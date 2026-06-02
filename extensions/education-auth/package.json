@@ -1,0 +1,18 @@
+{
+  "name": "@openclaw/education-auth",
+  "version": "2026.6.1",
+  "private": true,
+  "description": "OpenClaw Education Auth — user system, roles, RBAC, multi-tenant isolation",
+  "type": "module",
+  "dependencies": {
+    "typebox": "1.1.39"
+  },
+  "devDependencies": {
+    "@openclaw/plugin-sdk": "workspace:*"
+  },
+  "openclaw": {
+    "extensions": [
+      "./index.ts"
+    ]
+  }
+}

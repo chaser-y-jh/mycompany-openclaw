@@ -1,0 +1,67 @@
+{
+  "id": "education-auth",
+  "activation": {
+    "onStartup": true
+  },
+  "enabledByDefault": false,
+  "name": "Education Auth",
+  "description": "User system, roles (student/teacher/parent/admin), RBAC, and multi-tenant isolation for K12 education deployments.",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "enabled": { "type": "boolean", "default": false },
+      "schoolId": {
+        "type": "string",
+        "description": "Unique school identifier for multi-tenant deployments."
+      },
+      "schoolName": {
+        "type": "string",
+        "description": "Human-readable school name."
+      },
+      "authMode": {
+        "type": "string",
+        "enum": ["phone", "username", "sso"],
+        "default": "phone",
+        "description": "How users are identified. 'phone' uses channel sender ID, 'username' uses login, 'sso' uses OIDC."
+      },
+      "allowSelfRegistration": {
+        "type": "boolean",
+        "default": false,
+        "description": "When true, users can register themselves. When false, only admins can create accounts."
+      },
+      "defaultRole": {
+        "type": "string",
+        "enum": ["student", "teacher", "parent", "admin"],
+        "default": "student",
+        "description": "Default role assigned to newly registered users."
+      }
+    }
+  },
+  "uiHints": {
+    "enabled": {
+      "label": "Enable Education Mode",
+      "help": "Turn on the education user system, RBAC, and multi-tenant features."
+    },
+    "schoolId": {
+      "label": "School ID",
+      "help": "Unique identifier for this school. Used for data isolation in multi-tenant setups."
+    },
+    "schoolName": {
+      "label": "School Name",
+      "help": "Display name of the school."
+    },
+    "authMode": {
+      "label": "Authentication Mode",
+      "help": "'phone' identifies users by their channel sender ID (e.g. WhatsApp number). 'username' uses login credentials. 'sso' delegates to an OIDC provider."
+    },
+    "allowSelfRegistration": {
+      "label": "Allow Self-Registration",
+      "help": "When enabled, new users can register without admin approval."
+    },
+    "defaultRole": {
+      "label": "Default Role",
+      "help": "Role assigned when a new user self-registers."
+    }
+  }
+}
