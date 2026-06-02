@@ -1,4 +1,20 @@
-# 🦞 OpenClaw — Personal AI Assistant
+> [!WARNING]
+> **这不是 [openclaw/openclaw](https://github.com/openclaw/openclaw) 官方仓库。**
+>
+> 本仓库为 **个人/教育场景 fork**：[`chaser-y-jh/mycompany-openclaw`](https://github.com/chaser-y-jh/mycompany-openclaw)  
+> 在 upstream OpenClaw 基础上做定制，与官方发行版、文档、Discord 支持无关。
+>
+> | 项目 | 说明 |
+> |------|------|
+> | **Upstream** | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
+> | **本 fork 定制** | Phase 0：教育场景认证扩展（用户体系、角色、RBAC）等 |
+> | **维护者** | chaser-y-jh |
+>
+> 使用问题请先查本仓库 Issues；通用 OpenClaw 问题请参考官方文档。
+
+---
+
+# 🦞 OpenClaw — Personal AI Assistant（上游 README，下文为原版说明）
 
 <p align="center">
     <picture>
