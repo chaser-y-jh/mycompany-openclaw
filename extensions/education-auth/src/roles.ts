@@ -21,6 +21,9 @@ export type EduPermission =
   | "lesson:create" // Can create lesson plans
   | "quiz:create" // Can create quizzes
   | "quiz:take" // Can take quizzes
+  | "attendance:record" // Can record attendance (roll call)
+  | "attendance:view_own" // Can view own attendance
+  | "attendance:view_class" // Can view class-wide attendance
   | "users:manage" // Can create/edit/delete users
   | "classes:manage" // Can create/edit/delete classes
   | "school:manage" // Can manage school settings
@@ -34,6 +37,7 @@ export const ROLE_PERMISSIONS: Record<EduRole, Set<EduPermission>> = {
     "homework:view_own",
     "progress:view_own",
     "quiz:take",
+    "attendance:view_own",
   ]),
   teacher: new Set<EduPermission>([
     "chat:teacher",
@@ -43,10 +47,14 @@ export const ROLE_PERMISSIONS: Record<EduRole, Set<EduPermission>> = {
     "progress:view_class",
     "lesson:create",
     "quiz:create",
+    "attendance:record",
+    "attendance:view_own",
+    "attendance:view_class",
   ]),
   parent: new Set<EduPermission>([
     "progress:view_child",
     "homework:view_own", // view linked child's homework
+    "attendance:view_own", // view linked child's attendance
   ]),
   admin: new Set<EduPermission>([
     "chat:tutor",
@@ -62,6 +70,9 @@ export const ROLE_PERMISSIONS: Record<EduRole, Set<EduPermission>> = {
     "lesson:create",
     "quiz:create",
     "quiz:take",
+    "attendance:record",
+    "attendance:view_own",
+    "attendance:view_class",
     "users:manage",
     "classes:manage",
     "school:manage",

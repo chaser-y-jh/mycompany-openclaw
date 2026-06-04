@@ -1,0 +1,44 @@
+{
+  "id": "education-attendance",
+  "activation": {
+    "onStartup": true
+  },
+  "enabledByDefault": false,
+  "name": "Education Attendance",
+  "description": "考勤打卡系统 — 教师点名、学生出勤统计。支持 present/late/absent/leave 四种状态，月度汇总。",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "enabled": {
+        "type": "boolean",
+        "default": false
+      },
+      "autoMarkAbsentAfter": {
+        "type": "string",
+        "default": "30min",
+        "description": "上课后多久自动标记为缺勤 (e.g. '15min', '30min', 'never')"
+      },
+      "allowStudentSelfCheckIn": {
+        "type": "boolean",
+        "default": false,
+        "description": "是否允许学生自助签到"
+      }
+    },
+    "required": []
+  },
+  "uiHints": {
+    "enabled": {
+      "label": "启用考勤打卡",
+      "help": "开启后，教师可记录学生出勤情况。"
+    },
+    "autoMarkAbsentAfter": {
+      "label": "自动缺勤时间",
+      "help": "上课开始后超过此时间未打卡的学生自动标记为缺勤。设为 never 关闭自动标记。"
+    },
+    "allowStudentSelfCheckIn": {
+      "label": "允许学生自助签到",
+      "help": "开启后学生可以自行打卡签到，否则仅教师可记录考勤。"
+    }
+  }
+}

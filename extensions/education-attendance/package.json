@@ -1,0 +1,16 @@
+{
+  "name": "@merclaw/education-attendance",
+  "version": "2026.6.1",
+  "private": true,
+  "description": "MerClaw Education Attendance — 考勤打卡、出勤统计",
+  "type": "module",
+  "dependencies": {},
+  "devDependencies": {
+    "@merclaw/plugin-sdk": "workspace:*"
+  },
+  "merclaw": {
+    "extensions": [
+      "./index.ts"
+    ]
+  }
+}
