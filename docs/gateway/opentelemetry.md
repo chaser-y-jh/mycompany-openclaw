@@ -1,13 +1,13 @@
 ---
-summary: "Export OpenClaw diagnostics to any OpenTelemetry collector via the diagnostics-otel plugin (OTLP/HTTP)"
+summary: "Export MerClaw diagnostics to any OpenTelemetry collector via the diagnostics-otel plugin (OTLP/HTTP)"
 title: "OpenTelemetry export"
 read_when:
-  - You want to send OpenClaw model usage, message flow, or session metrics to an OpenTelemetry collector
+  - You want to send MerClaw model usage, message flow, or session metrics to an OpenTelemetry collector
   - You are wiring traces, metrics, or logs into Grafana, Datadog, Honeycomb, New Relic, Tempo, or another OTLP backend
   - You need the exact metric names, span names, or attribute shapes to build dashboards or alerts
 ---
 
-OpenClaw exports diagnostics through the official `diagnostics-otel` plugin
+MerClaw exports diagnostics through the official `diagnostics-otel` plugin
 using **OTLP/HTTP (protobuf)**. Any collector or backend that accepts OTLP/HTTP
 works without code changes. For local file logs and how to read them, see
 [Logging](/logging).
@@ -19,7 +19,7 @@ works without code changes. For local file logs and how to read them, see
   and exec.
 - **`diagnostics-otel` plugin** subscribes to those events and exports them as
   OpenTelemetry **metrics**, **traces**, and **logs** over OTLP/HTTP.
-- **Provider calls** receive a W3C `traceparent` header from OpenClaw's
+- **Provider calls** receive a W3C `traceparent` header from MerClaw's
   trusted model-call span context when the provider transport accepts custom
   headers. Plugin-emitted trace context is not propagated.
 - Exporters only attach when both the diagnostics surface and the plugin are
@@ -30,7 +30,7 @@ works without code changes. For local file logs and how to read them, see
 For packaged installs, install the plugin first:
 
 ```bash
-openclaw plugins install clawhub:@openclaw/diagnostics-otel
+merclaw plugins install clawhub:@merclaw/diagnostics-otel
 ```
 
 ```json5
@@ -47,7 +47,7 @@ openclaw plugins install clawhub:@openclaw/diagnostics-otel
       enabled: true,
       endpoint: "http://otel-collector:4318",
       protocol: "http/protobuf",
-      serviceName: "openclaw-gateway",
+      serviceName: "merclaw-gateway",
       traces: true,
       metrics: true,
       logs: true,
@@ -61,7 +61,7 @@ openclaw plugins install clawhub:@openclaw/diagnostics-otel
 You can also enable the plugin from the CLI:
 
 ```bash
-openclaw plugins enable diagnostics-otel
+merclaw plugins enable diagnostics-otel
 ```
 
 <Note>
@@ -93,7 +93,7 @@ are exported only when `diagnostics.otel.logs` is explicitly `true`.
       metricsEndpoint: "http://otel-collector:4318/v1/metrics",
       logsEndpoint: "http://otel-collector:4318/v1/logs",
       protocol: "http/protobuf", // grpc is ignored
-      serviceName: "openclaw-gateway",
+      serviceName: "merclaw-gateway",
       headers: { "x-collector-token": "..." },
       traces: true,
       metrics: true,
@@ -123,7 +123,7 @@ are exported only when `diagnostics.otel.logs` is explicitly `true`.
 | `OTEL_SERVICE_NAME`                                                                                               | Override `diagnostics.otel.serviceName`.                                                                                                                                                                                                                                                                                                       |
 | `OTEL_EXPORTER_OTLP_PROTOCOL`                                                                                     | Override the wire protocol (only `http/protobuf` is honored today).                                                                                                                                                                                                                                                                            |
 | `OTEL_SEMCONV_STABILITY_OPT_IN`                                                                                   | Set to `gen_ai_latest_experimental` to emit the latest experimental GenAI inference span shape, including `{gen_ai.operation.name} {gen_ai.request.model}` span names, `CLIENT` span kind, and `gen_ai.provider.name` instead of the legacy `gen_ai.system`. GenAI metrics always use bounded, low-cardinality semantic attributes regardless. |
-| `OPENCLAW_OTEL_PRELOADED`                                                                                         | Set to `1` when another preload or host process already registered the global OpenTelemetry SDK. The plugin then skips its own NodeSDK lifecycle but still wires diagnostic listeners and honors `traces`/`metrics`/`logs`.                                                                                                                    |
+| `MERCLAW_OTEL_PRELOADED`                                                                                         | Set to `1` when another preload or host process already registered the global OpenTelemetry SDK. The plugin then skips its own NodeSDK lifecycle but still wires diagnostic listeners and honors `traces`/`metrics`/`logs`.                                                                                                                    |
 
 ## Privacy and content capture
 
@@ -141,7 +141,7 @@ provider, and event type. They do not include transcripts, audio payloads,
 session ids, turn ids, call ids, room ids, or handoff tokens.
 
 Outbound model requests may include a W3C `traceparent` header. That header is
-generated only from OpenClaw-owned diagnostic trace context for the active model
+generated only from MerClaw-owned diagnostic trace context for the active model
 call. Existing caller-supplied `traceparent` headers are replaced, so plugins or
 custom provider options cannot spoof cross-service trace ancestry.
 
@@ -157,7 +157,7 @@ text. Each subkey is opt-in independently:
 - `toolDefinitions` - model tool names, descriptions, and schemas.
 
 When any subkey is enabled, model and tool spans get bounded, redacted
-`openclaw.content.*` attributes for that class only. Use boolean
+`merclaw.content.*` attributes for that class only. Use boolean
 `captureContent: true` only for broad diagnostics captures where OTLP log
 message bodies are also approved for export.
 
@@ -182,64 +182,64 @@ message bodies are also approved for export.
 
 ### Model usage
 
-- `openclaw.tokens` (counter, attrs: `openclaw.token`, `openclaw.channel`, `openclaw.provider`, `openclaw.model`, `openclaw.agent`)
-- `openclaw.cost.usd` (counter, attrs: `openclaw.channel`, `openclaw.provider`, `openclaw.model`)
-- `openclaw.run.duration_ms` (histogram, attrs: `openclaw.channel`, `openclaw.provider`, `openclaw.model`)
-- `openclaw.context.tokens` (histogram, attrs: `openclaw.context`, `openclaw.channel`, `openclaw.provider`, `openclaw.model`)
+- `merclaw.tokens` (counter, attrs: `merclaw.token`, `merclaw.channel`, `merclaw.provider`, `merclaw.model`, `merclaw.agent`)
+- `merclaw.cost.usd` (counter, attrs: `merclaw.channel`, `merclaw.provider`, `merclaw.model`)
+- `merclaw.run.duration_ms` (histogram, attrs: `merclaw.channel`, `merclaw.provider`, `merclaw.model`)
+- `merclaw.context.tokens` (histogram, attrs: `merclaw.context`, `merclaw.channel`, `merclaw.provider`, `merclaw.model`)
 - `gen_ai.client.token.usage` (histogram, GenAI semantic-conventions metric, attrs: `gen_ai.token.type` = `input`/`output`, `gen_ai.provider.name`, `gen_ai.operation.name`, `gen_ai.request.model`)
 - `gen_ai.client.operation.duration` (histogram, seconds, GenAI semantic-conventions metric, attrs: `gen_ai.provider.name`, `gen_ai.operation.name`, `gen_ai.request.model`, optional `error.type`)
-- `openclaw.model_call.duration_ms` (histogram, attrs: `openclaw.provider`, `openclaw.model`, `openclaw.api`, `openclaw.transport`, plus `openclaw.errorCategory` and `openclaw.failureKind` on classified errors)
-- `openclaw.model_call.request_bytes` (histogram, UTF-8 byte size of the final model request payload; no raw payload content)
-- `openclaw.model_call.response_bytes` (histogram, UTF-8 byte size of streamed model response events; no raw response content)
-- `openclaw.model_call.time_to_first_byte_ms` (histogram, elapsed time before the first streamed response event)
-- `openclaw.model.failover` (counter, attrs: `openclaw.provider`, `openclaw.model`, `openclaw.failover.to_provider`, `openclaw.failover.to_model`, `openclaw.failover.reason`, `openclaw.failover.suspended`, `openclaw.lane`)
-- `openclaw.skill.used` (counter, attrs: `openclaw.skill.name`, `openclaw.skill.source`, `openclaw.skill.activation`, optional `openclaw.agent`, optional `openclaw.toolName`)
+- `merclaw.model_call.duration_ms` (histogram, attrs: `merclaw.provider`, `merclaw.model`, `merclaw.api`, `merclaw.transport`, plus `merclaw.errorCategory` and `merclaw.failureKind` on classified errors)
+- `merclaw.model_call.request_bytes` (histogram, UTF-8 byte size of the final model request payload; no raw payload content)
+- `merclaw.model_call.response_bytes` (histogram, UTF-8 byte size of streamed model response events; no raw response content)
+- `merclaw.model_call.time_to_first_byte_ms` (histogram, elapsed time before the first streamed response event)
+- `merclaw.model.failover` (counter, attrs: `merclaw.provider`, `merclaw.model`, `merclaw.failover.to_provider`, `merclaw.failover.to_model`, `merclaw.failover.reason`, `merclaw.failover.suspended`, `merclaw.lane`)
+- `merclaw.skill.used` (counter, attrs: `merclaw.skill.name`, `merclaw.skill.source`, `merclaw.skill.activation`, optional `merclaw.agent`, optional `merclaw.toolName`)
 
 ### Message flow
 
-- `openclaw.webhook.received` (counter, attrs: `openclaw.channel`, `openclaw.webhook`)
-- `openclaw.webhook.error` (counter, attrs: `openclaw.channel`, `openclaw.webhook`)
-- `openclaw.webhook.duration_ms` (histogram, attrs: `openclaw.channel`, `openclaw.webhook`)
-- `openclaw.message.queued` (counter, attrs: `openclaw.channel`, `openclaw.source`)
-- `openclaw.message.received` (counter, attrs: `openclaw.channel`, `openclaw.source`)
-- `openclaw.message.dispatch.started` (counter, attrs: `openclaw.channel`, `openclaw.source`)
-- `openclaw.message.dispatch.completed` (counter, attrs: `openclaw.channel`, `openclaw.outcome`, `openclaw.reason`, `openclaw.source`)
-- `openclaw.message.dispatch.duration_ms` (histogram, attrs: `openclaw.channel`, `openclaw.outcome`, `openclaw.reason`, `openclaw.source`)
-- `openclaw.message.processed` (counter, attrs: `openclaw.channel`, `openclaw.outcome`)
-- `openclaw.message.duration_ms` (histogram, attrs: `openclaw.channel`, `openclaw.outcome`)
-- `openclaw.message.delivery.started` (counter, attrs: `openclaw.channel`, `openclaw.delivery.kind`)
-- `openclaw.message.delivery.duration_ms` (histogram, attrs: `openclaw.channel`, `openclaw.delivery.kind`, `openclaw.outcome`, `openclaw.errorCategory`)
+- `merclaw.webhook.received` (counter, attrs: `merclaw.channel`, `merclaw.webhook`)
+- `merclaw.webhook.error` (counter, attrs: `merclaw.channel`, `merclaw.webhook`)
+- `merclaw.webhook.duration_ms` (histogram, attrs: `merclaw.channel`, `merclaw.webhook`)
+- `merclaw.message.queued` (counter, attrs: `merclaw.channel`, `merclaw.source`)
+- `merclaw.message.received` (counter, attrs: `merclaw.channel`, `merclaw.source`)
+- `merclaw.message.dispatch.started` (counter, attrs: `merclaw.channel`, `merclaw.source`)
+- `merclaw.message.dispatch.completed` (counter, attrs: `merclaw.channel`, `merclaw.outcome`, `merclaw.reason`, `merclaw.source`)
+- `merclaw.message.dispatch.duration_ms` (histogram, attrs: `merclaw.channel`, `merclaw.outcome`, `merclaw.reason`, `merclaw.source`)
+- `merclaw.message.processed` (counter, attrs: `merclaw.channel`, `merclaw.outcome`)
+- `merclaw.message.duration_ms` (histogram, attrs: `merclaw.channel`, `merclaw.outcome`)
+- `merclaw.message.delivery.started` (counter, attrs: `merclaw.channel`, `merclaw.delivery.kind`)
+- `merclaw.message.delivery.duration_ms` (histogram, attrs: `merclaw.channel`, `merclaw.delivery.kind`, `merclaw.outcome`, `merclaw.errorCategory`)
 
 ### Talk
 
-- `openclaw.talk.event` (counter, attrs: `openclaw.talk.event_type`, `openclaw.talk.mode`, `openclaw.talk.transport`, `openclaw.talk.brain`, `openclaw.talk.provider`)
-- `openclaw.talk.event.duration_ms` (histogram, attrs: same as `openclaw.talk.event`; emitted when a Talk event reports duration)
-- `openclaw.talk.audio.bytes` (histogram, attrs: same as `openclaw.talk.event`; emitted for Talk audio frame events that report byte length)
+- `merclaw.talk.event` (counter, attrs: `merclaw.talk.event_type`, `merclaw.talk.mode`, `merclaw.talk.transport`, `merclaw.talk.brain`, `merclaw.talk.provider`)
+- `merclaw.talk.event.duration_ms` (histogram, attrs: same as `merclaw.talk.event`; emitted when a Talk event reports duration)
+- `merclaw.talk.audio.bytes` (histogram, attrs: same as `merclaw.talk.event`; emitted for Talk audio frame events that report byte length)
 
 ### Queues and sessions
 
-- `openclaw.queue.lane.enqueue` (counter, attrs: `openclaw.lane`)
-- `openclaw.queue.lane.dequeue` (counter, attrs: `openclaw.lane`)
-- `openclaw.queue.depth` (histogram, attrs: `openclaw.lane` or `openclaw.channel=heartbeat`)
-- `openclaw.queue.wait_ms` (histogram, attrs: `openclaw.lane`)
-- `openclaw.session.state` (counter, attrs: `openclaw.state`, `openclaw.reason`)
-- `openclaw.session.stuck` (counter, attrs: `openclaw.state`; emitted for recoverable stale session bookkeeping)
-- `openclaw.session.stuck_age_ms` (histogram, attrs: `openclaw.state`; emitted for recoverable stale session bookkeeping)
-- `openclaw.session.turn.created` (counter, attrs: `openclaw.agent`, `openclaw.channel`, `openclaw.trigger`)
-- `openclaw.session.recovery.requested` (counter, attrs: `openclaw.state`, `openclaw.action`, `openclaw.active_work_kind`, `openclaw.reason`)
-- `openclaw.session.recovery.completed` (counter, attrs: `openclaw.state`, `openclaw.action`, `openclaw.status`, `openclaw.active_work_kind`, `openclaw.reason`)
-- `openclaw.session.recovery.age_ms` (histogram, attrs: same as the matching recovery counter)
-- `openclaw.run.attempt` (counter, attrs: `openclaw.attempt`)
+- `merclaw.queue.lane.enqueue` (counter, attrs: `merclaw.lane`)
+- `merclaw.queue.lane.dequeue` (counter, attrs: `merclaw.lane`)
+- `merclaw.queue.depth` (histogram, attrs: `merclaw.lane` or `merclaw.channel=heartbeat`)
+- `merclaw.queue.wait_ms` (histogram, attrs: `merclaw.lane`)
+- `merclaw.session.state` (counter, attrs: `merclaw.state`, `merclaw.reason`)
+- `merclaw.session.stuck` (counter, attrs: `merclaw.state`; emitted for recoverable stale session bookkeeping)
+- `merclaw.session.stuck_age_ms` (histogram, attrs: `merclaw.state`; emitted for recoverable stale session bookkeeping)
+- `merclaw.session.turn.created` (counter, attrs: `merclaw.agent`, `merclaw.channel`, `merclaw.trigger`)
+- `merclaw.session.recovery.requested` (counter, attrs: `merclaw.state`, `merclaw.action`, `merclaw.active_work_kind`, `merclaw.reason`)
+- `merclaw.session.recovery.completed` (counter, attrs: `merclaw.state`, `merclaw.action`, `merclaw.status`, `merclaw.active_work_kind`, `merclaw.reason`)
+- `merclaw.session.recovery.age_ms` (histogram, attrs: same as the matching recovery counter)
+- `merclaw.run.attempt` (counter, attrs: `merclaw.attempt`)
 
 ### Session liveness telemetry
 
 `diagnostics.stuckSessionWarnMs` is the no-progress age threshold for session
 liveness diagnostics. A `processing` session does not age toward this threshold
-while OpenClaw observes reply, tool, status, block, or ACP runtime progress.
+while MerClaw observes reply, tool, status, block, or ACP runtime progress.
 Typing keepalives are not counted as progress, so a silent model or harness can
 still be detected.
 
-OpenClaw classifies sessions by the work it can still observe:
+MerClaw classifies sessions by the work it can still observe:
 
 - `session.long_running`: active embedded work, model calls, or tool calls are
   still making progress.
@@ -258,8 +258,8 @@ Recovery emits structured `session.recovery.requested` and
 only after a mutating recovery outcome (`aborted` or `released`) and only if the
 same processing generation is still current.
 
-Only `session.stuck` emits the `openclaw.session.stuck` counter, the
-`openclaw.session.stuck_age_ms` histogram, and the `openclaw.session.stuck`
+Only `session.stuck` emits the `merclaw.session.stuck` counter, the
+`merclaw.session.stuck_age_ms` histogram, and the `merclaw.session.stuck`
 span. Repeated `session.stuck` diagnostics back off while the session remains
 unchanged, so dashboards should alert on sustained increases rather than every
 heartbeat tick. For the config knob and defaults, see
@@ -267,78 +267,78 @@ heartbeat tick. For the config knob and defaults, see
 
 Liveness warnings also emit:
 
-- `openclaw.liveness.warning` (counter, attrs: `openclaw.liveness.reason`)
-- `openclaw.liveness.event_loop_delay_p99_ms` (histogram, attrs: `openclaw.liveness.reason`)
-- `openclaw.liveness.event_loop_delay_max_ms` (histogram, attrs: `openclaw.liveness.reason`)
-- `openclaw.liveness.event_loop_utilization` (histogram, attrs: `openclaw.liveness.reason`)
-- `openclaw.liveness.cpu_core_ratio` (histogram, attrs: `openclaw.liveness.reason`)
+- `merclaw.liveness.warning` (counter, attrs: `merclaw.liveness.reason`)
+- `merclaw.liveness.event_loop_delay_p99_ms` (histogram, attrs: `merclaw.liveness.reason`)
+- `merclaw.liveness.event_loop_delay_max_ms` (histogram, attrs: `merclaw.liveness.reason`)
+- `merclaw.liveness.event_loop_utilization` (histogram, attrs: `merclaw.liveness.reason`)
+- `merclaw.liveness.cpu_core_ratio` (histogram, attrs: `merclaw.liveness.reason`)
 
 ### Harness lifecycle
 
-- `openclaw.harness.duration_ms` (histogram, attrs: `openclaw.harness.id`, `openclaw.harness.plugin`, `openclaw.outcome`, `openclaw.harness.phase` on errors)
+- `merclaw.harness.duration_ms` (histogram, attrs: `merclaw.harness.id`, `merclaw.harness.plugin`, `merclaw.outcome`, `merclaw.harness.phase` on errors)
 
 ### Tool execution
 
-- `openclaw.tool.execution.duration_ms` (histogram, attrs: `gen_ai.tool.name`, `openclaw.toolName`, `openclaw.tool.source`, `openclaw.tool.owner`, `openclaw.tool.params.kind`, plus `openclaw.errorCategory` on errors)
-- `openclaw.tool.execution.blocked` (counter, attrs: `gen_ai.tool.name`, `openclaw.toolName`, `openclaw.tool.source`, `openclaw.tool.owner`, `openclaw.tool.params.kind`, `openclaw.deniedReason`)
+- `merclaw.tool.execution.duration_ms` (histogram, attrs: `gen_ai.tool.name`, `merclaw.toolName`, `merclaw.tool.source`, `merclaw.tool.owner`, `merclaw.tool.params.kind`, plus `merclaw.errorCategory` on errors)
+- `merclaw.tool.execution.blocked` (counter, attrs: `gen_ai.tool.name`, `merclaw.toolName`, `merclaw.tool.source`, `merclaw.tool.owner`, `merclaw.tool.params.kind`, `merclaw.deniedReason`)
 
 ### Exec
 
-- `openclaw.exec.duration_ms` (histogram, attrs: `openclaw.exec.target`, `openclaw.exec.mode`, `openclaw.outcome`, `openclaw.failureKind`)
+- `merclaw.exec.duration_ms` (histogram, attrs: `merclaw.exec.target`, `merclaw.exec.mode`, `merclaw.outcome`, `merclaw.failureKind`)
 
 ### Diagnostics internals (memory and tool loop)
 
-- `openclaw.payload.large` (counter, attrs: `openclaw.payload.surface`, `openclaw.payload.action`, `openclaw.channel`, `openclaw.plugin`, `openclaw.reason`)
-- `openclaw.payload.large_bytes` (histogram, attrs: same as `openclaw.payload.large`)
-- `openclaw.memory.heap_used_bytes` (histogram, attrs: `openclaw.memory.kind`)
-- `openclaw.memory.rss_bytes` (histogram)
-- `openclaw.memory.pressure` (counter, attrs: `openclaw.memory.level`)
-- `openclaw.tool.loop.iterations` (counter, attrs: `openclaw.toolName`, `openclaw.outcome`)
-- `openclaw.tool.loop.duration_ms` (histogram, attrs: `openclaw.toolName`, `openclaw.outcome`)
+- `merclaw.payload.large` (counter, attrs: `merclaw.payload.surface`, `merclaw.payload.action`, `merclaw.channel`, `merclaw.plugin`, `merclaw.reason`)
+- `merclaw.payload.large_bytes` (histogram, attrs: same as `merclaw.payload.large`)
+- `merclaw.memory.heap_used_bytes` (histogram, attrs: `merclaw.memory.kind`)
+- `merclaw.memory.rss_bytes` (histogram)
+- `merclaw.memory.pressure` (counter, attrs: `merclaw.memory.level`)
+- `merclaw.tool.loop.iterations` (counter, attrs: `merclaw.toolName`, `merclaw.outcome`)
+- `merclaw.tool.loop.duration_ms` (histogram, attrs: `merclaw.toolName`, `merclaw.outcome`)
 
 ## Exported spans
 
-- `openclaw.model.usage`
-  - `openclaw.channel`, `openclaw.provider`, `openclaw.model`
-  - `openclaw.tokens.*` (input/output/cache_read/cache_write/total)
+- `merclaw.model.usage`
+  - `merclaw.channel`, `merclaw.provider`, `merclaw.model`
+  - `merclaw.tokens.*` (input/output/cache_read/cache_write/total)
   - `gen_ai.system` by default, or `gen_ai.provider.name` when the latest GenAI semantic conventions are opted in
   - `gen_ai.request.model`, `gen_ai.operation.name`, `gen_ai.usage.*`
-- `openclaw.run`
-  - `openclaw.outcome`, `openclaw.channel`, `openclaw.provider`, `openclaw.model`, `openclaw.errorCategory`
-- `openclaw.model.call`
+- `merclaw.run`
+  - `merclaw.outcome`, `merclaw.channel`, `merclaw.provider`, `merclaw.model`, `merclaw.errorCategory`
+- `merclaw.model.call`
   - `gen_ai.system` by default, or `gen_ai.provider.name` when the latest GenAI semantic conventions are opted in
-  - `gen_ai.request.model`, `gen_ai.operation.name`, `openclaw.provider`, `openclaw.model`, `openclaw.api`, `openclaw.transport`
-  - `openclaw.errorCategory` and optional `openclaw.failureKind` on errors
-  - `openclaw.model_call.request_bytes`, `openclaw.model_call.response_bytes`, `openclaw.model_call.time_to_first_byte_ms`
-  - `openclaw.provider.request_id_hash` (bounded SHA-based hash of the upstream provider request id; raw ids are not exported)
-  - With `OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental`, model-call spans use the latest GenAI inference span name `{gen_ai.operation.name} {gen_ai.request.model}` and `CLIENT` span kind instead of `openclaw.model.call`.
-- `openclaw.harness.run`
-  - `openclaw.harness.id`, `openclaw.harness.plugin`, `openclaw.outcome`, `openclaw.provider`, `openclaw.model`, `openclaw.channel`
-  - On completion: `openclaw.harness.result_classification`, `openclaw.harness.yield_detected`, `openclaw.harness.items.started`, `openclaw.harness.items.completed`, `openclaw.harness.items.active`
-  - On error: `openclaw.harness.phase`, `openclaw.errorCategory`, optional `openclaw.harness.cleanup_failed`
-- `openclaw.tool.execution`
-  - `gen_ai.tool.name`, `openclaw.toolName`, `openclaw.errorCategory`, `openclaw.tool.params.*`
-- `openclaw.exec`
-  - `openclaw.exec.target`, `openclaw.exec.mode`, `openclaw.outcome`, `openclaw.failureKind`, `openclaw.exec.command_length`, `openclaw.exec.exit_code`, `openclaw.exec.timed_out`
-- `openclaw.webhook.processed`
-  - `openclaw.channel`, `openclaw.webhook`
-- `openclaw.webhook.error`
-  - `openclaw.channel`, `openclaw.webhook`, `openclaw.error`
-- `openclaw.message.processed`
-  - `openclaw.channel`, `openclaw.outcome`, `openclaw.reason`
-- `openclaw.message.delivery`
-  - `openclaw.channel`, `openclaw.delivery.kind`, `openclaw.outcome`, `openclaw.errorCategory`, `openclaw.delivery.result_count`
-- `openclaw.session.stuck`
-  - `openclaw.state`, `openclaw.ageMs`, `openclaw.queueDepth`
-- `openclaw.context.assembled`
-  - `openclaw.prompt.size`, `openclaw.history.size`, `openclaw.context.tokens`, `openclaw.errorCategory` (no prompt, history, response, or session-key content)
-- `openclaw.tool.loop`
-  - `openclaw.toolName`, `openclaw.outcome`, `openclaw.iterations`, `openclaw.errorCategory` (no loop messages, params, or tool output)
-- `openclaw.memory.pressure`
-  - `openclaw.memory.level`, `openclaw.memory.heap_used_bytes`, `openclaw.memory.rss_bytes`
+  - `gen_ai.request.model`, `gen_ai.operation.name`, `merclaw.provider`, `merclaw.model`, `merclaw.api`, `merclaw.transport`
+  - `merclaw.errorCategory` and optional `merclaw.failureKind` on errors
+  - `merclaw.model_call.request_bytes`, `merclaw.model_call.response_bytes`, `merclaw.model_call.time_to_first_byte_ms`
+  - `merclaw.provider.request_id_hash` (bounded SHA-based hash of the upstream provider request id; raw ids are not exported)
+  - With `OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental`, model-call spans use the latest GenAI inference span name `{gen_ai.operation.name} {gen_ai.request.model}` and `CLIENT` span kind instead of `merclaw.model.call`.
+- `merclaw.harness.run`
+  - `merclaw.harness.id`, `merclaw.harness.plugin`, `merclaw.outcome`, `merclaw.provider`, `merclaw.model`, `merclaw.channel`
+  - On completion: `merclaw.harness.result_classification`, `merclaw.harness.yield_detected`, `merclaw.harness.items.started`, `merclaw.harness.items.completed`, `merclaw.harness.items.active`
+  - On error: `merclaw.harness.phase`, `merclaw.errorCategory`, optional `merclaw.harness.cleanup_failed`
+- `merclaw.tool.execution`
+  - `gen_ai.tool.name`, `merclaw.toolName`, `merclaw.errorCategory`, `merclaw.tool.params.*`
+- `merclaw.exec`
+  - `merclaw.exec.target`, `merclaw.exec.mode`, `merclaw.outcome`, `merclaw.failureKind`, `merclaw.exec.command_length`, `merclaw.exec.exit_code`, `merclaw.exec.timed_out`
+- `merclaw.webhook.processed`
+  - `merclaw.channel`, `merclaw.webhook`
+- `merclaw.webhook.error`
+  - `merclaw.channel`, `merclaw.webhook`, `merclaw.error`
+- `merclaw.message.processed`
+  - `merclaw.channel`, `merclaw.outcome`, `merclaw.reason`
+- `merclaw.message.delivery`
+  - `merclaw.channel`, `merclaw.delivery.kind`, `merclaw.outcome`, `merclaw.errorCategory`, `merclaw.delivery.result_count`
+- `merclaw.session.stuck`
+  - `merclaw.state`, `merclaw.ageMs`, `merclaw.queueDepth`
+- `merclaw.context.assembled`
+  - `merclaw.prompt.size`, `merclaw.history.size`, `merclaw.context.tokens`, `merclaw.errorCategory` (no prompt, history, response, or session-key content)
+- `merclaw.tool.loop`
+  - `merclaw.toolName`, `merclaw.outcome`, `merclaw.iterations`, `merclaw.errorCategory` (no loop messages, params, or tool output)
+- `merclaw.memory.pressure`
+  - `merclaw.memory.level`, `merclaw.memory.heap_used_bytes`, `merclaw.memory.rss_bytes`
 
 When content capture is explicitly enabled, model and tool spans can also
-include bounded, redacted `openclaw.content.*` attributes for the specific
+include bounded, redacted `merclaw.content.*` attributes for the specific
 content classes you opted into.
 
 ## Diagnostic event catalog
@@ -406,7 +406,7 @@ flags. Flags are case-insensitive and support wildcards (e.g. `telegram.*` or
 Or as a one-off env override:
 
 ```bash
-OPENCLAW_DIAGNOSTICS=telegram.http,telegram.payload openclaw gateway
+MERCLAW_DIAGNOSTICS=telegram.http,telegram.payload merclaw gateway
 ```
 
 Flag output goes to the standard log file (`logging.file`) and is still
@@ -422,7 +422,7 @@ redacted by `logging.redactSensitive`. Full guide:
 ```
 
 You can also leave `diagnostics-otel` out of `plugins.allow`, or run
-`openclaw plugins disable diagnostics-otel`.
+`merclaw plugins disable diagnostics-otel`.
 
 ## Related
 

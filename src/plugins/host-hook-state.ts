@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/normalization-core/string-coerce";
 import { loadSessionStore, updateSessionStore, type SessionEntry } from "../config/sessions.js";
 import { resolveAgentMainSessionKey } from "../config/sessions/main-session.js";
 import { resolveStorePath } from "../config/sessions/paths.js";
@@ -10,7 +10,7 @@ import {
   resolveAllAgentSessionStoreTargetsSync,
   type SessionStoreTarget,
 } from "../config/sessions/targets.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import {
   resolveSessionStoreAgentId,
   resolveSessionStoreKey,
@@ -118,7 +118,7 @@ function findFreshestStoreMatch(
 }
 
 function resolveSessionStoreCandidates(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentId: string;
 }): SessionStoreTarget[] {
   const storeConfig = params.cfg.session?.store;
@@ -140,7 +140,7 @@ function resolveSessionStoreCandidates(params: {
 }
 
 function buildSessionStoreScanTargets(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   key: string;
   canonicalKey: string;
   agentId: string;
@@ -165,7 +165,7 @@ function buildSessionStoreScanTargets(params: {
   return [...targets];
 }
 
-function loadPluginHostHookSessionEntry(params: { cfg: OpenClawConfig; sessionKey: string }): {
+function loadPluginHostHookSessionEntry(params: { cfg: MerClawConfig; sessionKey: string }): {
   storePath: string;
   entry?: SessionEntry;
   canonicalKey: string;
@@ -205,7 +205,7 @@ function loadPluginHostHookSessionEntry(params: { cfg: OpenClawConfig; sessionKe
   };
 }
 
-function isPluginPromptInjectionEnabled(cfg: OpenClawConfig, pluginId: string): boolean {
+function isPluginPromptInjectionEnabled(cfg: MerClawConfig, pluginId: string): boolean {
   const entry = cfg.plugins?.entries?.[pluginId];
   return entry?.hooks?.allowPromptInjection !== false;
 }
@@ -230,7 +230,7 @@ function toPluginNextTurnInjectionRecord(params: {
 }
 
 export async function enqueuePluginNextTurnInjection(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   pluginId: string;
   pluginName?: string;
   injection: PluginNextTurnInjection;
@@ -326,7 +326,7 @@ export async function enqueuePluginNextTurnInjection(params: {
 }
 
 export async function drainPluginNextTurnInjections(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   sessionKey?: string;
   now?: number;
 }): Promise<PluginNextTurnInjectionRecord[]> {
@@ -386,7 +386,7 @@ export async function drainPluginNextTurnInjections(params: {
 }
 
 export async function drainPluginNextTurnInjectionContext(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   sessionKey?: string;
   now?: number;
 }): Promise<PluginAgentTurnPrepareResult & { queuedInjections: PluginNextTurnInjectionRecord[] }> {
@@ -399,7 +399,7 @@ export async function drainPluginNextTurnInjectionContext(params: {
 
 // oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- Session-extension JSON reads are caller-typed by namespace.
 export function getPluginSessionExtensionSync<T extends PluginJsonValue = PluginJsonValue>(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   pluginId: string;
   sessionKey?: string;
   namespace: string;
@@ -418,7 +418,7 @@ export function getPluginSessionExtensionSync<T extends PluginJsonValue = Plugin
 }
 
 export function getPluginSessionExtensionStateSync(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   pluginId: string;
   sessionKey?: string;
 }): Record<string, PluginJsonValue> | undefined {
@@ -435,7 +435,7 @@ export function getPluginSessionExtensionStateSync(params: {
 }
 
 export async function patchPluginSessionExtension(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   sessionKey: string;
   pluginId: string;
   namespace: string;

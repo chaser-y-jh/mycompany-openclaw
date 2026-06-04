@@ -1,11 +1,11 @@
 import fs from "node:fs";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { clearRuntimeAuthProfileStoreSnapshots } from "../agents/auth-profiles/store.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import {
-  createOpenClawTestState,
-  type OpenClawTestState,
-} from "../test-utils/openclaw-test-state.js";
+  createMerClawTestState,
+  type MerClawTestState,
+} from "../test-utils/merclaw-test-state.js";
 import {
   collectOpenAICodexAuthProfileStoreIdMap,
   maybeRepairLegacyFlatAuthProfileStores,
@@ -14,7 +14,7 @@ import {
 } from "./doctor-auth-flat-profiles.js";
 import type { DoctorPrompter } from "./doctor-prompter.js";
 
-const states: OpenClawTestState[] = [];
+const states: MerClawTestState[] = [];
 
 function makePrompter(shouldRepair: boolean): DoctorPrompter {
   return {
@@ -35,12 +35,12 @@ function makePrompter(shouldRepair: boolean): DoctorPrompter {
   };
 }
 
-async function makeTestState(): Promise<OpenClawTestState> {
-  const state = await createOpenClawTestState({
+async function makeTestState(): Promise<MerClawTestState> {
+  const state = await createMerClawTestState({
     layout: "state-only",
-    prefix: "openclaw-doctor-flat-auth-",
+    prefix: "merclaw-doctor-flat-auth-",
     env: {
-      OPENCLAW_AGENT_DIR: undefined,
+      MERCLAW_AGENT_DIR: undefined,
     },
   });
   states.push(state);
@@ -197,10 +197,10 @@ describe("maybeRepairOpenAICodexAuthConfig", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     const result = maybeRepairOpenAICodexAuthConfig(cfg);
-    const migrated = result.config as OpenClawConfig & {
+    const migrated = result.config as MerClawConfig & {
       agents?: {
         defaults?: {
           models?: Record<string, { agentRuntime?: { authProfileId?: string } }>;
@@ -248,10 +248,10 @@ describe("maybeRepairOpenAICodexAuthConfig", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     const result = maybeRepairOpenAICodexAuthConfig(cfg);
-    const migrated = result.config as OpenClawConfig & {
+    const migrated = result.config as MerClawConfig & {
       agents?: {
         defaults?: {
           models?: Record<string, { agentRuntime?: { authProfileId?: string } }>;
@@ -288,12 +288,12 @@ describe("maybeRepairOpenAICodexAuthConfig", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     const result = maybeRepairOpenAICodexAuthConfig(cfg, {
       profileIdMap: new Map([["openai-codex:default", "openai:chatgpt-default"]]),
     });
-    const migrated = result.config as OpenClawConfig & {
+    const migrated = result.config as MerClawConfig & {
       agents?: {
         defaults?: {
           models?: Record<string, { agentRuntime?: { authProfileId?: string } }>;
@@ -322,12 +322,12 @@ describe("maybeRepairOpenAICodexAuthConfig", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     const result = maybeRepairOpenAICodexAuthConfig(cfg, {
       profileIdMap: new Map([["openai-codex:default", "openai:chatgpt-default"]]),
     });
-    const migrated = result.config as OpenClawConfig & {
+    const migrated = result.config as MerClawConfig & {
       agents?: {
         defaults?: {
           models?: Record<string, { agentRuntime?: { authProfileId?: string } }>;
@@ -363,12 +363,12 @@ describe("maybeRepairOpenAICodexAuthConfig", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     const result = maybeRepairOpenAICodexAuthConfig(cfg, {
       profileIdMap: new Map([["openai-codex:default", "openai:chatgpt-default"]]),
     });
-    const migrated = result.config as OpenClawConfig & {
+    const migrated = result.config as MerClawConfig & {
       agents?: {
         defaults?: {
           systemPrompt?: string;
@@ -398,7 +398,7 @@ describe("maybeRepairOpenAICodexAuthConfig", () => {
           "openai-codex": ["openai-codex:default"],
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     const result = maybeRepairOpenAICodexAuthConfig(cfg, {
       profileIdMap: new Map([["openai-codex:default", "openai:chatgpt-default"]]),
@@ -445,12 +445,12 @@ describe("maybeRepairOpenAICodexAuthConfig", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     const result = maybeRepairOpenAICodexAuthConfig(cfg, {
       profileIdMap: new Map([["openai-codex:default", "openai:default"]]),
     });
-    const migrated = result.config as OpenClawConfig & {
+    const migrated = result.config as MerClawConfig & {
       agents?: {
         defaults?: {
           models?: Record<string, { agentRuntime?: { authProfileId?: string } }>;

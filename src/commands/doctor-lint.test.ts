@@ -30,7 +30,7 @@ describe("runDoctorLintCli", () => {
       exists: true,
       valid: true,
       config: {},
-      path: "/tmp/openclaw.json",
+      path: "/tmp/merclaw.json",
     });
 
     const stdout = vi.spyOn(process.stdout, "write").mockImplementation(() => true);
@@ -54,7 +54,7 @@ describe("runDoctorLintCli", () => {
       exists: true,
       valid: true,
       config: {},
-      path: "/tmp/openclaw.json",
+      path: "/tmp/merclaw.json",
     });
 
     const stdout = vi.spyOn(process.stdout, "write").mockImplementation(() => true);
@@ -80,7 +80,7 @@ describe("runDoctorLintCli", () => {
       exists: true,
       valid: false,
       config: {},
-      path: "/tmp/openclaw.json",
+      path: "/tmp/merclaw.json",
       issues: [{ path: "gateway.mode", message: "Required" }],
     });
 
@@ -113,7 +113,7 @@ describe("runDoctorLintCli", () => {
       exists: true,
       valid: true,
       config: {},
-      path: "/tmp/openclaw.json",
+      path: "/tmp/merclaw.json",
     });
 
     const stdout = vi.spyOn(process.stdout, "write").mockImplementation(() => true);

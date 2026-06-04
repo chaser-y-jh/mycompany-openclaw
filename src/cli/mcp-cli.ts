@@ -4,7 +4,7 @@ import path from "node:path";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeStringifiedOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/normalization-core/string-coerce";
 import { Command } from "commander";
 import { buildBundleMcpToolsFromCatalog } from "../agents/agent-bundle-mcp-materialize.js";
 import { createSessionMcpRuntime } from "../agents/agent-bundle-mcp-runtime.js";
@@ -28,9 +28,9 @@ import {
   updateConfiguredMcpServer,
   updateConfiguredMcpServerTools,
 } from "../config/mcp-config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { formatErrorMessage } from "../infra/errors.js";
-import { serveOpenClawChannelMcp } from "../mcp/channel-server.js";
+import { serveMerClawChannelMcp } from "../mcp/channel-server.js";
 import { defaultRuntime } from "../runtime.js";
 import { formatCliCommand } from "./command-format.js";
 import { resolveGatewayAuthOptions } from "./gateway-secret-options.js";
@@ -300,7 +300,7 @@ async function collectMcpDoctorIssues(params: {
   name: string;
   server: Record<string, unknown>;
   probe: boolean;
-  config: OpenClawConfig;
+  config: MerClawConfig;
   path: string;
 }): Promise<McpDoctorIssue[]> {
   const issues: McpDoctorIssue[] = [];
@@ -334,7 +334,7 @@ async function collectMcpDoctorIssues(params: {
           issues.push(
             issue(
               "warning",
-              `OAuth credentials are not authorized; run ${formatCliCommand(`openclaw mcp login ${name}`)}`,
+              `OAuth credentials are not authorized; run ${formatCliCommand(`merclaw mcp login ${name}`)}`,
             ),
           );
         }
@@ -401,12 +401,12 @@ async function collectMcpDoctorIssues(params: {
 }
 
 async function probeMcpServerIssue(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   name: string;
   server: Record<string, unknown>;
 }): Promise<McpDoctorIssue | null> {
   const runtime = createSessionMcpRuntime({
-    sessionId: "openclaw-cli-mcp-doctor",
+    sessionId: "merclaw-cli-mcp-doctor",
     workspaceDir: process.cwd(),
     cfg: buildMcpProbeConfig({
       config: params.config,
@@ -521,9 +521,9 @@ function formatMcpProbeResult(
 }
 
 function buildMcpProbeConfig(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   servers: Record<string, Record<string, unknown>>;
-}): OpenClawConfig {
+}): MerClawConfig {
   return {
     ...params.config,
     mcp: {
@@ -534,12 +534,12 @@ function buildMcpProbeConfig(params: {
 }
 
 async function probeMcpServersOrFail(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   servers: Record<string, Record<string, unknown>>;
   path: string;
 }): Promise<ReturnType<typeof formatMcpProbeResult>> {
   const runtime = createSessionMcpRuntime({
-    sessionId: "openclaw-cli-mcp-probe",
+    sessionId: "merclaw-cli-mcp-probe",
     workspaceDir: process.cwd(),
     cfg: buildMcpProbeConfig({ config: params.config, servers: params.servers }),
     manifestRegistry: { plugins: [] },
@@ -562,11 +562,11 @@ async function probeMcpServersOrFail(params: {
 }
 
 export function registerMcpCli(program: Command) {
-  const mcp = program.command("mcp").description("Manage OpenClaw MCP config and channel bridge");
+  const mcp = program.command("mcp").description("Manage MerClaw MCP config and channel bridge");
 
   mcp
     .command("serve")
-    .description("Expose OpenClaw channels over MCP stdio")
+    .description("Expose MerClaw channels over MCP stdio")
     .option("--url <url>", "Gateway WebSocket URL (defaults to gateway.remote.url when configured)")
     .option("--token <token>", "Gateway token (if required)")
     .option("--token-file <path>", "Read gateway token from file")
@@ -591,7 +591,7 @@ export function registerMcpCli(program: Command) {
         ) {
           throw new Error('Invalid --claude-channel-mode value. Use "auto", "on", or "off".');
         }
-        await serveOpenClawChannelMcp({
+        await serveMerClawChannelMcp({
           gatewayUrl: opts.url as string | undefined,
           gatewayToken,
           gatewayPassword,
@@ -600,7 +600,7 @@ export function registerMcpCli(program: Command) {
         });
       } catch (err) {
         defaultRuntime.error(
-          `MCP server failed to start: ${formatErrorMessage(err)}. Run ${formatCliCommand("openclaw mcp list")} to inspect configured servers.`,
+          `MCP server failed to start: ${formatErrorMessage(err)}. Run ${formatCliCommand("merclaw mcp list")} to inspect configured servers.`,
         );
         defaultRuntime.exit(1);
       }
@@ -622,7 +622,7 @@ export function registerMcpCli(program: Command) {
       const names = Object.keys(loaded.mcpServers).toSorted();
       if (names.length === 0) {
         defaultRuntime.log(
-          `No MCP servers configured in ${loaded.path}. Add one with ${formatCliCommand('openclaw mcp set <name> \'{"command":"uvx","args":["context7-mcp"]}\'')}.`,
+          `No MCP servers configured in ${loaded.path}. Add one with ${formatCliCommand('merclaw mcp set <name> \'{"command":"uvx","args":["context7-mcp"]}\'')}.`,
         );
         return;
       }
@@ -645,7 +645,7 @@ export function registerMcpCli(program: Command) {
       const value = name ? loaded.mcpServers[name] : loaded.mcpServers;
       if (name && !value) {
         fail(
-          `No MCP server named "${name}" in ${loaded.path}. Run ${formatCliCommand("openclaw mcp list")} to see configured servers.`,
+          `No MCP server named "${name}" in ${loaded.path}. Run ${formatCliCommand("merclaw mcp list")} to see configured servers.`,
         );
       }
       if (opts.json) {
@@ -721,16 +721,16 @@ export function registerMcpCli(program: Command) {
         : loaded.mcpServers;
       if (!servers) {
         fail(
-          `No MCP server named "${name}" in ${loaded.path}. Run ${formatCliCommand("openclaw mcp list")} to see configured servers.`,
+          `No MCP server named "${name}" in ${loaded.path}. Run ${formatCliCommand("merclaw mcp list")} to see configured servers.`,
         );
       }
       if (name && loaded.mcpServers[name]?.enabled === false) {
         fail(
-          `MCP server "${name}" is disabled in ${loaded.path}. Run ${formatCliCommand(`openclaw mcp configure ${name} --enable`)} before probing it.`,
+          `MCP server "${name}" is disabled in ${loaded.path}. Run ${formatCliCommand(`merclaw mcp configure ${name} --enable`)} before probing it.`,
         );
       }
       const runtime = createSessionMcpRuntime({
-        sessionId: "openclaw-cli-mcp-probe",
+        sessionId: "merclaw-cli-mcp-probe",
         workspaceDir: process.cwd(),
         cfg: buildMcpProbeConfig({ config: loaded.config, servers }),
         manifestRegistry: { plugins: [] },
@@ -773,7 +773,7 @@ export function registerMcpCli(program: Command) {
         : loaded.mcpServers;
       if (!selected) {
         fail(
-          `No MCP server named "${name}" in ${loaded.path}. Run ${formatCliCommand("openclaw mcp list")} to see configured servers.`,
+          `No MCP server named "${name}" in ${loaded.path}. Run ${formatCliCommand("merclaw mcp list")} to see configured servers.`,
         );
       }
       const servers = await Promise.all(
@@ -804,7 +804,7 @@ export function registerMcpCli(program: Command) {
       }
       if (servers.length === 0) {
         defaultRuntime.log(
-          `No MCP servers configured in ${loaded.path}. Add one with ${formatCliCommand("openclaw mcp add <name> --command <command>")}.`,
+          `No MCP servers configured in ${loaded.path}. Add one with ${formatCliCommand("merclaw mcp add <name> --command <command>")}.`,
         );
         return;
       }
@@ -973,7 +973,7 @@ export function registerMcpCli(program: Command) {
         defaultRuntime.log(`Saved MCP server "${name}" to ${result.path}.`);
         if (server.auth === "oauth") {
           defaultRuntime.log(
-            `Run ${formatCliCommand(`openclaw mcp login ${name}`)} to authorize this MCP server.`,
+            `Run ${formatCliCommand(`merclaw mcp login ${name}`)} to authorize this MCP server.`,
           );
         }
       },
@@ -1031,7 +1031,7 @@ export function registerMcpCli(program: Command) {
       }
       if (!result.updated) {
         fail(
-          `No MCP server named "${name}" in ${result.path}. Run ${formatCliCommand("openclaw mcp list")} to see configured servers.`,
+          `No MCP server named "${name}" in ${result.path}. Run ${formatCliCommand("merclaw mcp list")} to see configured servers.`,
         );
       }
       defaultRuntime.log(`Updated MCP tool selection for "${name}" in ${result.path}.`);
@@ -1096,7 +1096,7 @@ export function registerMcpCli(program: Command) {
         const current = loaded.mcpServers[name];
         if (!current) {
           fail(
-            `No MCP server named "${name}" in ${loaded.path}. Run ${formatCliCommand("openclaw mcp list")} to see configured servers.`,
+            `No MCP server named "${name}" in ${loaded.path}. Run ${formatCliCommand("merclaw mcp list")} to see configured servers.`,
           );
         }
         const next = { ...current };
@@ -1203,7 +1203,7 @@ export function registerMcpCli(program: Command) {
         }
         if (!result.updated) {
           fail(
-            `No MCP server named "${name}" in ${result.path}. Run ${formatCliCommand("openclaw mcp list")} to see configured servers.`,
+            `No MCP server named "${name}" in ${result.path}. Run ${formatCliCommand("merclaw mcp list")} to see configured servers.`,
           );
         }
         if (clearOAuthCredentials) {
@@ -1226,7 +1226,7 @@ export function registerMcpCli(program: Command) {
       const server = loaded.mcpServers[name];
       if (!server) {
         fail(
-          `No MCP server named "${name}" in ${loaded.path}. Run ${formatCliCommand("openclaw mcp list")} to see configured servers.`,
+          `No MCP server named "${name}" in ${loaded.path}. Run ${formatCliCommand("merclaw mcp list")} to see configured servers.`,
         );
       }
       if (server.auth !== "oauth") {
@@ -1258,7 +1258,7 @@ export function registerMcpCli(program: Command) {
           defaultRuntime.log(`Open this URL to authorize "${name}":`);
           defaultRuntime.log(url.toString());
           defaultRuntime.log(
-            `After approval, run ${formatCliCommand(`openclaw mcp login ${name} --code <code>`)}.`,
+            `After approval, run ${formatCliCommand(`merclaw mcp login ${name} --code <code>`)}.`,
           );
         },
       });
@@ -1279,7 +1279,7 @@ export function registerMcpCli(program: Command) {
       const server = loaded.mcpServers[name];
       if (!server) {
         fail(
-          `No MCP server named "${name}" in ${loaded.path}. Run ${formatCliCommand("openclaw mcp list")} to see configured servers.`,
+          `No MCP server named "${name}" in ${loaded.path}. Run ${formatCliCommand("merclaw mcp list")} to see configured servers.`,
         );
       }
       const resolved = resolveMcpTransportConfig(name, server);
@@ -1321,7 +1321,7 @@ export function registerMcpCli(program: Command) {
       }
       if (!result.removed) {
         fail(
-          `No MCP server named "${name}" in ${result.path}. Run ${formatCliCommand("openclaw mcp list")} to see configured servers.`,
+          `No MCP server named "${name}" in ${result.path}. Run ${formatCliCommand("merclaw mcp list")} to see configured servers.`,
         );
       }
       if (current) {

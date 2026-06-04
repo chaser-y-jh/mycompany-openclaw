@@ -1,13 +1,13 @@
-import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalLowercaseString } from "@merclaw/normalization-core/string-coerce";
 import { getLoadedChannelPlugin } from "../channels/plugins/index.js";
 import { resolveReadOnlyChannelCommandDefaults } from "../channels/plugins/read-only-command-defaults.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { pluginCommandSupportsChannel } from "./command-registration.js";
 import { pluginCommands } from "./command-registry-state.js";
-import type { OpenClawPluginCommandDefinition } from "./types.js";
+import type { MerClawPluginCommandDefinition } from "./types.js";
 
 function resolvePluginNativeName(
-  command: OpenClawPluginCommandDefinition,
+  command: MerClawPluginCommandDefinition,
   provider?: string,
 ): string {
   const providerName = normalizeOptionalLowercaseString(provider);
@@ -28,7 +28,7 @@ export function getPluginCommandSpecs(
     env?: NodeJS.ProcessEnv;
     stateDir?: string;
     workspaceDir?: string;
-    config?: OpenClawConfig;
+    config?: MerClawConfig;
   } = {},
 ): Array<{
   name: string;

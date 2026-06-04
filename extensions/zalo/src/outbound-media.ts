@@ -6,16 +6,16 @@ import { join } from "node:path";
 import {
   asDateTimestampMs,
   resolveExpiresAtMsFromDurationMs,
-} from "openclaw/plugin-sdk/number-runtime";
-import { loadOutboundMediaFromUrl } from "openclaw/plugin-sdk/outbound-media";
-import { privateFileStore } from "openclaw/plugin-sdk/security-runtime";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
-import { resolveWebhookPath } from "openclaw/plugin-sdk/webhook-ingress";
+} from "merclaw/plugin-sdk/number-runtime";
+import { loadOutboundMediaFromUrl } from "merclaw/plugin-sdk/outbound-media";
+import { privateFileStore } from "merclaw/plugin-sdk/security-runtime";
+import { resolvePreferredMerClawTmpDir } from "merclaw/plugin-sdk/temp-path";
+import { resolveWebhookPath } from "merclaw/plugin-sdk/webhook-ingress";
 
 const ZALO_OUTBOUND_MEDIA_TTL_MS = 2 * 60_000;
 const ZALO_OUTBOUND_MEDIA_SEGMENT = "media";
 const ZALO_OUTBOUND_MEDIA_PREFIX = `/${ZALO_OUTBOUND_MEDIA_SEGMENT}/`;
-const ZALO_OUTBOUND_MEDIA_DIR_NAME = "openclaw-zalo-outbound-media";
+const ZALO_OUTBOUND_MEDIA_DIR_NAME = "merclaw-zalo-outbound-media";
 
 function resolveHostedZaloMediaDirName(): string {
   const workerId = process.env.VITEST_WORKER_ID ?? process.env.VITEST_POOL_ID;
@@ -27,7 +27,7 @@ function resolveHostedZaloMediaDirName(): string {
 }
 
 const ZALO_OUTBOUND_MEDIA_DIR = join(
-  resolvePreferredOpenClawTmpDir(),
+  resolvePreferredMerClawTmpDir(),
   resolveHostedZaloMediaDirName(),
 );
 const ZALO_OUTBOUND_MEDIA_ID_RE = /^[a-f0-9]{24}$/;

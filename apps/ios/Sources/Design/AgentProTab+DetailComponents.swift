@@ -1,5 +1,5 @@
-import OpenClawKit
-import OpenClawProtocol
+import MerClawKit
+import MerClawProtocol
 import SwiftUI
 
 extension AgentProTab {

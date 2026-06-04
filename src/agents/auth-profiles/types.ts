@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import type { SecretRef } from "../../config/types.secrets.js";
 
 export type OAuthProvider = string;
@@ -32,7 +32,7 @@ export type ApiKeyCredential = {
 export type TokenCredential = {
   /**
    * Static bearer-style token (often OAuth access token / PAT).
-   * Not refreshable by OpenClaw (unlike `type: "oauth"`).
+   * Not refreshable by MerClaw (unlike `type: "oauth"`).
    */
   type: "token";
   provider: string;
@@ -126,7 +126,7 @@ export type AuthProfileStore = AuthProfileSecretsStore &
   };
 
 export type AuthProfileIdRepairResult = {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   changes: string[];
   migrated: boolean;
   fromProfileId?: string;

@@ -8,12 +8,12 @@ import {
   listOpenAIAuthProfileProvidersForAgentRuntime,
   openAIProviderUsesCodexRuntimeByDefault,
 } from "../agents/openai-routing.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import type { WizardPrompter } from "../wizard/prompts.js";
 import { buildProviderAuthRecoveryHint } from "./provider-auth-guidance.js";
 
 function resolveAuthProviderCandidates(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   provider: string;
   modelId: string;
   agentId?: string;
@@ -37,7 +37,7 @@ function resolveAuthProviderCandidates(params: {
 }
 
 function resolveAcceptedAuthProfileTypes(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   provider: string;
 }): readonly AuthProfileCredential["type"][] | undefined {
   if (
@@ -68,7 +68,7 @@ function hasProfileForProvider(params: {
 }
 
 export async function warnIfModelConfigLooksOff(
-  config: OpenClawConfig,
+  config: MerClawConfig,
   prompter: WizardPrompter,
   options?: { agentId?: string; agentDir?: string; validateCatalog?: boolean },
 ) {

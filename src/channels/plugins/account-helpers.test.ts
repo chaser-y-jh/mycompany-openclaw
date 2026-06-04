@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { MerClawConfig } from "../../config/config.js";
 import { normalizeAccountId } from "../../routing/session-key.js";
 import {
   createAccountListHelpers,
@@ -14,16 +14,16 @@ import {
 const { listConfiguredAccountIds, listAccountIds, resolveDefaultAccountId } =
   createAccountListHelpers("testchannel");
 
-function cfg(accounts?: Record<string, unknown> | null, defaultAccount?: string): OpenClawConfig {
+function cfg(accounts?: Record<string, unknown> | null, defaultAccount?: string): MerClawConfig {
   if (accounts === null) {
     return {
       channels: {
         testchannel: defaultAccount ? { defaultAccount } : {},
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
   }
   if (accounts === undefined && !defaultAccount) {
-    return {} as unknown as OpenClawConfig;
+    return {} as unknown as MerClawConfig;
   }
   return {
     channels: {
@@ -32,18 +32,18 @@ function cfg(accounts?: Record<string, unknown> | null, defaultAccount?: string)
         ...(defaultAccount ? { defaultAccount } : {}),
       },
     },
-  } as unknown as OpenClawConfig;
+  } as unknown as MerClawConfig;
 }
 
 function expectResolvedAccountIdsCase(params: {
-  resolve: (cfg: OpenClawConfig) => string[];
-  input: OpenClawConfig;
+  resolve: (cfg: MerClawConfig) => string[];
+  input: MerClawConfig;
   expected: string[];
 }) {
   expect(params.resolve(params.input)).toEqual(params.expected);
 }
 
-function expectResolvedDefaultAccountCase(input: OpenClawConfig, expected: string) {
+function expectResolvedDefaultAccountCase(input: MerClawConfig, expected: string) {
   expect(resolveDefaultAccountId(input)).toBe(expected);
 }
 
@@ -52,7 +52,7 @@ describe("createAccountListHelpers", () => {
     it.each([
       {
         name: "returns empty for missing config",
-        input: {} as OpenClawConfig,
+        input: {} as MerClawConfig,
       },
       {
         name: "returns empty when no accounts key",
@@ -102,7 +102,7 @@ describe("createAccountListHelpers", () => {
     it.each([
       {
         name: 'returns ["default"] for empty config',
-        input: {} as OpenClawConfig,
+        input: {} as MerClawConfig,
         expected: ["default"],
       },
       {
@@ -136,7 +136,7 @@ describe("createAccountListHelpers", () => {
               accounts: { work: {} },
             },
           },
-        } as unknown as OpenClawConfig),
+        } as unknown as MerClawConfig),
       ).toEqual(["default", "work"]);
     });
 
@@ -188,7 +188,7 @@ describe("createAccountListHelpers", () => {
       },
       {
         name: 'returns "default" for empty config',
-        input: {} as OpenClawConfig,
+        input: {} as MerClawConfig,
         expected: "default",
       },
     ])("$name", ({ input, expected }) => {

@@ -1,1 +1,1 @@
-export { dispatchInboundDirectDmWithRuntime } from "openclaw/plugin-sdk/channel-inbound";
+export { dispatchInboundDirectDmWithRuntime } from "merclaw/plugin-sdk/channel-inbound";

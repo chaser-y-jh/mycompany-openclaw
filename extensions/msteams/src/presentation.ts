@@ -1,8 +1,8 @@
 import {
   adaptMessagePresentationForChannel,
   type MessagePresentation,
-} from "openclaw/plugin-sdk/interactive-runtime";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/interactive-runtime";
+import { normalizeOptionalString } from "merclaw/plugin-sdk/string-coerce-runtime";
 import type { ChannelOutboundAdapter } from "../runtime-api.js";
 
 export const MSTEAMS_PRESENTATION_CAPABILITIES = {

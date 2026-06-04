@@ -1089,7 +1089,7 @@ describe("loadChatHistory filtering", () => {
         content: [
           {
             type: "text",
-            text: "[openclaw] missing tool result in session history; inserted synthetic error result for transcript repair.",
+            text: "[merclaw] missing tool result in session history; inserted synthetic error result for transcript repair.",
           },
         ],
       },
@@ -1115,11 +1115,11 @@ describe("loadChatHistory filtering", () => {
 
   it("keeps image-only user messages that carry transcript media paths", async () => {
     const messages = [
-      { role: "user", content: "", MediaPath: "/tmp/openclaw/user-upload.png" },
+      { role: "user", content: "", MediaPath: "/tmp/merclaw/user-upload.png" },
       {
         role: "user",
         content: "",
-        MediaPaths: ["/tmp/openclaw/first.png", "/tmp/openclaw/second.jpg"],
+        MediaPaths: ["/tmp/merclaw/first.png", "/tmp/merclaw/second.jpg"],
       },
       { role: "user", content: "" },
     ];
@@ -1143,7 +1143,7 @@ describe("loadChatHistory filtering", () => {
         content: [
           {
             type: "text",
-            text: "[openclaw] missing tool result in session history; inserted synthetic error result for transcript repair.",
+            text: "[merclaw] missing tool result in session history; inserted synthetic error result for transcript repair.",
           },
         ],
       },
@@ -1650,9 +1650,9 @@ describe("loadChatHistory retry handling", () => {
             {
               type: "text",
               text: [
-                "<<<BEGIN_OPENCLAW_INTERNAL_CONTEXT>>>",
+                "<<<BEGIN_MERCLAW_INTERNAL_CONTEXT>>>",
                 "subagent completion payload",
-                "<<<END_OPENCLAW_INTERNAL_CONTEXT>>>",
+                "<<<END_MERCLAW_INTERNAL_CONTEXT>>>",
               ].join("\n"),
             },
           ],
@@ -1677,7 +1677,7 @@ describe("loadChatHistory retry handling", () => {
     const persistedUser = {
       role: "user",
       content: [{ type: "text", text: "first" }],
-      __openclaw: { seq: 1 },
+      __merclaw: { seq: 1 },
     };
     const optimisticUser = {
       role: "user",
@@ -1741,12 +1741,12 @@ describe("loadChatHistory retry handling", () => {
     const historyUser = {
       role: "user",
       content: [{ type: "text", text: "latest ask" }],
-      __openclaw: { seq: 1 },
+      __merclaw: { seq: 1 },
     };
     const historyAssistant = {
       role: "assistant",
       content: [{ type: "text", text: "latest answer" }],
-      __openclaw: { seq: 2 },
+      __merclaw: { seq: 2 },
     };
     const request = vi.fn().mockResolvedValue({
       messages: [historyUser, historyAssistant],

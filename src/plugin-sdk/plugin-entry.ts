@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { emptyPluginConfigSchema } from "../plugins/config-schema.js";
 import type {
   AnyAgentTool,
@@ -15,22 +15,22 @@ import type {
   MigrationProviderContext,
   MigrationProviderPlugin,
   MigrationSummary,
-  OpenClawPluginApi,
-  OpenClawPluginCommandDefinition,
-  OpenClawPluginConfigSchema,
-  OpenClawPluginDefinition,
-  OpenClawPluginHttpRouteHandler,
-  OpenClawPluginNodeHostCommand,
-  OpenClawPluginNodeInvokePolicy,
-  OpenClawPluginNodeInvokePolicyContext,
-  OpenClawPluginNodeInvokePolicyResult,
-  OpenClawPluginReloadRegistration,
-  OpenClawPluginSecurityAuditCollector,
-  OpenClawPluginSecurityAuditContext,
-  OpenClawPluginService,
-  OpenClawPluginServiceContext,
-  OpenClawPluginToolContext,
-  OpenClawPluginToolFactory,
+  MerClawPluginApi,
+  MerClawPluginCommandDefinition,
+  MerClawPluginConfigSchema,
+  MerClawPluginDefinition,
+  MerClawPluginHttpRouteHandler,
+  MerClawPluginNodeHostCommand,
+  MerClawPluginNodeInvokePolicy,
+  MerClawPluginNodeInvokePolicyContext,
+  MerClawPluginNodeInvokePolicyResult,
+  MerClawPluginReloadRegistration,
+  MerClawPluginSecurityAuditCollector,
+  MerClawPluginSecurityAuditContext,
+  MerClawPluginService,
+  MerClawPluginServiceContext,
+  MerClawPluginToolContext,
+  MerClawPluginToolFactory,
   PluginLogger,
   ProviderAugmentModelCatalogContext,
   ProviderAuthContext,
@@ -84,8 +84,8 @@ import type {
   ProviderWrapStreamFnContext,
   UnifiedModelCatalogProviderContext,
   UnifiedModelCatalogProviderPlugin,
-  OpenClawGatewayDiscoveryAdvertiseContext,
-  OpenClawGatewayDiscoveryService,
+  MerClawGatewayDiscoveryAdvertiseContext,
+  MerClawGatewayDiscoveryService,
   SpeechProviderPlugin,
   PluginCommandContext,
   PluginCommandResult,
@@ -136,16 +136,16 @@ export type {
   MigrationProviderContext,
   MigrationProviderPlugin,
   MigrationSummary,
-  OpenClawPluginApi,
-  OpenClawPluginNodeHostCommand,
-  OpenClawPluginNodeInvokePolicy,
-  OpenClawPluginNodeInvokePolicyContext,
-  OpenClawPluginNodeInvokePolicyResult,
-  OpenClawPluginReloadRegistration,
-  OpenClawPluginSecurityAuditCollector,
-  OpenClawPluginSecurityAuditContext,
-  OpenClawPluginToolContext,
-  OpenClawPluginToolFactory,
+  MerClawPluginApi,
+  MerClawPluginNodeHostCommand,
+  MerClawPluginNodeInvokePolicy,
+  MerClawPluginNodeInvokePolicyContext,
+  MerClawPluginNodeInvokePolicyResult,
+  MerClawPluginReloadRegistration,
+  MerClawPluginSecurityAuditCollector,
+  MerClawPluginSecurityAuditContext,
+  MerClawPluginToolContext,
+  MerClawPluginToolFactory,
   PluginCommandContext,
   PluginCommandResult,
   PluginAgentEventEmitParams,
@@ -177,8 +177,8 @@ export type {
   PluginSessionExtensionProjection,
   PluginToolMetadataRegistration,
   PluginTrustedToolPolicyRegistration,
-  OpenClawPluginConfigSchema,
-  OpenClawPluginHttpRouteHandler,
+  MerClawPluginConfigSchema,
+  MerClawPluginHttpRouteHandler,
   ProviderDiscoveryContext,
   ProviderCatalogContext,
   ProviderCatalogResult,
@@ -227,17 +227,17 @@ export type {
   ProviderWrapStreamFnContext,
   UnifiedModelCatalogProviderContext,
   UnifiedModelCatalogProviderPlugin,
-  OpenClawGatewayDiscoveryAdvertiseContext,
-  OpenClawGatewayDiscoveryService,
-  OpenClawPluginService,
-  OpenClawPluginServiceContext,
+  MerClawGatewayDiscoveryAdvertiseContext,
+  MerClawGatewayDiscoveryService,
+  MerClawPluginService,
+  MerClawPluginServiceContext,
   ProviderAuthContext,
   ProviderAuthDoctorHintContext,
   ProviderAuthMethodNonInteractiveContext,
   ProviderAuthMethod,
   ProviderAuthResult,
-  OpenClawPluginCommandDefinition,
-  OpenClawPluginDefinition,
+  MerClawPluginCommandDefinition,
+  MerClawPluginDefinition,
   PluginLogger,
 };
 export type {
@@ -256,8 +256,8 @@ export type {
   UnifiedModelCatalogEntry,
   UnifiedModelCatalogKind,
   UnifiedModelCatalogSource,
-} from "@openclaw/model-catalog-core/model-catalog-types";
-export type { OpenClawConfig };
+} from "@merclaw/model-catalog-core/model-catalog-types";
+export type { MerClawConfig };
 
 export {
   buildJsonPluginConfigSchema,
@@ -271,27 +271,27 @@ type DefinePluginEntryOptions = {
   name: string;
   description: string;
   /**
-   * @deprecated Declare exclusive plugin kind in `openclaw.plugin.json` via
+   * @deprecated Declare exclusive plugin kind in `merclaw.plugin.json` via
    * manifest `kind`. Runtime-entry `kind` remains only as a compatibility
    * fallback for older plugins.
    */
-  kind?: OpenClawPluginDefinition["kind"];
-  configSchema?: OpenClawPluginConfigSchema | (() => OpenClawPluginConfigSchema);
-  reload?: OpenClawPluginDefinition["reload"];
-  nodeHostCommands?: OpenClawPluginDefinition["nodeHostCommands"];
-  securityAuditCollectors?: OpenClawPluginDefinition["securityAuditCollectors"];
-  register: (api: OpenClawPluginApi) => void;
+  kind?: MerClawPluginDefinition["kind"];
+  configSchema?: MerClawPluginConfigSchema | (() => MerClawPluginConfigSchema);
+  reload?: MerClawPluginDefinition["reload"];
+  nodeHostCommands?: MerClawPluginDefinition["nodeHostCommands"];
+  securityAuditCollectors?: MerClawPluginDefinition["securityAuditCollectors"];
+  register: (api: MerClawPluginApi) => void;
 };
 
-/** Normalized object shape that OpenClaw loads from a plugin entry module. */
+/** Normalized object shape that MerClaw loads from a plugin entry module. */
 type DefinedPluginEntry = {
   id: string;
   name: string;
   description: string;
-  configSchema: OpenClawPluginConfigSchema;
-  register: NonNullable<OpenClawPluginDefinition["register"]>;
+  configSchema: MerClawPluginConfigSchema;
+  register: NonNullable<MerClawPluginDefinition["register"]>;
 } & Pick<
-  OpenClawPluginDefinition,
+  MerClawPluginDefinition,
   "kind" | "reload" | "nodeHostCommands" | "securityAuditCollectors"
 >;
 
@@ -300,7 +300,7 @@ type DefinedPluginEntry = {
  *
  * Use this for provider, tool, command, service, memory, and context-engine
  * plugins. Channel plugins should use `defineChannelPluginEntry(...)` from
- * `openclaw/plugin-sdk/core` so they inherit the channel capability wiring.
+ * `merclaw/plugin-sdk/core` so they inherit the channel capability wiring.
  */
 export function definePluginEntry({
   id,

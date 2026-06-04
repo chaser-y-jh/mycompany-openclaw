@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { sanitizeTerminalText } from "openclaw/plugin-sdk/test-fixtures";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { sanitizeTerminalText } from "merclaw/plugin-sdk/test-fixtures";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { resetIMessageShortIdState, rememberIMessageReplyCache } from "../monitor-reply-cache.js";
 import {
@@ -14,7 +14,7 @@ import {
 import { createSelfChatCache } from "./self-chat-cache.js";
 
 describe("resolveIMessageInboundDecision echo detection", () => {
-  const cfg = {} as OpenClawConfig;
+  const cfg = {} as MerClawConfig;
   type InboundDecisionParams = Parameters<typeof resolveIMessageInboundDecision>[0];
 
   function createInboundDecisionParams(
@@ -190,7 +190,7 @@ describe("resolveIMessageInboundDecision echo detection", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const createdAt = "2026-03-02T20:58:10.649Z";
 
     expect(
@@ -543,9 +543,9 @@ describe("resolveIMessageInboundDecision echo detection", () => {
   });
 
   it("uses the production reply-cache lookup for bot-authored reaction targets", async () => {
-    const tempStateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-imsg-reaction-cache-"));
-    const priorStateDir = process.env.OPENCLAW_STATE_DIR;
-    process.env.OPENCLAW_STATE_DIR = tempStateDir;
+    const tempStateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-imsg-reaction-cache-"));
+    const priorStateDir = process.env.MERCLAW_STATE_DIR;
+    process.env.MERCLAW_STATE_DIR = tempStateDir;
     try {
       resetIMessageShortIdState();
       rememberIMessageReplyCache({
@@ -587,9 +587,9 @@ describe("resolveIMessageInboundDecision echo detection", () => {
     } finally {
       resetIMessageShortIdState();
       if (priorStateDir === undefined) {
-        delete process.env.OPENCLAW_STATE_DIR;
+        delete process.env.MERCLAW_STATE_DIR;
       } else {
-        process.env.OPENCLAW_STATE_DIR = priorStateDir;
+        process.env.MERCLAW_STATE_DIR = priorStateDir;
       }
       fs.rmSync(tempStateDir, { recursive: true, force: true });
     }
@@ -747,7 +747,7 @@ describe("describeIMessageEchoDropLog", () => {
 describe("buildIMessageInboundContext", () => {
   it("keeps numeric row id and provider GUID separately for action tooling", async () => {
     const decision = await resolveIMessageInboundDecision({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as MerClawConfig,
       accountId: "default",
       message: {
         id: 12345,
@@ -777,7 +777,7 @@ describe("buildIMessageInboundContext", () => {
     }
 
     const { ctxPayload } = await buildIMessageInboundContext({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as MerClawConfig,
       decision,
       message: {
         id: 12345,
@@ -797,7 +797,7 @@ describe("buildIMessageInboundContext", () => {
 
   it("prepends direct-message history when supplied", async () => {
     const decision = await resolveIMessageInboundDecision({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as MerClawConfig,
       accountId: "default",
       message: {
         id: 12346,
@@ -827,7 +827,7 @@ describe("buildIMessageInboundContext", () => {
     }
 
     const { ctxPayload, inboundHistory } = await buildIMessageInboundContext({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as MerClawConfig,
       decision,
       message: {
         id: 12346,
@@ -853,7 +853,7 @@ describe("buildIMessageInboundContext", () => {
 });
 
 describe("resolveIMessageInboundDecision command auth", () => {
-  const cfg = {} as OpenClawConfig;
+  const cfg = {} as MerClawConfig;
   const resolveDmCommandDecision = (params: {
     messageId: number;
     storeAllowFrom: string[];
@@ -991,15 +991,15 @@ describe("buildIMessageInboundContext MessageSid handling (rowid-leak regression
   let tempStateDir: string;
   let priorStateDir: string | undefined;
   beforeAll(() => {
-    tempStateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-imsg-inbound-"));
-    priorStateDir = process.env.OPENCLAW_STATE_DIR;
-    process.env.OPENCLAW_STATE_DIR = tempStateDir;
+    tempStateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-imsg-inbound-"));
+    priorStateDir = process.env.MERCLAW_STATE_DIR;
+    process.env.MERCLAW_STATE_DIR = tempStateDir;
   });
   afterAll(() => {
     if (priorStateDir === undefined) {
-      delete process.env.OPENCLAW_STATE_DIR;
+      delete process.env.MERCLAW_STATE_DIR;
     } else {
-      process.env.OPENCLAW_STATE_DIR = priorStateDir;
+      process.env.MERCLAW_STATE_DIR = priorStateDir;
     }
     fs.rmSync(tempStateDir, { recursive: true, force: true });
   });
@@ -1030,7 +1030,7 @@ describe("buildIMessageInboundContext MessageSid handling (rowid-leak regression
       hasControlCommand: false,
     };
     return {
-      cfg: {} as OpenClawConfig,
+      cfg: {} as MerClawConfig,
       decision: decision as unknown as Parameters<
         typeof buildIMessageInboundContext
       >[0]["decision"],

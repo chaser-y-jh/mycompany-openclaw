@@ -1,14 +1,14 @@
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 
 export async function finalizeDoctorConfigFlow(params: {
-  cfg: OpenClawConfig;
-  candidate: OpenClawConfig;
+  cfg: MerClawConfig;
+  candidate: MerClawConfig;
   pendingChanges: boolean;
   shouldRepair: boolean;
   fixHints: string[];
   confirm: (p: { message: string; initialValue: boolean }) => Promise<boolean>;
   note: (message: string, title?: string) => void;
-}): Promise<{ cfg: OpenClawConfig; shouldWriteConfig: boolean }> {
+}): Promise<{ cfg: MerClawConfig; shouldWriteConfig: boolean }> {
   if (!params.shouldRepair && params.pendingChanges) {
     const shouldApply = await params.confirm({
       message: "Apply recommended config repairs now?",

@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { parseStrictFiniteNumber, parseStrictInteger } from "openclaw/plugin-sdk/number-runtime";
+import { parseStrictFiniteNumber, parseStrictInteger } from "merclaw/plugin-sdk/number-runtime";
 
 type ProcessTreeSnapshot = {
   childrenByParent: Map<number, number[]>;

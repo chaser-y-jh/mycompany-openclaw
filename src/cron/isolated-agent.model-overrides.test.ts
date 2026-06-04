@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runEmbeddedAgent } from "../agents/embedded-agent.js";
 import { loadModelCatalog } from "../agents/model-catalog.js";
 import { BASE_THINKING_LEVELS } from "../auto-reply/thinking.shared.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import type { PluginProviderRegistration } from "../plugins/registry.js";
 import { resetPluginRuntimeStateForTest, setActivePluginRegistry } from "../plugins/runtime.js";
 import { createTestRegistry } from "../test-utils/channel-plugins.js";
@@ -63,12 +63,12 @@ function mockDeterministicModelCatalog() {
   ]);
 }
 
-const OPENAI_PI_RUNTIME_CONFIG: Partial<OpenClawConfig> = {
+const OPENAI_PI_RUNTIME_CONFIG: Partial<MerClawConfig> = {
   models: {
     providers: {
       openai: {
         baseUrl: "https://api.openai.com/v1",
-        agentRuntime: { id: "openclaw" },
+        agentRuntime: { id: "merclaw" },
         models: [],
       },
     },
@@ -280,7 +280,7 @@ describe("runCronIsolatedAgentTurn model overrides", () => {
           agents: {
             defaults: {
               model: "google/gemini-3-flash-preview",
-              workspace: path.join(home, "openclaw"),
+              workspace: path.join(home, "merclaw"),
               thinkingDefault: "low",
             },
           },

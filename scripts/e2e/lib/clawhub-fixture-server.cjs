@@ -10,8 +10,8 @@ const portFile = process.argv[3];
 const requireFromApp = createRequire(path.join(process.cwd(), "package.json"));
 const JSZip = requireFromApp("jszip");
 const tar = requireFromApp("tar");
-const packageName = "@openclaw/kitchen-sink";
-const pluginId = "openclaw-kitchen-sink-fixture";
+const packageName = "@merclaw/kitchen-sink";
+const pluginId = "merclaw-kitchen-sink-fixture";
 
 const buildArtifactSummary = ({
   clawpackSha256,
@@ -46,7 +46,7 @@ const buildClawPackSummary = ({
 });
 
 async function buildNpmPackArtifact(fixture) {
-  const packRoot = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-clawhub-fixture-"));
+  const packRoot = await fs.promises.mkdtemp(path.join(os.tmpdir(), "merclaw-clawhub-fixture-"));
   try {
     const packageDir = path.join(packRoot, "package");
     await fs.promises.mkdir(packageDir, { recursive: true });
@@ -56,7 +56,7 @@ async function buildNpmPackArtifact(fixture) {
     );
     await fs.promises.writeFile(path.join(packageDir, "index.js"), fixture.indexJs);
     await fs.promises.writeFile(
-      path.join(packageDir, "openclaw.plugin.json"),
+      path.join(packageDir, "merclaw.plugin.json"),
       `${JSON.stringify(fixture.manifest, null, 2)}\n`,
     );
     const npmTarballName = `${packageName.replace(/^@/, "").replace("/", "-")}-${fixture.version}.tgz`;
@@ -96,17 +96,17 @@ const profiles = {
         "is-number": "7.0.0",
       },
       peerDependencies: {
-        openclaw: ">=2026.4.11",
+        merclaw: ">=2026.4.11",
       },
       peerDependenciesMeta: {
-        openclaw: {
+        merclaw: {
           optional: true,
         },
       },
-      openclaw: { extensions: ["./index.js"] },
+      merclaw: { extensions: ["./index.js"] },
     },
     indexJs: `import isNumber from "is-number";
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
+import { definePluginEntry } from "merclaw/plugin-sdk/plugin-entry";
 
 const dependencyUrl = import.meta.resolve("is-number");
 const expectedDependencyBaseUrl = new URL("./node_modules/is-number/", import.meta.url).href;
@@ -116,7 +116,7 @@ if (!dependencyUrl.startsWith(expectedDependencyBaseUrl)) {
 
 export default definePluginEntry({
   id: "${pluginId}",
-  name: "OpenClaw Kitchen Sink",
+  name: "MerClaw Kitchen Sink",
   register(api) {
     if (!isNumber(42)) {
       throw new Error("kitchen-sink dependency sentinel did not load");
@@ -172,7 +172,7 @@ export default definePluginEntry({
 `,
     manifest: {
       id: pluginId,
-      name: "OpenClaw Kitchen Sink",
+      name: "MerClaw Kitchen Sink",
       kind: "context-engine",
       channels: ["kitchen-sink-channel"],
       channelConfigs: {
@@ -214,13 +214,13 @@ export default definePluginEntry({
       const packageDetail = {
         package: {
           name: packageName,
-          displayName: "OpenClaw Kitchen Sink",
+          displayName: "MerClaw Kitchen Sink",
           family: "code-plugin",
           runtimeId: pluginId,
           channel: "official",
           isOfficial: true,
           summary: "Kitchen sink plugin fixture for prerelease CI.",
-          ownerHandle: "openclaw",
+          ownerHandle: "merclaw",
           createdAt: 0,
           updatedAt: 0,
           latestVersion: this.version,
@@ -240,7 +240,7 @@ export default definePluginEntry({
           },
           verification: {
             tier: "source-linked",
-            sourceRepo: "https://github.com/openclaw/kitchen-sink",
+            sourceRepo: "https://github.com/merclaw/kitchen-sink",
             hasProvenance: false,
             scanStatus: "passed",
           },
@@ -253,7 +253,7 @@ export default definePluginEntry({
         versionDetail: {
           package: {
             name: packageName,
-            displayName: "OpenClaw Kitchen Sink",
+            displayName: "MerClaw Kitchen Sink",
             family: "code-plugin",
           },
           version: {
@@ -282,18 +282,18 @@ export default definePluginEntry({
         "is-number": "7.0.0",
       },
       peerDependencies: {
-        openclaw: ">=2026.4.11",
+        merclaw: ">=2026.4.11",
       },
       peerDependenciesMeta: {
-        openclaw: {
+        merclaw: {
           optional: true,
         },
       },
-      openclaw: { extensions: ["./index.js"] },
+      merclaw: { extensions: ["./index.js"] },
     },
     indexJs: `module.exports = {
   id: "${pluginId}",
-  name: "OpenClaw Kitchen Sink",
+  name: "MerClaw Kitchen Sink",
   description: "Docker E2E kitchen-sink plugin fixture",
   register(api) {
     api.on("before_agent_start", async (event, context) => ({
@@ -329,7 +329,7 @@ export default definePluginEntry({
         packageDetail: {
           package: {
             name: packageName,
-            displayName: "OpenClaw Kitchen Sink",
+            displayName: "MerClaw Kitchen Sink",
             family: "code-plugin",
             channel: "official",
             isOfficial: true,
@@ -371,7 +371,7 @@ async function main() {
   });
   zip.file("package/index.js", fixture.indexJs, { date: new Date(0) });
   const manifestJson = `${JSON.stringify(fixture.manifest, null, 2)}\n`;
-  zip.file("package/openclaw.plugin.json", manifestJson, { date: new Date(0) });
+  zip.file("package/merclaw.plugin.json", manifestJson, { date: new Date(0) });
 
   const archive = await zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" });
   const sha256hash = crypto.createHash("sha256").update(archive).digest("hex");
@@ -388,7 +388,7 @@ async function main() {
   const artifactResolverDetail = {
     package: versionDetail.package ?? {
       name: packageName,
-      displayName: packageDetail.package?.displayName ?? "OpenClaw Kitchen Sink",
+      displayName: packageDetail.package?.displayName ?? "MerClaw Kitchen Sink",
       family: packageDetail.package?.family ?? "code-plugin",
     },
     version: versionDetail.version,

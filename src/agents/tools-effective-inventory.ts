@@ -1,17 +1,17 @@
 import {
   findNormalizedProviderValue,
   normalizeProviderId,
-} from "@openclaw/model-catalog-core/provider-id";
+} from "@merclaw/model-catalog-core/provider-id";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/config.js";
+} from "@merclaw/normalization-core/string-coerce";
+import type { MerClawConfig } from "../config/config.js";
 import { extractModelCompat } from "../plugins/provider-model-compat.js";
 import type { ProviderRuntimeModel } from "../plugins/provider-runtime-model.types.js";
 import { normalizeProviderTransportWithPlugin } from "../plugins/provider-runtime.js";
 import { resolveAgentDir, resolveAgentWorkspaceDir, resolveSessionAgentId } from "./agent-scope.js";
-import { createOpenClawCodingTools } from "./agent-tools.js";
+import { createMerClawCodingTools } from "./agent-tools.js";
 import { resolveEffectiveToolPolicy } from "./agent-tools.policy.js";
 import { resolveModel } from "./embedded-agent-runner/model.js";
 import { resolveBundledStaticCatalogModel } from "./embedded-agent-runner/model.static-catalog.js";
@@ -46,16 +46,16 @@ function policyDeniesTool(policy: { deny?: string[] } | undefined, toolName: str
   return (
     listIncludesTool(policy?.deny, toolName) ||
     listIncludesTool(policy?.deny, "group:ui") ||
-    listIncludesTool(policy?.deny, "group:openclaw")
+    listIncludesTool(policy?.deny, "group:merclaw")
   );
 }
 
-function hasExplicitBrowserIntent(cfg: OpenClawConfig): boolean {
+function hasExplicitBrowserIntent(cfg: MerClawConfig): boolean {
   return cfg.browser?.enabled !== false && Boolean(cfg.browser || cfg.plugins?.entries?.browser);
 }
 
 function buildToolInventoryNotices(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   profile: string;
   entries: EffectiveToolInventoryEntry[];
   effectivePolicy: ReturnType<typeof resolveEffectiveToolPolicy>;
@@ -111,7 +111,7 @@ function buildToolInventoryNotices(params: {
 }
 
 function applyProviderTransportNormalization(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   provider: string;
   workspaceDir?: string;
   runtimeModel: ProviderRuntimeModel;
@@ -151,7 +151,7 @@ function resolveConfiguredFallbackApi(
 }
 
 function resolveDynamicRuntimeModelContext(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   provider: string;
@@ -170,7 +170,7 @@ function resolveDynamicRuntimeModelContext(params: {
 }
 
 export function resolveEffectiveToolInventoryRuntimeModelContext(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentId?: string;
   agentDir?: string;
   workspaceDir?: string;
@@ -256,7 +256,7 @@ export function resolveEffectiveToolInventoryRuntimeModelContext(params: {
 }
 
 function resolveEffectiveModelCompat(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   modelProvider?: string;
   modelId?: string;
 }) {
@@ -311,7 +311,7 @@ export function resolveEffectiveToolInventory(
     modelId: params.modelId,
   });
 
-  const effectiveTools = createOpenClawCodingTools({
+  const effectiveTools = createMerClawCodingTools({
     agentId,
     sessionKey: params.sessionKey,
     workspaceDir,

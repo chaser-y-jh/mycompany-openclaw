@@ -1,10 +1,10 @@
-import { detectMime } from "@openclaw/media-core/mime";
+import { detectMime } from "@merclaw/media-core/mime";
 import {
   asPositiveSafeInteger,
   asSafeIntegerInRange,
   parseStrictFiniteNumber,
-} from "@openclaw/normalization-core/number-coercion";
-import { normalizeStringEntries } from "@openclaw/normalization-core/string-normalization";
+} from "@merclaw/normalization-core/number-coercion";
+import { normalizeStringEntries } from "@merclaw/normalization-core/string-normalization";
 import type { TSchema } from "typebox";
 import { readLocalFileSafely } from "../../infra/fs-safe.js";
 import { readSnakeCaseParamRaw } from "../../param-key.js";

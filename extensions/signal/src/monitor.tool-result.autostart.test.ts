@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
 import { describe, expect, it, vi } from "vitest";
 import type { SignalDaemonExitEvent } from "./daemon.js";
 import {
@@ -44,7 +44,7 @@ function createAutoAbortController() {
 
 async function runMonitorWithMocks(opts: MonitorSignalProviderOptions) {
   return monitorSignalProvider({
-    config: config as OpenClawConfig,
+    config: config as MerClawConfig,
     waitForTransportReady:
       waitForTransportReadyMock as MonitorSignalProviderOptions["waitForTransportReady"],
     ...opts,
@@ -115,7 +115,7 @@ describe("monitorSignalProvider autostart", () => {
 
   it("passes channels.signal.configPath to signal-cli daemon startup", async () => {
     const runtime = createMonitorRuntime();
-    setSignalAutoStartConfig({ configPath: "~/.openclaw/signal-cli" });
+    setSignalAutoStartConfig({ configPath: "~/.merclaw/signal-cli" });
     const abortController = createAutoAbortController();
 
     await runMonitorWithMocks({
@@ -127,7 +127,7 @@ describe("monitorSignalProvider autostart", () => {
 
     expect(spawnSignalDaemonMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        configPath: "~/.openclaw/signal-cli",
+        configPath: "~/.merclaw/signal-cli",
       }),
     );
   });

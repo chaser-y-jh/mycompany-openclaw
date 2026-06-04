@@ -12,7 +12,7 @@ const { createTempDir } = createScriptTestHarness();
 
 describe("run-tsgo sparse guard", () => {
   it("ignores non-core projects", () => {
-    const cwd = createTempDir("openclaw-run-tsgo-");
+    const cwd = createTempDir("merclaw-run-tsgo-");
 
     expect(
       getSparseTsgoGuardError(["-p", "tsconfig.extensions.json"], {
@@ -23,7 +23,7 @@ describe("run-tsgo sparse guard", () => {
   });
 
   it("ignores full worktrees", () => {
-    const cwd = createTempDir("openclaw-run-tsgo-");
+    const cwd = createTempDir("merclaw-run-tsgo-");
 
     expect(
       getSparseTsgoGuardError(["-p", "test/tsconfig/tsconfig.core.test.json"], {
@@ -34,7 +34,7 @@ describe("run-tsgo sparse guard", () => {
   });
 
   it("ignores metadata-only commands", () => {
-    const cwd = createTempDir("openclaw-run-tsgo-");
+    const cwd = createTempDir("merclaw-run-tsgo-");
 
     expect(
       getSparseTsgoGuardError(["-p", "test/tsconfig/tsconfig.core.test.json", "--showConfig"], {
@@ -45,7 +45,7 @@ describe("run-tsgo sparse guard", () => {
   });
 
   it("ignores sparse worktrees when the required files are present", () => {
-    const cwd = createTempDir("openclaw-run-tsgo-");
+    const cwd = createTempDir("merclaw-run-tsgo-");
     const requiredPaths = [
       "packages/plugin-package-contract/src/index.ts",
       "ui/config/control-ui-chunking.ts",
@@ -72,7 +72,7 @@ describe("run-tsgo sparse guard", () => {
   });
 
   it("rejects sparse core worktrees that include only selected ui and package files", () => {
-    const cwd = createTempDir("openclaw-run-tsgo-");
+    const cwd = createTempDir("merclaw-run-tsgo-");
     const requiredPaths = [
       "packages/plugin-package-contract/src/index.ts",
       "ui/config/control-ui-chunking.ts",
@@ -111,7 +111,7 @@ describe("run-tsgo sparse guard", () => {
   });
 
   it("returns a helpful message for sparse core worktrees missing transitive project files", () => {
-    const cwd = createTempDir("openclaw-run-tsgo-");
+    const cwd = createTempDir("merclaw-run-tsgo-");
     const uiToolDisplay = path.join(cwd, "ui/src/ui/tool-display.ts");
     fs.mkdirSync(path.dirname(uiToolDisplay), { recursive: true });
     fs.writeFileSync(uiToolDisplay, "", "utf8");
@@ -123,13 +123,13 @@ describe("run-tsgo sparse guard", () => {
       }),
     ).toMatchInlineSnapshot(`
       "tsconfig.core.json cannot be typechecked from this sparse checkout because tracked project inputs are missing or only partially included:
-      - apps/shared/OpenClawKit/Sources/OpenClawKit/Resources/tool-display.json
+      - apps/shared/MerClawKit/Sources/MerClawKit/Resources/tool-display.json
       Expand this worktree's sparse checkout to include those paths, or rerun in a full worktree."
     `);
   });
 
   it("returns a helpful message for sparse core-test worktrees missing ui and packages files", () => {
-    const cwd = createTempDir("openclaw-run-tsgo-");
+    const cwd = createTempDir("merclaw-run-tsgo-");
 
     expect(
       getSparseTsgoGuardError(["-p", "test/tsconfig/tsconfig.core.test.json"], {
@@ -149,12 +149,12 @@ describe("run-tsgo sparse guard", () => {
   });
 
   it("recognizes the check:changed sparse-skip env", () => {
-    expect(shouldSkipSparseTsgoGuardError({ OPENCLAW_TSGO_SPARSE_SKIP: "1" })).toBe(true);
-    expect(shouldSkipSparseTsgoGuardError({ OPENCLAW_TSGO_SPARSE_SKIP: "true" })).toBe(true);
-    expect(shouldSkipSparseTsgoGuardError({ OPENCLAW_TSGO_SPARSE_SKIP: "0" })).toBe(false);
+    expect(shouldSkipSparseTsgoGuardError({ MERCLAW_TSGO_SPARSE_SKIP: "1" })).toBe(true);
+    expect(shouldSkipSparseTsgoGuardError({ MERCLAW_TSGO_SPARSE_SKIP: "true" })).toBe(true);
+    expect(shouldSkipSparseTsgoGuardError({ MERCLAW_TSGO_SPARSE_SKIP: "0" })).toBe(false);
     expect(createSparseTsgoSkipEnv({ PATH: "/usr/bin" })).toStrictEqual({
       PATH: "/usr/bin",
-      OPENCLAW_TSGO_SPARSE_SKIP: "1",
+      MERCLAW_TSGO_SPARSE_SKIP: "1",
     });
   });
 });

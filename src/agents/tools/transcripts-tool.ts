@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
 import path from "node:path";
-import { uniqueStrings } from "@openclaw/normalization-core/string-normalization";
+import { uniqueStrings } from "@merclaw/normalization-core/string-normalization";
 import { Type } from "typebox";
 import { resolveStateDir } from "../../config/paths.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import {
   type ResolvedTranscriptsAutoStartConfig,
   resolveTranscriptsConfig,
@@ -26,7 +26,7 @@ type TranscriptsLogger = {
 };
 
 type TranscriptsRuntimeContext = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   stateDir: string;
   logger: TranscriptsLogger;
 };
@@ -394,7 +394,7 @@ async function statusTranscripts(ctx: TranscriptsRuntimeContext) {
 }
 
 export function createTranscriptsTool(options?: {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   stateDir?: string;
   logger?: TranscriptsLogger;
 }): AnyAgentTool {

@@ -1,5 +1,5 @@
-import type { SlackSlashCommandConfig } from "openclaw/plugin-sdk/config-contracts";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { SlackSlashCommandConfig } from "merclaw/plugin-sdk/config-contracts";
+import { normalizeOptionalString } from "merclaw/plugin-sdk/string-coerce-runtime";
 
 /**
  * Strip Slack mentions (<@U123>, <@U123|name>) so command detection works on
@@ -20,9 +20,9 @@ export function resolveSlackSlashCommandConfig(
   raw?: SlackSlashCommandConfig,
 ): Required<SlackSlashCommandConfig> {
   const normalizedName = normalizeSlackSlashCommandName(
-    normalizeOptionalString(raw?.name) ?? "openclaw",
+    normalizeOptionalString(raw?.name) ?? "merclaw",
   );
-  const name = normalizedName || "openclaw";
+  const name = normalizedName || "merclaw";
   return {
     enabled: raw?.enabled === true,
     name,

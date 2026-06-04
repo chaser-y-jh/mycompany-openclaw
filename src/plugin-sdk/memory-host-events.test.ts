@@ -66,7 +66,7 @@ describe("memory host event journal helpers", () => {
 
 describe("createPersistentDedupe", () => {
   it("deduplicates keys, persists across instances, warms up, and checks recent keys", async () => {
-    const root = await createTempDir("openclaw-dedupe-");
+    const root = await createTempDir("merclaw-dedupe-");
     const first = createDedupe(root);
     expect(await first.checkAndRecord("m1", { namespace: "a" })).toBe(true);
     expect(await first.checkAndRecord("m1", { namespace: "a" })).toBe(false);
@@ -87,7 +87,7 @@ describe("createPersistentDedupe", () => {
   });
 
   it("bounds non-finite persistent dedupe options", async () => {
-    const root = await createTempDir("openclaw-dedupe-");
+    const root = await createTempDir("merclaw-dedupe-");
     const dedupe = createPersistentDedupe({
       ttlMs: Number.NaN,
       memoryMaxSize: Number.NaN,
@@ -114,7 +114,7 @@ describe("createPersistentDedupe", () => {
   });
 
   it("warms empty namespaces and skips expired disk entries", async () => {
-    const root = await createTempDir("openclaw-dedupe-");
+    const root = await createTempDir("merclaw-dedupe-");
     const emptyReader = createDedupe(root, { ttlMs: 10_000 });
     expect(await emptyReader.warmup("nonexistent")).toBe(0);
 
@@ -182,7 +182,7 @@ describe("createClaimableDedupe", () => {
   });
 
   it("supports persistent-backed recent checks and warmup", async () => {
-    const root = await createTempDir("openclaw-claimable-dedupe-");
+    const root = await createTempDir("merclaw-claimable-dedupe-");
     const writer = createClaimableDedupe({
       ttlMs: 10_000,
       memoryMaxSize: 100,

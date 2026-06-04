@@ -135,7 +135,7 @@ describe("Parallels smoke model selection", () => {
       },
     );
     invalidModelTimeoutResult = spawnNodeEvalSync(
-      `process.env.OPENCLAW_PARALLELS_MACOS_MODEL_TIMEOUT_S = "1800s"; const { resolveParallelsModelTimeoutSeconds } = await import("./${TS_PATHS.common}"); resolveParallelsModelTimeoutSeconds("macos");`,
+      `process.env.MERCLAW_PARALLELS_MACOS_MODEL_TIMEOUT_S = "1800s"; const { resolveParallelsModelTimeoutSeconds } = await import("./${TS_PATHS.common}"); resolveParallelsModelTimeoutSeconds("macos");`,
       { env: process.env, imports: ["tsx"] },
     );
     invalidHostPortResult = spawnNodeEvalSync(
@@ -163,18 +163,18 @@ describe("Parallels smoke model selection", () => {
     expect(parseLinuxSmokeArgs(["--mode", "fresh", "--", "--mode", "upgrade"]).mode).toBe("fresh");
     expect(parseMacosSmokeArgs(["--", "--mode", "upgrade"]).mode).toBe("upgrade");
     expect(parseMacosSmokeArgs(["--mode", "fresh", "--", "--mode", "upgrade"]).mode).toBe("fresh");
-    expect(parseNpmUpdateSmokeArgs(["--", "--package-spec", "openclaw@2026.5.1"]).packageSpec).toBe(
-      "openclaw@2026.5.1",
+    expect(parseNpmUpdateSmokeArgs(["--", "--package-spec", "merclaw@2026.5.1"]).packageSpec).toBe(
+      "merclaw@2026.5.1",
     );
     expect(
       parseNpmUpdateSmokeArgs([
         "--package-spec",
-        "openclaw@2026.5.1",
+        "merclaw@2026.5.1",
         "--",
         "--package-spec",
-        "openclaw@latest",
+        "merclaw@latest",
       ]).packageSpec,
-    ).toBe("openclaw@2026.5.1");
+    ).toBe("merclaw@2026.5.1");
     expect(parseWindowsSmokeArgs(["--", "--upgrade-from-packed-main"]).upgradeFromPackedMain).toBe(
       true,
     );
@@ -187,8 +187,8 @@ describe("Parallels smoke model selection", () => {
   it("keeps provider auth and model defaults in the shared TypeScript helper", () => {
     const providerAuth = readFileSync(TS_PATHS.providerAuth, "utf8");
 
-    expect(providerAuth).toContain("OPENCLAW_PARALLELS_OPENAI_MODEL");
-    expect(providerAuth).toContain("OPENCLAW_PARALLELS_WINDOWS_OPENAI_MODEL");
+    expect(providerAuth).toContain("MERCLAW_PARALLELS_OPENAI_MODEL");
+    expect(providerAuth).toContain("MERCLAW_PARALLELS_WINDOWS_OPENAI_MODEL");
     expect(providerAuth).toContain("openai/gpt-5.5");
     expect(providerAuth).toContain('authChoice: "openai-api-key"');
     expect(providerAuth).toContain('authChoice: "apiKey"');
@@ -233,7 +233,7 @@ describe("Parallels smoke model selection", () => {
     expect(packageArtifact).toContain("withPackageLock");
     expect(packageArtifact).toContain("Wait for Parallels package lock");
     expect(packageArtifact).toContain("export async function packageVersionFromTgz");
-    expect(packageArtifact).toContain("export async function packOpenClaw");
+    expect(packageArtifact).toContain("export async function packMerClaw");
     expect(parallelsVm).toContain("export function resolveUbuntuVmName");
     expect(parallelsVm).toContain("export function waitForVmStatus");
     expect(hostServer).toContain("export async function startHostServer");
@@ -265,7 +265,7 @@ describe("Parallels smoke model selection", () => {
   it.runIf(process.platform !== "win32")(
     "reports only the bounded host artifact server stderr tail",
     async () => {
-      const tempDir = mkdtempSync(join(tmpdir(), "openclaw-parallels-host-server-"));
+      const tempDir = mkdtempSync(join(tmpdir(), "merclaw-parallels-host-server-"));
       const fakePython = join(tempDir, "python3");
       writeFileSync(
         fakePython,
@@ -306,7 +306,7 @@ exit 42
   );
 
   it("quotes shell args and resolves fuzzy snapshot hints through the shared TypeScript helper", () => {
-    const tempDir = mkdtempSync(join(tmpdir(), "openclaw-parallels-helper-"));
+    const tempDir = mkdtempSync(join(tmpdir(), "merclaw-parallels-helper-"));
     writeFakePrlctl(
       tempDir,
       `#!/usr/bin/env bash
@@ -355,7 +355,7 @@ if (isPrlctl) {
   });
 
   it("resolves a latest snapshot hint to the matching version before older LATEST labels", () => {
-    const tempDir = mkdtempSync(join(tmpdir(), "openclaw-parallels-snapshot-latest-"));
+    const tempDir = mkdtempSync(join(tmpdir(), "merclaw-parallels-snapshot-latest-"));
     writeFakePrlctl(
       tempDir,
       `#!/usr/bin/env bash
@@ -401,7 +401,7 @@ if (isPrlctl) {
   });
 
   it("uses one Ubuntu VM fallback resolver for Linux lanes", () => {
-    const tempDir = mkdtempSync(join(tmpdir(), "openclaw-parallels-vm-helper-"));
+    const tempDir = mkdtempSync(join(tmpdir(), "merclaw-parallels-vm-helper-"));
     writeFakePrlctl(
       tempDir,
       `#!/usr/bin/env bash
@@ -457,7 +457,7 @@ if (isPrlctl) {
     const script = readFileSync(TS_PATHS.linux, "utf8");
 
     expect(script).toContain('BAD_PLUGIN_DIAGNOSTIC_MIN_VERSION = "2026.5.7"');
-    expect(script).toContain("parseOpenClawPackageVersion");
+    expect(script).toContain("parseMerClawPackageVersion");
     expect(script).toContain("maybeInjectBadPluginFixture");
     expect(script).toContain("maybeVerifyBadPluginDiagnostic");
     expect(script).toContain("Skipping bad plugin diagnostic fixture");
@@ -511,7 +511,7 @@ if (isPrlctl) {
       withEnv(
         {
           OPENAI_API_KEY: "sk-openai",
-          OPENCLAW_PARALLELS_WINDOWS_OPENAI_MODEL: "openai/custom-windows",
+          MERCLAW_PARALLELS_WINDOWS_OPENAI_MODEL: "openai/custom-windows",
         },
         () => resolveWindowsProviderAuth({ provider: "openai" }),
       ),
@@ -623,8 +623,8 @@ if (isPrlctl) {
 
     expect(macos).toContain('channel: "dev"');
     expect(windows).toContain("Name channel -Value 'dev'");
-    expect(macos).toContain("OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS=1");
-    expect(windows).toContain("OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS");
+    expect(macos).toContain("MERCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS=1");
+    expect(windows).toContain("MERCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS");
   });
 
   it("passes aggregate model overrides into each OS fresh lane", () => {
@@ -635,16 +635,16 @@ if (isPrlctl) {
     expect(script).toContain('"--model"');
     expect(script).toContain("auth.modelId");
     expect(script).toContain("authForPlatform");
-    expect(script).toContain("OPENCLAW_PARALLELS_LINUX_DISABLE_BONJOUR");
+    expect(script).toContain("MERCLAW_PARALLELS_LINUX_DISABLE_BONJOUR");
   });
 
   it("keeps the Windows update config scrub compatible with PowerShell 5.1", () => {
     const script = readFileSync(TS_PATHS.npmUpdateScripts, "utf8");
 
     expect(script).not.toContain("ConvertFrom-Json -AsHashtable");
-    expect(script).toContain("function Get-OpenClawJsonProperty");
-    expect(script).toContain("function Remove-OpenClawJsonProperty");
-    expect(script).toContain("Remove-OpenClawJsonProperty $entries $pluginId");
+    expect(script).toContain("function Get-MerClawJsonProperty");
+    expect(script).toContain("function Remove-MerClawJsonProperty");
+    expect(script).toContain("Remove-MerClawJsonProperty $entries $pluginId");
   });
 
   it("keeps aggregate update guest scripts isolated from the npm-update orchestrator", () => {
@@ -657,7 +657,7 @@ if (isPrlctl) {
     expect(orchestrator).not.toContain("Remove-FuturePluginEntries");
     expect(updateScripts).toContain("Remove-FuturePluginEntries");
     expect(updateScripts).toContain("scrub_future_plugin_entries");
-    expect(updateScripts).toContain("Invoke-OpenClaw update");
+    expect(updateScripts).toContain("Invoke-MerClaw update");
     expect(updateScripts).toContain("Parallels npm update smoke test assistant.");
   });
 
@@ -678,21 +678,21 @@ if (isPrlctl) {
     const macos = readFileSync(TS_PATHS.macos, "utf8");
 
     expect(macos).toContain("/usr/local/bin:/usr/local/sbin");
-    expect(macos).toContain('const guestOpenClaw = "openclaw"');
+    expect(macos).toContain('const guestMerClaw = "merclaw"');
     expect(macos).toContain('const guestNode = "node"');
     expect(macos).toContain('const guestNpm = "npm"');
-    expect(macos).toContain("$(npm root -g)/openclaw/openclaw.mjs");
-    expect(macos).toContain("guestOpenClawEntryExec");
-    expect(macos).not.toContain('const guestOpenClaw = "/opt/homebrew/bin/openclaw"');
+    expect(macos).toContain("$(npm root -g)/merclaw/merclaw.mjs");
+    expect(macos).toContain("guestMerClawEntryExec");
+    expect(macos).not.toContain('const guestMerClaw = "/opt/homebrew/bin/merclaw"');
     expect(macos).not.toContain('const guestNode = "/opt/homebrew/bin/node"');
     expect(macos).not.toContain('const guestNpm = "/opt/homebrew/bin/npm"');
-    expect(macos).not.toContain("/opt/homebrew/lib/node_modules/openclaw/openclaw.mjs");
+    expect(macos).not.toContain("/opt/homebrew/lib/node_modules/merclaw/merclaw.mjs");
   });
 
   it("keeps Windows gateway reachability on a real deadline with start recovery", () => {
     const script = readFileSync(TS_PATHS.windows, "utf8");
 
-    expect(script).toContain("OPENCLAW_PARALLELS_WINDOWS_GATEWAY_RECOVERY_AFTER_S");
+    expect(script).toContain("MERCLAW_PARALLELS_WINDOWS_GATEWAY_RECOVERY_AFTER_S");
     expect(script).toContain("Date.now() < deadline");
     expect(script).toContain("gateway start");
     expect(script).toContain("gateway-reachable recovery");
@@ -705,9 +705,9 @@ if (isPrlctl) {
     expect(script).toContain("guestPowerShellBackground");
     expect(script).toContain("runWindowsBackgroundPowerShell");
     expect(transports).toContain("Join-Path $env:TEMP");
-    expect(transports).toContain("__OPENCLAW_BACKGROUND_DONE__");
-    expect(transports).toContain("__OPENCLAW_BACKGROUND_EXIT__");
-    expect(transports).toContain("__OPENCLAW_LOG_OFFSET__");
+    expect(transports).toContain("__MERCLAW_BACKGROUND_DONE__");
+    expect(transports).toContain("__MERCLAW_BACKGROUND_EXIT__");
+    expect(transports).toContain("__MERCLAW_LOG_OFFSET__");
     expect(transports).toContain("poll.status !== 0 && poll.status !== 124");
     expect(transports).toContain("Start-Process -FilePath powershell.exe");
     expect(transports).toContain('launch.stdout.includes("started")');
@@ -773,14 +773,14 @@ if (isPrlctl) {
     const execPath = "C:\\nodejs\\node.exe";
     const npmCmdPath = win32.resolve(win32.dirname(execPath), "npm.cmd");
     expect(
-      resolveHostCommandInvocation("npm", ["view", "openclaw", "version"], {
+      resolveHostCommandInvocation("npm", ["view", "merclaw", "version"], {
         env: { ComSpec: comSpec },
         execPath,
         existsSync: (candidate) => candidate === npmCmdPath,
         platform: "win32",
       }),
     ).toEqual({
-      args: ["/d", "/s", "/c", `${npmCmdPath} view openclaw version`],
+      args: ["/d", "/s", "/c", `${npmCmdPath} view merclaw version`],
       command: comSpec,
       shell: false,
       windowsVerbatimArguments: true,
@@ -805,8 +805,8 @@ if (isPrlctl) {
     const script = readFileSync(TS_PATHS.windows, "utf8");
 
     expect(script).toContain('guestPowerShellBackground(\n      "agent-turn"');
-    expect(script).toContain("OPENCLAW_PARALLELS_WINDOWS_AGENT_TIMEOUT_S");
-    expect(script).toContain("OPENCLAW_PARALLELS_WINDOWS_AGENT_TIMEOUT_S || 2700");
+    expect(script).toContain("MERCLAW_PARALLELS_WINDOWS_AGENT_TIMEOUT_S");
+    expect(script).toContain("MERCLAW_PARALLELS_WINDOWS_AGENT_TIMEOUT_S || 2700");
     expect(script).toContain("windowsAgentTurnConfigPatchScript(this.auth.modelId)");
     expect(script).toContain("--model");
     expect(script).toContain('resolveParallelsModelTimeoutSeconds("windows")');
@@ -829,7 +829,7 @@ if (isPrlctl) {
       windows: 1800,
     });
     expect(readFileSync(TS_PATHS.macos, "utf8")).toContain(
-      'this.agentTimeoutSeconds = readPositiveIntEnv("OPENCLAW_PARALLELS_MACOS_AGENT_TIMEOUT_S", 2700)',
+      'this.agentTimeoutSeconds = readPositiveIntEnv("MERCLAW_PARALLELS_MACOS_AGENT_TIMEOUT_S", 2700)',
     );
     expect(readFileSync(TS_PATHS.macos, "utf8")).toContain("--timeout ${this.modelTimeoutSeconds}");
     expect(readFileSync(TS_PATHS.linux, "utf8")).toContain(
@@ -839,32 +839,32 @@ if (isPrlctl) {
 
   it("rejects loose Parallels numeric limits before starting smoke lanes", () => {
     expect(
-      withEnv({ OPENCLAW_PARALLELS_MODEL_TIMEOUT_S: "1200" }, () =>
+      withEnv({ MERCLAW_PARALLELS_MODEL_TIMEOUT_S: "1200" }, () =>
         resolveParallelsModelTimeoutSeconds("linux"),
       ),
     ).toBe(1200);
     expect(
-      withEnv({ OPENCLAW_PARALLELS_NUMERIC_TEST: " 42 " }, () =>
-        readPositiveIntEnv("OPENCLAW_PARALLELS_NUMERIC_TEST", 7),
+      withEnv({ MERCLAW_PARALLELS_NUMERIC_TEST: " 42 " }, () =>
+        readPositiveIntEnv("MERCLAW_PARALLELS_NUMERIC_TEST", 7),
       ),
     ).toBe(42);
 
     expect(invalidModelTimeoutResult.status).toBe(1);
     expect(invalidModelTimeoutResult.stderr).toContain(
-      "invalid OPENCLAW_PARALLELS_MACOS_MODEL_TIMEOUT_S: 1800s",
+      "invalid MERCLAW_PARALLELS_MACOS_MODEL_TIMEOUT_S: 1800s",
     );
 
     expect(invalidHostPortResult.status).toBe(1);
     expect(invalidHostPortResult.stderr).toContain("invalid --host-port: 18425x");
 
     expect(readFileSync(TS_PATHS.macos, "utf8")).toContain(
-      'this.updateDevTimeoutSeconds = readPositiveIntEnv(\n      "OPENCLAW_PARALLELS_MACOS_UPDATE_DEV_TIMEOUT_S"',
+      'this.updateDevTimeoutSeconds = readPositiveIntEnv(\n      "MERCLAW_PARALLELS_MACOS_UPDATE_DEV_TIMEOUT_S"',
     );
     expect(readFileSync(TS_PATHS.packageArtifact, "utf8")).toContain(
-      'readPositiveIntEnv("OPENCLAW_PARALLELS_PACKAGE_LOCK_TIMEOUT_MS", 30 * 60_000)',
+      'readPositiveIntEnv("MERCLAW_PARALLELS_PACKAGE_LOCK_TIMEOUT_MS", 30 * 60_000)',
     );
     expect(readFileSync(TS_PATHS.npmUpdate, "utf8")).toContain(
-      'readPositiveIntEnv("OPENCLAW_PARALLELS_NPM_UPDATE_TIMEOUT_S", 1200)',
+      'readPositiveIntEnv("MERCLAW_PARALLELS_NPM_UPDATE_TIMEOUT_S", 1200)',
     );
   });
 
@@ -883,10 +883,10 @@ if (isPrlctl) {
 
     expect(powershell).toContain("windowsScopedEnvFunction");
     expect(windows).toContain(
-      "Invoke-WithScopedEnv @{ OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS",
+      "Invoke-WithScopedEnv @{ MERCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS",
     );
-    expect(windows).toContain("$script:OpenClawUpdateExit = $LASTEXITCODE");
-    expect(windows).not.toContain("$env:OPENCLAW_DISABLE_BUNDLED_PLUGINS = '1'");
+    expect(windows).toContain("$script:MerClawUpdateExit = $LASTEXITCODE");
+    expect(windows).not.toContain("$env:MERCLAW_DISABLE_BUNDLED_PLUGINS = '1'");
   });
 
   it("writes Parallels phase timing artifacts", () => {
@@ -899,26 +899,26 @@ if (isPrlctl) {
     expect(npmUpdate).toContain("recordTiming");
   });
 
-  it("resolves Windows OpenClaw commands without assuming the npm shim path", () => {
+  it("resolves Windows MerClaw commands without assuming the npm shim path", () => {
     const powershell = readFileSync(TS_PATHS.powershell, "utf8");
     const windows = readFileSync(TS_PATHS.windows, "utf8");
 
-    expect(powershell).toContain("windowsOpenClawResolver");
+    expect(powershell).toContain("windowsMerClawResolver");
     expect(powershell).toContain("providerTimeoutConfigJson");
     expect(powershell).toContain("models.providers.${providerId}");
     expect(powershell).toContain("agents.defaults.models${configPathMapKey(modelId)}");
-    expect(powershell).toContain("OPENCLAW_PARALLELS_AGENT_RUNTIME_POLICY_SUPPORTED");
-    expect(powershell).toContain('selectedModelEntry.agentRuntime = { id: "openclaw" }');
+    expect(powershell).toContain("MERCLAW_PARALLELS_AGENT_RUNTIME_POLICY_SUPPORTED");
+    expect(powershell).toContain('selectedModelEntry.agentRuntime = { id: "merclaw" }');
     expect(powershell).toContain("delete selectedModelEntry.agentRuntime");
     expect(powershell).toContain("delete providerEntry.agentRuntime");
     expect(powershell).toContain("configPathMapKey");
     expect(powershell).toContain('transport: "sse"');
-    expect(powershell).toContain("Resolve-OpenClawCommand");
-    expect(powershell).toContain("npm\\node_modules\\openclaw\\openclaw.mjs");
+    expect(powershell).toContain("Resolve-MerClawCommand");
+    expect(powershell).toContain("npm\\node_modules\\merclaw\\merclaw.mjs");
     expect(powershell).toContain("$ErrorActionPreference = 'Continue'");
     expect(powershell).toContain("$PSNativeCommandUseErrorActionPreference = $false");
-    expect(windows).toContain("windowsOpenClawResolver");
-    expect(windows).toContain("Invoke-OpenClaw gateway");
-    expect(windows).not.toContain("Join-Path $env:APPDATA 'npm\\\\openclaw.cmd'");
+    expect(windows).toContain("windowsMerClawResolver");
+    expect(windows).toContain("Invoke-MerClaw gateway");
+    expect(windows).not.toContain("Join-Path $env:APPDATA 'npm\\\\merclaw.cmd'");
   });
 });

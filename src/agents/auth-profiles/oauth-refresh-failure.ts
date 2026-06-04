@@ -1,4 +1,4 @@
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
+import { normalizeProviderId } from "@merclaw/model-catalog-core/provider-id";
 import { sanitizeForLog } from "../../../packages/terminal-core/src/ansi.js";
 import { formatCliCommand } from "../../cli/command-format.js";
 
@@ -70,6 +70,6 @@ export function classifyOAuthRefreshFailure(message: string): {
 export function buildOAuthRefreshFailureLoginCommand(provider: string | null | undefined): string {
   const sanitizedProvider = sanitizeOAuthRefreshFailureProvider(provider);
   return sanitizedProvider
-    ? formatCliCommand(`openclaw models auth login --provider ${sanitizedProvider}`)
-    : formatCliCommand("openclaw models auth login");
+    ? formatCliCommand(`merclaw models auth login --provider ${sanitizedProvider}`)
+    : formatCliCommand("merclaw models auth login");
 }

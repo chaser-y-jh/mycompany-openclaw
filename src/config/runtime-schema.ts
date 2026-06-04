@@ -5,10 +5,10 @@ import {
   collectPluginSchemaMetadata,
 } from "./channel-config-metadata.js";
 import { getRuntimeConfig, readConfigFileSnapshot } from "./config.js";
-import type { OpenClawConfig } from "./config.js";
+import type { MerClawConfig } from "./config.js";
 import { buildConfigSchema, type ConfigSchemaResponse } from "./schema.js";
 
-function loadManifestRegistry(config: OpenClawConfig, env?: NodeJS.ProcessEnv) {
+function loadManifestRegistry(config: MerClawConfig, env?: NodeJS.ProcessEnv) {
   const workspaceDir = resolveAgentWorkspaceDir(config, resolveDefaultAgentId(config));
   return resolvePluginMetadataSnapshot({
     config,

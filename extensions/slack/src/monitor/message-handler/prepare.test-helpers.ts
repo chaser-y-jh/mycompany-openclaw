@@ -1,15 +1,15 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { App } from "@slack/bolt";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import type { RuntimeEnv } from "merclaw/plugin-sdk/runtime-env";
+import { resolvePreferredMerClawTmpDir } from "merclaw/plugin-sdk/temp-path";
 import type { ResolvedSlackAccount } from "../../accounts.js";
 import type { SlackChannelConfigEntries } from "../channel-config.js";
 import { createSlackMonitorContext } from "../context.js";
 
 export function createInboundSlackTestContext(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   appClient?: App["client"];
   defaultRequireMention?: boolean;
   replyToMode?: "off" | "all" | "first" | "batched";
@@ -49,7 +49,7 @@ export function createInboundSlackTestContext(params: {
     threadRequireExplicitMention: params.threadRequireExplicitMention ?? false,
     slashCommand: {
       enabled: false,
-      name: "openclaw",
+      name: "merclaw",
       sessionPrefix: "slack:slash",
       ephemeral: true,
     },
@@ -83,7 +83,7 @@ export function createSlackSessionStoreFixture(prefix: string) {
 
   return {
     setup() {
-      fixtureRoot = fs.mkdtempSync(path.join(resolvePreferredOpenClawTmpDir(), prefix));
+      fixtureRoot = fs.mkdtempSync(path.join(resolvePreferredMerClawTmpDir(), prefix));
     },
     cleanup() {
       if (!fixtureRoot) {

@@ -1,4 +1,4 @@
-import { uniqueStrings } from "@openclaw/normalization-core/string-normalization";
+import { uniqueStrings } from "@merclaw/normalization-core/string-normalization";
 import type {
   ChannelIngressPolicyInput,
   ChannelIngressState,

@@ -1,4 +1,4 @@
-import { asBoolean } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { asBoolean } from "merclaw/plugin-sdk/string-coerce-runtime";
 import {
   describeCodexNotificationCorrelation,
   isCodexNotificationForTurn,
@@ -144,15 +144,15 @@ export function readNotificationItemId(notification: CodexServerNotification): s
   );
 }
 
-export function isPendingOpenClawDynamicToolCompletionNotification(
+export function isPendingMerClawDynamicToolCompletionNotification(
   notification: CodexServerNotification,
-  pendingOpenClawDynamicToolCompletionIds: ReadonlySet<string>,
+  pendingMerClawDynamicToolCompletionIds: ReadonlySet<string>,
 ): boolean {
   if (notification.method !== "item/completed" || !isJsonObject(notification.params)) {
     return false;
   }
   const itemId = readNotificationItemId(notification);
-  if (!itemId || !pendingOpenClawDynamicToolCompletionIds.has(itemId)) {
+  if (!itemId || !pendingMerClawDynamicToolCompletionIds.has(itemId)) {
     return false;
   }
   const item = isJsonObject(notification.params.item) ? notification.params.item : undefined;

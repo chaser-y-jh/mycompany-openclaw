@@ -10,10 +10,10 @@ import {
 import { listQaRunnerCliContributions } from "./qa-runner-runtime.js";
 
 const ORIGINAL_ENV = {
-  OPENCLAW_DISABLE_BUNDLED_PLUGINS: process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS,
-  OPENCLAW_CONFIG_PATH: process.env.OPENCLAW_CONFIG_PATH,
-  OPENCLAW_STATE_DIR: process.env.OPENCLAW_STATE_DIR,
-  OPENCLAW_TEST_FAST: process.env.OPENCLAW_TEST_FAST,
+  MERCLAW_DISABLE_BUNDLED_PLUGINS: process.env.MERCLAW_DISABLE_BUNDLED_PLUGINS,
+  MERCLAW_CONFIG_PATH: process.env.MERCLAW_CONFIG_PATH,
+  MERCLAW_STATE_DIR: process.env.MERCLAW_STATE_DIR,
+  MERCLAW_TEST_FAST: process.env.MERCLAW_TEST_FAST,
 } as const;
 
 const tempDirs: string[] = [];
@@ -32,8 +32,8 @@ function resetQaRunnerRuntimeState() {
 describe("plugin-sdk qa-runner-runtime linked plugin smoke", () => {
   beforeEach(() => {
     resetQaRunnerRuntimeState();
-    process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS = "1";
-    process.env.OPENCLAW_TEST_FAST = "1";
+    process.env.MERCLAW_DISABLE_BUNDLED_PLUGINS = "1";
+    process.env.MERCLAW_TEST_FAST = "1";
   });
 
   afterEach(() => {
@@ -51,9 +51,9 @@ describe("plugin-sdk qa-runner-runtime linked plugin smoke", () => {
   });
 
   it("loads an activated qa runner from a linked plugin path without a bundled install fallback", async () => {
-    const stateDir = makeTempDir("openclaw-qa-runner-state-");
+    const stateDir = makeTempDir("merclaw-qa-runner-state-");
     const pluginDir = path.join(stateDir, "extensions", "qa-linked");
-    const configPath = path.join(stateDir, "openclaw.json");
+    const configPath = path.join(stateDir, "merclaw.json");
 
     fs.writeFileSync(
       configPath,
@@ -62,12 +62,12 @@ describe("plugin-sdk qa-runner-runtime linked plugin smoke", () => {
       }),
       "utf8",
     );
-    process.env.OPENCLAW_CONFIG_PATH = configPath;
-    process.env.OPENCLAW_STATE_DIR = stateDir;
+    process.env.MERCLAW_CONFIG_PATH = configPath;
+    process.env.MERCLAW_STATE_DIR = stateDir;
 
     fs.mkdirSync(pluginDir, { recursive: true });
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "merclaw.plugin.json"),
       JSON.stringify({
         id: "qa-linked",
         qaRunners: [
@@ -87,12 +87,12 @@ describe("plugin-sdk qa-runner-runtime linked plugin smoke", () => {
     fs.writeFileSync(
       path.join(pluginDir, "package.json"),
       JSON.stringify({
-        name: "@openclaw/qa-linked",
+        name: "@merclaw/qa-linked",
         type: "module",
-        openclaw: {
+        merclaw: {
           extensions: ["./index.js"],
           install: {
-            npmSpec: "@openclaw/qa-linked",
+            npmSpec: "@merclaw/qa-linked",
           },
         },
       }),

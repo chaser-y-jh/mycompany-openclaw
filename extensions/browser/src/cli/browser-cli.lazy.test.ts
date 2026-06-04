@@ -102,9 +102,9 @@ describe("registerBrowserCli lazy browser subcommands", () => {
 
   it("registers browser placeholders without loading handlers for help", () => {
     const program = new Command();
-    program.name("openclaw");
+    program.name("merclaw");
 
-    registerBrowserCli(program, ["node", "openclaw", "browser", "--help"]);
+    registerBrowserCli(program, ["node", "merclaw", "browser", "--help"]);
 
     const browser = program.commands.find((command) => command.name() === "browser");
     expect(browser?.commands.map((command) => command.name())).toContain("status");
@@ -121,9 +121,9 @@ describe("registerBrowserCli lazy browser subcommands", () => {
 
   it("registers only the requested browser group before dispatch", async () => {
     const program = new Command();
-    program.name("openclaw");
+    program.name("merclaw");
 
-    registerBrowserCli(program, ["node", "openclaw", "browser", "status"]);
+    registerBrowserCli(program, ["node", "merclaw", "browser", "status"]);
 
     const browser = program.commands.find((command) => command.name() === "browser");
     expect(browser?.commands.map((command) => command.name())).toEqual(["status"]);
@@ -137,9 +137,9 @@ describe("registerBrowserCli lazy browser subcommands", () => {
 
   it("loads browser doctor from the manage group so --deep is available", async () => {
     const program = new Command();
-    program.name("openclaw");
+    program.name("merclaw");
 
-    registerBrowserCli(program, ["node", "openclaw", "browser", "doctor", "--deep"]);
+    registerBrowserCli(program, ["node", "merclaw", "browser", "doctor", "--deep"]);
 
     await program.parseAsync(["browser", "doctor", "--deep"], { from: "user" });
 
@@ -152,9 +152,9 @@ describe("registerBrowserCli lazy browser subcommands", () => {
 
   it("preserves parent --json while reparsing lazy manage commands", async () => {
     const program = new Command();
-    program.name("openclaw");
+    program.name("merclaw");
 
-    registerBrowserCli(program, ["node", "openclaw", "browser", "--json", "open", "about:blank"]);
+    registerBrowserCli(program, ["node", "merclaw", "browser", "--json", "open", "about:blank"]);
 
     await program.parseAsync(["browser", "--json", "open", "about:blank"], { from: "user" });
 
@@ -166,8 +166,8 @@ describe("registerBrowserCli lazy browser subcommands", () => {
     expect(openCommand.parent?.opts().json).toBe(true);
 
     const tabsProgram = new Command();
-    tabsProgram.name("openclaw");
-    registerBrowserCli(tabsProgram, ["node", "openclaw", "browser", "--json", "tabs"]);
+    tabsProgram.name("merclaw");
+    registerBrowserCli(tabsProgram, ["node", "merclaw", "browser", "--json", "tabs"]);
 
     await tabsProgram.parseAsync(["browser", "--json", "tabs"], { from: "user" });
 
@@ -181,11 +181,11 @@ describe("registerBrowserCli lazy browser subcommands", () => {
 
   it("skips browser option values when selecting the lazy command group", async () => {
     const program = new Command();
-    program.name("openclaw");
+    program.name("merclaw");
 
     registerBrowserCli(program, [
       "node",
-      "openclaw",
+      "merclaw",
       "browser",
       "--browser-profile",
       "status",
@@ -206,11 +206,11 @@ describe("registerBrowserCli lazy browser subcommands", () => {
 
   it("resolves browser parent options for nested commands", async () => {
     const program = new Command();
-    program.name("openclaw");
+    program.name("merclaw");
 
     registerBrowserCli(program, [
       "node",
-      "openclaw",
+      "merclaw",
       "browser",
       "--browser-profile",
       "work",
@@ -231,11 +231,11 @@ describe("registerBrowserCli lazy browser subcommands", () => {
   });
 
   it("can eagerly register all browser groups for compatibility", async () => {
-    vi.stubEnv("OPENCLAW_DISABLE_LAZY_SUBCOMMANDS", "1");
+    vi.stubEnv("MERCLAW_DISABLE_LAZY_SUBCOMMANDS", "1");
     const program = new Command();
-    program.name("openclaw");
+    program.name("merclaw");
 
-    registerBrowserCli(program, ["node", "openclaw", "browser", "--help"]);
+    registerBrowserCli(program, ["node", "merclaw", "browser", "--help"]);
 
     await vi.waitFor(() =>
       expect(manageMocks.registerBrowserManageCommands).toHaveBeenCalledTimes(1),

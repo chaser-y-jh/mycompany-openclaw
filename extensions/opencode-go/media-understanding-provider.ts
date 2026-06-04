@@ -2,7 +2,7 @@ import {
   describeImageWithModel,
   describeImagesWithModel,
   type MediaUnderstandingProvider,
-} from "openclaw/plugin-sdk/media-understanding";
+} from "merclaw/plugin-sdk/media-understanding";
 
 export const opencodeGoMediaUnderstandingProvider: MediaUnderstandingProvider = {
   id: "opencode-go",

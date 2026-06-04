@@ -1,6 +1,6 @@
 import type { App } from "@slack/bolt";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import type { RuntimeEnv } from "merclaw/plugin-sdk/runtime-env";
 import { describe, expect, it } from "vitest";
 import { createSlackMonitorContext } from "./context.js";
 
@@ -9,7 +9,7 @@ function createTestContext() {
     cfg: {
       channels: { slack: { enabled: true } },
       session: { dmScope: "main" },
-    } as OpenClawConfig,
+    } as MerClawConfig,
     accountId: "default",
     botToken: "xoxb-test",
     app: { client: {} } as App,
@@ -38,7 +38,7 @@ function createTestContext() {
     threadRequireExplicitMention: false,
     slashCommand: {
       enabled: true,
-      name: "openclaw",
+      name: "merclaw",
       ephemeral: true,
       sessionPrefix: "slack:slash",
     },

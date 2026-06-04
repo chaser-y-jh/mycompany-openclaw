@@ -1,6 +1,6 @@
-# OpenClaw iOS Versioning
+# MerClaw iOS Versioning
 
-OpenClaw iOS uses a **pinned CalVer release version** instead of reading the current gateway version automatically on every build.
+MerClaw iOS uses a **pinned CalVer release version** instead of reading the current gateway version automatically on every build.
 
 ## Goals
 

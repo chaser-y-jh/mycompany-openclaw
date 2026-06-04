@@ -156,7 +156,7 @@ describe("createCopilotAgentHarness", () => {
       reason: "provider is not one of: github-copilot",
     });
     // Legacy aspirational ids should not be claimed by the harness.
-    for (const legacyId of ["github", "openclaw", "copilot"]) {
+    for (const legacyId of ["github", "merclaw", "copilot"]) {
       expect(
         harness.supports({
           provider: legacyId,
@@ -450,7 +450,7 @@ describe("createCopilotAgentHarness", () => {
       expect(deleteSession).toHaveBeenCalledTimes(1);
     });
 
-    it("does not invoke deleteSession for a session belonging to a different openclawSessionId", async () => {
+    it("does not invoke deleteSession for a session belonging to a different merclawSessionId", async () => {
       const pool = makePoolMock();
       const deleteSession = vi.fn().mockResolvedValue(undefined);
       const client = { deleteSession } as any;
@@ -492,7 +492,7 @@ describe("createCopilotAgentHarness", () => {
 
   describe("session reuse across turns (dogfood finding #4)", () => {
     // These tests pin the harness's session-reuse contract: subsequent
-    // `runAttempt` calls within the same OpenClaw session should pass
+    // `runAttempt` calls within the same MerClaw session should pass
     // the tracked `sdkSessionId` to the attempt via `initialReplayState`
     // so the SDK can `resumeSession` and keep its prompt cache + thread
     // history warm. Compatibility-fingerprint mismatch (provider/model/
@@ -1056,7 +1056,7 @@ describe("createCopilotAgentHarness", () => {
       });
     });
 
-    it("writes an OpenClaw marker under <workspaceDir>/files and returns ok:true,compacted:false", async () => {
+    it("writes an MerClaw marker under <workspaceDir>/files and returns ok:true,compacted:false", async () => {
       const workspaceDir = await mkdtemp(join(tmpdir(), "copilot-harness-compact-"));
       try {
         const harness = createCopilotAgentHarness({ pool: makePoolMock() });
@@ -1074,9 +1074,9 @@ describe("createCopilotAgentHarness", () => {
         });
 
         const files = await readdir(join(workspaceDir, "files"));
-        const marker = files.find((f) => f.startsWith("openclaw-compaction-"));
+        const marker = files.find((f) => f.startsWith("merclaw-compaction-"));
         expect(marker).toBeDefined();
-        expect(marker).toMatch(/openclaw-compaction-\d+-oc-sess-compact-1\.json/);
+        expect(marker).toMatch(/merclaw-compaction-\d+-oc-sess-compact-1\.json/);
         const contents = JSON.parse(await readFile(join(workspaceDir, "files", marker!), "utf8"));
         expect(contents).toMatchObject({
           version: 1,
@@ -1113,7 +1113,7 @@ describe("createCopilotAgentHarness", () => {
         } as any);
 
         const files = await readdir(join(workspaceDir, "files"));
-        const marker = files.find((f) => f.startsWith("openclaw-compaction-"))!;
+        const marker = files.find((f) => f.startsWith("merclaw-compaction-"))!;
         const contents = JSON.parse(await readFile(join(workspaceDir, "files", marker), "utf8"));
         expect(contents.sdkSessionId).toBe("sdk-sess-tracked");
       } finally {
@@ -1138,7 +1138,7 @@ describe("createCopilotAgentHarness", () => {
         });
 
         const files = await readdir(join(workspaceDir, "files"));
-        const marker = files.find((f) => f.startsWith("openclaw-compaction-"))!;
+        const marker = files.find((f) => f.startsWith("merclaw-compaction-"))!;
         const contents = JSON.parse(await readFile(join(workspaceDir, "files", marker), "utf8"));
         expect(contents.force).toBe(true);
         expect(contents.reason).toBe("force-requested-but-sdk-has-no-synchronous-compact-api");

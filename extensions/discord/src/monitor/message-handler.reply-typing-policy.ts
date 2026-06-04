@@ -1,4 +1,4 @@
-import { resolveChannelMessageSourceReplyDeliveryMode } from "openclaw/plugin-sdk/channel-outbound";
+import { resolveChannelMessageSourceReplyDeliveryMode } from "merclaw/plugin-sdk/channel-outbound";
 import type { DiscordMessagePreflightContext } from "./message-handler.preflight.types.js";
 
 type SourceReplyDeliveryMode = ReturnType<typeof resolveChannelMessageSourceReplyDeliveryMode>;

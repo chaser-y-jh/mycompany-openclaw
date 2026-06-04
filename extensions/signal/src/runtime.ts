@@ -1,5 +1,5 @@
-import type { PluginRuntime } from "openclaw/plugin-sdk/core";
-import { createPluginRuntimeStore } from "openclaw/plugin-sdk/runtime-store";
+import type { PluginRuntime } from "merclaw/plugin-sdk/core";
+import { createPluginRuntimeStore } from "merclaw/plugin-sdk/runtime-store";
 
 const {
   setRuntime: setSignalRuntime,

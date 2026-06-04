@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { redactMigrationPlan } from "openclaw/plugin-sdk/migration";
+import { redactMigrationPlan } from "merclaw/plugin-sdk/migration";
 import { afterEach, describe, expect, it } from "vitest";
 import { resolveHomePath } from "./helpers.js";
 import { buildClaudeMigrationProvider } from "./provider.js";
@@ -35,16 +35,16 @@ describe("Claude migration provider", () => {
     expect(provider.label).toBe("Claude");
   });
 
-  it("resolves tilde source paths against the OS home when OPENCLAW_HOME is set", () => {
-    const previous = process.env.OPENCLAW_HOME;
-    process.env.OPENCLAW_HOME = path.join(path.sep, "tmp", "openclaw-home");
+  it("resolves tilde source paths against the OS home when MERCLAW_HOME is set", () => {
+    const previous = process.env.MERCLAW_HOME;
+    process.env.MERCLAW_HOME = path.join(path.sep, "tmp", "merclaw-home");
     try {
       expect(resolveHomePath("~/.claude")).toBe(path.join(os.homedir(), ".claude"));
     } finally {
       if (previous === undefined) {
-        delete process.env.OPENCLAW_HOME;
+        delete process.env.MERCLAW_HOME;
       } else {
-        process.env.OPENCLAW_HOME = previous;
+        process.env.MERCLAW_HOME = previous;
       }
     }
   });

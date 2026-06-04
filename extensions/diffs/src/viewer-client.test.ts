@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const disableAutoStartKey = Symbol.for("openclaw.diffs.disableAutoStart");
+const disableAutoStartKey = Symbol.for("merclaw.diffs.disableAutoStart");
 (globalThis as typeof globalThis & Record<symbol, unknown>)[disableAutoStartKey] = true;
 
 const VIEWER_CLIENT_SRC = readFileSync(
@@ -63,8 +63,8 @@ function renderCard(): void {
   document.body.insertAdjacentHTML(
     "beforeend",
     `<section class="oc-diff-card">
-      <div data-openclaw-diff-host></div>
-      <script type="application/json" data-openclaw-diff-payload>${viewerPayload}</script>
+      <div data-merclaw-diff-host></div>
+      <script type="application/json" data-merclaw-diff-payload>${viewerPayload}</script>
     </section>`,
   );
 }
@@ -123,8 +123,8 @@ describe("createToolbarButton icon safety", () => {
 describe("hydrateViewer", () => {
   beforeEach(() => {
     document.body.innerHTML = "";
-    delete document.documentElement.dataset.openclawDiffsError;
-    delete document.documentElement.dataset.openclawDiffsReady;
+    delete document.documentElement.dataset.merclawDiffsError;
+    delete document.documentElement.dataset.merclawDiffsReady;
     vi.clearAllMocks();
   });
 
@@ -146,7 +146,7 @@ describe("hydrateViewer", () => {
       "Skipping diff card that failed to hydrate",
       expect.any(Error),
     );
-    expect(document.documentElement.dataset.openclawDiffsError).toBeUndefined();
+    expect(document.documentElement.dataset.merclawDiffsError).toBeUndefined();
     warn.mockRestore();
   });
 
@@ -169,7 +169,7 @@ describe("hydrateViewer", () => {
       "Skipping diff card that failed to hydrate",
       expect.any(Error),
     );
-    expect(document.documentElement.dataset.openclawDiffsError).toBeUndefined();
+    expect(document.documentElement.dataset.merclawDiffsError).toBeUndefined();
     warn.mockRestore();
   });
 });

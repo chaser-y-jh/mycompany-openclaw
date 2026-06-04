@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { resolveExpiresAtMsFromDurationMs } from "@openclaw/normalization-core/number-coercion";
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { resolveExpiresAtMsFromDurationMs } from "@merclaw/normalization-core/number-coercion";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
 import type {
   ExecApprovalDecision,
   ExecApprovalRequestPayload as InfraExecApprovalRequestPayload,

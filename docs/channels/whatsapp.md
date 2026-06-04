@@ -9,23 +9,23 @@ Status: production-ready via WhatsApp Web (Baileys). Gateway owns linked session
 
 ## Install (on demand)
 
-- Onboarding (`openclaw onboard`) and `openclaw channels add --channel whatsapp`
+- Onboarding (`merclaw onboard`) and `merclaw channels add --channel whatsapp`
   prompt to install the WhatsApp plugin the first time you select it.
-- `openclaw channels login --channel whatsapp` also offers the install flow when
+- `merclaw channels login --channel whatsapp` also offers the install flow when
   the plugin is not present yet.
 - Dev channel + git checkout: defaults to the local plugin path.
-- Stable/Beta: installs the official `@openclaw/whatsapp` plugin from ClawHub
+- Stable/Beta: installs the official `@merclaw/whatsapp` plugin from ClawHub
   first, with npm as the fallback.
-- The WhatsApp runtime is distributed outside the core OpenClaw npm package so
+- The WhatsApp runtime is distributed outside the core MerClaw npm package so
   WhatsApp-specific runtime dependencies stay with the external plugin.
 
 Manual install stays available:
 
 ```bash
-openclaw plugins install clawhub:@openclaw/whatsapp
+merclaw plugins install clawhub:@merclaw/whatsapp
 ```
 
-Use the bare npm package (`@openclaw/whatsapp`) only when you need the registry
+Use the bare npm package (`@merclaw/whatsapp`) only when you need the registry
 fallback. Pin an exact version only when you need a reproducible install.
 
 <CardGroup cols={3}>
@@ -63,7 +63,7 @@ fallback. Pin an exact version only when you need a reproducible install.
   <Step title="Link WhatsApp (QR)">
 
 ```bash
-openclaw channels login --channel whatsapp
+merclaw channels login --channel whatsapp
 ```
 
     Current login is QR-based. In remote or headless environments, make sure you
@@ -73,14 +73,14 @@ openclaw channels login --channel whatsapp
     For a specific account:
 
 ```bash
-openclaw channels login --channel whatsapp --account work
+merclaw channels login --channel whatsapp --account work
 ```
 
     To attach an existing/custom WhatsApp Web auth directory before login:
 
 ```bash
-openclaw channels add --channel whatsapp --account work --auth-dir /path/to/wa-auth
-openclaw channels login --channel whatsapp --account work
+merclaw channels add --channel whatsapp --account work --auth-dir /path/to/wa-auth
+merclaw channels login --channel whatsapp --account work
 ```
 
   </Step>
@@ -88,7 +88,7 @@ openclaw channels login --channel whatsapp --account work
   <Step title="Start the gateway">
 
 ```bash
-openclaw gateway
+merclaw gateway
 ```
 
   </Step>
@@ -96,8 +96,8 @@ openclaw gateway
   <Step title="Approve first pairing request (if using pairing mode)">
 
 ```bash
-openclaw pairing list whatsapp
-openclaw pairing approve whatsapp <CODE>
+merclaw pairing list whatsapp
+merclaw pairing approve whatsapp <CODE>
 ```
 
     Pairing requests expire after 1 hour. Pending requests are capped at 3 per channel.
@@ -106,7 +106,7 @@ openclaw pairing approve whatsapp <CODE>
 </Steps>
 
 <Note>
-OpenClaw recommends running WhatsApp on a separate number when possible. (The channel metadata and setup flow are optimized for that setup, but personal-number setups are also supported.)
+MerClaw recommends running WhatsApp on a separate number when possible. (The channel metadata and setup flow are optimized for that setup, but personal-number setups are also supported.)
 </Note>
 
 <Warning>
@@ -122,7 +122,7 @@ handoff path over manual terminal capture.
   <Accordion title="Dedicated number (recommended)">
     This is the cleanest operational mode:
 
-    - separate WhatsApp identity for OpenClaw
+    - separate WhatsApp identity for MerClaw
     - clearer DM allowlists and routing boundaries
     - lower chance of self-chat confusion
 
@@ -153,7 +153,7 @@ handoff path over manual terminal capture.
   </Accordion>
 
   <Accordion title="WhatsApp Web-only channel scope">
-    The messaging platform channel is WhatsApp Web-based (`Baileys`) in current OpenClaw channel architecture.
+    The messaging platform channel is WhatsApp Web-based (`Baileys`) in current MerClaw channel architecture.
 
     There is no separate Twilio WhatsApp messaging channel in the built-in chat-channel registry.
 
@@ -173,7 +173,7 @@ handoff path over manual terminal capture.
 - Group sessions are isolated (`agent:<agentId>:whatsapp:group:<jid>`).
 - WhatsApp Channels/Newsletters can be explicit outbound targets with their native `@newsletter` JID. Outbound newsletter sends use channel session metadata (`agent:<agentId>:whatsapp:channel:<jid>`) rather than DM session semantics.
 - WhatsApp Web transport honors standard proxy environment variables on the gateway host (`HTTPS_PROXY`, `HTTP_PROXY`, `NO_PROXY` / lowercase variants). Prefer host-level proxy config over channel-specific WhatsApp proxy settings.
-- When `messages.removeAckAfterReply` is enabled, OpenClaw clears the WhatsApp ack reaction after a visible reply is delivered.
+- When `messages.removeAckAfterReply` is enabled, MerClaw clears the WhatsApp ack reaction after a visible reply is delivered.
 
 ## Approval prompts
 
@@ -269,7 +269,7 @@ content and identifiers.
     - pairings are persisted in channel allow-store and merged with configured `allowFrom`
     - scheduled automation and heartbeat recipient fallback use explicit delivery targets or configured `allowFrom`; DM pairing approvals are not implicit cron or heartbeat recipients
     - if no allowlist is configured, the linked self number is allowed by default
-    - OpenClaw never auto-pairs outbound `fromMe` DMs (messages you send to yourself from the linked device)
+    - MerClaw never auto-pairs outbound `fromMe` DMs (messages you send to yourself from the linked device)
 
   </Tab>
 
@@ -325,7 +325,7 @@ When the linked self number is also present in `allowFrom`, WhatsApp self-chat s
 
 - skip read receipts for self-chat turns
 - ignore mention-JID auto-trigger behavior that would otherwise ping yourself
-- if `messages.responsePrefix` is unset, self-chat replies default to `[{identity.name}]` or `[openclaw]`
+- if `messages.responsePrefix` is unset, self-chat replies default to `[{identity.name}]` or `[merclaw]`
 
 ## Message normalization and context
 
@@ -342,7 +342,7 @@ When the linked self number is also present in `allowFrom`, WhatsApp self-chat s
     ```
 
     Reply metadata fields are also populated when available (`ReplyToId`, `ReplyToBody`, `ReplyToSender`, sender JID/E.164).
-    When the quoted reply target is downloadable media, OpenClaw saves it through
+    When the quoted reply target is downloadable media, MerClaw saves it through
     the normal inbound media store and exposes it as `MediaPath`/`MediaType` so
     the agent can inspect the referenced image instead of only seeing
     `<media:image>`.
@@ -529,7 +529,7 @@ Behavior notes:
 
 ## Lifecycle status reactions
 
-Set `messages.statusReactions.enabled: true` to let WhatsApp replace the ack reaction during a turn instead of leaving a static receipt emoji. When enabled, OpenClaw uses the same inbound message reaction slot for lifecycle states such as queued, thinking, tool activity, compaction, done, and error.
+Set `messages.statusReactions.enabled: true` to let WhatsApp replace the ack reaction during a turn instead of leaving a static receipt emoji. When enabled, MerClaw uses the same inbound message reaction slot for lifecycle states such as queued, thinking, tool activity, compaction, done, and error.
 
 ```json5
 {
@@ -565,16 +565,16 @@ Behavior notes:
   </Accordion>
 
   <Accordion title="Credential paths and legacy compatibility">
-    - current auth path: `~/.openclaw/credentials/whatsapp/<accountId>/creds.json`
+    - current auth path: `~/.merclaw/credentials/whatsapp/<accountId>/creds.json`
     - backup file: `creds.json.bak`
-    - legacy default auth in `~/.openclaw/credentials/` is still recognized/migrated for default-account flows
+    - legacy default auth in `~/.merclaw/credentials/` is still recognized/migrated for default-account flows
 
   </Accordion>
 
   <Accordion title="Logout behavior">
-    `openclaw channels logout --channel whatsapp [--account <id>]` clears WhatsApp auth state for that account.
+    `merclaw channels logout --channel whatsapp [--account <id>]` clears WhatsApp auth state for that account.
 
-    When a Gateway is reachable, logout first stops the live WhatsApp listener for the selected account so the linked session does not keep receiving messages until the next restart. `openclaw channels remove --channel whatsapp` also stops the live listener before disabling or deleting account config.
+    When a Gateway is reachable, logout first stops the live WhatsApp listener for the selected account so the linked session does not keep receiving messages until the next restart. `merclaw channels remove --channel whatsapp` also stops the live listener before disabling or deleting account config.
 
     In legacy auth directories, `oauth.json` is preserved while Baileys auth files are removed.
 
@@ -598,8 +598,8 @@ Behavior notes:
     Fix:
 
     ```bash
-    openclaw channels login --channel whatsapp
-    openclaw channels status
+    merclaw channels login --channel whatsapp
+    merclaw channels status
     ```
 
   </Accordion>
@@ -631,27 +631,27 @@ Behavior notes:
     Fix:
 
     ```bash
-    openclaw channels status --probe
-    openclaw doctor
-    openclaw logs --follow
-    openclaw gateway status
+    merclaw channels status --probe
+    merclaw doctor
+    merclaw logs --follow
+    merclaw gateway status
     ```
 
     If the loop persists after host connectivity and timing are fixed, back up
     the account auth directory and re-link that account:
 
     ```bash
-    cp -a ~/.openclaw/credentials/whatsapp/<accountId> \
-      ~/.openclaw/credentials/whatsapp/<accountId>.bak
-    openclaw channels logout --channel whatsapp --account <accountId>
-    openclaw channels login --channel whatsapp --account <accountId>
+    cp -a ~/.merclaw/credentials/whatsapp/<accountId> \
+      ~/.merclaw/credentials/whatsapp/<accountId>.bak
+    merclaw channels logout --channel whatsapp --account <accountId>
+    merclaw channels login --channel whatsapp --account <accountId>
     ```
 
-    If `~/.openclaw/logs/whatsapp-health.log` says `Gateway inactive` but
-    `openclaw gateway status` and `openclaw channels status --probe` show the
-    gateway and WhatsApp are healthy, run `openclaw doctor`. On Linux, doctor
+    If `~/.merclaw/logs/whatsapp-health.log` says `Gateway inactive` but
+    `merclaw gateway status` and `merclaw channels status --probe` show the
+    gateway and WhatsApp are healthy, run `merclaw doctor`. On Linux, doctor
     warns about legacy crontab entries that still invoke
-    `~/.openclaw/bin/ensure-whatsapp.sh`; remove those stale entries with
+    `~/.merclaw/bin/ensure-whatsapp.sh`; remove those stale entries with
     `crontab -e` because cron can lack the systemd user-bus environment and
     make that old script misreport gateway health.
 
@@ -660,7 +660,7 @@ Behavior notes:
   </Accordion>
 
   <Accordion title="QR login times out behind a proxy">
-    Symptom: `openclaw channels login --channel whatsapp` fails before showing a usable QR code with `status=408 Request Time-out` or a TLS socket disconnect.
+    Symptom: `merclaw channels login --channel whatsapp` fails before showing a usable QR code with `status=408 Request Time-out` or a TLS socket disconnect.
 
     WhatsApp Web login uses the gateway host's standard proxy environment (`HTTPS_PROXY`, `HTTP_PROXY`, lowercase variants, and `NO_PROXY`). Verify the gateway process inherits the proxy env and that `NO_PROXY` does not match `mmg.whatsapp.net`.
 
@@ -674,7 +674,7 @@ Behavior notes:
   </Accordion>
 
   <Accordion title="Reply appears in transcript but not in WhatsApp">
-    Transcript rows record what the agent generated. WhatsApp delivery is checked separately: OpenClaw only treats an auto-reply as sent after Baileys returns an outbound message id for at least one visible text or media send.
+    Transcript rows record what the agent generated. WhatsApp delivery is checked separately: MerClaw only treats an auto-reply as sent after Baileys returns an outbound message id for at least one visible text or media send.
 
     Ack reactions are independent pre-reply receipts. A successful reaction does not prove that the later text or media reply was accepted by WhatsApp.
 
@@ -689,9 +689,9 @@ Behavior notes:
     - `groupAllowFrom` / `allowFrom`
     - `groups` allowlist entries
     - mention gating (`requireMention` + mention patterns)
-    - duplicate keys in `openclaw.json` (JSON5): later entries override earlier ones, so keep a single `groupPolicy` per scope
+    - duplicate keys in `merclaw.json` (JSON5): later entries override earlier ones, so keep a single `groupPolicy` per scope
 
-    If `channels.whatsapp.groups` is present, WhatsApp can still observe messages from other groups, but OpenClaw drops them before session routing. Add the group JID to `channels.whatsapp.groups` or add `groups["*"]` to admit all groups while keeping sender authorization under `groupPolicy` and `groupAllowFrom`.
+    If `channels.whatsapp.groups` is present, WhatsApp can still observe messages from other groups, but MerClaw drops them before session routing. Add the group JID to `channels.whatsapp.groups` or add `groups["*"]` to admit all groups while keeping sender authorization under `groupPolicy` and `groupAllowFrom`.
 
   </Accordion>
 

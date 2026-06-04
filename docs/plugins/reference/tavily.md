@@ -11,8 +11,8 @@ Adds agent-callable tools. Adds web search provider support.
 
 ## Distribution
 
-- Package: `@openclaw/tavily-plugin`
-- Install route: included in OpenClaw
+- Package: `@merclaw/tavily-plugin`
+- Install route: included in MerClaw
 
 ## Surface
 

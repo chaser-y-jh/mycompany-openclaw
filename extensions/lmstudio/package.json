@@ -1,10 +1,10 @@
 {
-  "name": "@openclaw/lmstudio-provider",
+  "name": "@merclaw/lmstudio-provider",
   "version": "2026.5.31",
   "private": true,
-  "description": "OpenClaw LM Studio provider plugin",
+  "description": "MerClaw LM Studio provider plugin",
   "type": "module",
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ]

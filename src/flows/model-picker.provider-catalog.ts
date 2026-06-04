@@ -1,4 +1,4 @@
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
+import { normalizeProviderId } from "@merclaw/model-catalog-core/provider-id";
 import { resolveDefaultAgentDir } from "../agents/agent-scope.js";
 import { ensureAuthProfileStoreWithoutExternalProfiles } from "../agents/auth-profiles.js";
 import type { ModelCatalogEntry } from "../agents/model-catalog.js";
@@ -9,7 +9,7 @@ import {
 } from "../agents/models-config.providers.secrets.js";
 import { resolveProviderCatalogPluginIdsForFilter } from "../commands/models/list.provider-catalog.js";
 import type { ModelDefinitionConfig, ModelProviderConfig } from "../config/types.models.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import {
@@ -51,7 +51,7 @@ function hasLiveProviderCatalog(provider: ProviderPlugin): boolean {
 }
 
 async function resolvePreferredProviderLiveCatalogProviders(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env: NodeJS.ProcessEnv;
   onlyPluginIds: string[];
   providerFilter: string;
@@ -137,7 +137,7 @@ function modelFromProviderCatalog(params: {
 }
 
 export async function loadPreferredProviderPickerCatalog(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   preferredProvider: string;
   agentDir?: string;
   workspaceDir?: string;

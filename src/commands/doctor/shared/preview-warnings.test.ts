@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../../config/config.js";
+import type { MerClawConfig } from "../../../config/config.js";
 import {
   collectDoctorPreviewNotes,
   collectChannelBoundMessageToolPolicyWarnings,
@@ -124,8 +124,8 @@ vi.mock("./stale-plugin-config.js", () => ({
     const hits = [...(cfg.plugins?.allow ?? []), ...Object.keys(cfg.plugins?.entries ?? {})]
       .filter((id) => !knownIds.has(id))
       .map((id) => ({ id, surface: "plugin" }));
-    if (cfg.channels?.["openclaw-weixin"]) {
-      hits.push({ id: "openclaw-weixin", surface: "channel" });
+    if (cfg.channels?.["merclaw-weixin"]) {
+      hits.push({ id: "merclaw-weixin", surface: "channel" });
     }
     return hits.filter(
       (hit, index) => hits.findIndex((candidate) => candidate.id === hit.id) === index,
@@ -241,7 +241,7 @@ describe("doctor preview warnings", () => {
   });
 
   it("routes personal Codex asset notices to info instead of warnings", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-preview-codex-assets-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-preview-codex-assets-"));
     tempRoots.add(root);
     const codexHome = path.join(root, ".codex");
     await fs.mkdir(path.join(root, ".agents", "skills", "agent-helper"), { recursive: true });
@@ -261,8 +261,8 @@ describe("doctor preview warnings", () => {
             },
           },
         },
-      } as OpenClawConfig,
-      doctorFixCommand: "openclaw doctor --fix",
+      } as MerClawConfig,
+      doctorFixCommand: "merclaw doctor --fix",
       env: { CODEX_HOME: codexHome, HOME: root },
     });
 
@@ -282,7 +282,7 @@ describe("doctor preview warnings", () => {
           },
         },
       },
-      doctorFixCommand: "openclaw doctor --fix",
+      doctorFixCommand: "merclaw doctor --fix",
     });
 
     expect(
@@ -309,7 +309,7 @@ describe("doctor preview warnings", () => {
           },
         },
       },
-      doctorFixCommand: "openclaw doctor --fix",
+      doctorFixCommand: "merclaw doctor --fix",
     });
 
     const warning = expectSingleWarningContaining(
@@ -323,7 +323,7 @@ describe("doctor preview warnings", () => {
   it("includes stale plugin config warnings", async () => {
     const warnings = await collectDoctorPreviewWarnings({
       cfg: stalePluginConfig(),
-      doctorFixCommand: "openclaw doctor --fix",
+      doctorFixCommand: "merclaw doctor --fix",
     });
 
     const warning = expectSingleWarningContaining(
@@ -331,7 +331,7 @@ describe("doctor preview warnings", () => {
       'plugins.allow: stale plugin reference "acpx"',
     );
     expect(warning).toContain("plugins.entries.acpx");
-    expect(warning).toContain('Run "openclaw doctor --fix"');
+    expect(warning).toContain('Run "merclaw doctor --fix"');
     expect(warning).not.toContain("Auto-removal is paused");
   });
 
@@ -339,19 +339,19 @@ describe("doctor preview warnings", () => {
     const warnings = await collectDoctorPreviewWarnings({
       cfg: {
         channels: {
-          "openclaw-weixin": {
+          "merclaw-weixin": {
             enabled: true,
           },
         },
       },
-      doctorFixCommand: "openclaw doctor --fix",
+      doctorFixCommand: "merclaw doctor --fix",
     });
 
-    expectSingleWarningContaining(warnings, "channels.openclaw-weixin: dangling channel config");
+    expectSingleWarningContaining(warnings, "channels.merclaw-weixin: dangling channel config");
   });
 
   it("includes bundled plugin load path migration warnings", async () => {
-    const packageRoot = path.resolve("app-node-modules", "openclaw");
+    const packageRoot = path.resolve("app-node-modules", "merclaw");
     const legacyPath = path.join(packageRoot, "extensions", "feishu");
     manifestState.plugins = [manifest("feishu")];
 
@@ -363,24 +363,24 @@ describe("doctor preview warnings", () => {
           },
         },
       },
-      doctorFixCommand: "openclaw doctor --fix",
+      doctorFixCommand: "merclaw doctor --fix",
     });
 
     const warning = expectSingleWarningContaining(
       warnings,
       `plugins.load.paths: legacy bundled plugin path "${legacyPath}"`,
     );
-    expect(warning).toContain('Run "openclaw doctor --fix"');
+    expect(warning).toContain('Run "merclaw doctor --fix"');
   });
 
   it("includes stale OAuth profile shadow warnings", async () => {
     staleOAuthShadowState.warnings = [
-      '- ~/.openclaw/agents/telegram/agent/auth-profiles.json has stale OAuth auth profile openai-codex:default. Run "openclaw doctor --fix".',
+      '- ~/.merclaw/agents/telegram/agent/auth-profiles.json has stale OAuth auth profile openai-codex:default. Run "merclaw doctor --fix".',
     ];
 
     const warnings = await collectDoctorPreviewWarnings({
       cfg: {},
-      doctorFixCommand: "openclaw doctor --fix",
+      doctorFixCommand: "merclaw doctor --fix",
     });
 
     expectSingleWarningContaining(warnings, "stale OAuth auth profile openai-codex:default");
@@ -393,7 +393,7 @@ describe("doctor preview warnings", () => {
 
     const warnings = await collectDoctorPreviewWarnings({
       cfg: { tools: { allow: ["dofbot_move_angles"] } },
-      doctorFixCommand: "openclaw doctor --fix",
+      doctorFixCommand: "merclaw doctor --fix",
     });
 
     expect(warnings.some((warning) => warning.includes('active tool "dofbot_move_angles"'))).toBe(
@@ -409,7 +409,7 @@ describe("doctor preview warnings", () => {
 
     const warnings = await collectDoctorPreviewWarnings({
       cfg: stalePluginConfig(),
-      doctorFixCommand: "openclaw doctor --fix",
+      doctorFixCommand: "merclaw doctor --fix",
     });
 
     const warning = expectSingleWarningContaining(
@@ -417,7 +417,7 @@ describe("doctor preview warnings", () => {
       'plugins.allow: stale plugin reference "acpx"',
     );
     expect(warning).toContain("Auto-removal is paused");
-    expect(warning).toContain('rerun "openclaw doctor --fix"');
+    expect(warning).toContain('rerun "merclaw doctor --fix"');
   });
 
   it("warns when a configured channel plugin is disabled explicitly", async () => {
@@ -439,7 +439,7 @@ describe("doctor preview warnings", () => {
           },
         },
       },
-      doctorFixCommand: "openclaw doctor --fix",
+      doctorFixCommand: "merclaw doctor --fix",
     });
 
     const warning = expectSingleWarningContaining(
@@ -464,7 +464,7 @@ describe("doctor preview warnings", () => {
           enabled: false,
         },
       },
-      doctorFixCommand: "openclaw doctor --fix",
+      doctorFixCommand: "merclaw doctor --fix",
     });
 
     const warning = expectSingleWarningContaining(
@@ -493,7 +493,7 @@ describe("doctor preview warnings", () => {
           },
         },
       },
-      doctorFixCommand: "openclaw doctor --fix",
+      doctorFixCommand: "merclaw doctor --fix",
     });
 
     expectSingleWarningContaining(
@@ -513,7 +513,7 @@ describe("doctor preview warnings", () => {
           },
         },
       },
-      doctorFixCommand: "openclaw doctor --fix",
+      doctorFixCommand: "merclaw doctor --fix",
     });
 
     const warning = expectSingleWarningContaining(warnings, 'tools.profile is "messaging"');
@@ -757,7 +757,7 @@ describe("doctor preview warnings", () => {
       tools: {
         profile: "coding" as const,
       },
-    } satisfies OpenClawConfig;
+    } satisfies MerClawConfig;
 
     expect(collectVisibleReplyToolPolicyWarnings(cfg)).toStrictEqual([]);
     expect(collectChannelBoundMessageToolPolicyWarnings(cfg)).toStrictEqual([]);
@@ -793,7 +793,7 @@ describe("doctor preview warnings", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies MerClawConfig;
 
     expectWarningsContaining(collectVisibleReplyToolPolicyWarnings(cfg), [
       'messages.groupChat.visibleReplies is set to "message_tool"',
@@ -833,7 +833,7 @@ describe("doctor preview warnings", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies MerClawConfig;
 
     expect(collectVisibleReplyToolPolicyWarnings(cfg)).toStrictEqual([]);
     expect(collectChannelBoundMessageToolPolicyWarnings(cfg)).toStrictEqual([]);

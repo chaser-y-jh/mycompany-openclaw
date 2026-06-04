@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import type { SkillStatusEntry, SkillStatusReport } from "../skills/discovery/status.js";
 
 export function collectUnavailableAgentSkills(report: SkillStatusReport): SkillStatusEntry[] {
@@ -12,9 +12,9 @@ export function collectUnavailableAgentSkills(report: SkillStatusReport): SkillS
 }
 
 export function disableUnavailableSkillsInConfig(
-  config: OpenClawConfig,
+  config: MerClawConfig,
   skills: readonly SkillStatusEntry[],
-): OpenClawConfig {
+): MerClawConfig {
   if (skills.length === 0) {
     return config;
   }

@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { resolveExpiresAtMsFromDurationMs } from "@openclaw/normalization-core/number-coercion";
+import { resolveExpiresAtMsFromDurationMs } from "@merclaw/normalization-core/number-coercion";
 import { formatErrorMessage } from "../infra/errors.js";
 import { buildExecApprovalUnavailableReplyPayload } from "../infra/exec-approval-reply.js";
 import {
@@ -400,12 +400,12 @@ export function buildHeadlessExecApprovalDeniedMessage(params: {
   return [
     `exec denied: ${runLabel} cannot wait for interactive exec approval.`,
     `Effective host exec policy: security=${params.security} ask=${params.ask} askFallback=${params.askFallback}`,
-    "Stricter values from tools.exec and ~/.openclaw/exec-approvals.json both apply.",
+    "Stricter values from tools.exec and ~/.merclaw/exec-approvals.json both apply.",
     "Fix one of these:",
     '- align both files to security="full" and ask="off" for trusted local automation',
     "- keep allowlist mode and add an explicit allowlist entry for this command",
     "- enable Web UI, terminal UI, or chat exec approvals and rerun interactively",
-    'Tip: run "openclaw doctor" and "openclaw approvals get --gateway" to inspect the effective policy.',
+    'Tip: run "merclaw doctor" and "merclaw approvals get --gateway" to inspect the effective policy.',
   ].join("\n");
 }
 

@@ -1,24 +1,24 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { EmbeddingProviderAdapter } from "openclaw/plugin-sdk/embedding-providers";
-import type { MemoryEmbeddingProviderAdapter } from "openclaw/plugin-sdk/memory-core-host-engine-embeddings";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import type { EmbeddingProviderAdapter } from "merclaw/plugin-sdk/embedding-providers";
+import type { MemoryEmbeddingProviderAdapter } from "merclaw/plugin-sdk/memory-core-host-engine-embeddings";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createEmbeddingProvider, resolveEmbeddingProviderFallbackModel } from "./embeddings.js";
 
 const mockEmbeddingRegistry = vi.hoisted(() => ({
   genericAdapters: [] as EmbeddingProviderAdapter[],
   adapters: [] as MemoryEmbeddingProviderAdapter[],
-  genericLookupConfigs: [] as Array<OpenClawConfig | undefined>,
+  genericLookupConfigs: [] as Array<MerClawConfig | undefined>,
 }));
 
-vi.mock("openclaw/plugin-sdk/embedding-providers", () => ({
-  getEmbeddingProvider: (id: string, config?: OpenClawConfig) => {
+vi.mock("merclaw/plugin-sdk/embedding-providers", () => ({
+  getEmbeddingProvider: (id: string, config?: MerClawConfig) => {
     mockEmbeddingRegistry.genericLookupConfigs.push(config);
     return mockEmbeddingRegistry.genericAdapters.find((adapter) => adapter.id === id);
   },
   listEmbeddingProviders: () => [...mockEmbeddingRegistry.genericAdapters],
 }));
 
-vi.mock("openclaw/plugin-sdk/memory-core-host-engine-embeddings", () => ({
+vi.mock("merclaw/plugin-sdk/memory-core-host-engine-embeddings", () => ({
   DEFAULT_LOCAL_MODEL: "nomic-embed-text",
   createLocalEmbeddingProvider: async () => {
     throw new Error("local embedding provider is not used by these tests");
@@ -51,8 +51,8 @@ function createOptions(provider: string) {
           "voyage",
         ],
       },
-    } as OpenClawConfig,
-    agentDir: "/tmp/openclaw-agent",
+    } as MerClawConfig,
+    agentDir: "/tmp/merclaw-agent",
     provider,
     fallback: "none",
     model: "",

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { MerClawConfig } from "../../config/config.js";
 import type { SkillSnapshot } from "../types.js";
 
 const TEST_WORKSPACE_DIR = "/tmp/workspace";
@@ -128,7 +128,7 @@ describe("resolveReusableWorkspaceSkillSnapshot", () => {
 
     const first = resolveReusableWorkspaceSkillSnapshot({
       workspaceDir: TEST_WORKSPACE_DIR,
-      config: { channels: { discord: { token: "enabled" } } } as OpenClawConfig,
+      config: { channels: { discord: { token: "enabled" } } } as MerClawConfig,
       existingSnapshot: snapshot,
     });
 
@@ -137,7 +137,7 @@ describe("resolveReusableWorkspaceSkillSnapshot", () => {
 
     const second = resolveReusableWorkspaceSkillSnapshot({
       workspaceDir: TEST_WORKSPACE_DIR,
-      config: { channels: { discord: {} } } as OpenClawConfig,
+      config: { channels: { discord: {} } } as MerClawConfig,
       existingSnapshot: { ...snapshot },
     });
 
@@ -156,13 +156,13 @@ describe("resolveReusableWorkspaceSkillSnapshot", () => {
 
     resolveReusableWorkspaceSkillSnapshot({
       workspaceDir: TEST_WORKSPACE_DIR,
-      config: { channels: { discord: { token: "first-secret" } } } as OpenClawConfig,
+      config: { channels: { discord: { token: "first-secret" } } } as MerClawConfig,
       existingSnapshot: snapshot,
     });
 
     resolveReusableWorkspaceSkillSnapshot({
       workspaceDir: TEST_WORKSPACE_DIR,
-      config: { channels: { discord: { token: "rotated-secret" } } } as OpenClawConfig,
+      config: { channels: { discord: { token: "rotated-secret" } } } as MerClawConfig,
       existingSnapshot: { ...snapshot },
     });
 

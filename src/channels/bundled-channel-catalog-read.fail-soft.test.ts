@@ -1,4 +1,4 @@
-import { importFreshModule } from "openclaw/plugin-sdk/test-fixtures";
+import { importFreshModule } from "merclaw/plugin-sdk/test-fixtures";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 afterEach(() => {
@@ -8,9 +8,9 @@ afterEach(() => {
 
 describe("listBundledChannelCatalogEntries discovery failures", () => {
   it("falls back when bundled package metadata is unavailable during import", async () => {
-    vi.doMock("../infra/openclaw-root.js", () => ({
-      resolveOpenClawPackageRootSync: () => null,
-      resolveOpenClawPackageRoot: async () => null,
+    vi.doMock("../infra/merclaw-root.js", () => ({
+      resolveMerClawPackageRootSync: () => null,
+      resolveMerClawPackageRoot: async () => null,
     }));
     vi.doMock("../plugins/bundled-dir.js", () => ({
       resolveBundledPluginsDir: () => undefined,

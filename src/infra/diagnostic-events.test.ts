@@ -260,7 +260,7 @@ describe("diagnostic-events", () => {
   it("does not expose mutable diagnostic state on the obsolete global symbol", async () => {
     const globalStore = globalThis as Record<PropertyKey, unknown>;
     const events: boolean[] = [];
-    globalStore[Symbol.for("openclaw.diagnosticEventsState")] = {
+    globalStore[Symbol.for("merclaw.diagnosticEventsState")] = {
       listeners: new Set([() => events.push(true)]),
     };
     onInternalDiagnosticEvent((eventValue, metadata) => {
@@ -277,7 +277,7 @@ describe("diagnostic-events", () => {
 
     await new Promise<void>((resolve) => setImmediate(resolve));
     expect(events).toEqual([false]);
-    delete globalStore[Symbol.for("openclaw.diagnosticEventsState")];
+    delete globalStore[Symbol.for("merclaw.diagnosticEventsState")];
   });
 
   it("keeps trusted internal events off the public diagnostic stream", async () => {

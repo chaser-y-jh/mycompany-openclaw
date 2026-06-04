@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "./config/types.openclaw.js";
+import type { MerClawConfig } from "./config/types.merclaw.js";
 
 const closeTrackedBrowserTabsForSessions = vi.hoisted(() => vi.fn(async () => 0));
 
@@ -33,7 +33,7 @@ describe("cleanupBrowserSessionsForLifecycleEnd", () => {
   it("skips cleanup when root browser support is disabled", async () => {
     await expect(
       cleanupBrowserSessionsForLifecycleEnd({
-        cfg: { browser: { enabled: false } } as OpenClawConfig,
+        cfg: { browser: { enabled: false } } as MerClawConfig,
         sessionKeys: ["session-a"],
       }),
     ).resolves.toBeUndefined();
@@ -44,7 +44,7 @@ describe("cleanupBrowserSessionsForLifecycleEnd", () => {
   it("skips cleanup when the browser plugin entry is disabled", async () => {
     await expect(
       cleanupBrowserSessionsForLifecycleEnd({
-        cfg: { plugins: { entries: { browser: { enabled: false } } } } as OpenClawConfig,
+        cfg: { plugins: { entries: { browser: { enabled: false } } } } as MerClawConfig,
         sessionKeys: ["session-a"],
       }),
     ).resolves.toBeUndefined();

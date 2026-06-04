@@ -1,7 +1,7 @@
 import {
   hasConfiguredSecretInput,
   normalizeSecretInputString,
-} from "openclaw/plugin-sdk/secret-input";
+} from "merclaw/plugin-sdk/secret-input";
 import type { DiscordCredentialStatus } from "./token.js";
 
 export type InspectedDiscordConfiguredToken = {

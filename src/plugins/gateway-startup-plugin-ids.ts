@@ -1,15 +1,15 @@
-import { collectConfiguredModelRefs } from "@openclaw/model-catalog-core/configured-model-refs";
-import { buildModelCatalogMergeKey } from "@openclaw/model-catalog-core/model-catalog-refs";
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
-import { isRecord } from "@openclaw/normalization-core/record-coerce";
-import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
+import { collectConfiguredModelRefs } from "@merclaw/model-catalog-core/configured-model-refs";
+import { buildModelCatalogMergeKey } from "@merclaw/model-catalog-core/model-catalog-refs";
+import { normalizeProviderId } from "@merclaw/model-catalog-core/provider-id";
+import { isRecord } from "@merclaw/normalization-core/record-coerce";
+import { normalizeOptionalLowercaseString } from "@merclaw/normalization-core/string-coerce";
 import { collectConfiguredAgentHarnessRuntimes } from "../agents/harness-runtimes.js";
 import { splitTrailingAuthProfile } from "../agents/model-ref-profile.js";
 import {
   listExplicitlyDisabledChannelIdsForConfig,
   listPotentialConfiguredChannelIds,
 } from "../channels/config-presence.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import {
   DEFAULT_MEMORY_DREAMING_PLUGIN_ID,
   resolveMemoryDreamingConfig,
@@ -81,7 +81,7 @@ function sortUniquePluginIds(values: Iterable<string>): string[] {
 }
 
 function normalizePluginsConfigForInstalledIndex(
-  config: OpenClawConfig["plugins"] | undefined,
+  config: MerClawConfig["plugins"] | undefined,
   lookup: InstalledPluginIndexScopeLookup,
 ) {
   return normalizePluginsConfigWithResolver(config, lookup.normalizePluginId);
@@ -97,7 +97,7 @@ function isConfigActivationValueEnabled(value: unknown): boolean {
   return true;
 }
 
-function listPotentialEnabledChannelIds(config: OpenClawConfig, env: NodeJS.ProcessEnv): string[] {
+function listPotentialEnabledChannelIds(config: MerClawConfig, env: NodeJS.ProcessEnv): string[] {
   const disabled = new Set(listExplicitlyDisabledChannelIdsForConfig(config));
   return listPotentialConfiguredChannelIds(config, env, { includePersistedAuthState: false })
     .map((id) => normalizeOptionalLowercaseString(id) ?? "")
@@ -108,7 +108,7 @@ function isGatewayStartupMemoryPlugin(plugin: InstalledPluginIndexRecord): boole
   return plugin.startup.memory;
 }
 
-function resolveGatewayStartupDreamingPluginIds(config: OpenClawConfig): Set<string> {
+function resolveGatewayStartupDreamingPluginIds(config: MerClawConfig): Set<string> {
   const dreamingConfig = resolveMemoryDreamingConfig({
     pluginConfig: resolveMemoryDreamingPluginConfig(config),
     cfg: config,
@@ -120,7 +120,7 @@ function resolveGatewayStartupDreamingPluginIds(config: OpenClawConfig): Set<str
 }
 
 function resolveMemorySlotStartupPluginId(params: {
-  activationSourceConfig: OpenClawConfig;
+  activationSourceConfig: MerClawConfig;
   activationSourcePlugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   normalizePluginId: (pluginId: string) => string;
 }): string | undefined {
@@ -146,7 +146,7 @@ function resolveMemorySlotStartupPluginId(params: {
 }
 
 function resolveContextEngineSlotStartupPluginId(params: {
-  activationSourceConfig: OpenClawConfig;
+  activationSourceConfig: MerClawConfig;
   activationSourcePlugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   normalizePluginId: (pluginId: string) => string;
 }): string | undefined {
@@ -225,7 +225,7 @@ function findManifestPlugin(
 
 function hasConfiguredActivationPath(params: {
   manifest: PluginManifestRecord | undefined;
-  config: OpenClawConfig;
+  config: MerClawConfig;
 }): boolean {
   return hasConfiguredActivationPathPatterns({
     paths: params.manifest?.activation?.onConfigPaths,
@@ -235,7 +235,7 @@ function hasConfiguredActivationPath(params: {
 
 function hasConfiguredActivationPathPatterns(params: {
   paths: readonly string[] | undefined;
-  config: OpenClawConfig;
+  config: MerClawConfig;
 }): boolean {
   const paths = params.paths;
   if (!paths?.length) {
@@ -252,7 +252,7 @@ function hasConfiguredActivationPathPatterns(params: {
 function addConfiguredActivationPathPluginIds(
   target: Set<string>,
   params: {
-    activationSourceConfig: OpenClawConfig;
+    activationSourceConfig: MerClawConfig;
     index: InstalledPluginIndex;
   },
 ): void {
@@ -284,7 +284,7 @@ function manifestOwnsConfiguredSpeechProvider(params: {
   });
 }
 
-function collectConfiguredWebSearchProviderIds(config: OpenClawConfig): ReadonlySet<string> {
+function collectConfiguredWebSearchProviderIds(config: MerClawConfig): ReadonlySet<string> {
   const search = config.tools?.web?.search;
   if (search?.enabled === false || typeof search?.provider !== "string") {
     return new Set();
@@ -377,7 +377,7 @@ function buildManifestModelProviderLookup(
 }
 
 function collectConfiguredAgentModelProviderIds(
-  config: OpenClawConfig,
+  config: MerClawConfig,
   manifestRegistry: PluginManifestRegistry,
 ): ReadonlySet<string> {
   const modelIdsByProvider = new Map<string, Set<string>>();
@@ -428,7 +428,7 @@ function collectConfiguredAgentModelProviderIds(
 }
 
 function configuredModelProviderNeedsRuntimePlugin(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   manifestModelProviders: ManifestModelProviderLookup;
   providerId: string;
   modelId: string;
@@ -460,7 +460,7 @@ function manifestOwnsConfiguredModelProvider(params: {
 }
 
 function collectConfiguredGenerationProviderIds(
-  config: OpenClawConfig,
+  config: MerClawConfig,
 ): ConfiguredGenerationProviderIds {
   const defaults = config.agents?.defaults;
   return {
@@ -470,7 +470,7 @@ function collectConfiguredGenerationProviderIds(
   };
 }
 
-function collectConfiguredVoiceProviderIds(config: OpenClawConfig): ConfiguredVoiceProviderIds {
+function collectConfiguredVoiceProviderIds(config: MerClawConfig): ConfiguredVoiceProviderIds {
   const providerIds = collectModelProviderIds(config.agents?.defaults?.voiceModel);
   return {
     speechProviders: providerIds,
@@ -493,7 +493,7 @@ function addPluginConfigEntryIds(
 function addConfiguredSlotPluginIds(
   target: Set<string>,
   params: {
-    activationSourceConfig: OpenClawConfig;
+    activationSourceConfig: MerClawConfig;
     activationSourcePlugins: ReturnType<typeof normalizePluginsConfigForInstalledIndex>;
     lookup: InstalledPluginIndexScopeLookup;
   },
@@ -517,8 +517,8 @@ function addConfiguredSlotPluginIds(
 }
 
 function collectConfiguredStartupChannelIds(params: {
-  activationSourceConfig: OpenClawConfig;
-  config: OpenClawConfig;
+  activationSourceConfig: MerClawConfig;
+  config: MerClawConfig;
   env: NodeJS.ProcessEnv;
 }): string[] {
   return sortUniquePluginIds([
@@ -527,7 +527,7 @@ function collectConfiguredStartupChannelIds(params: {
   ]);
 }
 
-function collectValidationHeartbeatTargetChannelIds(config: OpenClawConfig): string[] {
+function collectValidationHeartbeatTargetChannelIds(config: MerClawConfig): string[] {
   const channelIds: string[] = [];
   const pushTarget = (target: unknown) => {
     if (typeof target !== "string") {
@@ -548,7 +548,7 @@ function collectValidationHeartbeatTargetChannelIds(config: OpenClawConfig): str
   return sortUniquePluginIds(channelIds);
 }
 
-function collectValidationChannelConfigIds(config: OpenClawConfig): string[] {
+function collectValidationChannelConfigIds(config: MerClawConfig): string[] {
   const channels = isRecord(config.channels) ? config.channels : null;
   if (!channels) {
     return [];
@@ -561,7 +561,7 @@ function collectValidationChannelConfigIds(config: OpenClawConfig): string[] {
 }
 
 function collectConfigValidationChannelIds(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   env: NodeJS.ProcessEnv;
 }): string[] {
   return sortUniquePluginIds([
@@ -575,7 +575,7 @@ function collectConfigValidationChannelIds(params: {
   ]);
 }
 
-function collectConfiguredProviderIds(config: OpenClawConfig): string[] {
+function collectConfiguredProviderIds(config: MerClawConfig): string[] {
   const configuredWebSearchProviderIds = collectConfiguredWebSearchProviderIds(config);
   const configuredGenerationProviderIds = collectConfiguredGenerationProviderIds(config);
   const configuredVoiceProviderIds = collectConfiguredVoiceProviderIds(config);
@@ -591,7 +591,7 @@ function collectConfiguredProviderIds(config: OpenClawConfig): string[] {
   ]);
 }
 
-function collectValidationConfiguredProviderIds(config: OpenClawConfig): string[] {
+function collectValidationConfiguredProviderIds(config: MerClawConfig): string[] {
   const providerIds: string[] = [];
   const pushProviderId = (value: unknown) => {
     if (typeof value !== "string") {
@@ -627,7 +627,7 @@ function collectValidationConfiguredProviderIds(config: OpenClawConfig): string[
   return sortUniquePluginIds(providerIds);
 }
 
-function collectValidationConfiguredShorthandModelIds(config: OpenClawConfig): string[] {
+function collectValidationConfiguredShorthandModelIds(config: MerClawConfig): string[] {
   return sortUniquePluginIds(
     collectConfiguredModelRefs(config)
       .map((ref) => ref.value)
@@ -640,13 +640,13 @@ function collectValidationConfiguredShorthandModelIds(config: OpenClawConfig): s
 function addRequiredAgentHarnessPluginIds(
   target: Set<string>,
   params: {
-    activationSourceConfig: OpenClawConfig;
-    config: OpenClawConfig;
+    activationSourceConfig: MerClawConfig;
+    config: MerClawConfig;
     index: InstalledPluginIndex;
     pluginsConfig: ReturnType<typeof normalizePluginsConfigForInstalledIndex>;
     activationSource: {
       plugins: ReturnType<typeof normalizePluginsConfigForInstalledIndex>;
-      rootConfig?: OpenClawConfig;
+      rootConfig?: MerClawConfig;
     };
     env: NodeJS.ProcessEnv;
     platform?: NodeJS.Platform;
@@ -677,8 +677,8 @@ function addRequiredAgentHarnessPluginIds(
 }
 
 export function resolveGatewayStartupMetadataPluginIds(params: {
-  config: OpenClawConfig;
-  activationSourceConfig?: OpenClawConfig;
+  config: MerClawConfig;
+  activationSourceConfig?: MerClawConfig;
   env: NodeJS.ProcessEnv;
   index: InstalledPluginIndex;
   platform?: NodeJS.Platform;
@@ -787,8 +787,8 @@ export function resolveGatewayStartupMetadataPluginIds(params: {
 }
 
 export function createGatewayStartupMetadataPluginIdScope(params: {
-  config: OpenClawConfig;
-  activationSourceConfig?: OpenClawConfig;
+  config: MerClawConfig;
+  activationSourceConfig?: MerClawConfig;
   env: NodeJS.ProcessEnv;
   platform?: NodeJS.Platform;
 }): PluginMetadataSnapshotPluginIdScope {
@@ -821,7 +821,7 @@ export function createGatewayStartupMetadataPluginIdScope(params: {
 function addValidationPluginConfigReferences(
   target: Set<string>,
   params: {
-    config: OpenClawConfig;
+    config: MerClawConfig;
     pluginsConfig: ReturnType<typeof normalizePluginsConfigForInstalledIndex>;
     normalizePluginId: (pluginId: string) => string;
   },
@@ -851,7 +851,7 @@ function addValidationPluginConfigReferences(
 }
 
 export function resolveConfigValidationMetadataPluginIds(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   env: NodeJS.ProcessEnv;
   index: InstalledPluginIndex;
   platform?: NodeJS.Platform;
@@ -917,7 +917,7 @@ export function resolveConfigValidationMetadataPluginIds(params: {
 }
 
 export function createConfigValidationMetadataPluginIdScope(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   env: NodeJS.ProcessEnv;
   platform?: NodeJS.Platform;
 }): PluginMetadataSnapshotPluginIdScope {
@@ -1017,11 +1017,11 @@ function manifestOwnsConfiguredVoiceProvider(params: {
 function canStartConfiguredGenerationProviderPlugin(params: {
   plugin: InstalledPluginIndexRecord;
   manifest: PluginManifestRecord | undefined;
-  config: OpenClawConfig;
+  config: MerClawConfig;
   pluginsConfig: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   activationSource: {
     plugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
-    rootConfig?: OpenClawConfig;
+    rootConfig?: MerClawConfig;
   };
   configuredGenerationProviderIds: ConfiguredGenerationProviderIds;
   platform?: NodeJS.Platform;
@@ -1066,11 +1066,11 @@ function canStartConfiguredGenerationProviderPlugin(params: {
 function canStartConfiguredVoiceProviderPlugin(params: {
   plugin: InstalledPluginIndexRecord;
   manifest: PluginManifestRecord | undefined;
-  config: OpenClawConfig;
+  config: MerClawConfig;
   pluginsConfig: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   activationSource: {
     plugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
-    rootConfig?: OpenClawConfig;
+    rootConfig?: MerClawConfig;
   };
   configuredVoiceProviderIds: ConfiguredVoiceProviderIds;
   platform?: NodeJS.Platform;
@@ -1115,11 +1115,11 @@ function canStartConfiguredVoiceProviderPlugin(params: {
 function canStartConfiguredModelProviderPlugin(params: {
   plugin: InstalledPluginIndexRecord;
   manifest: PluginManifestRecord | undefined;
-  config: OpenClawConfig;
+  config: MerClawConfig;
   pluginsConfig: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   activationSource: {
     plugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
-    rootConfig?: OpenClawConfig;
+    rootConfig?: MerClawConfig;
   };
   configuredModelProviderIds: ReadonlySet<string>;
   platform?: NodeJS.Platform;
@@ -1166,9 +1166,9 @@ function canStartRequiredAgentHarnessPlugin(params: {
   pluginsConfig: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   activationSource: {
     plugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
-    rootConfig?: OpenClawConfig;
+    rootConfig?: MerClawConfig;
   };
-  config: OpenClawConfig;
+  config: MerClawConfig;
   requiredAgentHarnessRuntimes: ReadonlySet<string>;
   platform?: NodeJS.Platform;
 }): boolean {
@@ -1220,11 +1220,11 @@ function canStartRequiredAgentHarnessPlugin(params: {
 function canStartConfiguredSpeechProviderPlugin(params: {
   plugin: InstalledPluginIndexRecord;
   manifest: PluginManifestRecord | undefined;
-  config: OpenClawConfig;
+  config: MerClawConfig;
   pluginsConfig: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   activationSource: {
     plugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
-    rootConfig?: OpenClawConfig;
+    rootConfig?: MerClawConfig;
   };
   configuredSpeechProviderIds: ReadonlySet<string>;
   platform?: NodeJS.Platform;
@@ -1266,11 +1266,11 @@ function canStartConfiguredSpeechProviderPlugin(params: {
 function canStartConfiguredWebSearchProviderPlugin(params: {
   plugin: InstalledPluginIndexRecord;
   manifest: PluginManifestRecord | undefined;
-  config: OpenClawConfig;
+  config: MerClawConfig;
   pluginsConfig: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   activationSource: {
     plugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
-    rootConfig?: OpenClawConfig;
+    rootConfig?: MerClawConfig;
   };
   configuredWebSearchProviderIds: ReadonlySet<string>;
   platform?: NodeJS.Platform;
@@ -1312,7 +1312,7 @@ function canStartConfiguredWebSearchProviderPlugin(params: {
 function canStartConfiguredRootPlugin(params: {
   plugin: InstalledPluginIndexRecord;
   manifest: PluginManifestRecord | undefined;
-  config: OpenClawConfig;
+  config: MerClawConfig;
   pluginsConfig: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   activationSourcePlugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
 }): boolean {
@@ -1367,11 +1367,11 @@ function hasHookRuntimeStartupIntent(params: {
 function canStartExplicitHookPlugin(params: {
   plugin: InstalledPluginIndexRecord;
   manifest: PluginManifestRecord | undefined;
-  config: OpenClawConfig;
+  config: MerClawConfig;
   pluginsConfig: NormalizedPluginsConfig;
   activationSource: {
     plugins: NormalizedPluginsConfig;
-    rootConfig?: OpenClawConfig;
+    rootConfig?: MerClawConfig;
   };
   activationSourcePlugins: NormalizedPluginsConfig;
   platform?: NodeJS.Platform;
@@ -1416,11 +1416,11 @@ function canStartExplicitHookPlugin(params: {
 
 function canStartConfiguredChannelPlugin(params: {
   plugin: InstalledPluginIndexRecord;
-  config: OpenClawConfig;
+  config: MerClawConfig;
   pluginsConfig: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   activationSource: {
     plugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
-    rootConfig?: OpenClawConfig;
+    rootConfig?: MerClawConfig;
   };
   manifestLookup: ManifestRegistryLookup;
   platform?: NodeJS.Platform;
@@ -1464,7 +1464,7 @@ function canStartConfiguredChannelPlugin(params: {
 }
 
 export function resolveChannelPluginIds(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
 }): string[] {
@@ -1481,7 +1481,7 @@ export function resolveChannelPluginIdsFromRegistry(params: {
 }
 
 export function resolveConfiguredDeferredChannelPluginIdsFromRegistry(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   env: NodeJS.ProcessEnv;
   index: PluginRegistrySnapshot;
   manifestRegistry: PluginManifestRegistry;
@@ -1509,13 +1509,13 @@ export function resolveConfiguredDeferredChannelPluginIdsFromRegistry(params: {
 }
 
 function resolveConfiguredDeferredChannelPluginIdsFromPrepared(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   index: PluginRegistrySnapshot;
   configuredChannelIds: ReadonlySet<string>;
   pluginsConfig: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   activationSource: {
     plugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
-    rootConfig?: OpenClawConfig;
+    rootConfig?: MerClawConfig;
   };
   manifestLookup: ManifestRegistryLookup;
   platform?: NodeJS.Platform;
@@ -1545,7 +1545,7 @@ function resolveConfiguredDeferredChannelPluginIdsFromPrepared(params: {
 }
 
 export function resolveConfiguredDeferredChannelPluginIds(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
 }): string[] {
@@ -1553,8 +1553,8 @@ export function resolveConfiguredDeferredChannelPluginIds(params: {
 }
 
 export function resolveGatewayStartupPluginPlanFromRegistry(params: {
-  config: OpenClawConfig;
-  activationSourceConfig?: OpenClawConfig;
+  config: MerClawConfig;
+  activationSourceConfig?: MerClawConfig;
   env: NodeJS.ProcessEnv;
   index: PluginRegistrySnapshot;
   manifestRegistry: PluginManifestRegistry;
@@ -1776,8 +1776,8 @@ export function resolveGatewayStartupPluginPlanFromRegistry(params: {
 }
 
 export function resolveGatewayStartupPluginIdsFromRegistry(params: {
-  config: OpenClawConfig;
-  activationSourceConfig?: OpenClawConfig;
+  config: MerClawConfig;
+  activationSourceConfig?: MerClawConfig;
   env: NodeJS.ProcessEnv;
   index: PluginRegistrySnapshot;
   manifestRegistry: PluginManifestRegistry;
@@ -1787,8 +1787,8 @@ export function resolveGatewayStartupPluginIdsFromRegistry(params: {
 }
 
 export function loadGatewayStartupPluginPlan(params: {
-  config: OpenClawConfig;
-  activationSourceConfig?: OpenClawConfig;
+  config: MerClawConfig;
+  activationSourceConfig?: MerClawConfig;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
   index?: PluginRegistrySnapshot;
@@ -1840,8 +1840,8 @@ export function loadGatewayStartupPluginPlan(params: {
 }
 
 export function resolveGatewayStartupPluginIds(params: {
-  config: OpenClawConfig;
-  activationSourceConfig?: OpenClawConfig;
+  config: MerClawConfig;
+  activationSourceConfig?: MerClawConfig;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
   platform?: NodeJS.Platform;

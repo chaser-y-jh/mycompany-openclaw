@@ -2,11 +2,11 @@
 // Keep monitor internals off the broad package runtime-api barrel so monitor
 // tests and shared workers do not pull unrelated Matrix helper surfaces.
 
-export type { NormalizedLocation } from "openclaw/plugin-sdk/channel-inbound";
-export type { PluginRuntime, RuntimeLogger } from "openclaw/plugin-sdk/plugin-runtime";
-export type { BlockReplyContext, ReplyPayload } from "openclaw/plugin-sdk/reply-runtime";
-export type { MarkdownTableMode, OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-export type { RuntimeEnv } from "openclaw/plugin-sdk/runtime";
+export type { NormalizedLocation } from "merclaw/plugin-sdk/channel-inbound";
+export type { PluginRuntime, RuntimeLogger } from "merclaw/plugin-sdk/plugin-runtime";
+export type { BlockReplyContext, ReplyPayload } from "merclaw/plugin-sdk/reply-runtime";
+export type { MarkdownTableMode, MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+export type { RuntimeEnv } from "merclaw/plugin-sdk/runtime";
 export {
   addAllowlistUserEntriesFromConfigEntry,
   buildAllowlistResolutionSummary,
@@ -14,16 +14,16 @@ export {
   formatAllowlistMatchMeta,
   patchAllowlistUsersInConfigEntries,
   summarizeMapping,
-} from "openclaw/plugin-sdk/allow-from";
+} from "merclaw/plugin-sdk/allow-from";
 export {
   createReplyPrefixOptions,
   createTypingCallbacks,
-} from "openclaw/plugin-sdk/channel-outbound";
-export { formatLocationText, toLocationContext } from "openclaw/plugin-sdk/channel-inbound";
-export { getAgentScopedMediaLocalRoots } from "openclaw/plugin-sdk/agent-media-payload";
-export { logInboundDrop } from "openclaw/plugin-sdk/channel-inbound";
-export { logTypingFailure } from "openclaw/plugin-sdk/channel-outbound";
+} from "merclaw/plugin-sdk/channel-outbound";
+export { formatLocationText, toLocationContext } from "merclaw/plugin-sdk/channel-inbound";
+export { getAgentScopedMediaLocalRoots } from "merclaw/plugin-sdk/agent-media-payload";
+export { logInboundDrop } from "merclaw/plugin-sdk/channel-inbound";
+export { logTypingFailure } from "merclaw/plugin-sdk/channel-outbound";
 export {
   buildChannelKeyCandidates,
   resolveChannelEntryMatch,
-} from "openclaw/plugin-sdk/channel-targets";
+} from "merclaw/plugin-sdk/channel-targets";

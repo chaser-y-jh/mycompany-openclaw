@@ -1,12 +1,12 @@
 import type {
   ChannelBotLoopProtectionConfig,
   MentionPatternsPolicyConfig,
-} from "openclaw/plugin-sdk/config-contracts";
+} from "merclaw/plugin-sdk/config-contracts";
 import type {
   ContextVisibilityMode,
   DmPolicy,
   GroupPolicy,
-  OpenClawConfig,
+  MerClawConfig,
   SecretInput,
 } from "./runtime-api.js";
 
@@ -97,7 +97,7 @@ export type MatrixStreamingMode = "partial" | "quiet" | "progress" | "off";
 export type MatrixStreamingConfig = {
   /** Preview streaming mode for Matrix replies. Default: "off". */
   mode?: MatrixStreamingMode;
-  progress?: import("openclaw/plugin-sdk/channel-outbound").ChannelStreamingProgressConfig;
+  progress?: import("merclaw/plugin-sdk/channel-outbound").ChannelStreamingProgressConfig;
   preview?: {
     /** Show tool/progress activity in the live draft preview. Default: true. */
     toolProgress?: boolean;
@@ -251,12 +251,12 @@ export type CoreConfig = {
   };
   session?: {
     store?: string;
-    dmScope?: NonNullable<OpenClawConfig["session"]>["dmScope"];
+    dmScope?: NonNullable<MerClawConfig["session"]>["dmScope"];
   };
   messages?: {
     ackReaction?: string;
     ackReactionScope?: "group-mentions" | "group-all" | "direct" | "all" | "none" | "off";
   };
-  secrets?: OpenClawConfig["secrets"];
+  secrets?: MerClawConfig["secrets"];
   [key: string]: unknown;
 };

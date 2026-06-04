@@ -1,5 +1,5 @@
-import { resolveHumanDelayConfig } from "openclaw/plugin-sdk/agent-runtime";
-import { logTypingFailure } from "openclaw/plugin-sdk/channel-feedback";
+import { resolveHumanDelayConfig } from "merclaw/plugin-sdk/agent-runtime";
+import { logTypingFailure } from "merclaw/plugin-sdk/channel-feedback";
 import {
   buildMentionRegexes,
   buildChannelInboundEventContext,
@@ -11,33 +11,33 @@ import {
   resolveEnvelopeFormatOptions,
   runChannelInboundEvent,
   shouldDebounceTextInbound,
-} from "openclaw/plugin-sdk/channel-inbound";
-import { logInboundDrop } from "openclaw/plugin-sdk/channel-inbound";
-import { createChannelMessageReplyPipeline } from "openclaw/plugin-sdk/channel-outbound";
+} from "merclaw/plugin-sdk/channel-inbound";
+import { logInboundDrop } from "merclaw/plugin-sdk/channel-inbound";
+import { createChannelMessageReplyPipeline } from "merclaw/plugin-sdk/channel-outbound";
 import {
   resolveChannelGroupPolicy,
   resolveChannelGroupRequireMention,
-} from "openclaw/plugin-sdk/channel-policy";
-import { hasControlCommand } from "openclaw/plugin-sdk/command-auth-native";
-import { recordInboundSession } from "openclaw/plugin-sdk/conversation-runtime";
+} from "merclaw/plugin-sdk/channel-policy";
+import { hasControlCommand } from "merclaw/plugin-sdk/command-auth-native";
+import { recordInboundSession } from "merclaw/plugin-sdk/conversation-runtime";
 import {
   createInternalHookEvent,
   fireAndForgetHook,
   toInternalMessageReceivedContext,
   triggerInternalHook,
-} from "openclaw/plugin-sdk/hook-runtime";
-import { kindFromMime } from "openclaw/plugin-sdk/media-runtime";
-import { createChannelHistoryWindow } from "openclaw/plugin-sdk/reply-history";
-import { dispatchInboundMessage } from "openclaw/plugin-sdk/reply-runtime";
-import { createReplyDispatcherWithTyping } from "openclaw/plugin-sdk/reply-runtime";
-import { settleReplyDispatcher } from "openclaw/plugin-sdk/reply-runtime";
-import { resolveAgentRoute, resolveInboundLastRouteSessionKey } from "openclaw/plugin-sdk/routing";
-import { danger, logVerbose, shouldLogVerbose } from "openclaw/plugin-sdk/runtime-env";
-import { resolvePinnedMainDmOwnerFromAllowlist } from "openclaw/plugin-sdk/security-runtime";
-import { readSessionUpdatedAt, resolveStorePath } from "openclaw/plugin-sdk/session-store-runtime";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { enqueueSystemEvent } from "openclaw/plugin-sdk/system-event-runtime";
-import { normalizeE164 } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "merclaw/plugin-sdk/hook-runtime";
+import { kindFromMime } from "merclaw/plugin-sdk/media-runtime";
+import { createChannelHistoryWindow } from "merclaw/plugin-sdk/reply-history";
+import { dispatchInboundMessage } from "merclaw/plugin-sdk/reply-runtime";
+import { createReplyDispatcherWithTyping } from "merclaw/plugin-sdk/reply-runtime";
+import { settleReplyDispatcher } from "merclaw/plugin-sdk/reply-runtime";
+import { resolveAgentRoute, resolveInboundLastRouteSessionKey } from "merclaw/plugin-sdk/routing";
+import { danger, logVerbose, shouldLogVerbose } from "merclaw/plugin-sdk/runtime-env";
+import { resolvePinnedMainDmOwnerFromAllowlist } from "merclaw/plugin-sdk/security-runtime";
+import { readSessionUpdatedAt, resolveStorePath } from "merclaw/plugin-sdk/session-store-runtime";
+import { normalizeOptionalString } from "merclaw/plugin-sdk/string-coerce-runtime";
+import { enqueueSystemEvent } from "merclaw/plugin-sdk/system-event-runtime";
+import { normalizeE164 } from "merclaw/plugin-sdk/text-utility-runtime";
 import {
   maybeResolveSignalApprovalReaction,
   resolveSignalApprovalConversationKey,

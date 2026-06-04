@@ -1,5 +1,5 @@
-import { sortUniqueStrings } from "@openclaw/normalization-core/string-normalization";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { sortUniqueStrings } from "@merclaw/normalization-core/string-normalization";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { DEFAULT_AGENT_ID } from "../routing/session-key.js";
 import {
   DEFAULT_EXEC_APPROVAL_ASK_FALLBACK,
@@ -19,7 +19,7 @@ import {
 
 const DEFAULT_REQUESTED_SECURITY: ExecSecurity = "full";
 const DEFAULT_REQUESTED_ASK: ExecAsk = "off";
-const DEFAULT_HOST_PATH = "~/.openclaw/exec-approvals.json";
+const DEFAULT_HOST_PATH = "~/.merclaw/exec-approvals.json";
 const REQUESTED_DEFAULT_LABEL = {
   security: DEFAULT_REQUESTED_SECURITY,
   ask: DEFAULT_REQUESTED_ASK,
@@ -99,13 +99,13 @@ function formatRequestedSource(params: {
   defaultValue: ExecSecurity | ExecAsk;
 }): string {
   return params.sourcePath === "__default__"
-    ? `OpenClaw default (${params.defaultValue})`
+    ? `MerClaw default (${params.defaultValue})`
     : `${params.sourcePath}.${params.field}`;
 }
 
 function formatModeSource(params: { sourcePath: string; configPath: string }): string {
   if (params.sourcePath === "__default__") {
-    return "derived from OpenClaw defaults";
+    return "derived from MerClaw defaults";
   }
   return `${params.sourcePath === "scope" ? params.configPath : params.sourcePath}.mode`;
 }
@@ -269,7 +269,7 @@ function formatHostFieldSource(params: {
     return `${params.hostPath} ${params.sourceSuffix}`;
   }
   if (params.field === "askFallback") {
-    return `OpenClaw default (${DEFAULT_EXEC_APPROVAL_ASK_FALLBACK})`;
+    return `MerClaw default (${DEFAULT_EXEC_APPROVAL_ASK_FALLBACK})`;
   }
   return "inherits requested tool policy";
 }
@@ -286,7 +286,7 @@ function resolveAskNote(params: {
 }
 
 export function collectExecPolicyScopeSnapshots(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   approvals: ExecApprovalsFile;
   hostPath?: string;
 }): ExecPolicyScopeSnapshot[] {
@@ -385,7 +385,7 @@ export function resolveExecPolicyScopeSnapshot(params: {
       requested: requestedHost.value,
       requestedSource:
         requestedHost.sourcePath === "__default__"
-          ? "OpenClaw default (auto)"
+          ? "MerClaw default (auto)"
           : `${requestedHost.sourcePath === "scope" ? params.configPath : requestedHost.sourcePath}.host`,
     },
     mode: {

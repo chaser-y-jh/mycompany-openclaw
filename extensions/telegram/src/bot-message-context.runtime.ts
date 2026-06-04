@@ -1,4 +1,4 @@
-export { createStatusReactionController } from "openclaw/plugin-sdk/channel-feedback";
-export { recordChannelActivity } from "openclaw/plugin-sdk/channel-activity-runtime";
-export { getRuntimeConfig } from "openclaw/plugin-sdk/runtime-config-snapshot";
-export { ensureConfiguredBindingRouteReady } from "openclaw/plugin-sdk/conversation-runtime";
+export { createStatusReactionController } from "merclaw/plugin-sdk/channel-feedback";
+export { recordChannelActivity } from "merclaw/plugin-sdk/channel-activity-runtime";
+export { getRuntimeConfig } from "merclaw/plugin-sdk/runtime-config-snapshot";
+export { ensureConfiguredBindingRouteReady } from "merclaw/plugin-sdk/conversation-runtime";

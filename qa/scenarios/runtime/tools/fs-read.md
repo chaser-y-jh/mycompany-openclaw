@@ -8,9 +8,9 @@ runtimeParityTier: standard
 coverage:
   primary:
     - tools.fs.read
-objective: Verify file read behavior is tracked across OpenClaw and Codex while Codex owns read natively.
+objective: Verify file read behavior is tracked across MerClaw and Codex while Codex owns read natively.
 successCriteria:
-  - OpenClaw may expose OpenClaw read while Codex app-server mode may omit duplicate OpenClaw dynamic read.
+  - MerClaw may expose MerClaw read while Codex app-server mode may omit duplicate MerClaw dynamic read.
   - Mock provider read plans are reported as fixture intent, not as actual runtime tool calls.
   - The row stays report-only until failure-path injection proves native Codex read behavior directly.
 docsRefs:

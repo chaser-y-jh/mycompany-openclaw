@@ -153,7 +153,7 @@ export type ModelDefinitionConfig = {
    */
   contextTokens?: number;
   maxTokens: number;
-  /** Maps OpenClaw thinking levels to provider/model-specific values. */
+  /** Maps MerClaw thinking levels to provider/model-specific values. */
   thinkingLevelMap?: ThinkingLevelMap;
   /** Provider-specific request/runtime parameters passed through to provider plugins. */
   params?: Record<string, unknown>;

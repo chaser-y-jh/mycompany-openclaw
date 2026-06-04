@@ -1,15 +1,15 @@
-import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalLowercaseString } from "@merclaw/normalization-core/string-coerce";
 import type { MsgContext } from "../auto-reply/templating.js";
-import type { OpenClawConfig } from "../config/types.js";
+import type { MerClawConfig } from "../config/types.js";
 import { loadBundledPluginPublicArtifactModuleSync } from "../plugins/public-surface-loader.js";
 
 type ChannelMediaContractApi = {
   resolveInboundAttachmentRoots?: (params: {
-    cfg: OpenClawConfig;
+    cfg: MerClawConfig;
     accountId?: string;
   }) => readonly string[] | undefined;
   resolveRemoteInboundAttachmentRoots?: (params: {
-    cfg: OpenClawConfig;
+    cfg: MerClawConfig;
     accountId?: string;
   }) => readonly string[] | undefined;
 };
@@ -63,7 +63,7 @@ function findChannelMediaContractApi(
 }
 
 export function resolveChannelInboundAttachmentRoots(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   ctx: MsgContext;
 }): readonly string[] | undefined {
   return resolveChannelInboundAttachmentRootsForChannel({
@@ -74,7 +74,7 @@ export function resolveChannelInboundAttachmentRoots(params: {
 }
 
 export function resolveChannelInboundAttachmentRootsForChannel(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channelId?: string | null;
   accountId?: string | null;
 }): readonly string[] | undefined {
@@ -92,7 +92,7 @@ export function resolveChannelInboundAttachmentRootsForChannel(params: {
 }
 
 export function resolveChannelRemoteInboundAttachmentRoots(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   ctx: MsgContext;
 }): readonly string[] | undefined {
   const contractApi = findChannelMediaContractApi(

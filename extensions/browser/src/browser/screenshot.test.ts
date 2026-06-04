@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
-import { getImageMetadata } from "openclaw/plugin-sdk/media-runtime";
-import { createSolidPngBuffer } from "openclaw/plugin-sdk/test-fixtures";
+import { getImageMetadata } from "merclaw/plugin-sdk/media-runtime";
+import { createSolidPngBuffer } from "merclaw/plugin-sdk/test-fixtures";
 import { describe, expect, it } from "vitest";
 import { normalizeBrowserScreenshot } from "./screenshot.js";
 

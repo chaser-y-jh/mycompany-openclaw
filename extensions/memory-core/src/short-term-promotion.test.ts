@@ -3,7 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
-vi.mock("openclaw/plugin-sdk/memory-host-events", () => ({
+vi.mock("merclaw/plugin-sdk/memory-host-events", () => ({
   appendMemoryHostEvent: vi.fn(async () => {}),
 }));
 
@@ -1164,7 +1164,7 @@ describe("short-term promotion", () => {
       expect(secondApply.reconciledExisting).toBe(1);
 
       const memoryText = await fs.readFile(path.join(workspaceDir, "MEMORY.md"), "utf-8");
-      expect(memoryText.match(/openclaw-memory-promotion:/g)?.length).toBe(1);
+      expect(memoryText.match(/merclaw-memory-promotion:/g)?.length).toBe(1);
       expect(
         memoryText.match(/The gateway should stay loopback-only on port 18789\./g)?.length,
       ).toBe(1);
@@ -1234,9 +1234,9 @@ describe("short-term promotion", () => {
 
       const memoryText = await fs.readFile(path.join(workspaceDir, "MEMORY.md"), "utf-8");
       expect(memoryText).toContain(
-        "<!-- openclaw-memory-promotion:memory:memory/project alpha/2026-04-01.md:2:2 -->",
+        "<!-- merclaw-memory-promotion:memory:memory/project alpha/2026-04-01.md:2:2 -->",
       );
-      expect(memoryText.match(/openclaw-memory-promotion:/g)?.length).toBe(1);
+      expect(memoryText.match(/merclaw-memory-promotion:/g)?.length).toBe(1);
       expect(
         memoryText.match(/The project alpha gateway should stay loopback-only on port 18789\./g)
           ?.length,
@@ -1451,9 +1451,9 @@ describe("short-term promotion", () => {
         "## Notes",
         "Real durable content.",
         "## Light Sleep",
-        "<!-- openclaw:dreaming:light:start -->",
+        "<!-- merclaw:dreaming:light:start -->",
         "- Candidate: some staged dream content",
-        "<!-- openclaw:dreaming:light:end -->",
+        "<!-- merclaw:dreaming:light:end -->",
         "## After",
         "More real content.",
       ];
@@ -1465,9 +1465,9 @@ describe("short-term promotion", () => {
       const lines = [
         "# Daily note",
         "Real durable content.",
-        "<!-- openclaw:dreaming:rem:start -->",
+        "<!-- merclaw:dreaming:rem:start -->",
         "staged dream content",
-        "<!-- openclaw:dreaming:rem:end -->",
+        "<!-- merclaw:dreaming:rem:end -->",
         "More real content.",
       ];
       expect(testing.lineRangeOverlapsDreamingFence(lines, 2, 2)).toBe(false);
@@ -1477,9 +1477,9 @@ describe("short-term promotion", () => {
     it("returns true when the range straddles a fence boundary", () => {
       const lines = [
         "real line 1",
-        "<!-- openclaw:dreaming:diary:start -->",
+        "<!-- merclaw:dreaming:diary:start -->",
         "dream line",
-        "<!-- openclaw:dreaming:diary:end -->",
+        "<!-- merclaw:dreaming:diary:end -->",
         "real line 5",
       ];
       expect(testing.lineRangeOverlapsDreamingFence(lines, 2, 4)).toBe(true);
@@ -1487,13 +1487,13 @@ describe("short-term promotion", () => {
 
     it("recovers after a fence end so later real content is not flagged", () => {
       const lines = [
-        "<!-- openclaw:dreaming:light:start -->",
+        "<!-- merclaw:dreaming:light:start -->",
         "dream",
-        "<!-- openclaw:dreaming:light:end -->",
+        "<!-- merclaw:dreaming:light:end -->",
         "real line 4",
-        "<!-- openclaw:dreaming:rem:start -->",
+        "<!-- merclaw:dreaming:rem:start -->",
         "more dream",
-        "<!-- openclaw:dreaming:rem:end -->",
+        "<!-- merclaw:dreaming:rem:end -->",
         "real line 8",
       ];
       expect(testing.lineRangeOverlapsDreamingFence(lines, 4, 4)).toBe(false);
@@ -1511,9 +1511,9 @@ describe("short-term promotion", () => {
         "Legitimate durable observation about backups.",
         "",
         "## Light Sleep",
-        "<!-- openclaw:dreaming:light:start -->",
+        "<!-- merclaw:dreaming:light:start -->",
         "- Candidate: staged dream scratchwork",
-        "<!-- openclaw:dreaming:light:end -->",
+        "<!-- merclaw:dreaming:light:end -->",
       ]);
       expect(dailyPath).toBeTruthy();
 
@@ -1811,7 +1811,7 @@ describe("short-term promotion", () => {
       expect(promotedLine).toMatch(
         /\[score=0\.\d{3} recalls=1 avg=0\.\d{3} source=memory\/2026-04-01\.md:1-1\]/,
       );
-      expect(memoryText).toMatch(/<!-- openclaw-memory-promotion:[^\n]+ -->/);
+      expect(memoryText).toMatch(/<!-- merclaw-memory-promotion:[^\n]+ -->/);
     });
   });
 
@@ -2594,11 +2594,11 @@ describe("short-term promotion", () => {
           "# Long-Term Memory",
           "",
           "## Promoted From Short-Term Memory (2026-04-10)",
-          "<!-- openclaw-memory-promotion:legacy-old -->",
+          "<!-- merclaw-memory-promotion:legacy-old -->",
           `- ${filler}`,
           "",
           "## Promoted From Short-Term Memory (2026-04-20)",
-          "<!-- openclaw-memory-promotion:legacy-newer -->",
+          "<!-- merclaw-memory-promotion:legacy-newer -->",
           `- ${filler}`,
           "",
         ].join("\n");

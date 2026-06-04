@@ -1,7 +1,7 @@
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
 import { normalizeConversationText } from "../../acp/conversation-id.js";
 import { resolveConversationBindingContext } from "../../channels/conversation-binding-context.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { getActivePluginChannelRegistry } from "../../plugins/runtime.js";
 import type { MsgContext } from "../templating.js";
 import type { HandleCommandsParams } from "./commands-types.js";
@@ -31,7 +31,7 @@ function resolveBindingChannel(ctx: BindingMsgContext, commandChannel?: string |
 
 function resolveBindingAccountId(params: {
   ctx: BindingMsgContext;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   commandChannel?: string | null;
 }): string {
   const channel = resolveBindingChannel(params.ctx, params.commandChannel);
@@ -52,7 +52,7 @@ function resolveBindingThreadId(threadId: string | number | null | undefined): s
 }
 
 export function resolveConversationBindingContextFromMessage(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   ctx: BindingMsgContext;
   senderId?: string | null;
   sessionKey?: string | null;
@@ -104,7 +104,7 @@ export function resolveConversationBindingChannelFromMessage(
 
 export function resolveConversationBindingAccountIdFromMessage(params: {
   ctx: BindingMsgContext;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   commandChannel?: string | null;
 }): string {
   return resolveBindingAccountId(params);

@@ -1,5 +1,5 @@
-import { expectChannelInboundContextContract as expectInboundContextContract } from "openclaw/plugin-sdk/channel-contract-testing";
-import type { MsgContext } from "openclaw/plugin-sdk/reply-runtime";
+import { expectChannelInboundContextContract as expectInboundContextContract } from "merclaw/plugin-sdk/channel-contract-testing";
+import type { MsgContext } from "merclaw/plugin-sdk/reply-runtime";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { SignalReactionMessage } from "./event-handler.types.js";
 vi.useRealTimers();
@@ -46,9 +46,9 @@ vi.mock("../send.js", () => ({
   sendReadReceiptSignal: sendReadReceiptMock,
 }));
 
-vi.mock("openclaw/plugin-sdk/reply-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/reply-runtime")>(
-    "openclaw/plugin-sdk/reply-runtime",
+vi.mock("merclaw/plugin-sdk/reply-runtime", async () => {
+  const actual = await vi.importActual<typeof import("merclaw/plugin-sdk/reply-runtime")>(
+    "merclaw/plugin-sdk/reply-runtime",
   );
   return {
     ...actual,
@@ -58,9 +58,9 @@ vi.mock("openclaw/plugin-sdk/reply-runtime", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/conversation-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/conversation-runtime")>(
-    "openclaw/plugin-sdk/conversation-runtime",
+vi.mock("merclaw/plugin-sdk/conversation-runtime", async () => {
+  const actual = await vi.importActual<typeof import("merclaw/plugin-sdk/conversation-runtime")>(
+    "merclaw/plugin-sdk/conversation-runtime",
   );
   return {
     ...actual,
@@ -70,9 +70,9 @@ vi.mock("openclaw/plugin-sdk/conversation-runtime", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/system-event-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/system-event-runtime")>(
-    "openclaw/plugin-sdk/system-event-runtime",
+vi.mock("merclaw/plugin-sdk/system-event-runtime", async () => {
+  const actual = await vi.importActual<typeof import("merclaw/plugin-sdk/system-event-runtime")>(
+    "merclaw/plugin-sdk/system-event-runtime",
   );
   return {
     ...actual,

@@ -1,10 +1,10 @@
 {
-  "name": "@openclaw/acpx",
+  "name": "@merclaw/acpx",
   "version": "2026.5.31",
-  "description": "OpenClaw ACP runtime backend with plugin-owned session and transport management.",
+  "description": "MerClaw ACP runtime backend with plugin-owned session and transport management.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/openclaw/openclaw"
+    "url": "https://github.com/merclaw/merclaw"
   },
   "type": "module",
   "dependencies": {
@@ -14,14 +14,14 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@merclaw/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ],
     "install": {
-      "npmSpec": "@openclaw/acpx",
+      "npmSpec": "@merclaw/acpx",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.4.25"
     },
@@ -29,7 +29,7 @@
       "pluginApi": ">=2026.5.31"
     },
     "build": {
-      "openclawVersion": "2026.5.31",
+      "merclawVersion": "2026.5.31",
       "staticAssets": [
         {
           "source": "./src/runtime-internals/mcp-proxy.mjs",

@@ -4,7 +4,7 @@ import {
   type CodexBundleMcpThreadConfig,
   type EmbeddedRunAttemptParams,
   type resolveSandboxContext,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "merclaw/plugin-sdk/agent-harness-runtime";
 import { defaultCodexAppInventoryCache } from "./app-inventory-cache.js";
 import { buildCodexPluginThreadConfigEligibilityLogData } from "./attempt-diagnostics.js";
 import { withCodexStartupTimeout } from "./attempt-timeouts.js";
@@ -21,7 +21,7 @@ import {
 import {
   disableCodexPluginThreadConfig,
   resolveCodexAppServerExecutionCwd,
-  resolveCodexExternalSandboxPolicyForOpenClawSandbox,
+  resolveCodexExternalSandboxPolicyForMerClawSandbox,
   resolveCodexSandboxEnvironmentSelection,
   shouldRequireCodexSandboxExecServerEnvironment,
 } from "./dynamic-tool-build.js";
@@ -227,7 +227,7 @@ export async function startCodexAttemptThread(params: {
                 !startupSandboxEnvironment
               ) {
                 throw new Error(
-                  "Codex app-server did not register an OpenClaw sandbox exec-server environment.",
+                  "Codex app-server did not register an MerClaw sandbox exec-server environment.",
                 );
               }
             } catch (error) {
@@ -244,7 +244,7 @@ export async function startCodexAttemptThread(params: {
               nativeToolSurfaceEnabled: params.nativeToolSurfaceEnabled,
             });
             const startupSandboxPolicy = startupSandboxEnvironment
-              ? resolveCodexExternalSandboxPolicyForOpenClawSandbox(params.sandbox)
+              ? resolveCodexExternalSandboxPolicyForMerClawSandbox(params.sandbox)
               : undefined;
             const buildThreadLifecycleParams = () =>
               ({

@@ -3,7 +3,7 @@ import type { BootstrapContextMode } from "../../agents/bootstrap-files.js";
 import { resolveCliRuntimeExecutionProvider } from "../../agents/model-runtime-aliases.js";
 import type { ThinkLevel, VerboseLevel } from "../../auto-reply/thinking.js";
 import type { AgentDefaultsConfig } from "../../config/types.agent-defaults.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import type { SourceDeliveryPlan } from "../../infra/outbound/source-delivery-plan.js";
 import { createLazyImportLoader } from "../../shared/lazy-promise.js";
 import type { SkillSnapshot } from "../../skills/types.js";
@@ -81,7 +81,7 @@ function resolveIsolatedCronPromptCacheKey(params: {
   const digest = createHash("sha256").update(material).digest("hex").slice(0, 32);
   // Isolated cron rotates transcript/session ids per run; keep cache affinity
   // on stable job identity without sending raw local session labels upstream.
-  return `openclaw-cron-${digest}`;
+  return `merclaw-cron-${digest}`;
 }
 
 export function isCommandStyleCronMessage(message: string): boolean {
@@ -114,8 +114,8 @@ export type CronExecutionResult = {
 };
 
 export function createCronPromptExecutor(params: {
-  cfg: OpenClawConfig;
-  cfgWithAgentDefaults: OpenClawConfig;
+  cfg: MerClawConfig;
+  cfgWithAgentDefaults: MerClawConfig;
   job: CronJob;
   agentId: string;
   agentDir: string;
@@ -350,8 +350,8 @@ export function createCronPromptExecutor(params: {
 }
 
 export async function executeCronRun(params: {
-  cfg: OpenClawConfig;
-  cfgWithAgentDefaults: OpenClawConfig;
+  cfg: MerClawConfig;
+  cfgWithAgentDefaults: MerClawConfig;
   job: CronJob;
   agentId: string;
   agentDir: string;

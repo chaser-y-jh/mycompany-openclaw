@@ -125,7 +125,7 @@ describe("parseStandalonePlainTextToolCallBlocks", () => {
     const firstRaw = [
       "[tool:exec]",
       "<parameter=command>",
-      'cat /proc/mounts 2>/dev/null | grep -i "libra|rav|openclaw" | head -20',
+      'cat /proc/mounts 2>/dev/null | grep -i "libra|rav|merclaw" | head -20',
       "</parameter>",
       "</function>",
     ].join("\n");
@@ -145,7 +145,7 @@ describe("parseStandalonePlainTextToolCallBlocks", () => {
       {
         name: "exec",
         arguments: {
-          command: 'cat /proc/mounts 2>/dev/null | grep -i "libra|rav|openclaw" | head -20',
+          command: 'cat /proc/mounts 2>/dev/null | grep -i "libra|rav|merclaw" | head -20',
         },
         start: 0,
         end: firstRaw.length,
@@ -288,7 +288,7 @@ describe("stripPlainTextToolCallBlocks", () => {
           "before",
           "[tool:exec]",
           "<parameter=command>",
-          'cat /proc/mounts 2>/dev/null | grep -i "libra|rav|openclaw" | head -20',
+          'cat /proc/mounts 2>/dev/null | grep -i "libra|rav|merclaw" | head -20',
           "</parameter>",
           "</function>",
           "",

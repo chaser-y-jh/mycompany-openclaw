@@ -1,5 +1,5 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { requireRuntimeConfig } from "openclaw/plugin-sdk/plugin-config-runtime";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { requireRuntimeConfig } from "merclaw/plugin-sdk/plugin-config-runtime";
 import { resolveDiscordAccount } from "./accounts.js";
 import { parseAndResolveDiscordTarget } from "./target-resolver.js";
 import type { DiscordTargetParseOptions } from "./targets.js";
@@ -16,7 +16,7 @@ type DiscordRecipient =
 
 export async function parseAndResolveRecipient(
   raw: string,
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   accountId?: string,
   parseOptions: DiscordTargetParseOptions = {},
 ): Promise<DiscordRecipient> {
@@ -40,7 +40,7 @@ export async function parseAndResolveRecipient(
 
 export async function parseAndResolveChannelRecipient(
   raw: string,
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   accountId?: string,
 ): Promise<DiscordRecipient> {
   return await parseAndResolveRecipient(raw, cfg, accountId, {

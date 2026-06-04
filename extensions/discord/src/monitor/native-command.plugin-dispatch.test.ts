@@ -1,19 +1,19 @@
 import { ChannelType } from "discord-api-types/v10";
-import type { NativeCommandSpec } from "openclaw/plugin-sdk/command-auth-native";
-import { resolveDirectStatusReplyForSession } from "openclaw/plugin-sdk/command-status-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NativeCommandSpec } from "merclaw/plugin-sdk/command-auth-native";
+import { resolveDirectStatusReplyForSession } from "merclaw/plugin-sdk/command-status-runtime";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
 import {
   clearPluginCommands,
   executePluginCommand,
   matchPluginCommand,
   registerPluginCommand,
-} from "openclaw/plugin-sdk/plugin-runtime";
+} from "merclaw/plugin-sdk/plugin-runtime";
 import {
   createTestRegistry,
   setActivePluginRegistry,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
-import { dispatchReplyWithDispatcher } from "openclaw/plugin-sdk/reply-dispatch-runtime";
-import { getSessionEntry } from "openclaw/plugin-sdk/session-store-runtime";
+} from "merclaw/plugin-sdk/plugin-test-runtime";
+import { dispatchReplyWithDispatcher } from "merclaw/plugin-sdk/reply-dispatch-runtime";
+import { getSessionEntry } from "merclaw/plugin-sdk/session-store-runtime";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineThrowingDiscordChannelGetter } from "../test-support/partial-channel.js";
 import { resolveDiscordNativeInteractionRouteState } from "./native-command-route.js";
@@ -33,14 +33,14 @@ const runtimeModuleMocks = vi.hoisted(() => ({
   getSessionEntry: vi.fn(),
 }));
 
-function createConfig(): OpenClawConfig {
+function createConfig(): MerClawConfig {
   return {
     channels: {
       discord: {
         dm: { enabled: true, policy: "open", allowFrom: ["*"] },
       },
     },
-  } as OpenClawConfig;
+  } as MerClawConfig;
 }
 
 function createConfiguredAcpBinding(params: {
@@ -106,7 +106,7 @@ function createConfiguredAcpCase(params: {
           agentId: params.agentId,
         }),
       ],
-    } as OpenClawConfig,
+    } as MerClawConfig,
     interaction: createInteraction({
       channelType: params.channelType,
       channelId: params.channelId,
@@ -116,7 +116,7 @@ function createConfiguredAcpCase(params: {
   };
 }
 
-async function createNativeCommand(cfg: OpenClawConfig, commandSpec: NativeCommandSpec) {
+async function createNativeCommand(cfg: MerClawConfig, commandSpec: NativeCommandSpec) {
   return createDiscordNativeCommand({
     command: commandSpec,
     cfg,
@@ -266,7 +266,7 @@ function expectNoFollowUpContent(interaction: MockCommandInteraction, content: s
   expect(matched).toBe(false);
 }
 
-async function createPluginCommand(params: { cfg: OpenClawConfig; name: string }) {
+async function createPluginCommand(params: { cfg: MerClawConfig; name: string }) {
   return createDiscordNativeCommand({
     command: {
       name: params.name,
@@ -319,7 +319,7 @@ function registerScopedPairPlugin(
 }
 
 async function expectPairCommandReply(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   commandName: string;
   interaction: MockCommandInteraction;
   expectedRegisteredName?: string;
@@ -352,7 +352,7 @@ async function expectPairCommandReply(params: {
   expect(params.interaction.reply).not.toHaveBeenCalled();
 }
 
-async function createStatusCommand(cfg: OpenClawConfig) {
+async function createStatusCommand(cfg: MerClawConfig) {
   return await createNativeCommand(cfg, {
     name: "status",
     description: "Status",
@@ -371,7 +371,7 @@ function createDispatchSpy() {
 }
 
 async function expectBoundStatusCommandDirectReply(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   interaction: MockCommandInteraction;
   expectedPattern: RegExp;
 }) {
@@ -436,10 +436,10 @@ describe("Discord native plugin command dispatch", () => {
     runtimeModuleMocks.getSessionEntry.mockReset();
     runtimeModuleMocks.getSessionEntry.mockReturnValue(undefined);
     discordNativeCommandTesting.setMatchPluginCommand(
-      runtimeModuleMocks.matchPluginCommand as typeof import("openclaw/plugin-sdk/plugin-runtime").matchPluginCommand,
+      runtimeModuleMocks.matchPluginCommand as typeof import("merclaw/plugin-sdk/plugin-runtime").matchPluginCommand,
     );
     discordNativeCommandTesting.setExecutePluginCommand(
-      runtimeModuleMocks.executePluginCommand as typeof import("openclaw/plugin-sdk/plugin-runtime").executePluginCommand,
+      runtimeModuleMocks.executePluginCommand as typeof import("merclaw/plugin-sdk/plugin-runtime").executePluginCommand,
     );
     discordNativeCommandTesting.setDispatchReplyWithDispatcher(
       runtimeModuleMocks.dispatchReplyWithDispatcher as typeof dispatchReplyWithDispatcher,
@@ -456,7 +456,7 @@ describe("Discord native plugin command dispatch", () => {
       }),
     );
     discordNativeCommandTesting.setGetSessionEntry(
-      runtimeModuleMocks.getSessionEntry as typeof import("openclaw/plugin-sdk/session-store-runtime").getSessionEntry,
+      runtimeModuleMocks.getSessionEntry as typeof import("merclaw/plugin-sdk/session-store-runtime").getSessionEntry,
     );
   });
 
@@ -524,7 +524,7 @@ describe("Discord native plugin command dispatch", () => {
   it("passes the configured binding agent to plugin-owned Discord command sessions", async () => {
     const cfg = createConfig();
     const interaction = createInteraction();
-    const pluginSessionKey = "plugin-binding:openclaw-codex-app-server:dm";
+    const pluginSessionKey = "plugin-binding:merclaw-codex-app-server:dm";
     discordNativeCommandTesting.setResolveDiscordNativeInteractionRouteState(async () => ({
       ...createConfiguredRouteState({
         sessionKey: pluginSessionKey,
@@ -586,7 +586,7 @@ describe("Discord native plugin command dispatch", () => {
           dm: { enabled: true, policy: "open", allowFrom: ["user:owner"] },
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const interaction = createInteraction();
     interaction.options.getString.mockReturnValue("now");
     const handler = registerScopedPairPlugin();
@@ -611,7 +611,7 @@ describe("Discord native plugin command dispatch", () => {
           dm: { enabled: true, policy: "open", allowFrom: ["*"] },
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const interaction = createInteraction({ userId: "123456789012345678" });
     interaction.options.getString.mockReturnValue("now");
     const handler = registerScopedPairPlugin();
@@ -662,7 +662,7 @@ describe("Discord native plugin command dispatch", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const commandSpec: NativeCommandSpec = {
       name: "pair",
       description: "Pair",
@@ -724,7 +724,7 @@ describe("Discord native plugin command dispatch", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const commandSpec: NativeCommandSpec = {
       name: "pair",
       description: "Pair",
@@ -784,7 +784,7 @@ describe("Discord native plugin command dispatch", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const commandSpec: NativeCommandSpec = {
       name: "pair",
       description: "Pair",
@@ -841,7 +841,7 @@ describe("Discord native plugin command dispatch", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const interaction = createInteraction({
       channelType: ChannelType.GroupDM,
       channelId: "blocked-group",
@@ -996,7 +996,7 @@ describe("Discord native plugin command dispatch", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const commandSpec: NativeCommandSpec = {
       name: "cron_jobs",
       description: "List cron jobs",
@@ -1064,7 +1064,7 @@ describe("Discord native plugin command dispatch", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const commandSpec: NativeCommandSpec = {
       name: "cron_jobs",
       description: "List cron jobs",
@@ -1170,7 +1170,7 @@ describe("Discord native plugin command dispatch", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const interaction = createInteraction({
       channelType: ChannelType.GuildText,
       channelId,

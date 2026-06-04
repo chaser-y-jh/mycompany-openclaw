@@ -24,7 +24,7 @@ export type ReleaseVerifyBetaArgs = {
   rerunFailedClawHub: boolean;
   workflowRuns: {
     fullReleaseValidation?: string;
-    openclawNpm?: string;
+    merclawNpm?: string;
     pluginNpm?: string;
     pluginClawHub?: string;
     npmTelegram?: string;
@@ -44,7 +44,7 @@ type WorkflowRunSummary = {
   durationSeconds?: number;
 };
 
-const DEFAULT_REPO = "openclaw/openclaw";
+const DEFAULT_REPO = "merclaw/merclaw";
 const DEFAULT_CLAWHUB_REGISTRY = "https://clawhub.ai";
 const CLAWHUB_REQUEST_TIMEOUT_MS = 20_000;
 const CLAWHUB_RESPONSE_BODY_MAX_BYTES = 1024 * 1024;
@@ -117,7 +117,7 @@ export function parseReleaseVerifyBetaArgs(argv: string[]): ReleaseVerifyBetaArg
   const version = values.shift();
   if (!version || version.startsWith("-")) {
     throw new Error(
-      "Usage: pnpm release:verify-beta -- <version> [--workflow-ref REF] [--full-release-validation-run ID] [--openclaw-npm-run ID] [--plugin-npm-run ID] [--plugin-clawhub-run ID] [--npm-telegram-run ID] [--skip-clawhub]",
+      "Usage: pnpm release:verify-beta -- <version> [--workflow-ref REF] [--full-release-validation-run ID] [--merclaw-npm-run ID] [--plugin-npm-run ID] [--plugin-clawhub-run ID] [--npm-telegram-run ID] [--skip-clawhub]",
     );
   }
 
@@ -175,8 +175,8 @@ export function parseReleaseVerifyBetaArgs(argv: string[]): ReleaseVerifyBetaArg
       case "--full-release-validation-run":
         parsed.workflowRuns.fullReleaseValidation = next();
         break;
-      case "--openclaw-npm-run":
-        parsed.workflowRuns.openclawNpm = next();
+      case "--merclaw-npm-run":
+        parsed.workflowRuns.merclawNpm = next();
         break;
       case "--plugin-npm-run":
         parsed.workflowRuns.pluginNpm = next();
@@ -479,17 +479,17 @@ export async function verifyBetaRelease(
   const releaseUrl = verifyGitHubRelease(args);
   lines.push(`GitHub release OK: ${releaseUrl}`);
 
-  const openclawNpm = verifyNpmPackage("openclaw", args.version, args.distTag);
-  lines.push(`openclaw npm OK: ${args.version} (${args.distTag})`);
+  const merclawNpm = verifyNpmPackage("merclaw", args.version, args.distTag);
+  lines.push(`merclaw npm OK: ${args.version} (${args.distTag})`);
 
   if (!args.skipPostpublish) {
     runCommandInherited("node", [
       "--import",
       "tsx",
-      "scripts/openclaw-npm-postpublish-verify.ts",
+      "scripts/merclaw-npm-postpublish-verify.ts",
       args.version,
     ]);
-    lines.push("openclaw postpublish verifier OK");
+    lines.push("merclaw postpublish verifier OK");
   }
 
   const npmPlugins = collectPublishablePluginPackages(rootDir, {
@@ -566,13 +566,13 @@ export async function verifyBetaRelease(
       }),
     );
   }
-  if (args.workflowRuns.openclawNpm !== undefined) {
+  if (args.workflowRuns.merclawNpm !== undefined) {
     workflowRuns.push(
       verifyWorkflowRun({
-        id: args.workflowRuns.openclawNpm,
-        label: "OpenClaw NPM Release",
+        id: args.workflowRuns.merclawNpm,
+        label: "MerClaw NPM Release",
         repo: args.repo,
-        expectedWorkflowName: "OpenClaw NPM Release",
+        expectedWorkflowName: "MerClaw NPM Release",
         expectedHeadBranch: args.workflowRef,
         rerunFailed: false,
       }),
@@ -608,7 +608,7 @@ export async function verifyBetaRelease(
           releaseTag: args.tag,
           npmDistTag: args.distTag,
           pluginSelection: args.pluginSelection,
-          openclawNpmIntegrity: openclawNpm.integrity,
+          merclawNpmIntegrity: merclawNpm.integrity,
           githubReleaseUrl: releaseUrl,
           pluginNpmPackageCount: npmPlugins.length,
           clawHubPackageCount: clawHubPlugins.length,

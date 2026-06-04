@@ -21,7 +21,7 @@ import {
 } from "../../extensions/telegram/src/native-tool-progress-draft.js";
 import { formatReasoningMessage } from "../../src/agents/embedded-agent-utils.js";
 import { getRuntimeConfig } from "../../src/config/config.js";
-import type { OpenClawConfig } from "../../src/config/types.openclaw.js";
+import type { MerClawConfig } from "../../src/config/types.merclaw.js";
 import { formatChannelProgressDraftText } from "../../src/plugin-sdk/channel-outbound.js";
 
 type SupportedChannel = "telegram";
@@ -40,7 +40,7 @@ export type ChannelMessageFlowArgs = {
 
 type TelegramSendFinalParams = {
   accountId?: string;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   target: string;
   text: string;
   threadId?: number;
@@ -54,13 +54,13 @@ type TelegramFlowResult = {
 type TelegramThinkingFinalDeps = {
   createDraftStream?: (params: {
     accountId?: string;
-    cfg: OpenClawConfig;
+    cfg: MerClawConfig;
     target: string;
     threadId?: number;
   }) => TelegramDraftStream;
   createNativeToolProgressDraft?: (params: {
     accountId?: string;
-    cfg: OpenClawConfig;
+    cfg: MerClawConfig;
     target: string;
     threadId?: number;
   }) => NativeTelegramToolProgressDraft;
@@ -69,12 +69,12 @@ type TelegramThinkingFinalDeps = {
 };
 
 export type TelegramThinkingFinalFlowOptions = ChannelMessageFlowArgs & {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   thinkingUpdates?: readonly string[];
 };
 
 export type TelegramWorkingFinalFlowOptions = ChannelMessageFlowArgs & {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
 };
 
 const DEFAULT_THINKING_FINAL_UPDATES = [
@@ -198,7 +198,7 @@ function formatWorkingProgressPreview(elapsedMs: number): string {
   });
 }
 
-function createTelegramFlowApi(params: { accountId?: string; cfg: OpenClawConfig }): Bot["api"] {
+function createTelegramFlowApi(params: { accountId?: string; cfg: MerClawConfig }): Bot["api"] {
   return {
     sendMessage: async (chatId, text, sendParams) => {
       const result = await sendMessageTelegram(String(chatId), text, {
@@ -233,7 +233,7 @@ export function resolveTelegramFlowThreadSpec(threadId?: number): TelegramThread
 
 function createDefaultTelegramDraftStream(params: {
   accountId?: string;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   target: string;
   threadId?: number;
 }): TelegramDraftStream {
@@ -252,7 +252,7 @@ function createDefaultTelegramDraftStream(params: {
 
 function createTelegramNativeDraftApi(params: {
   accountId?: string;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
 }): Bot["api"] {
   const account = resolveTelegramAccount({
     accountId: params.accountId,
@@ -273,7 +273,7 @@ function createTelegramNativeDraftApi(params: {
 
 function createDefaultNativeToolProgressDraft(params: {
   accountId?: string;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   target: string;
   threadId?: number;
 }): NativeTelegramToolProgressDraft {

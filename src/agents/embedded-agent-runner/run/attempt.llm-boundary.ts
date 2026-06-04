@@ -286,11 +286,11 @@ function stripHistoricalInboundMetadataFromUserMessages(messages: AgentMessage[]
 function stripUnsafeBlockedRunMetadata(messages: AgentMessage[]): AgentMessage[] {
   let changed = false;
   const nextMessages = messages.map((message) => {
-    const openclaw = (message as unknown as Record<string, unknown>)["__openclaw"];
-    if (!openclaw || typeof openclaw !== "object") {
+    const merclaw = (message as unknown as Record<string, unknown>)["__merclaw"];
+    if (!merclaw || typeof merclaw !== "object") {
       return message;
     }
-    const beforeAgentRunBlocked = (openclaw as { beforeAgentRunBlocked?: unknown })
+    const beforeAgentRunBlocked = (merclaw as { beforeAgentRunBlocked?: unknown })
       .beforeAgentRunBlocked;
     if (!beforeAgentRunBlocked || typeof beforeAgentRunBlocked !== "object") {
       return message;
@@ -303,14 +303,14 @@ function stripUnsafeBlockedRunMetadata(messages: AgentMessage[]): AgentMessage[]
     if (typeof blocked.blockedAt === "number") {
       safeBlocked.blockedAt = blocked.blockedAt;
     }
-    const nextOpenClaw = {
-      ...(openclaw as Record<string, unknown>),
+    const nextMerClaw = {
+      ...(merclaw as Record<string, unknown>),
       beforeAgentRunBlocked: safeBlocked,
     };
     changed = true;
     return {
       ...(message as unknown as Record<string, unknown>),
-      __openclaw: nextOpenClaw,
+      __merclaw: nextMerClaw,
     } as unknown as AgentMessage;
   });
   return changed ? nextMessages : messages;

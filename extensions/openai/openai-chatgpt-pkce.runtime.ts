@@ -1,1 +1,1 @@
-export { generateOAuthState, generatePKCE } from "openclaw/plugin-sdk/provider-oauth-runtime";
+export { generateOAuthState, generatePKCE } from "merclaw/plugin-sdk/provider-oauth-runtime";

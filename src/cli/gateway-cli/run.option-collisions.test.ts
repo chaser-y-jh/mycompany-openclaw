@@ -38,11 +38,11 @@ const readConfigFileSnapshotWithPluginMetadata = vi.fn(async () => ({
 }));
 const writeDiagnosticStabilityBundleForFailureSync = vi.fn((_reason: string, _error: unknown) => ({
   status: "written" as const,
-  message: "wrote stability bundle: /tmp/openclaw-stability.json",
-  path: "/tmp/openclaw-stability.json",
+  message: "wrote stability bundle: /tmp/merclaw-stability.json",
+  path: "/tmp/merclaw-stability.json",
 }));
 const controlUiState = vi.hoisted(() => ({
-  root: "/tmp/openclaw-control-ui" as string | null,
+  root: "/tmp/merclaw-control-ui" as string | null,
 }));
 const netState = vi.hoisted(() => ({
   autoBindHost: "127.0.0.1",
@@ -52,21 +52,21 @@ const withoutSupervisorEnv = Object.fromEntries(
   SUPERVISOR_HINT_ENV_VARS.map((key) => [key, undefined]),
 ) as Record<string, string | undefined>;
 const withoutGatewayAuthEnv = {
-  OPENCLAW_GATEWAY_TOKEN: undefined,
-  OPENCLAW_GATEWAY_PASSWORD: undefined,
+  MERCLAW_GATEWAY_TOKEN: undefined,
+  MERCLAW_GATEWAY_PASSWORD: undefined,
 };
 
 const { runtimeErrors, defaultRuntime, resetRuntimeCapture } = createCliRuntimeCapture();
 
 vi.mock("../../config/config.js", () => ({
-  getConfigPath: () => "/tmp/openclaw-test-missing-config.json",
+  getConfigPath: () => "/tmp/merclaw-test-missing-config.json",
   readBestEffortConfig: () => readBestEffortConfig(),
   readConfigFileSnapshot: async () => configState.snapshot,
   readConfigFileSnapshotWithPluginMetadata: () => readConfigFileSnapshotWithPluginMetadata(),
 }));
 
 vi.mock("../../config/paths.js", () => ({
-  CONFIG_PATH: "/tmp/openclaw-test-missing-config.json",
+  CONFIG_PATH: "/tmp/merclaw-test-missing-config.json",
   normalizeStateDirEnv: (env?: NodeJS.ProcessEnv) => normalizeStateDirEnv(env),
   resolveStateDir: () => "/tmp",
   resolveGatewayPort: (cfg?: { gateway?: { port?: number } }) => cfg?.gateway?.port ?? 18789,
@@ -82,13 +82,13 @@ vi.mock("../../gateway/auth.js", () => ({
     const token =
       (typeof params.authOverride?.token === "string" ? params.authOverride.token : undefined) ??
       (typeof params.authConfig?.token === "string" ? params.authConfig.token : undefined) ??
-      params.env?.OPENCLAW_GATEWAY_TOKEN;
+      params.env?.MERCLAW_GATEWAY_TOKEN;
     const password =
       (typeof params.authOverride?.password === "string"
         ? params.authOverride.password
         : undefined) ??
       (typeof params.authConfig?.password === "string" ? params.authConfig.password : undefined) ??
-      params.env?.OPENCLAW_GATEWAY_PASSWORD;
+      params.env?.MERCLAW_GATEWAY_PASSWORD;
     return {
       mode,
       token,
@@ -227,7 +227,7 @@ describe("gateway run option collisions", () => {
     netState.container = false;
     readBestEffortConfig.mockClear();
     readConfigFileSnapshotWithPluginMetadata.mockClear();
-    controlUiState.root = "/tmp/openclaw-control-ui";
+    controlUiState.root = "/tmp/merclaw-control-ui";
     gatewayLogMessages.length = 0;
     writeDiagnosticStabilityBundleForFailureSync.mockClear();
     startGatewayServer.mockClear();
@@ -303,7 +303,7 @@ describe("gateway run option collisions", () => {
   it("marks service-mode gateway descendants with the live gateway pid", async () => {
     await withEnvAsync(
       {
-        OPENCLAW_SERVICE_MARKER: "openclaw",
+        MERCLAW_SERVICE_MARKER: "merclaw",
         [GATEWAY_SERVICE_RUNTIME_PID_ENV]: undefined,
       },
       async () => {
@@ -339,17 +339,17 @@ describe("gateway run option collisions", () => {
       config: { meta: { lastTouchedVersion: "9999.1.1" } },
       sourceConfig: { meta: { lastTouchedVersion: "9999.1.1" } },
     };
-    const previousMarker = process.env.OPENCLAW_SERVICE_MARKER;
-    process.env.OPENCLAW_SERVICE_MARKER = "gateway";
+    const previousMarker = process.env.MERCLAW_SERVICE_MARKER;
+    process.env.MERCLAW_SERVICE_MARKER = "gateway";
     try {
       await expect(runGatewayCli(["gateway", "run", "--allow-unconfigured"])).rejects.toThrow(
         "__exit__:78",
       );
     } finally {
       if (previousMarker === undefined) {
-        delete process.env.OPENCLAW_SERVICE_MARKER;
+        delete process.env.MERCLAW_SERVICE_MARKER;
       } else {
-        process.env.OPENCLAW_SERVICE_MARKER = previousMarker;
+        process.env.MERCLAW_SERVICE_MARKER = previousMarker;
       }
     }
 
@@ -362,12 +362,12 @@ describe("gateway run option collisions", () => {
     ["--cli-backend-logs", "generic flag"],
     ["--claude-cli-logs", "deprecated alias"],
   ])("enables CLI backend log filtering via %s (%s)", async (flag) => {
-    delete process.env.OPENCLAW_CLI_BACKEND_LOG_OUTPUT;
+    delete process.env.MERCLAW_CLI_BACKEND_LOG_OUTPUT;
 
     await runGatewayCli(["gateway", "run", flag, "--allow-unconfigured"]);
 
     expect(setConsoleSubsystemFilter).toHaveBeenCalledWith(["agent/cli-backend"]);
-    expect(process.env.OPENCLAW_CLI_BACKEND_LOG_OUTPUT).toBe("1");
+    expect(process.env.MERCLAW_CLI_BACKEND_LOG_OUTPUT).toBe("1");
   });
 
   it("starts gateway when token mode has no configured token (startup bootstrap path)", async () => {
@@ -494,7 +494,7 @@ describe("gateway run option collisions", () => {
     await expect(runGatewayCli(["gateway", "run"])).rejects.toThrow("__exit__:78");
 
     expect(runtimeErrors).toContain(
-      "Gateway start blocked: existing config is missing gateway.mode. Treat this as suspicious or clobbered config. Re-run `openclaw onboard --mode local` or `openclaw setup`, set gateway.mode=local manually, or pass --allow-unconfigured.",
+      "Gateway start blocked: existing config is missing gateway.mode. Treat this as suspicious or clobbered config. Re-run `merclaw onboard --mode local` or `merclaw setup`, set gateway.mode=local manually, or pass --allow-unconfigured.",
     );
     expect(runtimeErrors).toContain(
       `Config write audit: ${path.join("/tmp", "logs", "config-audit.jsonl")}`,
@@ -508,7 +508,7 @@ describe("gateway run option collisions", () => {
     configState.snapshot = {
       exists: true,
       valid: false,
-      path: "/tmp/openclaw-test-missing-config.json",
+      path: "/tmp/merclaw-test-missing-config.json",
       config: {},
       parsed: null,
       issues: [{ path: "<root>", message: "JSON5 parse failed" }],
@@ -518,7 +518,7 @@ describe("gateway run option collisions", () => {
     await expect(runGatewayCli(["gateway", "run"])).rejects.toThrow("__exit__:78");
 
     expect(runtimeErrors).toContain(
-      "Gateway start blocked: existing config is missing gateway.mode. Treat this as suspicious or clobbered config. Re-run `openclaw onboard --mode local` or `openclaw setup`, set gateway.mode=local manually, or pass --allow-unconfigured.",
+      "Gateway start blocked: existing config is missing gateway.mode. Treat this as suspicious or clobbered config. Re-run `merclaw onboard --mode local` or `merclaw setup`, set gateway.mode=local manually, or pass --allow-unconfigured.",
     );
     expect(runtimeErrors).toContain(
       `Config write audit: ${path.join("/tmp", "logs", "config-audit.jsonl")}`,
@@ -532,7 +532,7 @@ describe("gateway run option collisions", () => {
     configState.snapshot = {
       exists: true,
       valid: false,
-      path: "/tmp/openclaw-test-missing-config.json",
+      path: "/tmp/merclaw-test-missing-config.json",
       config: {},
       parsed: null,
       issues: [{ path: "<root>", message: "JSON5 parse failed" }],
@@ -567,7 +567,7 @@ describe("gateway run option collisions", () => {
       gateway: {
         auth: {
           mode: "password",
-          password: { source: "env", provider: "default", id: "OPENCLAW_GATEWAY_PASSWORD" },
+          password: { source: "env", provider: "default", id: "MERCLAW_GATEWAY_PASSWORD" },
         },
       },
       secrets: {
@@ -590,7 +590,7 @@ describe("gateway run option collisions", () => {
 
   it("reads gateway password from --password-file", async () => {
     await withTempSecretFiles(
-      "openclaw-gateway-run-",
+      "merclaw-gateway-run-",
       { password: "pw_from_file\n" },
       async ({ passwordFile }) => {
         await runGatewayCli([
@@ -609,7 +609,7 @@ describe("gateway run option collisions", () => {
     expect(options.auth?.mode).toBe("password");
     expect(options.auth?.password).toBe("pw_from_file"); // pragma: allowlist secret
     expect(runtimeErrors).not.toContain(
-      "Warning: --password can be exposed via process listings. Prefer --password-file or OPENCLAW_GATEWAY_PASSWORD.",
+      "Warning: --password can be exposed via process listings. Prefer --password-file or MERCLAW_GATEWAY_PASSWORD.",
     );
   });
 
@@ -625,13 +625,13 @@ describe("gateway run option collisions", () => {
     ]);
 
     expect(runtimeErrors).toContain(
-      "Warning: --password can be exposed via process listings. Prefer --password-file or OPENCLAW_GATEWAY_PASSWORD.",
+      "Warning: --password can be exposed via process listings. Prefer --password-file or MERCLAW_GATEWAY_PASSWORD.",
     );
   });
 
   it("rejects using both --password and --password-file", async () => {
     await withTempSecretFiles(
-      "openclaw-gateway-run-",
+      "merclaw-gateway-run-",
       { password: "pw_from_file\n" },
       async ({ passwordFile }) => {
         await expect(

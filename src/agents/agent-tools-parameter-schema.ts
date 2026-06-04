@@ -1,6 +1,6 @@
-import { isRecord as isSchemaRecord } from "@openclaw/normalization-core/record-coerce";
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
-import { uniqueValues } from "@openclaw/normalization-core/string-normalization";
+import { isRecord as isSchemaRecord } from "@merclaw/normalization-core/record-coerce";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
+import { uniqueValues } from "@merclaw/normalization-core/string-normalization";
 import type { TSchema } from "typebox";
 import type { ModelCompatConfig } from "../config/types.models.js";
 import {

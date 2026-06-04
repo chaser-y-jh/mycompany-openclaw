@@ -2,20 +2,20 @@ import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { ChannelType } from "discord-api-types/v10";
-import * as commandRegistryModule from "openclaw/plugin-sdk/command-auth-native";
+import * as commandRegistryModule from "merclaw/plugin-sdk/command-auth-native";
 import type {
   ChatCommandDefinition,
   CommandArgsParsing,
-} from "openclaw/plugin-sdk/command-auth-native";
-import type { ModelsProviderData } from "openclaw/plugin-sdk/command-auth-native";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import * as globalsModule from "openclaw/plugin-sdk/runtime-env";
+} from "merclaw/plugin-sdk/command-auth-native";
+import type { ModelsProviderData } from "merclaw/plugin-sdk/command-auth-native";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import * as globalsModule from "merclaw/plugin-sdk/runtime-env";
 import {
   loadSessionStore,
   resolveStorePath,
   saveSessionStore,
-} from "openclaw/plugin-sdk/session-store-runtime";
-import * as commandTextModule from "openclaw/plugin-sdk/text-utility-runtime";
+} from "merclaw/plugin-sdk/session-store-runtime";
+import * as commandTextModule from "merclaw/plugin-sdk/text-utility-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineThrowingDiscordChannelGetter } from "../test-support/partial-channel.js";
 import { resolveDiscordChannelContext } from "./agent-components-helpers.js";
@@ -72,7 +72,7 @@ function createModelPickerContext(): ModelPickerContext {
         },
       },
     },
-  } as unknown as OpenClawConfig;
+  } as unknown as MerClawConfig;
 
   return {
     cfg,
@@ -287,7 +287,7 @@ function createBoundThreadBindingManager(params: {
 
 describe("Discord model picker interactions", () => {
   beforeEach(async () => {
-    tempDir = await mkdtemp(path.join(os.tmpdir(), "openclaw-discord-model-picker-"));
+    tempDir = await mkdtemp(path.join(os.tmpdir(), "merclaw-discord-model-picker-"));
     vi.useRealTimers();
     vi.restoreAllMocks();
   });
@@ -419,7 +419,7 @@ describe("Discord model picker interactions", () => {
         "openai",
         [
           { id: "codex", label: "Codex", description: "Use Codex." },
-          { id: "openclaw", label: "OpenClaw Default", description: "Use OpenClaw." },
+          { id: "merclaw", label: "MerClaw Default", description: "Use MerClaw." },
         ],
       ],
     ]);
@@ -467,7 +467,7 @@ describe("Discord model picker interactions", () => {
         "openai",
         [
           { id: "codex", label: "Codex", description: "Use Codex." },
-          { id: "openclaw", label: "OpenClaw Default", description: "Use OpenClaw." },
+          { id: "merclaw", label: "MerClaw Default", description: "Use MerClaw." },
         ],
       ],
     ]);
@@ -512,7 +512,7 @@ describe("Discord model picker interactions", () => {
       [
         "anthropic",
         [
-          { id: "openclaw", label: "OpenClaw Default", description: "Use OpenClaw." },
+          { id: "merclaw", label: "MerClaw Default", description: "Use MerClaw." },
           { id: "claude-cli", label: "Claude CLI", description: "Use Claude CLI." },
         ],
       ],
@@ -955,7 +955,7 @@ describe("Discord model picker interactions", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
 
     await replyWithDiscordModelPickerProviders({
       interaction: interaction as never,

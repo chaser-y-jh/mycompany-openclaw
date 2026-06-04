@@ -1,7 +1,7 @@
 import { normalizeOptionalString } from "../../../../packages/normalization-core/src/string-coerce.js";
 import { note } from "../../../../packages/terminal-core/src/note.js";
 import { formatCliCommand } from "../../../cli/command-format.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../../config/types.merclaw.js";
 import {
   loadCronQuarantineFile,
   loadCronJobsStoreWithConfigJobs,
@@ -52,7 +52,7 @@ function formatRunLogMigrationNote(importedFiles: number): string {
 }
 
 export async function maybeRepairLegacyCronStore(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   options: DoctorOptions;
   prompter: Pick<DoctorPrompter, "confirm">;
 }) {
@@ -101,7 +101,7 @@ export async function maybeRepairLegacyCronStore(params: {
       [
         `Unable to read cron job store at ${shortenHomePath(storePath)}.`,
         `- ${reason}`,
-        `Fix the file's permissions or contents and re-run ${formatCliCommand("openclaw doctor")}; later health checks will continue.`,
+        `Fix the file's permissions or contents and re-run ${formatCliCommand("merclaw doctor")}; later health checks will continue.`,
       ].join("\n"),
       "Cron",
     );
@@ -145,7 +145,7 @@ export async function maybeRepairLegacyCronStore(params: {
       [
         `Legacy cron storage detected at ${shortenHomePath(storePath)}.`,
         ...previewLines,
-        `Repair with ${formatCliCommand("openclaw doctor --fix")} to finish the migration.`,
+        `Repair with ${formatCliCommand("merclaw doctor --fix")} to finish the migration.`,
       ].join("\n"),
       "Cron",
     );
@@ -216,7 +216,7 @@ export async function maybeRepairLegacyCronStore(params: {
     [
       `Legacy cron job storage detected at ${shortenHomePath(storePath)}.`,
       ...previewLines,
-      `Repair with ${formatCliCommand("openclaw doctor --fix")} to normalize the store before the next scheduler run.`,
+      `Repair with ${formatCliCommand("merclaw doctor --fix")} to normalize the store before the next scheduler run.`,
     ].join("\n"),
     "Cron",
   );

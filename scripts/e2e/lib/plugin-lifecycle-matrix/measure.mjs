@@ -20,12 +20,12 @@ function readPositiveIntEnv(name, fallback) {
   return value;
 }
 
-const pageSize = readPositiveIntEnv("OPENCLAW_PROC_PAGE_SIZE", 4096);
-const clockTicks = readPositiveIntEnv("OPENCLAW_PROC_CLK_TCK", 100);
-const pollMs = readPositiveIntEnv("OPENCLAW_PLUGIN_LIFECYCLE_METRIC_POLL_MS", 100);
-const timeoutMs = readPositiveIntEnv("OPENCLAW_PLUGIN_LIFECYCLE_PHASE_TIMEOUT_MS", 300000);
+const pageSize = readPositiveIntEnv("MERCLAW_PROC_PAGE_SIZE", 4096);
+const clockTicks = readPositiveIntEnv("MERCLAW_PROC_CLK_TCK", 100);
+const pollMs = readPositiveIntEnv("MERCLAW_PLUGIN_LIFECYCLE_METRIC_POLL_MS", 100);
+const timeoutMs = readPositiveIntEnv("MERCLAW_PLUGIN_LIFECYCLE_PHASE_TIMEOUT_MS", 300000);
 const timeoutKillGraceMs = readPositiveIntEnv(
-  "OPENCLAW_PLUGIN_LIFECYCLE_TIMEOUT_KILL_GRACE_MS",
+  "MERCLAW_PLUGIN_LIFECYCLE_TIMEOUT_KILL_GRACE_MS",
   2000,
 );
 

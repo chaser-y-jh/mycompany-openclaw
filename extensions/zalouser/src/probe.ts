@@ -1,6 +1,6 @@
-import type { BaseProbeResult } from "openclaw/plugin-sdk/channel-contract";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { resolveTimerTimeoutMs } from "openclaw/plugin-sdk/number-runtime";
+import type { BaseProbeResult } from "merclaw/plugin-sdk/channel-contract";
+import { formatErrorMessage } from "merclaw/plugin-sdk/error-runtime";
+import { resolveTimerTimeoutMs } from "merclaw/plugin-sdk/number-runtime";
 import type { ZcaUserInfo } from "./types.js";
 import { getZaloUserInfo } from "./zalo-js.js";
 

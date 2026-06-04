@@ -43,7 +43,7 @@ vi.mock("../runtime.js", () => ({
 }));
 
 vi.mock("../terminal/links.js", () => ({
-  formatDocsLink: () => "docs.openclaw.ai/cli/skills",
+  formatDocsLink: () => "docs.merclaw.ai/cli/skills",
 }));
 
 vi.mock("../terminal/theme.js", () => ({
@@ -87,10 +87,10 @@ describe("skills workshop cli", () => {
   };
 
   beforeEach(async () => {
-    envSnapshot = captureEnv(["OPENCLAW_STATE_DIR"]);
-    mocks.workspaceDir = await tempDirs.make("openclaw-skills-cli-workshop-");
-    stateDir = await tempDirs.make("openclaw-skills-cli-workshop-state-");
-    process.env.OPENCLAW_STATE_DIR = stateDir;
+    envSnapshot = captureEnv(["MERCLAW_STATE_DIR"]);
+    mocks.workspaceDir = await tempDirs.make("merclaw-skills-cli-workshop-");
+    stateDir = await tempDirs.make("merclaw-skills-cli-workshop-state-");
+    process.env.MERCLAW_STATE_DIR = stateDir;
     mocks.runtimeStdout.length = 0;
     mocks.runtimeErrors.length = 0;
     mocks.defaultRuntime.log.mockClear();
@@ -192,7 +192,7 @@ describe("skills workshop cli", () => {
     const proposalId = mocks.runtimeStdout.at(-1);
     expect(proposalId).toMatch(/^first-cli-skill-/);
 
-    mocks.workspaceDir = await tempDirs.make("openclaw-skills-cli-workshop-second-");
+    mocks.workspaceDir = await tempDirs.make("merclaw-skills-cli-workshop-second-");
     await runCommand(["skills", "workshop", "list"]);
     expect(mocks.runtimeStdout.at(-1)).toBe("No skill proposals.");
     await expect(runCommand(["skills", "workshop", "inspect", proposalId!])).rejects.toThrow(

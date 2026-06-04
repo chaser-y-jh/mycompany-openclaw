@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const manifestMocks = vi.hoisted(() => ({
-  listOpenClawPluginManifestMetadata: vi.fn(),
+  listMerClawPluginManifestMetadata: vi.fn(),
   loadPluginManifest: vi.fn(),
 }));
 
 vi.mock("../../plugins/manifest-metadata-scan.js", () => ({
-  listOpenClawPluginManifestMetadata: manifestMocks.listOpenClawPluginManifestMetadata,
+  listMerClawPluginManifestMetadata: manifestMocks.listMerClawPluginManifestMetadata,
 }));
 
 vi.mock("../../plugins/manifest.js", async (importOriginal) => ({
@@ -23,7 +23,7 @@ function setManifestPlugins(plugins: unknown[]) {
       return [`/fixtures/${id}`, plugin];
     }),
   );
-  manifestMocks.listOpenClawPluginManifestMetadata.mockReturnValue(
+  manifestMocks.listMerClawPluginManifestMetadata.mockReturnValue(
     [...byPluginDir].map(([pluginDir, plugin]) => ({
       pluginDir,
       manifest: plugin,
@@ -34,7 +34,7 @@ function setManifestPlugins(plugins: unknown[]) {
     const plugin = byPluginDir.get(pluginDir);
     return plugin
       ? { ok: true, manifest: plugin }
-      : { ok: false, error: "missing manifest", manifestPath: `${pluginDir}/openclaw.plugin.json` };
+      : { ok: false, error: "missing manifest", manifestPath: `${pluginDir}/merclaw.plugin.json` };
   });
 }
 
@@ -75,7 +75,7 @@ function createMistralManifestPlugin(overrides?: {
 }
 
 beforeEach(() => {
-  manifestMocks.listOpenClawPluginManifestMetadata.mockReset();
+  manifestMocks.listMerClawPluginManifestMetadata.mockReset();
   manifestMocks.loadPluginManifest.mockReset();
   setManifestPlugins([]);
 });

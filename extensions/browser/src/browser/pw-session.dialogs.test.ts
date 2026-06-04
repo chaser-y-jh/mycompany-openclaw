@@ -1,4 +1,4 @@
-import { MAX_DATE_TIMESTAMP_MS } from "openclaw/plugin-sdk/number-runtime";
+import { MAX_DATE_TIMESTAMP_MS } from "merclaw/plugin-sdk/number-runtime";
 import type { Dialog, Page } from "playwright-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {

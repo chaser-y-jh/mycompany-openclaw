@@ -1,6 +1,6 @@
 import path from "node:path";
-import { kindFromMime, mimeTypeFromFilePath } from "@openclaw/media-core/mime";
-import type { OpenClawConfig } from "../config/types.js";
+import { kindFromMime, mimeTypeFromFilePath } from "@merclaw/media-core/mime";
+import type { MerClawConfig } from "../config/types.js";
 import { readLocalFileSafely } from "../infra/fs-safe.js";
 import { DEFAULT_MAX_BYTES } from "./defaults.constants.js";
 import { normalizeImageDescriptionInput } from "./image-input-normalize.js";
@@ -269,7 +269,7 @@ async function readImageDescriptionInput(params: {
   filePath: string;
   mediaUrl?: string;
   mime?: string;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   timeoutMs: number;
 }): Promise<{ buffer: Buffer; fileName: string; mime?: string }> {
   const remoteRef =

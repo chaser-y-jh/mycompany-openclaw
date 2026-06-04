@@ -42,7 +42,7 @@ describe("gateway startup benchmark script", () => {
 
   it("prints help without running benchmark cases", () => {
     expect(helpResult.status).toBe(0);
-    expect(helpResult.stdout).toContain("OpenClaw Gateway startup benchmark");
+    expect(helpResult.stdout).toContain("MerClaw Gateway startup benchmark");
     expect(helpResult.stdout).toContain("--case <id>");
     expect(helpResult.stdout).toContain("--cpu-prof-dir <dir>");
     expect(helpResult.stdout).toContain("default (gateway default)");
@@ -60,14 +60,14 @@ describe("gateway startup benchmark script", () => {
   });
 
   it("does not disable local-check policy in the child gateway environment", () => {
-    const env = testing.sanitizedEnv("/tmp/openclaw-bench", "/tmp/openclaw-bench/config.json", {
+    const env = testing.sanitizedEnv("/tmp/merclaw-bench", "/tmp/merclaw-bench/config.json", {
       config: {},
       id: "default",
       name: "gateway default",
     });
 
-    expect(env.OPENCLAW_LOCAL_CHECK).toBeUndefined();
-    expect(env.OPENCLAW_GATEWAY_STARTUP_TRACE).toBe("1");
+    expect(env.MERCLAW_LOCAL_CHECK).toBeUndefined();
+    expect(env.MERCLAW_GATEWAY_STARTUP_TRACE).toBe("1");
   });
 
   it("classifies HTTP listen and gateway ready logs separately", () => {
@@ -325,7 +325,7 @@ describe("gateway startup benchmark script", () => {
   });
 
   it("writes 50-plugin fixtures as a parent load path with explicit startup activation", () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-bench-config-test-"));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-bench-config-test-"));
     try {
       const configPath = testing.writeConfig(root, {
         config: {},
@@ -342,7 +342,7 @@ describe("gateway startup benchmark script", () => {
       expect(config.plugins?.allow).toEqual(["bench-plugin-01", "bench-plugin-02"]);
       const manifest = JSON.parse(
         fs.readFileSync(
-          path.join(root, "plugins", "bench-plugin-01", "openclaw.plugin.json"),
+          path.join(root, "plugins", "bench-plugin-01", "merclaw.plugin.json"),
           "utf8",
         ),
       ) as { activation?: { onStartup?: boolean } };
@@ -353,7 +353,7 @@ describe("gateway startup benchmark script", () => {
   });
 
   it("keeps startup-lazy plugin fixtures opted out of startup activation", () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-bench-config-test-"));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-bench-config-test-"));
     try {
       testing.writeConfig(root, {
         config: {},
@@ -364,7 +364,7 @@ describe("gateway startup benchmark script", () => {
       });
       const manifest = JSON.parse(
         fs.readFileSync(
-          path.join(root, "plugins", "bench-plugin-01", "openclaw.plugin.json"),
+          path.join(root, "plugins", "bench-plugin-01", "merclaw.plugin.json"),
           "utf8",
         ),
       ) as { activation?: { onStartup?: boolean } };

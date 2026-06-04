@@ -1,11 +1,11 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import type { OpenKeyedStoreOptions } from "openclaw/plugin-sdk/plugin-state-runtime";
+import type { OpenKeyedStoreOptions } from "merclaw/plugin-sdk/plugin-state-runtime";
 import {
   createPluginStateKeyedStoreForTests,
   resetPluginStateStoreForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
+} from "merclaw/plugin-sdk/plugin-state-test-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { PluginRuntime } from "../../runtime-api.js";
 import { setMatrixRuntime } from "../../runtime.js";
@@ -26,7 +26,7 @@ async function readPersistedStartupState(rootDir: string) {
   }>("matrix", {
     namespace: "startup-verification",
     maxEntries: 1_000,
-    env: { ...process.env, OPENCLAW_STATE_DIR: rootDir },
+    env: { ...process.env, MERCLAW_STATE_DIR: rootDir },
   });
   return await store.lookup("default");
 }

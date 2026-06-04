@@ -1,5 +1,5 @@
-import OpenClawKit
-import OpenClawProtocol
+import MerClawKit
+import MerClawProtocol
 import SwiftUI
 
 extension AgentProTab {
@@ -17,7 +17,7 @@ extension AgentProTab {
                     Spacer(minLength: 8)
                     ProValuePill(
                         value: self.agentSkillFilter == nil ? "all" : "\(self.agentSkillFilter?.count ?? 0)",
-                        color: OpenClawBrand.accent)
+                        color: MerClawBrand.accent)
                 }
 
                 HStack(spacing: 8) {
@@ -42,16 +42,16 @@ extension AgentProTab {
                 if let skillMutationStatusText {
                     Text(skillMutationStatusText)
                         .font(.caption2)
-                        .foregroundStyle(OpenClawBrand.accent)
+                        .foregroundStyle(MerClawBrand.accent)
                 }
                 if let skillMutationErrorText {
                     Text(skillMutationErrorText)
                         .font(.caption2)
-                        .foregroundStyle(OpenClawBrand.warn)
+                        .foregroundStyle(MerClawBrand.warn)
                 }
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     var skillsFilterField: some View {
@@ -84,14 +84,14 @@ extension AgentProTab {
                 .controlSize(.small)
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     var clawHubSearchCard: some View {
         ProCard(radius: AgentLayout.cardRadius) {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 10) {
-                    ProIconBadge(systemName: "square.and.arrow.down", color: OpenClawBrand.accent)
+                    ProIconBadge(systemName: "square.and.arrow.down", color: MerClawBrand.accent)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Install Skills")
                             .font(.headline)
@@ -127,7 +127,7 @@ extension AgentProTab {
                 if let clawHubErrorText {
                     Text(clawHubErrorText)
                         .font(.caption2)
-                        .foregroundStyle(OpenClawBrand.warn)
+                        .foregroundStyle(MerClawBrand.warn)
                 }
                 if !self.clawHubResults.isEmpty {
                     VStack(spacing: 0) {
@@ -142,13 +142,13 @@ extension AgentProTab {
                 }
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     func clawHubResultRow(_ result: ClawHubSearchResultLite) -> some View {
         let installing = self.clawHubInstallSlug == result.slug
         return HStack(alignment: .top, spacing: 10) {
-            ProIconBadge(systemName: "sparkles", color: OpenClawBrand.accent)
+            ProIconBadge(systemName: "sparkles", color: MerClawBrand.accent)
             VStack(alignment: .leading, spacing: 3) {
                 Text(result.displayName)
                     .font(.subheadline.weight(.semibold))
@@ -196,7 +196,7 @@ extension AgentProTab {
                     }
                 }
             }
-            .padding(.horizontal, OpenClawProMetric.pagePadding)
+            .padding(.horizontal, MerClawProMetric.pagePadding)
         }
     }
 
@@ -285,7 +285,7 @@ extension AgentProTab {
                 if let missing = skill.missingSummary {
                     Text("Missing: \(missing)")
                         .font(.caption2)
-                        .foregroundStyle(OpenClawBrand.warn)
+                        .foregroundStyle(MerClawBrand.warn)
                         .lineLimit(1)
                 }
                 if let install = skill.installSummary {
@@ -391,7 +391,7 @@ extension AgentProTab {
     func skillEditorSheet(_ skill: SkillStatusEntryLite) -> some View {
         NavigationStack {
             ZStack {
-                OpenClawProBackground()
+                MerClawProBackground()
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {
                         self.skillEditorHeader(skill)
@@ -433,7 +433,7 @@ extension AgentProTab {
                 ProValuePill(value: status.text, color: status.color)
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     func skillEditorControls(_ skill: SkillStatusEntryLite) -> some View {
@@ -473,11 +473,11 @@ extension AgentProTab {
                 if let message = self.skillConfigMessages[skill.effectiveSkillKey] {
                     Text(message.text)
                         .font(.caption2)
-                        .foregroundStyle(message.kind == .success ? OpenClawBrand.accent : OpenClawBrand.warn)
+                        .foregroundStyle(message.kind == .success ? MerClawBrand.accent : MerClawBrand.warn)
                 }
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     func skillEditorSetup(_ skill: SkillStatusEntryLite) -> some View {
@@ -488,7 +488,7 @@ extension AgentProTab {
                 if let missing = skill.missingSummary {
                     Text("Missing: \(missing)")
                         .font(.caption)
-                        .foregroundStyle(OpenClawBrand.warn)
+                        .foregroundStyle(MerClawBrand.warn)
                 } else {
                     Text("No missing requirements reported.")
                         .font(.caption)
@@ -506,7 +506,7 @@ extension AgentProTab {
                 }
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     func skillEditorMetadata(_ skill: SkillStatusEntryLite) -> some View {
@@ -522,7 +522,7 @@ extension AgentProTab {
                 }
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     @MainActor
@@ -759,8 +759,8 @@ extension AgentProTab {
             return ("disabled", .secondary)
         }
         if skill.hasMissingRequirements {
-            return ("setup", OpenClawBrand.warn)
+            return ("setup", MerClawBrand.warn)
         }
-        return ("enabled", OpenClawBrand.accent)
+        return ("enabled", MerClawBrand.accent)
     }
 }

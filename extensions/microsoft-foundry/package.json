@@ -1,13 +1,13 @@
 {
-  "name": "@openclaw/microsoft-foundry",
+  "name": "@merclaw/microsoft-foundry",
   "version": "2026.5.31",
   "private": true,
-  "description": "OpenClaw Microsoft Foundry provider plugin",
+  "description": "MerClaw Microsoft Foundry provider plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@merclaw/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ]

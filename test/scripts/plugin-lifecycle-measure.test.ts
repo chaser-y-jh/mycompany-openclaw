@@ -11,7 +11,7 @@ const hasTimeoutCommand =
   spawnSync("bash", ["-lc", "command -v timeout >/dev/null 2>&1"]).status === 0;
 
 function makeTempDir(): string {
-  const dir = mkdtempSync(path.join(tmpdir(), "openclaw-plugin-lifecycle-measure-"));
+  const dir = mkdtempSync(path.join(tmpdir(), "merclaw-plugin-lifecycle-measure-"));
   tempDirs.push(dir);
   return dir;
 }
@@ -53,14 +53,14 @@ describe("plugin lifecycle resource sampler", () => {
       encoding: "utf8",
       env: {
         ...process.env,
-        OPENCLAW_PLUGIN_LIFECYCLE_PHASE_TIMEOUT_MS: "150ms",
+        MERCLAW_PLUGIN_LIFECYCLE_PHASE_TIMEOUT_MS: "150ms",
       },
       timeout: 5000,
     });
 
     expect(result.status).not.toBe(0);
     expect(result.stderr).toContain(
-      "OPENCLAW_PLUGIN_LIFECYCLE_PHASE_TIMEOUT_MS must be a positive integer; got: 150ms",
+      "MERCLAW_PLUGIN_LIFECYCLE_PHASE_TIMEOUT_MS must be a positive integer; got: 150ms",
     );
   });
 
@@ -72,22 +72,22 @@ describe("plugin lifecycle resource sampler", () => {
       encoding: "utf8",
       env: {
         ...process.env,
-        OPENCLAW_PLUGIN_LIFECYCLE_PHASE_TIMEOUT_MS: "0",
+        MERCLAW_PLUGIN_LIFECYCLE_PHASE_TIMEOUT_MS: "0",
       },
       timeout: 5000,
     });
 
     expect(result.status).not.toBe(0);
     expect(result.stderr).toContain(
-      "OPENCLAW_PLUGIN_LIFECYCLE_PHASE_TIMEOUT_MS must be a positive integer; got: 0",
+      "MERCLAW_PLUGIN_LIFECYCLE_PHASE_TIMEOUT_MS must be a positive integer; got: 0",
     );
   });
 
   it("configures a phase timeout with process-group cleanup", () => {
     const script = readFileSync(scriptPath, "utf8");
 
-    expect(script).toContain("OPENCLAW_PLUGIN_LIFECYCLE_PHASE_TIMEOUT_MS");
-    expect(script).toContain("OPENCLAW_PLUGIN_LIFECYCLE_TIMEOUT_KILL_GRACE_MS");
+    expect(script).toContain("MERCLAW_PLUGIN_LIFECYCLE_PHASE_TIMEOUT_MS");
+    expect(script).toContain("MERCLAW_PLUGIN_LIFECYCLE_TIMEOUT_KILL_GRACE_MS");
     expect(script).toContain("detached: true");
     expect(script).toContain("process.kill(-child.pid, signal)");
     expect(script).toContain('const summarySignal = timedOut ? "timeout"');
@@ -107,8 +107,8 @@ describe("plugin lifecycle resource sampler", () => {
           encoding: "utf8",
           env: {
             ...process.env,
-            OPENCLAW_PLUGIN_LIFECYCLE_PHASE_TIMEOUT_MS: "150",
-            OPENCLAW_PLUGIN_LIFECYCLE_TIMEOUT_KILL_GRACE_MS: "50",
+            MERCLAW_PLUGIN_LIFECYCLE_PHASE_TIMEOUT_MS: "150",
+            MERCLAW_PLUGIN_LIFECYCLE_TIMEOUT_KILL_GRACE_MS: "50",
           },
           timeout: 5000,
         },
@@ -147,8 +147,8 @@ describe("plugin lifecycle resource sampler", () => {
             encoding: "utf8",
             env: {
               ...process.env,
-              OPENCLAW_PLUGIN_LIFECYCLE_PHASE_TIMEOUT_MS: "150",
-              OPENCLAW_PLUGIN_LIFECYCLE_TIMEOUT_KILL_GRACE_MS: "100",
+              MERCLAW_PLUGIN_LIFECYCLE_PHASE_TIMEOUT_MS: "150",
+              MERCLAW_PLUGIN_LIFECYCLE_TIMEOUT_KILL_GRACE_MS: "100",
               PID_FILE: pidFile,
             },
             timeout: 5000,
@@ -196,8 +196,8 @@ describe("plugin lifecycle resource sampler", () => {
           encoding: "utf8",
           env: {
             ...process.env,
-            OPENCLAW_PLUGIN_LIFECYCLE_PHASE_TIMEOUT_MS: "5000",
-            OPENCLAW_PLUGIN_LIFECYCLE_TIMEOUT_KILL_GRACE_MS: "100",
+            MERCLAW_PLUGIN_LIFECYCLE_PHASE_TIMEOUT_MS: "5000",
+            MERCLAW_PLUGIN_LIFECYCLE_TIMEOUT_KILL_GRACE_MS: "100",
             PID_FILE: pidFile,
           },
           timeout: 5000,

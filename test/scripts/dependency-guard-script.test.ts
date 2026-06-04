@@ -220,26 +220,26 @@ describe("dependency guard script", () => {
 
   it("trusts only configured dependency guard marker comment authors", () => {
     const trustedAuthors = dependencyGuardCommentAuthors(
-      "github-actions[bot], openclaw-autoscrub[bot]",
+      "github-actions[bot], merclaw-autoscrub[bot]",
     );
 
     expect(
       isDependencyGuardMarkerComment(
         {
-          body: "<!-- openclaw:dependency-graph-guard -->",
-          user: { login: "openclaw-autoscrub[bot]" },
+          body: "<!-- merclaw:dependency-graph-guard -->",
+          user: { login: "merclaw-autoscrub[bot]" },
         },
-        "<!-- openclaw:dependency-graph-guard -->",
+        "<!-- merclaw:dependency-graph-guard -->",
         trustedAuthors,
       ),
     ).toBe(true);
     expect(
       isDependencyGuardMarkerComment(
         {
-          body: "<!-- openclaw:dependency-graph-guard -->",
+          body: "<!-- merclaw:dependency-graph-guard -->",
           user: { login: "contributor" },
         },
-        "<!-- openclaw:dependency-graph-guard -->",
+        "<!-- merclaw:dependency-graph-guard -->",
         trustedAuthors,
       ),
     ).toBe(false);
@@ -249,7 +249,7 @@ describe("dependency guard script", () => {
           body: "no marker",
           user: { login: "github-actions[bot]" },
         },
-        "<!-- openclaw:dependency-graph-guard -->",
+        "<!-- merclaw:dependency-graph-guard -->",
         trustedAuthors,
       ),
     ).toBe(false);
@@ -268,7 +268,7 @@ describe("dependency guard script", () => {
       ],
     });
 
-    expect(body).toContain("<!-- openclaw:dependency-graph-guard -->");
+    expect(body).toContain("<!-- merclaw:dependency-graph-guard -->");
     expect(body).toContain("Dependency graph changes are blocked");
     expect(body).toContain("`pnpm-lock.yaml` changed.");
     expect(body).toContain("`extensions/slack/npm-shrinkwrap.json` changed.");
@@ -339,14 +339,14 @@ describe("dependency guard script", () => {
     const sameRepoPullRequest = {
       head: {
         ref: "contributor/change",
-        repo: { full_name: "openclaw/openclaw" },
+        repo: { full_name: "merclaw/merclaw" },
         sha: headSha,
       },
     };
     const forkPullRequest = {
       head: {
         ref: "contributor/change",
-        repo: { full_name: "external/openclaw" },
+        repo: { full_name: "external/merclaw" },
         sha: headSha,
       },
     };
@@ -354,29 +354,29 @@ describe("dependency guard script", () => {
       maintainer_can_modify: true,
       head: {
         ref: "contributor/change",
-        repo: { full_name: "external/openclaw" },
+        repo: { full_name: "external/merclaw" },
         sha: headSha,
       },
     };
 
     expect(
       canAutoscrubPullRequest({
-        owner: "openclaw",
-        repo: "openclaw",
+        owner: "merclaw",
+        repo: "merclaw",
         pullRequest: sameRepoPullRequest,
       }),
     ).toBe(true);
     expect(
       canAutoscrubPullRequest({
-        owner: "openclaw",
-        repo: "openclaw",
+        owner: "merclaw",
+        repo: "merclaw",
         pullRequest: forkPullRequest,
       }),
     ).toBe(false);
     expect(
       canAutoscrubPullRequest({
-        owner: "openclaw",
-        repo: "openclaw",
+        owner: "merclaw",
+        repo: "merclaw",
         pullRequest: editableForkPullRequest,
       }),
     ).toBe(true);
@@ -389,7 +389,7 @@ describe("dependency guard script", () => {
       lockfileChanges: ["pnpm-lock.yaml", "extensions/slack/npm-shrinkwrap.json"],
     });
 
-    expect(body).toContain("<!-- openclaw:dependency-graph-guard -->");
+    expect(body).toContain("<!-- merclaw:dependency-graph-guard -->");
     expect(body).toContain("Dependency lockfile changes were removed");
     expect(body).toContain("did not change dependency graph fields in package manifests");
     expect(body).toContain("`pnpm-lock.yaml`");
@@ -471,26 +471,26 @@ describe("dependency guard script", () => {
     const commit = await createAutoscrubCommit(
       { baseApi, writeApi },
       {
-        owner: "openclaw",
-        repo: "openclaw",
+        owner: "merclaw",
+        repo: "merclaw",
         pullRequest: {
           base: { sha: "base-sha" },
           head: { ref: "contributor/change", sha: headSha },
         },
         lockfileChanges: ["pnpm-lock.yaml"],
-        targetRepository: { owner: "contributor", repo: "openclaw" },
+        targetRepository: { owner: "contributor", repo: "merclaw" },
       },
     );
 
     expect(commit).toEqual({ sha: staleSha });
     expect(calls.map((call) => `${call.api}:${call.path}`)).toEqual([
-      "base:/repos/openclaw/openclaw/contents/pnpm-lock.yaml?ref=base-sha",
+      "base:/repos/merclaw/merclaw/contents/pnpm-lock.yaml?ref=base-sha",
       "write:graphql",
     ]);
     expect(calls[1].variables).toMatchObject({
       input: {
         branch: {
-          repositoryNameWithOwner: "contributor/openclaw",
+          repositoryNameWithOwner: "contributor/merclaw",
           branchName: "contributor/change",
         },
         expectedHeadOid: headSha,
@@ -510,7 +510,7 @@ describe("dependency guard script", () => {
   it("renders a cleared guard comment that preserves approval freshness", () => {
     const body = renderClearedDependencyGuardComment({ headSha });
 
-    expect(body).toContain("<!-- openclaw:dependency-graph-guard -->");
+    expect(body).toContain("<!-- merclaw:dependency-graph-guard -->");
     expect(body).toContain("Dependency graph guard cleared");
     expect(body).toContain(headSha);
     expect(body).toContain("requires a fresh `/allow-dependencies-change` comment");
@@ -568,7 +568,7 @@ describe("dependency guard script", () => {
       )) as typeof fetch;
 
     try {
-      await expect(githubApi("token").request("/repos/openclaw/openclaw")).rejects.toMatchObject({
+      await expect(githubApi("token").request("/repos/merclaw/merclaw")).rejects.toMatchObject({
         message: `403 Forbidden: GitHub error response body exceeded ${GITHUB_ERROR_BODY_MAX_BYTES} bytes`,
         status: 403,
       });

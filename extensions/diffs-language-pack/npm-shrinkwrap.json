@@ -1,11 +1,11 @@
 {
-  "name": "@openclaw/diffs-language-pack",
+  "name": "@merclaw/diffs-language-pack",
   "version": "2026.5.31",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
-      "name": "@openclaw/diffs-language-pack",
+      "name": "@merclaw/diffs-language-pack",
       "version": "2026.5.31"
     }
   }

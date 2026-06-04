@@ -1,4 +1,4 @@
-import { MAX_TIMER_TIMEOUT_MS, resolveTimerTimeoutMs } from "openclaw/plugin-sdk/number-runtime";
+import { MAX_TIMER_TIMEOUT_MS, resolveTimerTimeoutMs } from "merclaw/plugin-sdk/number-runtime";
 
 export function resolveVoiceCallSecondsTimerDelayMs(seconds: number, minMs = 1): number {
   if (!Number.isFinite(seconds)) {

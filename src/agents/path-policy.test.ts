@@ -17,15 +17,15 @@ describe("toRelativeWorkspacePath (windows semantics)", () => {
 
   it("accepts windows paths with mixed separators and case", () => {
     withMockedWindowsPlatform(() => {
-      const root = "C:\\Users\\User\\OpenClaw";
-      const candidate = "c:/users/user/openclaw/memory/log.txt";
+      const root = "C:\\Users\\User\\MerClaw";
+      const candidate = "c:/users/user/merclaw/memory/log.txt";
       expect(toRelativeWorkspacePath(root, candidate)).toBe("memory\\log.txt");
     });
   });
 
   it("rejects windows paths outside workspace root", () => {
     withMockedWindowsPlatform(() => {
-      const root = "C:\\Users\\User\\OpenClaw";
+      const root = "C:\\Users\\User\\MerClaw";
       const candidate = "C:\\Users\\User\\Other\\log.txt";
       expect(() => toRelativeWorkspacePath(root, candidate)).toThrow("Path escapes workspace root");
     });

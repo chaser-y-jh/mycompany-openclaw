@@ -1,11 +1,11 @@
 {
-  "name": "@openclaw/codex",
+  "name": "@merclaw/codex",
   "version": "2026.5.31",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
-      "name": "@openclaw/codex",
+      "name": "@merclaw/codex",
       "version": "2026.5.31",
       "dependencies": {
         "@openai/codex": "0.135.0",

@@ -24,10 +24,10 @@ import {
 import { buildUpdateRestartSentinelPayload } from "./update-restart-sentinel-payload.js";
 
 async function withRestartSentinelStateDir(run: () => Promise<void>): Promise<void> {
-  const envSnapshot = captureEnv(["OPENCLAW_STATE_DIR"]);
+  const envSnapshot = captureEnv(["MERCLAW_STATE_DIR"]);
   try {
-    await withTempDir({ prefix: "openclaw-sentinel-" }, async (tempDir) => {
-      process.env.OPENCLAW_STATE_DIR = tempDir;
+    await withTempDir({ prefix: "merclaw-sentinel-" }, async (tempDir) => {
+      process.env.MERCLAW_STATE_DIR = tempDir;
       await run();
     });
   } finally {
@@ -163,7 +163,7 @@ describe("restart sentinel", () => {
       status: "error" as const,
       ts: Date.now(),
       message: "Patch failed",
-      doctorHint: "Run openclaw doctor",
+      doctorHint: "Run merclaw doctor",
       stats: { mode: "patch", reason: "validation failed" },
     };
 
@@ -172,7 +172,7 @@ describe("restart sentinel", () => {
         "Gateway restart config-patch error (patch)",
         "Patch failed",
         "Reason: validation failed",
-        "Run openclaw doctor",
+        "Run merclaw doctor",
       ].join("\n"),
     );
   });
@@ -296,7 +296,7 @@ describe("control-plane update restart sentinel", () => {
     const result = {
       status: "ok" as const,
       mode: "npm" as const,
-      root: "/tmp/openclaw",
+      root: "/tmp/merclaw",
       before: { version: "2026.4.23" },
       after: { version: "2026.4.24" },
       steps: [],
@@ -365,18 +365,18 @@ describe("restart sentinel message dedup", () => {
 
   it("formats the non-interactive doctor command as actionability guidance", () => {
     expect(formatDoctorNonInteractiveHint({ PATH: "/usr/bin:/bin" })).toBe(
-      "Recommended follow-up: run openclaw doctor --non-interactive in a terminal or approvals-capable OpenClaw surface.",
+      "Recommended follow-up: run merclaw doctor --non-interactive in a terminal or approvals-capable MerClaw surface.",
     );
   });
 
   it("keeps profile-aware doctor guidance actionable outside constrained delivery surfaces", () => {
     expect(
       formatDoctorNonInteractiveHint({
-        OPENCLAW_PROFILE: "isolated",
+        MERCLAW_PROFILE: "isolated",
         PATH: "/usr/bin:/bin",
       }),
     ).toBe(
-      "Recommended follow-up: run openclaw --profile isolated doctor --non-interactive in a terminal or approvals-capable OpenClaw surface.",
+      "Recommended follow-up: run merclaw --profile isolated doctor --non-interactive in a terminal or approvals-capable MerClaw surface.",
     );
   });
 });

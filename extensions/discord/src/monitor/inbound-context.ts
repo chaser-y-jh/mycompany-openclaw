@@ -1,4 +1,4 @@
-import type { MsgContext } from "openclaw/plugin-sdk/reply-runtime";
+import type { MsgContext } from "merclaw/plugin-sdk/reply-runtime";
 import {
   resolveDiscordMemberAllowed,
   resolveDiscordOwnerAllowFrom,

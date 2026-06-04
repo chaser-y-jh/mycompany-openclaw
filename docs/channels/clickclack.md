@@ -1,14 +1,14 @@
 ---
 summary: "ClickClack bot-token channel setup and target syntax"
 read_when:
-  - Connecting OpenClaw to a ClickClack workspace
+  - Connecting MerClaw to a ClickClack workspace
   - Testing ClickClack bot identities
 title: "ClickClack"
 ---
 
-ClickClack connects OpenClaw to a self-hosted ClickClack workspace through first-class ClickClack bot tokens.
+ClickClack connects MerClaw to a self-hosted ClickClack workspace through first-class ClickClack bot tokens.
 
-Use this when you want an OpenClaw agent to appear as a ClickClack bot user. ClickClack supports independent service bots and user-owned bots; user-owned bots keep an `owner_user_id` and receive only the token scopes you grant.
+Use this when you want an MerClaw agent to appear as a ClickClack bot user. ClickClack supports independent service bots and user-owned bots; user-owned bots keep an `owner_user_id` and receive only the token scopes you grant.
 
 ## Quick setup
 
@@ -17,15 +17,15 @@ Create a bot token in ClickClack:
 ```bash
 clickclack admin bot create \
   --workspace <workspace_id_or_slug> \
-  --name "OpenClaw" \
-  --handle openclaw \
+  --name "MerClaw" \
+  --handle merclaw \
   --scopes bot:write \
   --plain
 ```
 
 For a user-owned bot, add `--owner <user_id>`.
 
-Configure OpenClaw:
+Configure MerClaw:
 
 ```json5
 {
@@ -56,7 +56,7 @@ Then run:
 
 ```bash
 export CLICKCLACK_BOT_TOKEN="ccb_..."
-openclaw gateway
+merclaw gateway
 ```
 
 ## Multiple bots
@@ -101,7 +101,7 @@ Each account opens its own ClickClack realtime connection and uses its own bot t
 ```
 
 `replyMode: "model"` uses `api.runtime.llm.complete` directly for short bot replies.
-When an account sets `agentId`, OpenClaw requires the explicit
+When an account sets `agentId`, MerClaw requires the explicit
 `plugins.entries.clickclack.llm.allowAgentIdOverride` trust bit so the plugin
 can run completions for that bot agent. Keep it off if you only use the default
 agent route.
@@ -115,9 +115,9 @@ agent route.
 Examples:
 
 ```bash
-openclaw message send --channel clickclack --target channel:general --message "hello"
-openclaw message send --channel clickclack --target dm:usr_123 --message "hello"
-openclaw message send --channel clickclack --target thread:msg_123 --message "following up"
+merclaw message send --channel clickclack --target channel:general --message "hello"
+merclaw message send --channel clickclack --target dm:usr_123 --message "hello"
+merclaw message send --channel clickclack --target thread:msg_123 --message "following up"
 ```
 
 ## Permissions
@@ -128,7 +128,7 @@ ClickClack token scopes are enforced by the ClickClack API.
 - `bot:write`: `bot:read` plus channel messages, thread replies, DMs, and uploads.
 - `bot:admin`: `bot:write` plus channel creation.
 
-OpenClaw only needs `bot:write` for normal agent chat.
+MerClaw only needs `bot:write` for normal agent chat.
 
 ## Troubleshooting
 

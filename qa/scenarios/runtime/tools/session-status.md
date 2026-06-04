@@ -8,7 +8,7 @@ runtimeParityTier: standard
 coverage:
   primary:
     - tools.session-status
-objective: Verify session_status preserves arguments and result shape across OpenClaw and Codex.
+objective: Verify session_status preserves arguments and result shape across MerClaw and Codex.
 successCriteria:
   - Effective tools expose session_status.
   - The mock provider plans exactly one happy-path session_status call.
@@ -27,14 +27,14 @@ execution:
     toolCoverage:
       family: session_status
       actualTool: session_status
-      bucket: openclaw-dynamic-integration
-      expectedLayer: openclaw-dynamic
-      capabilityLayer: openclaw-dynamic-direct
+      bucket: merclaw-dynamic-integration
+      expectedLayer: merclaw-dynamic
+      capabilityLayer: merclaw-dynamic-direct
       required: true
       codexDefaultImpact: P4
       qaImpact: P1
       action: hard gate in the standard direct-loading tier
-      reason: session_status is an OpenClaw integration tool and must stay visible and callable under OpenClaw and Codex direct runtime parity.
+      reason: session_status is an MerClaw integration tool and must stay visible and callable under MerClaw and Codex direct runtime parity.
     promptSnippet: "target=session_status"
     failurePromptSnippet: "failure target=session_status"
 ```

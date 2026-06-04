@@ -5,12 +5,12 @@ import type { Message } from "grammy/types";
 import type {
   ClaimableDedupe,
   ClaimableDedupeClaimResult,
-} from "openclaw/plugin-sdk/persistent-dedupe";
+} from "merclaw/plugin-sdk/persistent-dedupe";
 import type {
   PluginStateKeyedStore,
   PluginStateSyncKeyedStore,
-} from "openclaw/plugin-sdk/plugin-state-runtime";
-import { normalizeStringEntries, uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/plugin-state-runtime";
+import { normalizeStringEntries, uniqueStrings } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { getOptionalTelegramRuntime } from "./runtime.js";
 
 const TELEGRAM_MESSAGE_DISPATCH_TTL_MS = 7 * 24 * 60 * 60 * 1000;

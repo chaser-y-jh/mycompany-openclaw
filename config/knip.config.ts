@@ -5,7 +5,7 @@ function bundledPluginFile(pluginId: string, relativePath: string, suffix = ""):
 }
 
 const rootEntries = [
-  "openclaw.mjs!",
+  "merclaw.mjs!",
   "src/index.ts!",
   "src/entry.ts!",
   "src/cli/daemon-cli.ts!",
@@ -49,7 +49,7 @@ const bundledPluginIgnoredRuntimeDependencies = [
   "json5",
   "lit",
   "linkedom",
-  "openclaw",
+  "merclaw",
   "clawpdf",
 ] as const;
 
@@ -143,7 +143,7 @@ const config = {
     ".": {
       entry: rootEntries,
       ignoreDependencies: [
-        "@openclaw/*",
+        "@merclaw/*",
         "file-type",
         "playwright-core",
         "sqlite-vec",
@@ -206,7 +206,7 @@ const config = {
     "packages/speech-core": {
       entry: ["api.ts!", "runtime-api.ts!", "speaker.ts!", "voice-models.ts!"],
       project: ["**/*.ts!"],
-      ignoreDependencies: ["openclaw"],
+      ignoreDependencies: ["merclaw"],
     },
     "packages/*": {
       entry: ["index.js!", "scripts/postinstall.js!"],

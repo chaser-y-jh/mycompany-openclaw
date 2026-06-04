@@ -112,10 +112,10 @@ describe("docker build helper", () => {
     expect(helper).toContain("docker_build_run()");
     expect(helper).toContain("docker buildx build --load");
     expect(helper).toContain("docker_build_transient_failure()");
-    expect(helper).toContain("OPENCLAW_DOCKER_BUILD_RETRIES");
-    expect(helper).toContain("OPENCLAW_DOCKER_BUILD_TIMEOUT");
+    expect(helper).toContain("MERCLAW_DOCKER_BUILD_RETRIES");
+    expect(helper).toContain("MERCLAW_DOCKER_BUILD_TIMEOUT");
     expect(helper).toContain('docker_build_run_command "$timeout_value" "${command[@]}"');
-    expect(helper).toContain("OPENCLAW_DOCKER_BUILD_REQUIRE_TIMEOUT");
+    expect(helper).toContain("MERCLAW_DOCKER_BUILD_REQUIRE_TIMEOUT");
     expect(helper).toContain("frontend grpc server closed unexpectedly");
   });
 
@@ -135,7 +135,7 @@ describe("docker build helper", () => {
 
     expect(cleanupSmoke).toContain('source "$ROOT_DIR/scripts/lib/docker-e2e-container.sh"');
     expect(cleanupSmoke).toContain(
-      'DOCKER_COMMAND_TIMEOUT="${DOCKER_COMMAND_TIMEOUT:-${OPENCLAW_CLEANUP_SMOKE_DOCKER_TIMEOUT:-600s}}"',
+      'DOCKER_COMMAND_TIMEOUT="${DOCKER_COMMAND_TIMEOUT:-${MERCLAW_CLEANUP_SMOKE_DOCKER_TIMEOUT:-600s}}"',
     );
     expect(cleanupSmoke).toContain(
       'docker_e2e_docker_run_cmd run --rm --platform "$PLATFORM" -t "$IMAGE_NAME"',
@@ -144,7 +144,7 @@ describe("docker build helper", () => {
 
     expect(installE2eSmoke).toContain('source "$ROOT_DIR/scripts/lib/docker-e2e-container.sh"');
     expect(installE2eSmoke).toContain(
-      'DOCKER_COMMAND_TIMEOUT="${DOCKER_COMMAND_TIMEOUT:-${OPENCLAW_INSTALL_E2E_DOCKER_TIMEOUT:-2700s}}"',
+      'DOCKER_COMMAND_TIMEOUT="${DOCKER_COMMAND_TIMEOUT:-${MERCLAW_INSTALL_E2E_DOCKER_TIMEOUT:-2700s}}"',
     );
     expect(installE2eSmoke).toContain("docker_e2e_docker_run_cmd run --rm \\");
     expect(installE2eSmoke).not.toContain("docker run --rm \\");
@@ -157,15 +157,15 @@ describe("docker build helper", () => {
     const liveCliBackend = readFileSync(LIVE_CLI_BACKEND_DOCKER_PATH, "utf8");
 
     expect(helper).toContain("docker_build_on_missing_enabled()");
-    expect(helper).toContain("OPENCLAW_DOCKER_BUILD_ON_MISSING");
-    expect(helper).toContain("OPENCLAW_TESTBOX");
+    expect(helper).toContain("MERCLAW_DOCKER_BUILD_ON_MISSING");
+    expect(helper).toContain("MERCLAW_TESTBOX");
     expect(e2eImageHelper).toContain("docker_build_on_missing_enabled");
     expect(e2eImageHelper).toContain("Docker image not available; building");
     expect(e2eImageHelper).toContain('docker_e2e_docker_cmd image inspect "$image_name"');
     expect(e2eImageHelper).toContain('docker_e2e_docker_cmd pull "$image_name"');
     expect(liveBuild).toContain('source "$SCRIPT_ROOT_DIR/scripts/lib/docker-e2e-container.sh"');
     expect(liveBuild).toContain(
-      'DOCKER_COMMAND_TIMEOUT="${DOCKER_COMMAND_TIMEOUT:-${OPENCLAW_LIVE_DOCKER_PULL_TIMEOUT:-600s}}"',
+      'DOCKER_COMMAND_TIMEOUT="${DOCKER_COMMAND_TIMEOUT:-${MERCLAW_LIVE_DOCKER_PULL_TIMEOUT:-600s}}"',
     );
     expect(liveBuild).toContain('docker_e2e_docker_cmd image inspect "$LIVE_IMAGE_NAME"');
     expect(liveBuild).toContain('docker_e2e_docker_cmd pull "$LIVE_IMAGE_NAME"');
@@ -179,17 +179,17 @@ describe("docker build helper", () => {
       'timeout "$DOCKER_PULL_TIMEOUT" docker pull "$OPENWEBUI_IMAGE"',
     );
     expect(liveCliBackend).toContain(
-      'OPENCLAW_LIVE_DOCKER_REPO_ROOT="$ROOT_DIR" "$TRUSTED_HARNESS_DIR/scripts/test-live-build-docker.sh"',
+      'MERCLAW_LIVE_DOCKER_REPO_ROOT="$ROOT_DIR" "$TRUSTED_HARNESS_DIR/scripts/test-live-build-docker.sh"',
     );
     expect(liveCliBackend).toContain("codex-cli is no longer a bundled CLI backend");
     expect(liveCliBackend).not.toContain("==> Direct Codex CLI probe ok");
     expect(liveCliBackend).not.toContain(
-      'echo "==> Reuse live-test image: $LIVE_IMAGE_NAME (OPENCLAW_SKIP_DOCKER_BUILD=1)"',
+      'echo "==> Reuse live-test image: $LIVE_IMAGE_NAME (MERCLAW_SKIP_DOCKER_BUILD=1)"',
     );
   });
 
   it("wraps centralized Docker builds with the timeout helper", () => {
-    const workDir = mkdtempSync(join(tmpdir(), "openclaw-docker-build-timeout-"));
+    const workDir = mkdtempSync(join(tmpdir(), "merclaw-docker-build-timeout-"));
 
     try {
       const binDir = join(workDir, "bin");
@@ -221,7 +221,7 @@ ROOT_DIR=${shellQuote(rootDir)}
 TMPDIR=${shellQuote(workDir)}
 export ROOT_DIR TMPDIR
 export PATH="$TMPDIR/bin:$PATH"
-export OPENCLAW_DOCKER_BUILD_TIMEOUT=17s
+export MERCLAW_DOCKER_BUILD_TIMEOUT=17s
 
 source "$ROOT_DIR/scripts/lib/docker-build.sh"
 
@@ -238,7 +238,7 @@ grep -q '^build -t demo-image .$' "$TMPDIR/docker-seen"
   });
 
   it("fails centralized Docker builds fast when timeout is unavailable", () => {
-    const workDir = mkdtempSync(join(tmpdir(), "openclaw-docker-build-timeout-required-"));
+    const workDir = mkdtempSync(join(tmpdir(), "merclaw-docker-build-timeout-required-"));
 
     try {
       mkdirSync(join(workDir, "bin"));
@@ -249,7 +249,7 @@ ROOT_DIR=${shellQuote(rootDir)}
 TMPDIR=${shellQuote(workDir)}
 export ROOT_DIR TMPDIR
 export PATH="$TMPDIR/bin"
-export OPENCLAW_DOCKER_BUILD_TIMEOUT=19s
+export MERCLAW_DOCKER_BUILD_TIMEOUT=19s
 
 dirname() {
   /usr/bin/dirname "$@"
@@ -296,7 +296,7 @@ stdout="$(<"$TMPDIR/stdout")"
   });
 
   it("keeps setup-style Docker builds compatible when timeout is unavailable", () => {
-    const workDir = mkdtempSync(join(tmpdir(), "openclaw-docker-build-timeout-optional-"));
+    const workDir = mkdtempSync(join(tmpdir(), "merclaw-docker-build-timeout-optional-"));
 
     try {
       const binDir = join(workDir, "bin");
@@ -332,7 +332,7 @@ ROOT_DIR=${shellQuote(rootDir)}
 TMPDIR=${shellQuote(workDir)}
 export ROOT_DIR TMPDIR
 export PATH="$TMPDIR/bin"
-export OPENCLAW_DOCKER_BUILD_TIMEOUT=23s
+export MERCLAW_DOCKER_BUILD_TIMEOUT=23s
 
 dirname() {
   /usr/bin/dirname "$@"
@@ -365,7 +365,7 @@ docker_build_exec -t setup-image .
   });
 
   it("keeps reused Docker image probes behind the timeout-aware helper", () => {
-    const workDir = mkdtempSync(join(tmpdir(), "openclaw-docker-image-reuse-timeout-"));
+    const workDir = mkdtempSync(join(tmpdir(), "merclaw-docker-image-reuse-timeout-"));
 
     try {
       const rootDir = process.cwd();
@@ -375,7 +375,7 @@ ROOT_DIR=${shellQuote(rootDir)}
 TMPDIR=${shellQuote(workDir)}
 export ROOT_DIR TMPDIR
 export DOCKER_COMMAND_TIMEOUT=3s
-export OPENCLAW_SKIP_DOCKER_BUILD=1
+export MERCLAW_SKIP_DOCKER_BUILD=1
 
 mkdir -p "$TMPDIR/bin"
 cat >"$TMPDIR/bin/timeout" <<'SH'
@@ -404,7 +404,7 @@ docker() {
     "image inspect")
       return 1
       ;;
-    "pull openclaw-reuse-image")
+    "pull merclaw-reuse-image")
       return 0
       ;;
     *)
@@ -417,15 +417,15 @@ export -f docker
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 
 docker_e2e_build_or_reuse \\
-  openclaw-reuse-image \\
+  merclaw-reuse-image \\
   reuse-timeout-proof \\
   "$ROOT_DIR/scripts/e2e/Dockerfile" \\
   "$ROOT_DIR" \\
   functional
 
 test "$(grep -c '^--kill-after=30s 3s|' "$TMPDIR/timeout-seen")" = "2"
-grep -q '^image inspect openclaw-reuse-image$' "$TMPDIR/docker-seen"
-grep -q '^pull openclaw-reuse-image$' "$TMPDIR/docker-seen"
+grep -q '^image inspect merclaw-reuse-image$' "$TMPDIR/docker-seen"
+grep -q '^pull merclaw-reuse-image$' "$TMPDIR/docker-seen"
 `;
 
       execFileSync("bash", ["-lc", script], { encoding: "utf8" });
@@ -435,7 +435,7 @@ grep -q '^pull openclaw-reuse-image$' "$TMPDIR/docker-seen"
   });
 
   it("fails Docker commands fast when timeout is unavailable", () => {
-    const workDir = mkdtempSync(join(tmpdir(), "openclaw-docker-timeout-required-"));
+    const workDir = mkdtempSync(join(tmpdir(), "merclaw-docker-timeout-required-"));
 
     try {
       mkdirSync(join(workDir, "bin"));
@@ -473,7 +473,7 @@ stderr="$(<"$TMPDIR/stderr")"
   });
 
   it("uses a Node watchdog for Docker commands when timeout is unavailable", () => {
-    const workDir = mkdtempSync(join(tmpdir(), "openclaw-docker-node-timeout-"));
+    const workDir = mkdtempSync(join(tmpdir(), "merclaw-docker-node-timeout-"));
 
     try {
       const binDir = join(workDir, "bin");
@@ -517,7 +517,7 @@ stderr="$(<"$TMPDIR/stderr")"
   });
 
   it("escalates Docker watchdog children that ignore parent termination", () => {
-    const workDir = mkdtempSync(join(tmpdir(), "openclaw-docker-node-signal-"));
+    const workDir = mkdtempSync(join(tmpdir(), "merclaw-docker-node-signal-"));
 
     try {
       const binDir = join(workDir, "bin");
@@ -545,7 +545,7 @@ TMPDIR=${shellQuote(workDir)}
 export ROOT_DIR TMPDIR
 export PATH="$TMPDIR/bin"
 export DOCKER_COMMAND_TIMEOUT=30s
-export OPENCLAW_DOCKER_TIMEOUT_KILL_GRACE_MS=100
+export MERCLAW_DOCKER_TIMEOUT_KILL_GRACE_MS=100
 
 source "$ROOT_DIR/scripts/lib/docker-e2e-container.sh"
 
@@ -579,7 +579,7 @@ exit 1
   });
 
   it("uses plain timeout when kill-after is unsupported", () => {
-    const workDir = mkdtempSync(join(tmpdir(), "openclaw-docker-plain-timeout-"));
+    const workDir = mkdtempSync(join(tmpdir(), "merclaw-docker-plain-timeout-"));
 
     try {
       const binDir = join(workDir, "bin");
@@ -626,7 +626,7 @@ grep -q '^image inspect demo$' "$TMPDIR/docker-seen"
   });
 
   it("uses gtimeout when timeout is unavailable", () => {
-    const workDir = mkdtempSync(join(tmpdir(), "openclaw-docker-gtimeout-"));
+    const workDir = mkdtempSync(join(tmpdir(), "merclaw-docker-gtimeout-"));
 
     try {
       const binDir = join(workDir, "bin");
@@ -651,7 +651,7 @@ ROOT_DIR=${shellQuote(rootDir)}
 TMPDIR=${shellQuote(workDir)}
 export ROOT_DIR TMPDIR
 export PATH="$TMPDIR/bin"
-export OPENCLAW_DOCKER_E2E_RUN_TIMEOUT=13s
+export MERCLAW_DOCKER_E2E_RUN_TIMEOUT=13s
 
 docker() {
   printf "%s\\n" "$*" >>"$TMPDIR/docker-seen"
@@ -673,7 +673,7 @@ docker_e2e_docker_run_cmd run demo
   });
 
   it("keeps package-backed Docker runs bounded without the shared timeout helper", () => {
-    const workDir = mkdtempSync(join(tmpdir(), "openclaw-docker-package-timeout-required-"));
+    const workDir = mkdtempSync(join(tmpdir(), "merclaw-docker-package-timeout-required-"));
 
     try {
       mkdirSync(join(workDir, "bin"));
@@ -684,7 +684,7 @@ ROOT_DIR=${shellQuote(rootDir)}
 TMPDIR=${shellQuote(workDir)}
 export ROOT_DIR TMPDIR
 export PATH="$TMPDIR/bin"
-export OPENCLAW_DOCKER_E2E_RUN_TIMEOUT=11s
+export MERCLAW_DOCKER_E2E_RUN_TIMEOUT=11s
 
 dirname() {
   /usr/bin/dirname "$@"
@@ -719,7 +719,7 @@ stderr="$(<"$TMPDIR/stderr")"
   });
 
   it("uses gtimeout for package-backed Docker runs without the shared timeout helper", () => {
-    const workDir = mkdtempSync(join(tmpdir(), "openclaw-docker-package-gtimeout-"));
+    const workDir = mkdtempSync(join(tmpdir(), "merclaw-docker-package-gtimeout-"));
 
     try {
       const binDir = join(workDir, "bin");
@@ -744,7 +744,7 @@ ROOT_DIR=${shellQuote(rootDir)}
 TMPDIR=${shellQuote(workDir)}
 export ROOT_DIR TMPDIR
 export PATH="$TMPDIR/bin"
-export OPENCLAW_DOCKER_E2E_RUN_TIMEOUT=15s
+export MERCLAW_DOCKER_E2E_RUN_TIMEOUT=15s
 
 dirname() {
   /usr/bin/dirname "$@"
@@ -774,7 +774,7 @@ docker_e2e_docker_run_cmd run demo
   });
 
   it("removes functional Docker build package inputs after the build", () => {
-    const workDir = mkdtempSync(join(tmpdir(), "openclaw-docker-build-cleanup-"));
+    const workDir = mkdtempSync(join(tmpdir(), "merclaw-docker-build-cleanup-"));
 
     try {
       const rootDir = process.cwd();
@@ -787,7 +787,7 @@ export ROOT_DIR TMPDIR
 node() {
   local script="$1"
   shift
-  if [[ "$script" != "$ROOT_DIR/scripts/package-openclaw-for-docker.mjs" ]]; then
+  if [[ "$script" != "$ROOT_DIR/scripts/package-merclaw-for-docker.mjs" ]]; then
     command node "$script" "$@"
     return
   fi
@@ -823,19 +823,19 @@ docker_build_run() {
   local arg
   for arg in "$@"; do
     case "$arg" in
-      openclaw_package=*)
-        build_context="\${arg#openclaw_package=}"
+      merclaw_package=*)
+        build_context="\${arg#merclaw_package=}"
         ;;
     esac
   done
 
   test -n "$build_context"
-  test -f "$build_context/openclaw-current.tgz"
+  test -f "$build_context/merclaw-current.tgz"
   printf "%s\\n" "$build_context" >"$TMPDIR/build-context-seen"
 }
 
 docker_e2e_build_or_reuse \\
-  openclaw-test-image \\
+  merclaw-test-image \\
   cleanup-proof \\
   "$ROOT_DIR/scripts/e2e/Dockerfile" \\
   "$ROOT_DIR" \\
@@ -843,8 +843,8 @@ docker_e2e_build_or_reuse \\
 
 test -f "$TMPDIR/build-context-seen"
 leftovers="$(find "$TMPDIR" -maxdepth 1 \\( \\
-  -name 'openclaw-docker-e2e-pack.*' \\
-  -o -name 'openclaw-docker-e2e-package-context.*' \\
+  -name 'merclaw-docker-e2e-pack.*' \\
+  -o -name 'merclaw-docker-e2e-package-context.*' \\
 \\) -print)"
 if [[ -n "$leftovers" ]]; then
   printf 'leftover functional build inputs:\\n%s\\n' "$leftovers" >&2
@@ -859,7 +859,7 @@ fi
   });
 
   it("keeps caller-provided functional Docker build packages", () => {
-    const workDir = mkdtempSync(join(tmpdir(), "openclaw-docker-build-external-package-"));
+    const workDir = mkdtempSync(join(tmpdir(), "merclaw-docker-build-external-package-"));
 
     try {
       const rootDir = process.cwd();
@@ -871,9 +871,9 @@ export ROOT_DIR TMPDIR
 
 external_dir="$TMPDIR/external-package"
 mkdir -p "$external_dir"
-printf fixture >"$external_dir/openclaw-current.tgz"
-OPENCLAW_CURRENT_PACKAGE_TGZ="$external_dir/openclaw-current.tgz"
-export OPENCLAW_CURRENT_PACKAGE_TGZ
+printf fixture >"$external_dir/merclaw-current.tgz"
+MERCLAW_CURRENT_PACKAGE_TGZ="$external_dir/merclaw-current.tgz"
+export MERCLAW_CURRENT_PACKAGE_TGZ
 
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 
@@ -882,27 +882,27 @@ docker_build_run() {
   local arg
   for arg in "$@"; do
     case "$arg" in
-      openclaw_package=*)
-        build_context="\${arg#openclaw_package=}"
+      merclaw_package=*)
+        build_context="\${arg#merclaw_package=}"
         ;;
     esac
   done
 
   test -n "$build_context"
-  test -f "$build_context/openclaw-current.tgz"
+  test -f "$build_context/merclaw-current.tgz"
   printf "%s\\n" "$build_context" >"$TMPDIR/build-context-seen"
 }
 
 docker_e2e_build_or_reuse \\
-  openclaw-test-image \\
+  merclaw-test-image \\
   external-package-proof \\
   "$ROOT_DIR/scripts/e2e/Dockerfile" \\
   "$ROOT_DIR" \\
   functional
 
 test -f "$TMPDIR/build-context-seen"
-test -f "$OPENCLAW_CURRENT_PACKAGE_TGZ"
-leftovers="$(find "$TMPDIR" -maxdepth 1 -name 'openclaw-docker-e2e-package-context.*' -print)"
+test -f "$MERCLAW_CURRENT_PACKAGE_TGZ"
+leftovers="$(find "$TMPDIR" -maxdepth 1 -name 'merclaw-docker-e2e-package-context.*' -print)"
 if [[ -n "$leftovers" ]]; then
   printf 'leftover functional build context:\\n%s\\n' "$leftovers" >&2
   exit 1
@@ -916,7 +916,7 @@ fi
   });
 
   it("cleans generated package mounts after harness Docker runs", () => {
-    const workDir = mkdtempSync(join(tmpdir(), "openclaw-docker-package-mount-cleanup-"));
+    const workDir = mkdtempSync(join(tmpdir(), "merclaw-docker-package-mount-cleanup-"));
 
     try {
       const rootDir = process.cwd();
@@ -951,7 +951,7 @@ export PATH="$TMPDIR/bin:$PATH"
 node() {
   local script="$1"
   shift
-  if [[ "$script" != "$ROOT_DIR/scripts/package-openclaw-for-docker.mjs" ]]; then
+  if [[ "$script" != "$ROOT_DIR/scripts/package-merclaw-for-docker.mjs" ]]; then
     command node "$script" "$@"
     return
   fi
@@ -1015,13 +1015,13 @@ test ! -e "$pack_dir"
 
 external_dir="$TMPDIR/external-package"
 mkdir -p "$external_dir"
-printf fixture >"$external_dir/openclaw-current.tgz"
-docker_e2e_package_mount_args "$external_dir/openclaw-current.tgz"
+printf fixture >"$external_dir/merclaw-current.tgz"
+docker_e2e_package_mount_args "$external_dir/merclaw-current.tgz"
 unset DOCKER_COMMAND_TIMEOUT
 rm -f "$TMPDIR/docker-timeout-seen"
 docker_e2e_run_with_harness image-name bash -lc true
 test "$(cat "$TMPDIR/docker-timeout-seen")" = "--kill-after=30s 3600s"
-test -f "$external_dir/openclaw-current.tgz"
+test -f "$external_dir/merclaw-current.tgz"
 `;
 
       execFileSync("bash", ["-lc", script], { encoding: "utf8" });
@@ -1031,7 +1031,7 @@ test -f "$external_dir/openclaw-current.tgz"
   });
 
   it("propagates shared E2E command timeouts into package-backed containers", () => {
-    const workDir = mkdtempSync(join(tmpdir(), "openclaw-docker-package-timeout-env-"));
+    const workDir = mkdtempSync(join(tmpdir(), "merclaw-docker-package-timeout-env-"));
 
     try {
       const rootDir = process.cwd();
@@ -1042,17 +1042,17 @@ TMPDIR=${shellQuote(workDir)}
 export ROOT_DIR TMPDIR
 source "$ROOT_DIR/scripts/lib/docker-e2e-package.sh"
 
-package="$TMPDIR/openclaw-current.tgz"
+package="$TMPDIR/merclaw-current.tgz"
 printf fixture >"$package"
-export OPENCLAW_E2E_NPM_INSTALL_TIMEOUT=42s
-export OPENCLAW_E2E_COMMAND_TIMEOUT=23s
+export MERCLAW_E2E_NPM_INSTALL_TIMEOUT=42s
+export MERCLAW_E2E_COMMAND_TIMEOUT=23s
 docker_e2e_package_mount_args "$package"
 printf "%s\\n" "\${DOCKER_E2E_PACKAGE_ARGS[@]}" >"$TMPDIR/package-args"
 
 grep -qx -- "-e" "$TMPDIR/package-args"
-grep -qx -- "OPENCLAW_CURRENT_PACKAGE_TGZ=/tmp/openclaw-current.tgz" "$TMPDIR/package-args"
-grep -qx -- "OPENCLAW_E2E_NPM_INSTALL_TIMEOUT=42s" "$TMPDIR/package-args"
-grep -qx -- "OPENCLAW_E2E_COMMAND_TIMEOUT=23s" "$TMPDIR/package-args"
+grep -qx -- "MERCLAW_CURRENT_PACKAGE_TGZ=/tmp/merclaw-current.tgz" "$TMPDIR/package-args"
+grep -qx -- "MERCLAW_E2E_NPM_INSTALL_TIMEOUT=42s" "$TMPDIR/package-args"
+grep -qx -- "MERCLAW_E2E_COMMAND_TIMEOUT=23s" "$TMPDIR/package-args"
 `;
 
       execFileSync("bash", ["-lc", script], { encoding: "utf8" });
@@ -1064,15 +1064,15 @@ grep -qx -- "OPENCLAW_E2E_COMMAND_TIMEOUT=23s" "$TMPDIR/package-args"
   it("passes plugin lifecycle sampler timeout overrides into Docker", () => {
     const runner = readFileSync(PLUGIN_LIFECYCLE_MATRIX_DOCKER_E2E_PATH, "utf8");
 
-    expect(runner).toContain('if [ -n "${OPENCLAW_PLUGIN_LIFECYCLE_PHASE_TIMEOUT_MS:-}" ]; then');
+    expect(runner).toContain('if [ -n "${MERCLAW_PLUGIN_LIFECYCLE_PHASE_TIMEOUT_MS:-}" ]; then');
     expect(runner).toContain(
-      'DOCKER_ENV_ARGS+=(-e "OPENCLAW_PLUGIN_LIFECYCLE_PHASE_TIMEOUT_MS=$OPENCLAW_PLUGIN_LIFECYCLE_PHASE_TIMEOUT_MS")',
+      'DOCKER_ENV_ARGS+=(-e "MERCLAW_PLUGIN_LIFECYCLE_PHASE_TIMEOUT_MS=$MERCLAW_PLUGIN_LIFECYCLE_PHASE_TIMEOUT_MS")',
     );
     expect(runner).toContain(
-      'if [ -n "${OPENCLAW_PLUGIN_LIFECYCLE_TIMEOUT_KILL_GRACE_MS:-}" ]; then',
+      'if [ -n "${MERCLAW_PLUGIN_LIFECYCLE_TIMEOUT_KILL_GRACE_MS:-}" ]; then',
     );
     expect(runner).toContain(
-      'DOCKER_ENV_ARGS+=(-e "OPENCLAW_PLUGIN_LIFECYCLE_TIMEOUT_KILL_GRACE_MS=$OPENCLAW_PLUGIN_LIFECYCLE_TIMEOUT_KILL_GRACE_MS")',
+      'DOCKER_ENV_ARGS+=(-e "MERCLAW_PLUGIN_LIFECYCLE_TIMEOUT_KILL_GRACE_MS=$MERCLAW_PLUGIN_LIFECYCLE_TIMEOUT_KILL_GRACE_MS")',
     );
     expect(runner).toContain('docker_e2e_run_with_harness \\\n  "${DOCKER_ENV_ARGS[@]}"');
   });
@@ -1086,23 +1086,23 @@ grep -qx -- "OPENCLAW_E2E_COMMAND_TIMEOUT=23s" "$TMPDIR/package-args"
     const pluginCorrupt = readFileSync(PLUGIN_UPDATE_CORRUPT_SCENARIO_PATH, "utf8");
 
     expect(multiNode).toContain(
-      'openclaw_e2e_install_package "$ARTIFACTS/install-a.log" "OpenClaw package under node-A prefix" "$NPM_PREFIX_A"',
+      'merclaw_e2e_install_package "$ARTIFACTS/install-a.log" "MerClaw package under node-A prefix" "$NPM_PREFIX_A"',
     );
     expect(updateChannel).toContain(
-      'openclaw_e2e_maybe_timeout "${OPENCLAW_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install --omit=optional --no-fund --no-audit',
+      'merclaw_e2e_maybe_timeout "${MERCLAW_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install --omit=optional --no-fund --no-audit',
     );
     expect(updateChannel).toContain(
-      'openclaw_e2e_maybe_timeout "${OPENCLAW_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install -g --prefix /tmp/npm-prefix --omit=optional "$pkg_tgz_path"',
+      'merclaw_e2e_maybe_timeout "${MERCLAW_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install -g --prefix /tmp/npm-prefix --omit=optional "$pkg_tgz_path"',
     );
     expect(doctorSwitch).toContain(
-      'openclaw_e2e_maybe_timeout "${OPENCLAW_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install --omit=optional --no-fund --no-audit',
+      'merclaw_e2e_maybe_timeout "${MERCLAW_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install --omit=optional --no-fund --no-audit',
     );
     expect(doctorSwitch).toContain(
-      'openclaw_e2e_maybe_timeout "${OPENCLAW_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install -g --prefix /tmp/npm-prefix --omit=optional "$package_tgz"',
+      'merclaw_e2e_maybe_timeout "${MERCLAW_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install -g --prefix /tmp/npm-prefix --omit=optional "$package_tgz"',
     );
     for (const script of [releaseUpgrade, upgradeSurvivor, pluginCorrupt]) {
       expect(script).toContain(
-        'openclaw_e2e_maybe_timeout "${OPENCLAW_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install -g',
+        'merclaw_e2e_maybe_timeout "${MERCLAW_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install -g',
       );
     }
   });
@@ -1112,24 +1112,24 @@ grep -qx -- "OPENCLAW_E2E_COMMAND_TIMEOUT=23s" "$TMPDIR/package-args"
     const publishedRunner = readFileSync(UPGRADE_SURVIVOR_RUN_SCRIPT, "utf8");
 
     for (const script of [runner, publishedRunner]) {
-      expect(script).toContain("openclaw-upgrade-survivor-runtime");
-      expect(script).toContain("OPENCLAW_UPGRADE_SURVIVOR_TMPDIR");
-      expect(script).toContain("OPENCLAW_UPGRADE_SURVIVOR_TEST_STATE_TMPDIR");
+      expect(script).toContain("merclaw-upgrade-survivor-runtime");
+      expect(script).toContain("MERCLAW_UPGRADE_SURVIVOR_TMPDIR");
+      expect(script).toContain("MERCLAW_UPGRADE_SURVIVOR_TEST_STATE_TMPDIR");
       expect(script).toContain(
-        'export npm_config_cache="${OPENCLAW_UPGRADE_SURVIVOR_NPM_CACHE:-$OPENCLAW_UPGRADE_SURVIVOR_RUNTIME_ROOT/npm-cache}"',
+        'export npm_config_cache="${MERCLAW_UPGRADE_SURVIVOR_NPM_CACHE:-$MERCLAW_UPGRADE_SURVIVOR_RUNTIME_ROOT/npm-cache}"',
       );
       expect(script).toContain('export NPM_CONFIG_CACHE="$npm_config_cache"');
       expect(script).toContain('chmod 700 "$npm_config_cache" || true');
       expect(script).not.toContain('export TMPDIR="$ARTIFACT_ROOT/tmp"');
-      expect(script).not.toContain('export TMPDIR="$OPENCLAW_UPGRADE_SURVIVOR_ARTIFACT_ROOT/tmp"');
+      expect(script).not.toContain('export TMPDIR="$MERCLAW_UPGRADE_SURVIVOR_ARTIFACT_ROOT/tmp"');
       expect(script).not.toContain('export npm_config_cache="$ARTIFACT_ROOT/npm-cache"');
       expect(script).not.toContain(
-        'export npm_config_cache="$OPENCLAW_UPGRADE_SURVIVOR_ARTIFACT_ROOT/npm-cache"',
+        'export npm_config_cache="$MERCLAW_UPGRADE_SURVIVOR_ARTIFACT_ROOT/npm-cache"',
       );
     }
   });
 
-  it("wraps package-backed scenario OpenClaw CLI calls with the shared timeout helper", () => {
+  it("wraps package-backed scenario MerClaw CLI calls with the shared timeout helper", () => {
     const paths = [
       CODEX_ON_DEMAND_DOCKER_E2E_PATH,
       CODEX_MEDIA_PATH_SCENARIO_PATH,
@@ -1147,10 +1147,10 @@ grep -qx -- "OPENCLAW_E2E_COMMAND_TIMEOUT=23s" "$TMPDIR/package-args"
     for (const path of paths) {
       const script = readFileSync(path, "utf8");
 
-      expect(script, path).toContain("openclaw_e2e_enable_openclaw_cli_timeout");
+      expect(script, path).toContain("merclaw_e2e_enable_merclaw_cli_timeout");
     }
     expect(readFileSync(RELEASE_UPGRADE_USER_JOURNEY_SCENARIO_PATH, "utf8")).toContain(
-      'openclaw_e2e_run_command node "$baseline_entry" onboard',
+      'merclaw_e2e_run_command node "$baseline_entry" onboard',
     );
   });
 
@@ -1168,74 +1168,74 @@ grep -qx -- "OPENCLAW_E2E_COMMAND_TIMEOUT=23s" "$TMPDIR/package-args"
     }
   });
 
-  it("bounds upgrade survivor foreground OpenClaw CLI calls", () => {
+  it("bounds upgrade survivor foreground MerClaw CLI calls", () => {
     const runner = readFileSync(UPGRADE_SURVIVOR_DOCKER_E2E_PATH, "utf8");
     const publishedRunner = readFileSync(UPGRADE_SURVIVOR_RUN_SCRIPT, "utf8");
     const updateRestartAuth = readFileSync(UPGRADE_SURVIVOR_UPDATE_RESTART_AUTH_PATH, "utf8");
 
     expect(runner).toContain(
-      'COMMAND_TIMEOUT="${OPENCLAW_UPGRADE_SURVIVOR_COMMAND_TIMEOUT:-900s}"',
+      'COMMAND_TIMEOUT="${MERCLAW_UPGRADE_SURVIVOR_COMMAND_TIMEOUT:-900s}"',
     );
-    expect(runner).toContain('-e OPENCLAW_UPGRADE_SURVIVOR_COMMAND_TIMEOUT="$COMMAND_TIMEOUT"');
+    expect(runner).toContain('-e MERCLAW_UPGRADE_SURVIVOR_COMMAND_TIMEOUT="$COMMAND_TIMEOUT"');
     expect(runner).toContain(
-      'command_timeout="${OPENCLAW_UPGRADE_SURVIVOR_COMMAND_TIMEOUT:-900s}"',
-    );
-    expect(runner).toContain(
-      'openclaw_e2e_maybe_timeout "$command_timeout" env -u OPENCLAW_GATEWAY_TOKEN',
+      'command_timeout="${MERCLAW_UPGRADE_SURVIVOR_COMMAND_TIMEOUT:-900s}"',
     );
     expect(runner).toContain(
-      'openclaw_e2e_maybe_timeout "$command_timeout" openclaw doctor --fix --non-interactive',
+      'merclaw_e2e_maybe_timeout "$command_timeout" env -u MERCLAW_GATEWAY_TOKEN',
     );
     expect(runner).toContain(
-      'openclaw_e2e_maybe_timeout "$command_timeout" openclaw config validate',
+      'merclaw_e2e_maybe_timeout "$command_timeout" merclaw doctor --fix --non-interactive',
     );
     expect(runner).toContain(
-      'openclaw_e2e_maybe_timeout "$command_timeout" openclaw gateway status',
+      'merclaw_e2e_maybe_timeout "$command_timeout" merclaw config validate',
     );
     expect(runner).toContain(
-      'openclaw gateway --port "$PORT" --bind loopback --allow-unconfigured',
+      'merclaw_e2e_maybe_timeout "$command_timeout" merclaw gateway status',
+    );
+    expect(runner).toContain(
+      'merclaw gateway --port "$PORT" --bind loopback --allow-unconfigured',
     );
 
     expect(publishedRunner).toContain(
-      'COMMAND_TIMEOUT="${OPENCLAW_UPGRADE_SURVIVOR_COMMAND_TIMEOUT:-900s}"',
+      'COMMAND_TIMEOUT="${MERCLAW_UPGRADE_SURVIVOR_COMMAND_TIMEOUT:-900s}"',
     );
     expect(publishedRunner).toContain(
-      'openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" env -u OPENCLAW_GATEWAY_TOKEN',
+      'merclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" env -u MERCLAW_GATEWAY_TOKEN',
     );
     expect(publishedRunner).toContain(
-      'openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" openclaw --version',
+      'merclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" merclaw --version',
     );
     expect(publishedRunner).toContain(
-      'openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" openclaw config validate >"$BASELINE_CONFIG_VALIDATE_LOG"',
+      'merclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" merclaw config validate >"$BASELINE_CONFIG_VALIDATE_LOG"',
     );
     expect(publishedRunner).toContain(
-      'openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" "${update_env[@]}" openclaw',
+      'merclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" "${update_env[@]}" merclaw',
     );
     expect(publishedRunner).toContain(
-      'openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" "${root_cli_env[@]}" openclaw',
+      'merclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" "${root_cli_env[@]}" merclaw',
     );
     expect(publishedRunner).toContain(
-      'openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" openclaw doctor --fix --non-interactive',
+      'merclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" merclaw doctor --fix --non-interactive',
     );
     expect(publishedRunner).toContain(
-      'openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" openclaw config validate',
+      'merclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" merclaw config validate',
     );
     expect(publishedRunner).toContain(
-      'openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" openclaw gateway status',
+      'merclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" merclaw gateway status',
     );
-    expect(publishedRunner).toContain('openclaw gateway --port "$port" --bind loopback');
+    expect(publishedRunner).toContain('merclaw gateway --port "$port" --bind loopback');
 
     expect(updateRestartAuth).toContain(
-      'command_timeout="${OPENCLAW_UPGRADE_SURVIVOR_COMMAND_TIMEOUT:-900s}"',
+      'command_timeout="${MERCLAW_UPGRADE_SURVIVOR_COMMAND_TIMEOUT:-900s}"',
     );
     expect(updateRestartAuth).toContain(
-      'openclaw_e2e_maybe_timeout "$command_timeout" env -u OPENCLAW_GATEWAY_TOKEN',
+      'merclaw_e2e_maybe_timeout "$command_timeout" env -u MERCLAW_GATEWAY_TOKEN',
     );
-    expect(updateRestartAuth).toContain('openclaw gateway --port "$port" --bind loopback');
+    expect(updateRestartAuth).toContain('merclaw gateway --port "$port" --bind loopback');
   });
 
   it("keeps the harness run wrapper available with pre-sourced Docker command helpers", () => {
-    const workDir = mkdtempSync(join(tmpdir(), "openclaw-docker-package-helper-guard-"));
+    const workDir = mkdtempSync(join(tmpdir(), "merclaw-docker-package-helper-guard-"));
 
     try {
       const rootDir = process.cwd();
@@ -1349,7 +1349,7 @@ test -f "$TMPDIR/docker-cmd-seen"
 
     expect(helper).toContain("docker_e2e_run_logged_print_with_harness()");
     expect(helper).toContain("run_logged_print_heartbeat \\");
-    expect(helper).toContain("OPENCLAW_DOCKER_E2E_LOG_HEARTBEAT_SECONDS");
+    expect(helper).toContain("MERCLAW_DOCKER_E2E_LOG_HEARTBEAT_SECONDS");
     expect(runner).toContain("docker_e2e_run_logged_print_with_harness \\");
     expect(runner).not.toContain("docker_e2e_run_logged_with_harness plugins-run");
   });
@@ -1363,12 +1363,12 @@ test -f "$TMPDIR/docker-cmd-seen"
   it("keeps onboarding Docker E2E resource-guarded", () => {
     const runner = readFileSync(ONBOARD_DOCKER_E2E_PATH, "utf8");
 
-    expect(runner).toContain("OPENCLAW_ONBOARD_MAX_MEMORY_MIB");
-    expect(runner).toContain("OPENCLAW_ONBOARD_MAX_CPU_PERCENT");
+    expect(runner).toContain("MERCLAW_ONBOARD_MAX_MEMORY_MIB");
+    expect(runner).toContain("MERCLAW_ONBOARD_MAX_CPU_PERCENT");
     expect(runner).toContain(
-      'COMMAND_TIMEOUT="${OPENCLAW_ONBOARD_COMMAND_TIMEOUT:-${OPENCLAW_E2E_COMMAND_TIMEOUT:-300s}}"',
+      'COMMAND_TIMEOUT="${MERCLAW_ONBOARD_COMMAND_TIMEOUT:-${MERCLAW_E2E_COMMAND_TIMEOUT:-300s}}"',
     );
-    expect(runner).toContain('-e "OPENCLAW_E2E_COMMAND_TIMEOUT=$COMMAND_TIMEOUT"');
+    expect(runner).toContain('-e "MERCLAW_E2E_COMMAND_TIMEOUT=$COMMAND_TIMEOUT"');
     expect(runner).toContain('--name "$CONTAINER_NAME"');
     expect(runner).toContain("docker_e2e_sample_stats_until_exit \\");
     expect(runner).toContain('"$STATS_LOG" \\');
@@ -1391,7 +1391,7 @@ test -f "$TMPDIR/docker-cmd-seen"
       expect(runner, path).toContain(
         'DOCKER_COMMAND_TIMEOUT="$DOCKER_RUN_TIMEOUT" docker_e2e_docker_run_cmd run --name "$CONTAINER_NAME"',
       );
-      expect(runner, path).toContain('DOCKER_RUN_TIMEOUT="${OPENCLAW_');
+      expect(runner, path).toContain('DOCKER_RUN_TIMEOUT="${MERCLAW_');
       expect(runner, path).toContain("docker_e2e_sample_stats_until_exit \\");
       expect(runner, path).toContain('"$STATS_LOG" \\');
       expect(runner, path).toContain('"$RUN_LOG" \\');
@@ -1411,21 +1411,21 @@ test -f "$TMPDIR/docker-cmd-seen"
     const sweep = readFileSync("scripts/e2e/lib/kitchen-sink-plugin/sweep.sh", "utf8");
 
     expect(runner).toContain(
-      'KITCHEN_SINK_CLI_TIMEOUT="${OPENCLAW_KITCHEN_SINK_PLUGIN_CLI_TIMEOUT:-${KITCHEN_SINK_CLI_TIMEOUT:-180s}}"',
+      'KITCHEN_SINK_CLI_TIMEOUT="${MERCLAW_KITCHEN_SINK_PLUGIN_CLI_TIMEOUT:-${KITCHEN_SINK_CLI_TIMEOUT:-180s}}"',
     );
     expect(runner).toContain('-e "KITCHEN_SINK_CLI_TIMEOUT=$KITCHEN_SINK_CLI_TIMEOUT"');
     expect(sweep).toContain('KITCHEN_SINK_CLI_TIMEOUT="${KITCHEN_SINK_CLI_TIMEOUT:-180s}"');
-    expect(sweep).toContain("run_kitchen_sink_openclaw_logged()");
-    expect(sweep).toContain("run_kitchen_sink_openclaw_capture()");
+    expect(sweep).toContain("run_kitchen_sink_merclaw_logged()");
+    expect(sweep).toContain("run_kitchen_sink_merclaw_capture()");
     expect(sweep).toContain(
-      'run_logged_print "$label" openclaw_e2e_maybe_timeout "$KITCHEN_SINK_CLI_TIMEOUT" node "$OPENCLAW_ENTRY" "$@"',
+      'run_logged_print "$label" merclaw_e2e_maybe_timeout "$KITCHEN_SINK_CLI_TIMEOUT" node "$MERCLAW_ENTRY" "$@"',
     );
     for (const line of sweep.split("\n")) {
-      if (!line.includes('node "$OPENCLAW_ENTRY" plugins')) {
+      if (!line.includes('node "$MERCLAW_ENTRY" plugins')) {
         continue;
       }
 
-      expect(line).toContain("openclaw_e2e_maybe_timeout");
+      expect(line).toContain("merclaw_e2e_maybe_timeout");
     }
   });
 
@@ -1486,7 +1486,7 @@ test -f "$TMPDIR/docker-cmd-seen"
     expect(scheduler).toContain("path.dirname(process.execPath)");
     expect(scheduler).toContain("env.PATH = [...new Set(pathEntries)].join(path.delimiter)");
     expect(scheduler).toContain("withResolvedPnpmCommand");
-    expect(scheduler).toContain("OPENCLAW_DOCKER_ALL_PNPM_COMMAND");
+    expect(scheduler).toContain("MERCLAW_DOCKER_ALL_PNPM_COMMAND");
   });
 
   it("runs release installer E2E against the npm beta tag", () => {
@@ -1494,16 +1494,16 @@ test -f "$TMPDIR/docker-cmd-seen"
     const openWebUiRunner = readFileSync(OPENWEBUI_DOCKER_E2E_PATH, "utf8");
 
     expect(scenarios).toContain(
-      '"OPENCLAW_INSTALL_TAG=beta OPENCLAW_E2E_MODELS=openai OPENCLAW_INSTALL_E2E_IMAGE=openclaw-install-e2e-openai:local OPENCLAW_INSTALL_E2E_AGENT_TOOL_SMOKE=0 OPENCLAW_INSTALL_E2E_OPENAI_MODEL=openai/gpt-5.4-mini OPENCLAW_INSTALL_E2E_AGENT_TURN_TIMEOUT_SECONDS=120 OPENCLAW_INSTALL_E2E_OPENAI_PROVIDER_TIMEOUT_SECONDS=120 pnpm test:install:e2e"',
+      '"MERCLAW_INSTALL_TAG=beta MERCLAW_E2E_MODELS=openai MERCLAW_INSTALL_E2E_IMAGE=merclaw-install-e2e-openai:local MERCLAW_INSTALL_E2E_AGENT_TOOL_SMOKE=0 MERCLAW_INSTALL_E2E_OPENAI_MODEL=openai/gpt-5.4-mini MERCLAW_INSTALL_E2E_AGENT_TURN_TIMEOUT_SECONDS=120 MERCLAW_INSTALL_E2E_OPENAI_PROVIDER_TIMEOUT_SECONDS=120 pnpm test:install:e2e"',
     );
     expect(scenarios).toContain(
-      '"OPENCLAW_INSTALL_TAG=beta OPENCLAW_E2E_MODELS=anthropic OPENCLAW_INSTALL_E2E_IMAGE=openclaw-install-e2e-anthropic:local pnpm test:install:e2e"',
+      '"MERCLAW_INSTALL_TAG=beta MERCLAW_E2E_MODELS=anthropic MERCLAW_INSTALL_E2E_IMAGE=merclaw-install-e2e-anthropic:local pnpm test:install:e2e"',
     );
     expect(scenarios).toContain(
-      '"OPENCLAW_OPENWEBUI_MODEL=openai/gpt-5.4-mini OPENWEBUI_SMOKE_MODE=models OPENCLAW_OPENWEBUI_PROVIDER_TIMEOUT_SECONDS=300 OPENCLAW_SKIP_DOCKER_BUILD=1 pnpm test:docker:openwebui"',
+      '"MERCLAW_OPENWEBUI_MODEL=openai/gpt-5.4-mini OPENWEBUI_SMOKE_MODE=models MERCLAW_OPENWEBUI_PROVIDER_TIMEOUT_SECONDS=300 MERCLAW_SKIP_DOCKER_BUILD=1 pnpm test:docker:openwebui"',
     );
     expect(openWebUiRunner).toContain(
-      'SMOKE_MODE="${OPENWEBUI_SMOKE_MODE:-${OPENCLAW_OPENWEBUI_SMOKE_MODE:-chat}}"',
+      'SMOKE_MODE="${OPENWEBUI_SMOKE_MODE:-${MERCLAW_OPENWEBUI_SMOKE_MODE:-chat}}"',
     );
     expect(openWebUiRunner).toContain('-e "OPENWEBUI_SMOKE_MODE=$SMOKE_MODE"');
   });
@@ -1513,7 +1513,7 @@ test -f "$TMPDIR/docker-cmd-seen"
     const wrapper = readFileSync("scripts/test-install-sh-e2e-docker.sh", "utf8");
 
     expect(runner).toContain(
-      'AGENT_TURNS_PARALLEL="${OPENCLAW_INSTALL_E2E_AGENT_TURNS_PARALLEL:-1}"',
+      'AGENT_TURNS_PARALLEL="${MERCLAW_INSTALL_E2E_AGENT_TURNS_PARALLEL:-1}"',
     );
     expect(runner).toContain("time_phase");
     expect(runner).toContain("phase_mark_start");
@@ -1524,15 +1524,15 @@ test -f "$TMPDIR/docker-cmd-seen"
     expect(runner).not.toContain('run_agent_turn_bg "read proof"');
     expect(runner).toContain('run_agent_turn_bg "image write"');
     expect(runner).toContain('run_agent_turn_logged_or_skip_profile "read proof copy"');
-    expect(wrapper).toContain("OPENCLAW_INSTALL_E2E_AGENT_TURNS_PARALLEL");
-    expect(wrapper).toContain("OPENCLAW_INSTALL_E2E_AGENT_TOOL_SMOKE");
-    expect(wrapper).toContain("OPENCLAW_INSTALL_E2E_OPENAI_MODEL");
-    expect(wrapper).toContain("OPENCLAW_INSTALL_E2E_OPENAI_PROVIDER_TIMEOUT_SECONDS");
-    expect(wrapper).toContain("OPENCLAW_INSTALL_E2E_AGENT_TURN_TIMEOUT_SECONDS:-300");
-    expect(runner).toContain("OPENCLAW_INSTALL_E2E_OPENAI_MODEL");
-    expect(runner).toContain("OPENCLAW_INSTALL_E2E_OPENAI_PROVIDER_TIMEOUT_SECONDS");
+    expect(wrapper).toContain("MERCLAW_INSTALL_E2E_AGENT_TURNS_PARALLEL");
+    expect(wrapper).toContain("MERCLAW_INSTALL_E2E_AGENT_TOOL_SMOKE");
+    expect(wrapper).toContain("MERCLAW_INSTALL_E2E_OPENAI_MODEL");
+    expect(wrapper).toContain("MERCLAW_INSTALL_E2E_OPENAI_PROVIDER_TIMEOUT_SECONDS");
+    expect(wrapper).toContain("MERCLAW_INSTALL_E2E_AGENT_TURN_TIMEOUT_SECONDS:-300");
+    expect(runner).toContain("MERCLAW_INSTALL_E2E_OPENAI_MODEL");
+    expect(runner).toContain("MERCLAW_INSTALL_E2E_OPENAI_PROVIDER_TIMEOUT_SECONDS");
     expect(runner).toContain(
-      'AGENT_TURN_TIMEOUT_SECONDS="${OPENCLAW_INSTALL_E2E_AGENT_TURN_TIMEOUT_SECONDS:-300}"',
+      'AGENT_TURN_TIMEOUT_SECONDS="${MERCLAW_INSTALL_E2E_AGENT_TURN_TIMEOUT_SECONDS:-300}"',
     );
   });
 
@@ -1542,7 +1542,7 @@ test -f "$TMPDIR/docker-cmd-seen"
     expect(scenarios).toContain('"plugins-offline"');
     expect(scenarios).toContain("`bundled-plugin-install-uninstall-${index}`");
     expect(scenarios).toContain("pnpm test:docker:bundled-plugin-install-uninstall");
-    expect(scenarios).toContain("OPENCLAW_PLUGINS_E2E_CLAWHUB=0");
+    expect(scenarios).toContain("MERCLAW_PLUGINS_E2E_CLAWHUB=0");
   });
 
   it("allows plugin update smoke to tolerate config metadata migrations", () => {
@@ -1567,7 +1567,7 @@ test -f "$TMPDIR/docker-cmd-seen"
     expect(runner).toContain('if [ "$GATEWAY_START_FAILED" -ne 0 ]; then');
     expect(runner).toContain('if [ "$GATEWAY_HEALTH_FAILED" -ne 0 ]; then');
     expect(runner).toContain("ActiveState=active");
-    expect(runner).toContain("OPENCLAW_NO_RESPAWN=1");
+    expect(runner).toContain("MERCLAW_NO_RESPAWN=1");
     expect(runner).toContain("is-enabled)");
     expect(runner).toContain("/healthz");
     expect(runner).toContain("FAIL: gateway install failed before update");
@@ -1611,7 +1611,7 @@ test -f "$TMPDIR/docker-cmd-seen"
     expect(doctorScenario).toContain("scripts/e2e/lib/package-compat.mjs");
     expect(pluginsSweep).toContain("scripts/e2e/lib/package-compat.mjs");
     expect(pluginUpdateProbe).toContain("../package-compat.mjs");
-    expect(scripts.join("\n")).toContain("OPENCLAW_PACKAGE_ACCEPTANCE_LEGACY_COMPAT");
+    expect(scripts.join("\n")).toContain("MERCLAW_PACKAGE_ACCEPTANCE_LEGACY_COMPAT");
     expect(scripts.join("\n")).toContain(
       "Package $package_version must support gateway install --wrapper.",
     );
@@ -1624,30 +1624,30 @@ test -f "$TMPDIR/docker-cmd-seen"
     const scenario = readFileSync(DOCTOR_SWITCH_SCENARIO_PATH, "utf8");
 
     expect(scenario).toContain(
-      'command_timeout="${OPENCLAW_DOCKER_DOCTOR_SWITCH_COMMAND_TIMEOUT:-900s}"',
+      'command_timeout="${MERCLAW_DOCKER_DOCTOR_SWITCH_COMMAND_TIMEOUT:-900s}"',
     );
     expect(scenario).toContain(
-      'openclaw_e2e_maybe_timeout "$command_timeout" bash -c "$install_cmd"',
+      'merclaw_e2e_maybe_timeout "$command_timeout" bash -c "$install_cmd"',
     );
     expect(scenario).toContain(
-      'openclaw_e2e_maybe_timeout "$command_timeout" bash -c "$doctor_cmd"',
+      'merclaw_e2e_maybe_timeout "$command_timeout" bash -c "$doctor_cmd"',
     );
     expect(scenario).toContain(
-      'openclaw_e2e_maybe_timeout "$command_timeout" "$npm_bin" gateway install --wrapper "$wrapper" --force',
+      'merclaw_e2e_maybe_timeout "$command_timeout" "$npm_bin" gateway install --wrapper "$wrapper" --force',
     );
     expect(scenario).toContain(
-      'openclaw_e2e_maybe_timeout "$command_timeout" node "$git_cli" doctor --repair --force --yes',
+      'merclaw_e2e_maybe_timeout "$command_timeout" node "$git_cli" doctor --repair --force --yes',
     );
     expect(scenario).not.toMatch(/^\s*if ! timeout "\$command_timeout"/mu);
   });
 
   it("prepares pnpm workspace package fixtures without package dependencies", () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-update-channel-fixture-"));
+    const root = mkdtempSync(join(tmpdir(), "merclaw-update-channel-fixture-"));
     try {
       mkdirSync(join(root, "patches"));
       writeFileSync(
         join(root, "package.json"),
-        `${JSON.stringify({ name: "openclaw", version: "2026.5.6", scripts: {} }, null, 2)}\n`,
+        `${JSON.stringify({ name: "merclaw", version: "2026.5.6", scripts: {} }, null, 2)}\n`,
         "utf8",
       );
       writeFileSync(
@@ -1692,19 +1692,19 @@ test -f "$TMPDIR/docker-cmd-seen"
     const probe = readFileSync(BUNDLED_PLUGIN_INSTALL_UNINSTALL_PROBE_PATH, "utf8");
     const runtimeSmoke = readFileSync(BUNDLED_PLUGIN_INSTALL_UNINSTALL_RUNTIME_SMOKE_PATH, "utf8");
 
-    expect(runner).toContain("OPENCLAW_BUNDLED_PLUGIN_SWEEP_TOTAL");
-    expect(runner).toContain("OPENCLAW_BUNDLED_PLUGIN_SWEEP_INDEX");
-    expect(runner).toContain("OPENCLAW_BUNDLED_PLUGIN_RUNTIME_READY_MS");
-    expect(runner).toContain("OPENCLAW_PLUGIN_LIFECYCLE_TRACE");
+    expect(runner).toContain("MERCLAW_BUNDLED_PLUGIN_SWEEP_TOTAL");
+    expect(runner).toContain("MERCLAW_BUNDLED_PLUGIN_SWEEP_INDEX");
+    expect(runner).toContain("MERCLAW_BUNDLED_PLUGIN_RUNTIME_READY_MS");
+    expect(runner).toContain("MERCLAW_PLUGIN_LIFECYCLE_TRACE");
     expect(runner).toContain("scripts/e2e/lib/bundled-plugin-install-uninstall/sweep.sh");
     expect(runner).toContain('tee "$RUN_LOG"');
     expect(runner).not.toContain('cat "$RUN_LOG"');
-    expect(probe).toContain('"openclaw.plugin.json"');
-    expect(runtimeSmoke).toContain("process.env.OPENCLAW_BUNDLED_PLUGIN_RUNTIME_READY_MS");
+    expect(probe).toContain('"merclaw.plugin.json"');
+    expect(runtimeSmoke).toContain("process.env.MERCLAW_BUNDLED_PLUGIN_RUNTIME_READY_MS");
     expect(runtimeSmoke).toContain("900000");
     expect(sweep).toContain("read -r plugin_id plugin_dir requires_config");
-    expect(sweep).toContain('node "$OPENCLAW_ENTRY" plugins install "$plugin_id"');
-    expect(sweep).toContain('node "$OPENCLAW_ENTRY" plugins uninstall "$plugin_id" --force');
+    expect(sweep).toContain('node "$MERCLAW_ENTRY" plugins install "$plugin_id"');
+    expect(sweep).toContain('node "$MERCLAW_ENTRY" plugins uninstall "$plugin_id" --force');
     expect(sweep).toContain("now_ms()");
     expect(sweep).toContain("lifecycle_trace_enabled()");
     expect(sweep).toContain("if lifecycle_trace_enabled; then");
@@ -1718,11 +1718,11 @@ test -f "$TMPDIR/docker-cmd-seen"
   it("passes installer tag env to bash, not curl", () => {
     const runner = readFileSync(INSTALL_E2E_RUNNER_PATH, "utf8");
 
-    expect(runner).toContain('curl -fsSL "$INSTALL_URL" | OPENCLAW_BETA=1 bash');
-    expect(runner).toContain('curl -fsSL "$INSTALL_URL" | OPENCLAW_VERSION="$INSTALL_TAG" bash');
-    expect(runner).not.toContain('OPENCLAW_BETA=1 curl -fsSL "$INSTALL_URL" | bash');
+    expect(runner).toContain('curl -fsSL "$INSTALL_URL" | MERCLAW_BETA=1 bash');
+    expect(runner).toContain('curl -fsSL "$INSTALL_URL" | MERCLAW_VERSION="$INSTALL_TAG" bash');
+    expect(runner).not.toContain('MERCLAW_BETA=1 curl -fsSL "$INSTALL_URL" | bash');
     expect(runner).not.toContain(
-      'OPENCLAW_VERSION="$INSTALL_TAG" curl -fsSL "$INSTALL_URL" | bash',
+      'MERCLAW_VERSION="$INSTALL_TAG" curl -fsSL "$INSTALL_URL" | bash',
     );
   });
 
@@ -1764,16 +1764,16 @@ test -f "$TMPDIR/docker-cmd-seen"
     const clawhub = readFileSync(PLUGINS_DOCKER_CLAWHUB_PATH, "utf8");
 
     expect(runner).toContain("scripts/e2e/lib/plugins/sweep.sh");
-    expect(runner).toContain("OPENCLAW_PLUGINS_E2E_LIVE_CLAWHUB");
+    expect(runner).toContain("MERCLAW_PLUGINS_E2E_LIVE_CLAWHUB");
     expect(sweep).toContain("scripts/e2e/lib/plugins/clawhub.sh");
     expect(clawhub).toContain("start_clawhub_fixture_server()");
-    expect(clawhub).toContain('OPENCLAW_CLAWHUB_URL="http://127.0.0.1:');
-    expect(clawhub).toContain("OPENCLAW_PLUGINS_E2E_LIVE_CLAWHUB");
-    expect(clawhub).toContain("OPENCLAW_PLUGINS_E2E_LIVE_NPM_REGISTRY");
+    expect(clawhub).toContain('MERCLAW_CLAWHUB_URL="http://127.0.0.1:');
+    expect(clawhub).toContain("MERCLAW_PLUGINS_E2E_LIVE_CLAWHUB");
+    expect(clawhub).toContain("MERCLAW_PLUGINS_E2E_LIVE_NPM_REGISTRY");
     expect(clawhub).toContain("live ClawHub can rate-limit CI");
-    expect(clawhub).toContain('[[ -n "${OPENCLAW_CLAWHUB_URL:-}" || -n "${CLAWHUB_URL:-}" ]]');
+    expect(clawhub).toContain('[[ -n "${MERCLAW_CLAWHUB_URL:-}" || -n "${CLAWHUB_URL:-}" ]]');
     expect(clawhub).toContain("Ignoring ambient ClawHub URL for fixture-mode plugin E2E");
-    expect(clawhub).toContain("unset OPENCLAW_CLAWHUB_URL CLAWHUB_URL");
+    expect(clawhub).toContain("unset MERCLAW_CLAWHUB_URL CLAWHUB_URL");
   });
 
   it("keeps the plugin binding command escape Docker smoke focused", () => {
@@ -1783,7 +1783,7 @@ test -f "$TMPDIR/docker-cmd-seen"
     expect(runner).toContain("--reporter=verbose -t");
     expect(runner).not.toContain("-- --reporter=verbose");
     expect(runner).toContain(
-      'DOCKER_RUN_TIMEOUT="${OPENCLAW_PLUGIN_BINDING_COMMAND_ESCAPE_DOCKER_RUN_TIMEOUT:-900s}"',
+      'DOCKER_RUN_TIMEOUT="${MERCLAW_PLUGIN_BINDING_COMMAND_ESCAPE_DOCKER_RUN_TIMEOUT:-900s}"',
     );
     expect(runner).toContain(
       'DOCKER_COMMAND_TIMEOUT="$DOCKER_RUN_TIMEOUT" docker_e2e_docker_run_cmd run --rm',
@@ -1797,9 +1797,9 @@ test -f "$TMPDIR/docker-cmd-seen"
       "keeps unauthorized plugin-owned binding slash text routed to the bound plugin",
     );
     expect(runner).toContain("expected focused Vitest summary for exactly 3 passed tests");
-    expect(dockerfile).toContain("OPENCLAW_DISABLE_BUNDLED_PLUGIN_POSTINSTALL=1");
+    expect(dockerfile).toContain("MERCLAW_DISABLE_BUNDLED_PLUGIN_POSTINSTALL=1");
     expect(dockerfile).toContain(
-      "pnpm install --frozen-lockfile --ignore-scripts --filter openclaw",
+      "pnpm install --frozen-lockfile --ignore-scripts --filter merclaw",
     );
   });
 
@@ -1818,15 +1818,15 @@ test -f "$TMPDIR/docker-cmd-seen"
     const assertions = readFileSync(PLUGINS_DOCKER_ASSERTIONS_PATH, "utf8");
     const npmRegistry = readFileSync(PLUGINS_DOCKER_NPM_REGISTRY_PATH, "utf8");
 
-    expect(sweep).toContain('OPENCLAW_PLUGINS_CLI_TIMEOUT="${OPENCLAW_PLUGINS_CLI_TIMEOUT:-180s}"');
+    expect(sweep).toContain('MERCLAW_PLUGINS_CLI_TIMEOUT="${MERCLAW_PLUGINS_CLI_TIMEOUT:-180s}"');
     expect(sweep).toContain(
-      'run_logged "$label" openclaw_e2e_maybe_timeout "$OPENCLAW_PLUGINS_CLI_TIMEOUT" node "$OPENCLAW_ENTRY" "$@"',
+      'run_logged "$label" merclaw_e2e_maybe_timeout "$MERCLAW_PLUGINS_CLI_TIMEOUT" node "$MERCLAW_ENTRY" "$@"',
     );
-    expect(sweep).toContain("run_plugins_openclaw_capture()");
+    expect(sweep).toContain("run_plugins_merclaw_capture()");
     expect(sweep).toContain(
-      'openclaw_e2e_maybe_timeout "$OPENCLAW_PLUGINS_CLI_TIMEOUT" node "$OPENCLAW_ENTRY" "$@" >"$output_file"',
+      'merclaw_e2e_maybe_timeout "$MERCLAW_PLUGINS_CLI_TIMEOUT" node "$MERCLAW_ENTRY" "$@" >"$output_file"',
     );
-    expect(sweep).not.toContain('run_logged install-npm node "$OPENCLAW_ENTRY"');
+    expect(sweep).not.toContain('run_logged install-npm node "$MERCLAW_ENTRY"');
     for (const [path, script] of [
       [PLUGINS_DOCKER_SWEEP_PATH, sweep],
       [PLUGINS_DOCKER_MARKETPLACE_PATH, marketplace],
@@ -1834,8 +1834,8 @@ test -f "$TMPDIR/docker-cmd-seen"
     ] as const) {
       const unboundedPluginCliLines = script
         .split("\n")
-        .filter((line) => line.includes('node "$OPENCLAW_ENTRY" plugins'))
-        .filter((line) => !line.includes("openclaw_e2e_maybe_timeout"));
+        .filter((line) => line.includes('node "$MERCLAW_ENTRY" plugins'))
+        .filter((line) => !line.includes("merclaw_e2e_maybe_timeout"));
 
       expect(unboundedPluginCliLines, path).toEqual([]);
     }
@@ -1845,7 +1845,7 @@ test -f "$TMPDIR/docker-cmd-seen"
     expect(assertions).toContain('Skipping "demo-plugin-dir" (source: path).');
 
     expect(sweep).toContain("start_npm_fixture_registry");
-    expect(sweep).toContain('plugins install "npm:@openclaw/demo-plugin-npm@0.0.1"');
+    expect(sweep).toContain('plugins install "npm:@merclaw/demo-plugin-npm@0.0.1"');
     expect(sweep).toContain("plugins update demo-plugin-npm");
     expect(assertions).toContain("demo-plugin-npm is up to date (0.0.1).");
     expect(npmRegistry).toContain('"dist-tags": { latest: entry.latestVersion }');
@@ -1858,9 +1858,9 @@ test -f "$TMPDIR/docker-cmd-seen"
 
     expect(clawhub).toContain('plugins install "$CLAWHUB_PLUGIN_SPEC"');
     expect(clawhub).toContain('plugins update "$CLAWHUB_PLUGIN_ID"');
-    expect(clawhub).toContain("run_plugins_openclaw_logged install-clawhub");
-    expect(clawhub).toContain('openclaw_e2e_maybe_timeout "$OPENCLAW_PLUGINS_CLI_TIMEOUT"');
-    expect(clawhub).toContain("clawhub:@openclaw/kitchen-sink");
+    expect(clawhub).toContain("run_plugins_merclaw_logged install-clawhub");
+    expect(clawhub).toContain('merclaw_e2e_maybe_timeout "$MERCLAW_PLUGINS_CLI_TIMEOUT"');
+    expect(clawhub).toContain("clawhub:@merclaw/kitchen-sink");
     expect(assertions).toContain("clawhub-updated");
     expect(assertions).toContain("record.clawpackSha256");
     expect(assertions).toContain("record.artifactKind");

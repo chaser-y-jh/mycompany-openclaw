@@ -7,9 +7,9 @@ export function buildPairingReply(params: {
   code: string;
 }): string {
   const { channel, idLine, code } = params;
-  const approveCommand = formatCliCommand(`openclaw pairing approve ${channel} ${code}`);
+  const approveCommand = formatCliCommand(`merclaw pairing approve ${channel} ${code}`);
   return [
-    "OpenClaw: access not configured.",
+    "MerClaw: access not configured.",
     "",
     idLine,
     "Pairing code:",

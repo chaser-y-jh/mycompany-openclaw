@@ -1,6 +1,6 @@
 import { setTimeout as sleep } from "node:timers/promises";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { resolveTimerTimeoutMs } from "openclaw/plugin-sdk/number-runtime";
+import { formatErrorMessage } from "merclaw/plugin-sdk/error-runtime";
+import { resolveTimerTimeoutMs } from "merclaw/plugin-sdk/number-runtime";
 
 type QaCronRunLogEntry = {
   ts?: number;

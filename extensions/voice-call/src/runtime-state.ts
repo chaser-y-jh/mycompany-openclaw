@@ -1,4 +1,4 @@
-import { createPluginRuntimeStore, type PluginRuntime } from "openclaw/plugin-sdk/runtime-store";
+import { createPluginRuntimeStore, type PluginRuntime } from "merclaw/plugin-sdk/runtime-store";
 
 export type VoiceCallStateRuntime = Pick<PluginRuntime, "state">;
 

@@ -26,7 +26,7 @@ const mocks = vi.hoisted(() => ({
     }>
   >(async () => ({ messageId: "poll-1" })),
   getChannelPlugin: vi.fn(),
-  loadOpenClawPlugins: vi.fn(),
+  loadMerClawPlugins: vi.fn(),
   applyPluginAutoEnable: vi.fn(),
   getRuntimeConfigSnapshot: vi.fn(),
   getRuntimeConfigSourceSnapshot: vi.fn(),
@@ -51,7 +51,7 @@ vi.mock("../../channels/plugins/message-action-dispatch.js", () => ({
   dispatchChannelMessageAction: mocks.dispatchChannelMessageAction,
 }));
 
-const TEST_AGENT_WORKSPACE = "/tmp/openclaw-test-workspace";
+const TEST_AGENT_WORKSPACE = "/tmp/merclaw-test-workspace";
 let sendHandlers: typeof import("./send.js").sendHandlers;
 
 function resolveAgentIdFromSessionKeyForTests(params: { sessionKey?: string }): string {
@@ -93,7 +93,7 @@ vi.mock("../../config/runtime-snapshot.js", async () => {
 });
 
 vi.mock("../../plugins/loader.js", () => ({
-  loadOpenClawPlugins: mocks.loadOpenClawPlugins,
+  loadMerClawPlugins: mocks.loadMerClawPlugins,
   resolveRuntimePluginRegistry: vi.fn(),
 }));
 
@@ -796,14 +796,14 @@ describe("gateway send mirroring", () => {
     const { respond } = await runSend({
       to: "channel:C1",
       message: "voice note",
-      mediaUrl: "file:///tmp/openclaw-voice.ogg",
+      mediaUrl: "file:///tmp/merclaw-voice.ogg",
       asVoice: true,
       channel: "slack",
       idempotencyKey: "idem-voice",
     });
 
     expect(deliveryCall()?.payloads?.[0]?.text).toBe("voice note");
-    expect(deliveryCall()?.payloads?.[0]?.mediaUrl).toBe("file:///tmp/openclaw-voice.ogg");
+    expect(deliveryCall()?.payloads?.[0]?.mediaUrl).toBe("file:///tmp/merclaw-voice.ogg");
     expect(deliveryCall()?.payloads?.[0]?.audioAsVoice).toBe(true);
     const response = firstRespondCall(respond);
     expect(response?.[0]).toBe(true);

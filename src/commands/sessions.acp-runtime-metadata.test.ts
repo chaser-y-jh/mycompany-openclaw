@@ -1,22 +1,22 @@
 import { describe, expect, it } from "vitest";
 import { resolveModelAgentRuntimeMetadata } from "../agents/agent-runtime-metadata.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { parseAgentSessionKey } from "../routing/session-key.js";
 
 /**
- * Catalog #18 — `openclaw sessions --json` reports `agentRuntime.id: "openclaw"` for
+ * Catalog #18 — `merclaw sessions --json` reports `agentRuntime.id: "merclaw"` for
  * ACP sessions because the old metadata resolver only consulted agent-config
- * policies (env / agent / defaults / implicit fallback to "openclaw"). The session
+ * policies (env / agent / defaults / implicit fallback to "merclaw"). The session
  * key clearly carries the ACP runtime indicator (the `:acp:` segment), but
  * `sessions.ts:294` used to ignore it.
  *
- * Empirical observation from a deployed openclaw container against a copilot
+ * Empirical observation from a deployed merclaw container against a copilot
  * agent that has no explicit `agentRuntime.id` policy:
  *
  *   {
  *     "key": "agent:copilot:acp:86b7b5af-3773-4a56-b244-069d6c5d3db9",
  *     "agentId": "copilot",
- *     "agentRuntime": { "id": "openclaw", "source": "implicit" },
+ *     "agentRuntime": { "id": "merclaw", "source": "implicit" },
  *     "kind": "direct"
  *   }
  *
@@ -27,7 +27,7 @@ import { parseAgentSessionKey } from "../routing/session-key.js";
  * This test mirrors the exact computation `sessionsCommand` performs at
  * `src/commands/sessions.ts:294` and proves the bug in two parts:
  *
- *   - RED: ACP-keyed session resolves to `id: "openclaw"`, `source: "implicit"`.
+ *   - RED: ACP-keyed session resolves to `id: "merclaw"`, `source: "implicit"`.
  *   - GREEN control: a non-ACP `agent:main:main` session resolves to the
  *     same implicit-native metadata, which IS correct in that case. The control
  *     proves the assertion infrastructure is not masking the RED case.
@@ -45,15 +45,15 @@ const ACP_SESSION_KEY = "agent:copilot:acp:86b7b5af-3773-4a56-b244-069d6c5d3db9"
 const NON_ACP_SESSION_KEY = "agent:main:main";
 
 /**
- * Build a minimal `OpenClawConfig` that mirrors the deployed scenario:
+ * Build a minimal `MerClawConfig` that mirrors the deployed scenario:
  * - a copilot agent exists in the agents.list
  * - it has NO explicit `agentRuntime.id` policy
  * - no top-level `agents.defaults.agentRuntime` either
  *
- * Result: the old metadata resolver fell through to the implicit "openclaw"
+ * Result: the old metadata resolver fell through to the implicit "merclaw"
  * branch — which is the bug under test.
  */
-function buildConfigWithoutAgentRuntimePolicy(): OpenClawConfig {
+function buildConfigWithoutAgentRuntimePolicy(): MerClawConfig {
   return {
     agents: {
       list: [
@@ -68,7 +68,7 @@ function buildConfigWithoutAgentRuntimePolicy(): OpenClawConfig {
       // No `defaults.agentRuntime` either.
       defaults: {},
     },
-  } as OpenClawConfig;
+  } as MerClawConfig;
 }
 
 /**
@@ -80,7 +80,7 @@ function buildConfigWithoutAgentRuntimePolicy(): OpenClawConfig {
  * After commit 02fe0d8978, the production path goes through resolveModelAgentRuntimeMetadata.
  */
 function computeSessionAgentRuntime(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   sessionKey: string;
   fallbackAgentId: string;
   /** Mirrors `entry?.acp != null` passed from loaded session rows. */
@@ -109,12 +109,12 @@ describe("sessions --json agentRuntime classifier (catalog #18)", () => {
     });
 
     // The bug was: the session key plainly contains `:acp:` and yet the
-    // resolved metadata said id="openclaw", source="implicit".
+    // resolved metadata said id="merclaw", source="implicit".
     // After the fix (applyAcpRuntimeOverlay in resolveModelAgentRuntimeMetadata),
     // the ACP session key overrides the runtime to id="acpx", source="session-key".
     expect(
       agentRuntime.id,
-      `ACP session ${ACP_SESSION_KEY} should no longer be misclassified as "auto" or "openclaw". ` +
+      `ACP session ${ACP_SESSION_KEY} should no longer be misclassified as "auto" or "merclaw". ` +
         `Got "${agentRuntime.id}". resolveModelAgentRuntimeMetadata must pass sessionKey to ` +
         `applyAcpRuntimeOverlay so ACP sessions are classified as "acpx".`,
     ).not.toBe("auto");
@@ -150,7 +150,7 @@ describe("sessions --json agentRuntime classifier (catalog #18)", () => {
     //
     // Note: the exact id ("acpx" vs another label) is a design choice for
     // the fix author. What matters is that it is meaningfully different
-    // from "openclaw" and reflects the actual runtime driving the session.
+    // from "merclaw" and reflects the actual runtime driving the session.
     // If the fix picks a different label, update this assertion to match —
     // the structural point (session-key-aware classification) is the
     // load-bearing part.

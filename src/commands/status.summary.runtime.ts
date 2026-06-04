@@ -1,21 +1,21 @@
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
+import { normalizeProviderId } from "@merclaw/model-catalog-core/provider-id";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
   normalizeOptionalLowercaseString,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/normalization-core/string-coerce";
 import { resolveModelAgentRuntimeMetadata } from "../agents/agent-runtime-metadata.js";
 import { resolveConfiguredProviderFallback } from "../agents/configured-provider-fallback.js";
 import { DEFAULT_CONTEXT_TOKENS, DEFAULT_MODEL, DEFAULT_PROVIDER } from "../agents/defaults.js";
 import { parseModelRef, resolvePersistedSelectedModelRef } from "../agents/model-selection.js";
 import { resolveAgentModelPrimaryValue } from "../config/model-input.js";
 import type { SessionEntry } from "../config/sessions/types.js";
-import type { OpenClawConfig } from "../config/types.js";
+import type { MerClawConfig } from "../config/types.js";
 import { classifySessionKind } from "../sessions/classify-session-kind.js";
 import { resolveAgentRuntimeLabel } from "../status/agent-runtime-label.js";
 
 function resolveStatusModelRefFromRaw(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   rawModel: string;
   defaultProvider: string;
 }): { provider: string; model: string } | null {
@@ -47,7 +47,7 @@ function resolveStatusModelRefFromRaw(params: {
 }
 
 function resolveConfiguredStatusModelRef(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   defaultProvider: string;
   defaultModel: string;
   agentId?: string;
@@ -92,7 +92,7 @@ function resolveConfiguredStatusModelRef(params: {
 }
 
 function resolveConfiguredProviderContextTokens(
-  cfg: OpenClawConfig | undefined,
+  cfg: MerClawConfig | undefined,
   provider: string,
   model: string,
 ): number | undefined {
@@ -126,7 +126,7 @@ function resolveConfiguredProviderContextTokens(
 }
 
 function resolveSessionModelRef(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   entry?:
     | SessionEntry
     | Pick<SessionEntry, "model" | "modelProvider" | "modelOverride" | "providerOverride">,
@@ -151,7 +151,7 @@ function resolveSessionModelRef(
 }
 
 function resolveSessionRuntimeLabel(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   entry?: SessionEntry;
   provider: string;
   model: string;
@@ -168,7 +168,7 @@ function resolveSessionRuntimeLabel(params: {
     acpBackend: params.entry?.acp?.backend,
   });
   const id = normalizeOptionalLowercaseString(runtime.id);
-  const resolvedHarness = id && id !== "openclaw" && id !== "auto" ? id : undefined;
+  const resolvedHarness = id && id !== "merclaw" && id !== "auto" ? id : undefined;
   return resolveAgentRuntimeLabel({
     config: params.cfg,
     sessionEntry: params.entry,
@@ -178,7 +178,7 @@ function resolveSessionRuntimeLabel(params: {
 }
 
 function resolveContextTokensForModel(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   provider?: string;
   model?: string;
   contextTokensOverride?: number;

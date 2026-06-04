@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { normalizeAgentId, parseAgentSessionKey } from "../routing/session-key.js";
 import { resolveAgentConfig, resolveDefaultAgentId } from "./agent-scope-config.js";
 import type { AnyAgentTool } from "./agent-tools.types.js";
@@ -30,7 +30,7 @@ export function resolveLocalModelLeanPreserveToolNames(params?: {
 }
 
 function resolveLocalModelLeanAgentId(params: {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentId?: string;
   sessionKey?: string;
 }): string | undefined {
@@ -49,7 +49,7 @@ function resolveLocalModelLeanAgentId(params: {
 }
 
 export function isLocalModelLeanEnabled(params: {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentId?: string;
   sessionKey?: string;
 }): boolean {
@@ -64,7 +64,7 @@ export function isLocalModelLeanEnabled(params: {
 
 export function filterLocalModelLeanTools(params: {
   tools: AnyAgentTool[];
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentId?: string;
   sessionKey?: string;
   preserveToolNames?: Iterable<string>;

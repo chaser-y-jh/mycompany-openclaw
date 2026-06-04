@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { uniqueStrings } from "@openclaw/normalization-core/string-normalization";
+import { uniqueStrings } from "@merclaw/normalization-core/string-normalization";
 import { getToolPluginMetadata, type ToolPluginMetadata } from "../plugin-sdk/tool-plugin.js";
 import {
   loadPluginManifest,
@@ -189,20 +189,20 @@ export function buildToolPluginPackageManifest(params: {
   packageManifest: JsonObject;
   entry: string;
 }): JsonObject {
-  const openclaw =
-    params.packageManifest.openclaw &&
-    typeof params.packageManifest.openclaw === "object" &&
-    !Array.isArray(params.packageManifest.openclaw)
-      ? { ...(params.packageManifest.openclaw as JsonObject) }
+  const merclaw =
+    params.packageManifest.merclaw &&
+    typeof params.packageManifest.merclaw === "object" &&
+    !Array.isArray(params.packageManifest.merclaw)
+      ? { ...(params.packageManifest.merclaw as JsonObject) }
       : {};
-  const existingExtensions = Array.isArray(openclaw.extensions)
-    ? openclaw.extensions.filter((entry): entry is string => typeof entry === "string")
+  const existingExtensions = Array.isArray(merclaw.extensions)
+    ? merclaw.extensions.filter((entry): entry is string => typeof entry === "string")
     : [];
   const extensions = uniqueStrings([...existingExtensions, params.entry]);
   return {
     ...params.packageManifest,
-    openclaw: {
-      ...openclaw,
+    merclaw: {
+      ...merclaw,
       extensions,
     },
   };
@@ -221,15 +221,15 @@ export function validateToolPluginProject(params: {
     existingManifest: params.manifest,
   });
   if (JSON.stringify(params.manifest) !== JSON.stringify(expectedManifest)) {
-    errors.push("openclaw.plugin.json generated metadata is stale. Run openclaw plugins build.");
+    errors.push("merclaw.plugin.json generated metadata is stale. Run merclaw plugins build.");
   }
   if (params.manifest.id !== params.metadata.id) {
     errors.push(
-      `openclaw.plugin.json id (${String(params.manifest.id)}) must match entry id (${params.metadata.id})`,
+      `merclaw.plugin.json id (${String(params.manifest.id)}) must match entry id (${params.metadata.id})`,
     );
   }
   if (!params.manifest.configSchema || typeof params.manifest.configSchema !== "object") {
-    errors.push("openclaw.plugin.json must include object configSchema");
+    errors.push("merclaw.plugin.json must include object configSchema");
   }
   const manifestContracts = params.manifest.contracts as { tools?: unknown } | undefined;
   const manifestTools = Array.isArray(manifestContracts?.tools)
@@ -239,11 +239,11 @@ export function validateToolPluginProject(params: {
   const missing = metadataTools.filter((tool) => !manifestTools.includes(tool));
   const extra = manifestTools.filter((tool) => !metadataTools.includes(tool));
   if (missing.length > 0) {
-    errors.push(`openclaw.plugin.json contracts.tools is missing: ${missing.join(", ")}`);
+    errors.push(`merclaw.plugin.json contracts.tools is missing: ${missing.join(", ")}`);
   }
   if (extra.length > 0) {
     errors.push(
-      `openclaw.plugin.json contracts.tools has no matching defineToolPlugin tool: ${extra.join(
+      `merclaw.plugin.json contracts.tools has no matching defineToolPlugin tool: ${extra.join(
         ", ",
       )}`,
     );
@@ -252,11 +252,11 @@ export function validateToolPluginProject(params: {
   if (extensionResolution.status !== "ok") {
     errors.push(
       extensionResolution.status === "missing" || extensionResolution.status === "empty"
-        ? "package.json must include openclaw.extensions"
+        ? "package.json must include merclaw.extensions"
         : extensionResolution.error,
     );
   } else if (!extensionResolution.entries.includes(params.entry)) {
-    errors.push(`package.json openclaw.extensions must include ${params.entry}`);
+    errors.push(`package.json merclaw.extensions must include ${params.entry}`);
   }
   return errors;
 }
@@ -286,7 +286,7 @@ export async function runPluginsBuildCommand(opts: PluginsBuildOptions): Promise
       JSON.stringify(currentManifest) !== JSON.stringify(manifest) ||
       JSON.stringify(currentPackage) !== JSON.stringify(nextPackageManifest)
     ) {
-      defaultRuntime.error("Generated plugin metadata is out of date. Run openclaw plugins build.");
+      defaultRuntime.error("Generated plugin metadata is out of date. Run merclaw plugins build.");
       return defaultRuntime.exit(1);
     }
     defaultRuntime.log("Plugin metadata is up to date.");
@@ -350,37 +350,37 @@ export async function runPluginsInitCommand(id: string, opts: PluginsInitOptions
   fs.mkdirSync(path.join(rootDir, "src"), { recursive: true });
 
   const packageManifest = {
-    name: `openclaw-plugin-${id}`,
+    name: `merclaw-plugin-${id}`,
     version: "0.1.0",
     type: "module",
     private: true,
     scripts: {
       build: "tsc -p tsconfig.json",
-      "plugin:build": "npm run build && openclaw plugins build --entry ./dist/index.js",
-      "plugin:validate": "npm run build && openclaw plugins validate --entry ./dist/index.js",
+      "plugin:build": "npm run build && merclaw plugins build --entry ./dist/index.js",
+      "plugin:validate": "npm run build && merclaw plugins validate --entry ./dist/index.js",
       test: "vitest run",
     },
-    files: ["dist", "openclaw.plugin.json", "README.md"],
+    files: ["dist", "merclaw.plugin.json", "README.md"],
     peerDependencies: {
-      openclaw: ">=2026.5.17",
+      merclaw: ">=2026.5.17",
     },
     dependencies: {
       typebox: "^1.1.38",
     },
     devDependencies: {
-      openclaw: "latest",
+      merclaw: "latest",
       typescript: "^5.9.0",
       vitest: "^3.2.0",
     },
-    openclaw: {
+    merclaw: {
       extensions: ["./dist/index.js"],
     },
   };
   const idLiteral = jsStringLiteral(id);
   const nameLiteral = jsStringLiteral(name);
-  const descriptionLiteral = jsStringLiteral(`Add ${name} tools to OpenClaw.`);
+  const descriptionLiteral = jsStringLiteral(`Add ${name} tools to MerClaw.`);
   const indexSource = `import { Type } from "typebox";
-import { defineToolPlugin } from "openclaw/plugin-sdk/tool-plugin";
+import { defineToolPlugin } from "merclaw/plugin-sdk/tool-plugin";
 
 export default defineToolPlugin({
   id: ${idLiteral},
@@ -400,7 +400,7 @@ export default defineToolPlugin({
 `;
   const testSource = `import { describe, expect, it } from "vitest";
 import entry from "./index.js";
-import { getToolPluginMetadata } from "openclaw/plugin-sdk/tool-plugin";
+import { getToolPluginMetadata } from "merclaw/plugin-sdk/tool-plugin";
 
 describe(${idLiteral}, () => {
   it("declares tool metadata", () => {
@@ -410,7 +410,7 @@ describe(${idLiteral}, () => {
 `;
   const readmeSource = `# ${name}
 
-Simple OpenClaw tool plugin.
+Simple MerClaw tool plugin.
 
 ## Build
 
@@ -442,7 +442,7 @@ npm test
   writeJsonFile(path.join(rootDir, PLUGIN_MANIFEST_FILENAME), {
     id,
     name,
-    description: `Add ${name} tools to OpenClaw.`,
+    description: `Add ${name} tools to MerClaw.`,
     version: packageManifest.version,
     configSchema: {
       type: "object",

@@ -3,9 +3,9 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../state/openclaw-state-db.js";
+  closeMerClawStateDatabaseForTest,
+  openMerClawStateDatabase,
+} from "../state/merclaw-state-db.js";
 import { captureEnv } from "../test-utils/env.js";
 import {
   loadSubagentRegistryFromSqlite,
@@ -54,16 +54,16 @@ function createRun(overrides: Partial<SubagentRunRecord> = {}): SubagentRunRecor
 }
 
 describe("subagent registry sqlite store", () => {
-  const envSnapshot = captureEnv(["OPENCLAW_STATE_DIR"]);
+  const envSnapshot = captureEnv(["MERCLAW_STATE_DIR"]);
   let tempStateDir: string | null = null;
 
   beforeEach(async () => {
-    tempStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-subagent-sqlite-"));
-    process.env.OPENCLAW_STATE_DIR = tempStateDir;
+    tempStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-subagent-sqlite-"));
+    process.env.MERCLAW_STATE_DIR = tempStateDir;
   });
 
   afterEach(async () => {
-    closeOpenClawStateDatabaseForTest();
+    closeMerClawStateDatabaseForTest();
     if (tempStateDir) {
       await fs.rm(tempStateDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 50 });
       tempStateDir = null;
@@ -87,7 +87,7 @@ describe("subagent registry sqlite store", () => {
       completion: run.completion,
       delivery: run.delivery,
     });
-    expect(await fs.stat(path.join(tempStateDir!, "state", "openclaw.sqlite"))).toBeTruthy();
+    expect(await fs.stat(path.join(tempStateDir!, "state", "merclaw.sqlite"))).toBeTruthy();
     await expect(fs.stat(path.join(tempStateDir!, "subagents", "runs.json"))).rejects.toThrow();
   });
 
@@ -128,7 +128,7 @@ describe("subagent registry sqlite store", () => {
       "import legacy registry",
     );
     expect(
-      openOpenClawStateDatabase().db.prepare("SELECT COUNT(*) AS count FROM subagent_runs").get(),
+      openMerClawStateDatabase().db.prepare("SELECT COUNT(*) AS count FROM subagent_runs").get(),
     ).toEqual({ count: 1 });
   });
 });

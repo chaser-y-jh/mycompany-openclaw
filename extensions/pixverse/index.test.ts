@@ -1,4 +1,4 @@
-import { capturePluginRegistration } from "openclaw/plugin-sdk/plugin-test-runtime";
+import { capturePluginRegistration } from "merclaw/plugin-sdk/plugin-test-runtime";
 import { describe, expect, it, vi } from "vitest";
 import {
   PIXVERSE_BASE_URL_BY_REGION,

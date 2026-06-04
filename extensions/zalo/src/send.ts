@@ -2,9 +2,9 @@ import {
   createMessageReceiptFromOutboundResults,
   type MessageReceipt,
   type MessageReceiptPartKind,
-} from "openclaw/plugin-sdk/channel-outbound";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+} from "merclaw/plugin-sdk/channel-outbound";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { formatErrorMessage } from "merclaw/plugin-sdk/error-runtime";
 import { resolveZaloAccount } from "./accounts.js";
 import type { ZaloFetch } from "./api.js";
 import { sendMessage, sendPhoto } from "./api.js";
@@ -14,7 +14,7 @@ import { resolveZaloToken } from "./token.js";
 type ZaloSendOptions = {
   token?: string;
   accountId?: string;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   mediaUrl?: string;
   caption?: string;
   verbose?: boolean;

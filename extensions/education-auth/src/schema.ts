@@ -2,7 +2,7 @@
  * SQL schema for education auth tables.
  *
  * These tables live in a dedicated education SQLite database
- * (separate from the core OpenClaw state DB) for clean plugin isolation.
+ * (separate from the core MerClaw state DB) for clean plugin isolation.
  */
 
 export const EDU_AUTH_SCHEMA_VERSION = 1;

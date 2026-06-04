@@ -1,0 +1,4 @@
+interface:
+  display_name: "MerClaw Debugging"
+  short_description: "Debug model, tool, stream, and live behavior"
+  default_prompt: "Use $merclaw-debugging to identify the right MerClaw debug boundary, turn on targeted logs, and choose the narrowest local or Crabbox proof."

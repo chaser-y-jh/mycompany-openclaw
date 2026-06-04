@@ -1,6 +1,6 @@
 import { DisconnectReason, type WASocket } from "baileys";
-import { info } from "openclaw/plugin-sdk/runtime-env";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
+import { info } from "merclaw/plugin-sdk/runtime-env";
+import type { RuntimeEnv } from "merclaw/plugin-sdk/runtime-env";
 import {
   registerWhatsAppConnectionController,
   unregisterWhatsAppConnectionController,
@@ -24,7 +24,7 @@ const WHATSAPP_LOGIN_RESTART_MESSAGE =
 const WHATSAPP_LOGIN_TIMEOUT_RESTART_MESSAGE =
   "WhatsApp connection timed out before login; retrying with a fresh socket…";
 const WHATSAPP_LOGGED_OUT_RELINK_MESSAGE =
-  "WhatsApp reported the session is logged out. Cleared cached web session; please rerun openclaw channels login and scan the QR again.";
+  "WhatsApp reported the session is logged out. Cleared cached web session; please rerun merclaw channels login and scan the QR again.";
 export const WHATSAPP_LOGGED_OUT_QR_MESSAGE =
   "WhatsApp reported the session is logged out. Cleared cached web session; please scan a new QR.";
 export const WHATSAPP_WATCHDOG_TIMEOUT_ERROR = "watchdog-timeout";
@@ -165,7 +165,7 @@ export function closeWaSocket(
 ): void {
   try {
     if (typeof sock?.end === "function") {
-      sock.end(new Error("OpenClaw WhatsApp socket close"));
+      sock.end(new Error("MerClaw WhatsApp socket close"));
       return;
     }
     sock?.ws?.close?.();

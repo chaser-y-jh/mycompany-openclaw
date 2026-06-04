@@ -1,4 +1,4 @@
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
+import { definePluginEntry } from "merclaw/plugin-sdk/plugin-entry";
 import { createCopilotAgentHarness, type CopilotSessionBinding } from "./harness.js";
 
 function isRecord(value: unknown): value is Record<string, unknown> {

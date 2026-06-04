@@ -4,7 +4,7 @@ import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { saveSessionStore } from "../config/sessions/store.js";
 import type { SessionEntry } from "../config/sessions/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 
 const note = vi.hoisted(() => vi.fn());
 
@@ -51,7 +51,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
 
   beforeEach(async () => {
     note.mockClear();
-    root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-doctor-session-snapshots-"));
+    root = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-doctor-session-snapshots-"));
     bundledSkillsDir = path.join(root, "current", "skills");
     await fs.mkdir(path.join(bundledSkillsDir, "doctor"), { recursive: true });
     await fs.writeFile(path.join(bundledSkillsDir, "doctor", "SKILL.md"), "# Doctor\n");
@@ -66,7 +66,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "merclaw",
       "skills",
       "doctor",
       "SKILL.md",
@@ -75,7 +75,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
       path.sep,
       "private",
       "tmp",
-      "openclaw",
+      "merclaw",
       "skills",
       "doctor",
       "SKILL.md",
@@ -116,7 +116,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
 
   it("expands home-relative cached bundled skill locations before classifying them", () => {
     const homeDir = path.join(root, "home");
-    const stalePath = "~/old-runtime/node_modules/openclaw/skills/doctor/SKILL.md";
+    const stalePath = "~/old-runtime/node_modules/merclaw/skills/doctor/SKILL.md";
 
     const findings = scanSessionStoreForStaleRuntimeSnapshotPaths({
       bundledSkillsDir,
@@ -144,10 +144,10 @@ describe("doctor session snapshot stale runtime metadata", () => {
   it("ignores current bundled locations and unrelated workspace skill locations", () => {
     const currentPath = path.join(bundledSkillsDir, "doctor", "SKILL.md");
     const workspacePath = path.join(root, "workspace", "skills", "doctor", "SKILL.md");
-    const openClawWorkspacePath = path.join(
+    const merClawWorkspacePath = path.join(
       root,
       "projects",
-      "openclaw",
+      "merclaw",
       "skills",
       "doctor",
       "SKILL.md",
@@ -161,9 +161,9 @@ describe("doctor session snapshot stale runtime metadata", () => {
         "agent:workspace": sessionEntry({
           skillsSnapshot: { prompt: skillPrompt(workspacePath), skills: [{ name: "doctor" }] },
         }),
-        "agent:openclaw-workspace": sessionEntry({
+        "agent:merclaw-workspace": sessionEntry({
           skillsSnapshot: {
-            prompt: skillPrompt(openClawWorkspacePath),
+            prompt: skillPrompt(merClawWorkspacePath),
             skills: [{ name: "doctor" }],
           },
         }),
@@ -179,10 +179,10 @@ describe("doctor session snapshot stale runtime metadata", () => {
       "C:\\",
       "Users",
       "alice",
-      ".openclaw",
+      ".merclaw",
       "lib",
       "node_modules",
-      "openclaw",
+      "merclaw",
       "skills",
     );
     const currentPath = path.win32.join(windowsBundledSkillsDir, "doctor", "SKILL.md");
@@ -190,7 +190,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
       "C:\\",
       "opt",
       "node_modules",
-      "openclaw",
+      "merclaw",
       "skills",
       "doctor",
       "SKILL.md",
@@ -224,7 +224,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "merclaw",
       "skills",
       "doctor",
       "SKILL.md",
@@ -256,7 +256,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "merclaw",
       "skills",
       "doctor",
       "SKILL.md",
@@ -302,7 +302,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "merclaw",
       "skills",
       "doctor",
       "SKILL.md",
@@ -339,7 +339,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "merclaw",
       "skills",
       "doctor",
       "SKILL.md",
@@ -358,9 +358,9 @@ describe("doctor session snapshot stale runtime metadata", () => {
     });
 
     await noteSessionSnapshotHealth({
-      cfg: { session: { store: configuredStorePath } } as OpenClawConfig,
+      cfg: { session: { store: configuredStorePath } } as MerClawConfig,
       bundledSkillsDir,
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { MERCLAW_STATE_DIR: stateDir },
     });
 
     expect(note).toHaveBeenCalledTimes(1);
@@ -375,7 +375,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "merclaw",
       "skills",
       "doctor",
       "SKILL.md",
@@ -395,9 +395,9 @@ describe("doctor session snapshot stale runtime metadata", () => {
       cfg: {
         session: { store: templatedStore },
         agents: { list: [{ id: "main" }, { id: "ops" }] },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       bundledSkillsDir,
-      env: { OPENCLAW_STATE_DIR: path.join(root, "state") },
+      env: { MERCLAW_STATE_DIR: path.join(root, "state") },
     });
 
     expect(note).toHaveBeenCalledTimes(1);

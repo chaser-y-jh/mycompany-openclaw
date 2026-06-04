@@ -174,9 +174,9 @@ describe("pairing setup code", () => {
   }
 
   beforeEach(() => {
-    vi.stubEnv("OPENCLAW_GATEWAY_TOKEN", "");
-    vi.stubEnv("OPENCLAW_GATEWAY_PASSWORD", "");
-    vi.stubEnv("OPENCLAW_GATEWAY_PORT", "");
+    vi.stubEnv("MERCLAW_GATEWAY_TOKEN", "");
+    vi.stubEnv("MERCLAW_GATEWAY_PASSWORD", "");
+    vi.stubEnv("MERCLAW_GATEWAY_PORT", "");
   });
 
   beforeEach(() => {
@@ -281,13 +281,13 @@ describe("pairing setup code", () => {
       expectedAuthLabel: "password",
     },
     {
-      name: "uses OPENCLAW_GATEWAY_PASSWORD without resolving configured password SecretRef",
+      name: "uses MERCLAW_GATEWAY_PASSWORD without resolving configured password SecretRef",
       auth: {
         mode: "password",
         password: { source: "env", provider: "default", id: "MISSING_GW_PASSWORD" },
       } as const,
       env: {
-        OPENCLAW_GATEWAY_PASSWORD: "password-from-env", // pragma: allowlist secret
+        MERCLAW_GATEWAY_PASSWORD: "password-from-env", // pragma: allowlist secret
       },
       expectedAuthLabel: "password",
     },
@@ -350,7 +350,7 @@ describe("pairing setup code", () => {
       },
       {
         env: {
-          OPENCLAW_GATEWAY_PASSWORD: "password-from-env", // pragma: allowlist secret
+          MERCLAW_GATEWAY_PASSWORD: "password-from-env", // pragma: allowlist secret
         },
       },
     );
@@ -437,7 +437,7 @@ describe("pairing setup code", () => {
       } satisfies ResolveSetupConfig,
       options: {
         env: {
-          OPENCLAW_GATEWAY_TOKEN: "new-token",
+          MERCLAW_GATEWAY_TOKEN: "new-token",
         },
       } satisfies ResolveSetupOptions,
       expected: {

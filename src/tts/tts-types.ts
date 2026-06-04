@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import type {
   ResolvedTtsPersona,
   TtsAutoMode,
@@ -25,5 +25,5 @@ export type ResolvedTtsConfig = {
   timeoutMs: number;
   timeoutMsSource?: "config" | "default";
   rawConfig?: TtsConfig;
-  sourceConfig?: OpenClawConfig;
+  sourceConfig?: MerClawConfig;
 };

@@ -8,23 +8,23 @@ describe("qa-e2e script", () => {
 
     enablePrivateQaScriptEnv(env);
 
-    expect(env.OPENCLAW_BUILD_PRIVATE_QA).toBe("1");
-    expect(env.OPENCLAW_ENABLE_PRIVATE_QA_CLI).toBe("1");
-    expect(env.OPENCLAW_DISABLE_BUNDLED_PLUGINS).toBe("0");
+    expect(env.MERCLAW_BUILD_PRIVATE_QA).toBe("1");
+    expect(env.MERCLAW_ENABLE_PRIVATE_QA_CLI).toBe("1");
+    expect(env.MERCLAW_DISABLE_BUNDLED_PLUGINS).toBe("0");
   });
 
   it("overrides inherited environment that would break the private QA self-check", () => {
     const env: NodeJS.ProcessEnv = {
-      OPENCLAW_BUILD_PRIVATE_QA: "0",
-      OPENCLAW_ENABLE_PRIVATE_QA_CLI: "0",
-      OPENCLAW_DISABLE_BUNDLED_PLUGINS: "1",
+      MERCLAW_BUILD_PRIVATE_QA: "0",
+      MERCLAW_ENABLE_PRIVATE_QA_CLI: "0",
+      MERCLAW_DISABLE_BUNDLED_PLUGINS: "1",
     };
 
     enablePrivateQaScriptEnv(env);
 
-    expect(env.OPENCLAW_BUILD_PRIVATE_QA).toBe("1");
-    expect(env.OPENCLAW_ENABLE_PRIVATE_QA_CLI).toBe("1");
-    expect(env.OPENCLAW_DISABLE_BUNDLED_PLUGINS).toBe("0");
+    expect(env.MERCLAW_BUILD_PRIVATE_QA).toBe("1");
+    expect(env.MERCLAW_ENABLE_PRIVATE_QA_CLI).toBe("1");
+    expect(env.MERCLAW_DISABLE_BUNDLED_PLUGINS).toBe("0");
   });
 
   it("resolves the default self-check report path", () => {

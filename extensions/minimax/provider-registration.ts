@@ -1,23 +1,23 @@
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import { formatErrorMessage } from "merclaw/plugin-sdk/error-runtime";
 import type {
-  OpenClawPluginApi,
-  OpenClawConfig,
+  MerClawPluginApi,
+  MerClawConfig,
   ProviderAuthContext,
   ProviderAuthResult,
   ProviderCatalogContext,
-} from "openclaw/plugin-sdk/plugin-entry";
+} from "merclaw/plugin-sdk/plugin-entry";
 import {
   MINIMAX_OAUTH_MARKER,
   ensureAuthProfileStore,
   listProfilesForProvider,
-} from "openclaw/plugin-sdk/provider-auth";
-import { buildOauthProviderAuthResult } from "openclaw/plugin-sdk/provider-auth";
-import { createProviderApiKeyAuthMethod } from "openclaw/plugin-sdk/provider-auth-api-key";
-import type { ProviderPlugin } from "openclaw/plugin-sdk/provider-model-shared";
-import { buildProviderReplayFamilyHooks } from "openclaw/plugin-sdk/provider-model-shared";
-import { MINIMAX_FAST_MODE_STREAM_HOOKS } from "openclaw/plugin-sdk/provider-stream-family";
-import { fetchMinimaxUsage } from "openclaw/plugin-sdk/provider-usage";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/provider-auth";
+import { buildOauthProviderAuthResult } from "merclaw/plugin-sdk/provider-auth";
+import { createProviderApiKeyAuthMethod } from "merclaw/plugin-sdk/provider-auth-api-key";
+import type { ProviderPlugin } from "merclaw/plugin-sdk/provider-model-shared";
+import { buildProviderReplayFamilyHooks } from "merclaw/plugin-sdk/provider-model-shared";
+import { MINIMAX_FAST_MODE_STREAM_HOOKS } from "merclaw/plugin-sdk/provider-stream-family";
+import { fetchMinimaxUsage } from "merclaw/plugin-sdk/provider-usage";
+import { normalizeOptionalString } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { isMiniMaxModernModelId, MINIMAX_DEFAULT_MODEL_ID } from "./api.js";
 import type { MiniMaxRegion } from "./oauth.js";
 import { applyMinimaxApiConfig, applyMinimaxApiConfigCn } from "./onboard.js";
@@ -70,11 +70,11 @@ function portalModelRef(modelId: string): string {
   return `${PORTAL_PROVIDER_ID}/${modelId}`;
 }
 
-function getProviderBaseUrl(cfg: OpenClawConfig, providerId: string): string | undefined {
+function getProviderBaseUrl(cfg: MerClawConfig, providerId: string): string | undefined {
   return normalizeOptionalString(cfg.models?.providers?.[providerId]?.baseUrl);
 }
 
-function resolveMinimaxUsageBaseUrl(cfg: OpenClawConfig): string | undefined {
+function resolveMinimaxUsageBaseUrl(cfg: MerClawConfig): string | undefined {
   return getProviderBaseUrl(cfg, PORTAL_PROVIDER_ID) ?? getProviderBaseUrl(cfg, API_PROVIDER_ID);
 }
 
@@ -296,7 +296,7 @@ export function buildMinimaxPortalProviderPlugin(): ProviderPlugin {
   };
 }
 
-export function registerMinimaxProviders(api: OpenClawPluginApi) {
+export function registerMinimaxProviders(api: MerClawPluginApi) {
   api.registerProvider(buildMinimaxApiProviderPlugin());
   api.registerProvider(buildMinimaxPortalProviderPlugin());
 }

@@ -1,13 +1,13 @@
 {
-  "name": "@openclaw/gmi-provider",
+  "name": "@merclaw/gmi-provider",
   "version": "2026.5.31",
   "private": true,
-  "description": "OpenClaw GMI Cloud provider plugin",
+  "description": "MerClaw GMI Cloud provider plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@merclaw/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ]

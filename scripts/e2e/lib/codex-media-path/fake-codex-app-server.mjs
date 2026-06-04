@@ -2,8 +2,8 @@ import fs from "node:fs";
 import readline from "node:readline";
 
 const requestLog =
-  process.env.OPENCLAW_CODEX_MEDIA_PATH_APP_SERVER_LOG ??
-  "/tmp/openclaw-codex-media-path-app-server.jsonl";
+  process.env.MERCLAW_CODEX_MEDIA_PATH_APP_SERVER_LOG ??
+  "/tmp/merclaw-codex-media-path-app-server.jsonl";
 let turnCount = 0;
 
 function appendRequest(request) {
@@ -25,8 +25,8 @@ rl.on("line", (line) => {
   if (method === "initialize") {
     send(id, {
       protocolVersion: "2",
-      serverInfo: { name: "openclaw-codex-media-path-e2e", version: "0.125.0" },
-      userAgent: "openclaw-codex-media-path-e2e/0.125.0 (Docker; test)",
+      serverInfo: { name: "merclaw-codex-media-path-e2e", version: "0.125.0" },
+      userAgent: "merclaw-codex-media-path-e2e/0.125.0 (Docker; test)",
     });
     return;
   }

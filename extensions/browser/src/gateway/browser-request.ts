@@ -1,9 +1,9 @@
 import crypto from "node:crypto";
-import { clampTimerTimeoutMs } from "openclaw/plugin-sdk/number-runtime";
+import { clampTimerTimeoutMs } from "merclaw/plugin-sdk/number-runtime";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/string-coerce-runtime";
 import {
   ErrorCodes,
   applyBrowserProxyPaths,
@@ -22,7 +22,7 @@ import {
   withTimeout,
   type GatewayRequestHandlers,
   type NodeSession,
-  type OpenClawConfig,
+  type MerClawConfig,
 } from "../core-api.js";
 
 type BrowserRequestParams = {
@@ -90,7 +90,7 @@ function resolveBrowserNode(nodes: NodeSession[], query: string): NodeSession | 
 }
 
 function resolveBrowserNodeTarget(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   nodes: NodeSession[];
 }): NodeSession | null {
   const policy = params.cfg.gateway?.nodes?.browser;

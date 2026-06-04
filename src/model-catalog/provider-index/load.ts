@@ -1,9 +1,9 @@
-import { normalizeOpenClawProviderIndex } from "./normalize.js";
-import { OPENCLAW_PROVIDER_INDEX } from "./openclaw-provider-index.js";
-import type { OpenClawProviderIndex } from "./types.js";
+import { normalizeMerClawProviderIndex } from "./normalize.js";
+import { MERCLAW_PROVIDER_INDEX } from "./merclaw-provider-index.js";
+import type { MerClawProviderIndex } from "./types.js";
 
-export function loadOpenClawProviderIndex(
-  source: unknown = OPENCLAW_PROVIDER_INDEX,
-): OpenClawProviderIndex {
-  return normalizeOpenClawProviderIndex(source) ?? { version: 1, providers: {} };
+export function loadMerClawProviderIndex(
+  source: unknown = MERCLAW_PROVIDER_INDEX,
+): MerClawProviderIndex {
+  return normalizeMerClawProviderIndex(source) ?? { version: 1, providers: {} };
 }

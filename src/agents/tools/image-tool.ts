@@ -1,6 +1,6 @@
 import { resolve, isAbsolute } from "node:path";
 import { Type } from "typebox";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import type { MediaUnderstandingModelConfig } from "../../config/types.tools.js";
 import {
   DEFAULT_TIMEOUT_SECONDS,
@@ -117,7 +117,7 @@ const imageToolProviderDeps = {
   loadImageWebMediaRuntime,
 };
 
-function hasExplicitDefaultPrimaryModel(cfg?: OpenClawConfig): boolean {
+function hasExplicitDefaultPrimaryModel(cfg?: MerClawConfig): boolean {
   const model = cfg?.agents?.defaults?.model;
   if (typeof model === "string") {
     return model.trim().length > 0;
@@ -221,7 +221,7 @@ function resolveImageToolMaxTokens(modelMaxTokens: number | undefined, requested
  *   - fall back to OpenAI/Anthropic when available
  */
 export function resolveImageModelConfigForTool(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   agentDir: string;
   workspaceDir?: string;
   authStore?: AuthProfileStore;
@@ -309,7 +309,7 @@ export function resolveImageModelConfigForTool(params: {
 }
 
 function resolveImageModelConfigForOverride(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   modelOverride?: string;
 }): ImageModelConfig | null {
   const model = params.modelOverride?.trim();
@@ -322,7 +322,7 @@ function resolveImageModelConfigForOverride(params: {
   });
 }
 
-function pickMaxBytes(cfg?: OpenClawConfig, maxBytesMb?: number): number | undefined {
+function pickMaxBytes(cfg?: MerClawConfig, maxBytesMb?: number): number | undefined {
   if (typeof maxBytesMb === "number" && Number.isFinite(maxBytesMb) && maxBytesMb > 0) {
     return Math.floor(maxBytesMb * 1024 * 1024);
   }
@@ -334,7 +334,7 @@ function pickMaxBytes(cfg?: OpenClawConfig, maxBytesMb?: number): number | undef
 }
 
 function resolveCompressionModelCandidates(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   imageModelConfig?: ImageModelConfig | null;
   modelOverride?: string;
 }): Array<{ provider: string; model: string }> {
@@ -373,7 +373,7 @@ function mergeImageCompressionPolicies(params: {
 }
 
 function resolveBundledStaticCompressionModelPolicy(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   provider: string;
   model: string;
   workspaceDir?: string;
@@ -388,7 +388,7 @@ function resolveBundledStaticCompressionModelPolicy(params: {
 }
 
 function providerUsesRuntimeModelAugment(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   provider: string;
   workspaceDir?: string;
 }): boolean {
@@ -428,7 +428,7 @@ function providerUsesRuntimeModelAugment(params: {
 }
 
 async function resolveCompressionModelPolicyWithHooks(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   provider: string;
   model: string;
   agentDir?: string;
@@ -455,7 +455,7 @@ async function resolveCompressionModelPolicyWithHooks(params: {
 }
 
 async function resolveCompressionModelPolicy(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   provider: string;
   model: string;
   agentDir?: string;
@@ -487,7 +487,7 @@ async function resolveCompressionModelPolicy(params: {
 }
 
 async function resolveImageCompressionPolicy(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   imageModelConfig?: ImageModelConfig | null;
   modelOverride?: string;
   imageCount: number;
@@ -548,7 +548,7 @@ function matchesImageTimeoutEntry(params: {
 }
 
 function resolveImageToolTimeoutMs(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   provider: string;
   model: string;
   providerRegistry: Map<string, MediaUnderstandingProvider>;
@@ -584,7 +584,7 @@ type ImageSandboxConfig = {
 };
 
 async function runImagePrompt(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   agentDir: string;
   imageModelConfig: ImageModelConfig;
   modelOverride?: string;
@@ -598,7 +598,7 @@ async function runImagePrompt(params: {
   attempts: Array<{ provider: string; model: string; error: string }>;
 }> {
   const effectiveCfg = applyImageModelConfigDefaults(params.cfg, params.imageModelConfig);
-  const providerCfg: OpenClawConfig = effectiveCfg ?? {};
+  const providerCfg: MerClawConfig = effectiveCfg ?? {};
   const providerRegistry = imageToolProviderDeps.buildProviderRegistry(undefined, providerCfg);
 
   const result = await runWithImageModelFallback({
@@ -696,7 +696,7 @@ async function runImagePrompt(params: {
 }
 
 export function createImageTool(options?: {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentDir?: string;
   authProfileStore?: AuthProfileStore;
   workspaceDir?: string;

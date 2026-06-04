@@ -1,4 +1,4 @@
-import { defineChannelMessageAdapter } from "openclaw/plugin-sdk/channel-outbound";
+import { defineChannelMessageAdapter } from "merclaw/plugin-sdk/channel-outbound";
 import { sendMessageNextcloudTalk } from "./send.js";
 import type { CoreConfig } from "./types.js";
 

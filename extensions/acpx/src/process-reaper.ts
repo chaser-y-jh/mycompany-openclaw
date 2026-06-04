@@ -4,7 +4,7 @@ import path from "node:path";
 import { promisify } from "node:util";
 import { splitCommandParts } from "./command-line.js";
 import { resolveAcpxPluginRoot } from "./config.js";
-import { OPENCLAW_ACPX_LEASE_ID_ARG, OPENCLAW_GATEWAY_INSTANCE_ID_ARG } from "./process-lease.js";
+import { MERCLAW_ACPX_LEASE_ID_ARG, MERCLAW_GATEWAY_INSTANCE_ID_ARG } from "./process-lease.js";
 
 const execFileAsync = promisify(execFile);
 const requireFromHere = createRequire(import.meta.url);
@@ -12,7 +12,7 @@ const GENERATED_WRAPPER_BASENAMES = new Set([
   "codex-acp-wrapper.mjs",
   "claude-agent-acp-wrapper.mjs",
 ]);
-const OPENCLAW_PLUGIN_DEPS_MARKER = "/plugin-runtime-deps/";
+const MERCLAW_PLUGIN_DEPS_MARKER = "/plugin-runtime-deps/";
 const OWNED_ACP_PACKAGE_NAMES = [
   "@zed-industries/codex-acp",
   "@zed-industries/codex-acp-darwin-arm64",
@@ -44,7 +44,7 @@ export type AcpxProcessCleanupDeps = {
 export type AcpxProcessCleanupResult = {
   inspectedPids: number[];
   terminatedPids: number[];
-  skippedReason?: "missing-root" | "not-openclaw-owned" | "unverified-root";
+  skippedReason?: "missing-root" | "not-merclaw-owned" | "unverified-root";
 };
 
 export type AcpxStartupReapResult = {
@@ -65,7 +65,7 @@ function resolvePackageRoot(packageName: string): string | undefined {
   }
 }
 
-function resolveOpenClawInstallRoot(pluginRoot: string): string {
+function resolveMerClawInstallRoot(pluginRoot: string): string {
   if (
     path.basename(pluginRoot) === "acpx" &&
     path.basename(path.dirname(pluginRoot)) === "extensions"
@@ -78,11 +78,11 @@ function resolveOpenClawInstallRoot(pluginRoot: string): string {
 
 function resolveOwnedAcpPackageRootCandidates(packageName: string): string[] {
   const pluginRoot = resolveAcpxPluginRoot(import.meta.url);
-  const openClawRoot = resolveOpenClawInstallRoot(pluginRoot);
+  const merClawRoot = resolveMerClawInstallRoot(pluginRoot);
   return [
     resolvePackageRoot(packageName),
     path.join(pluginRoot, "node_modules", packageName),
-    path.join(openClawRoot, "node_modules", packageName),
+    path.join(merClawRoot, "node_modules", packageName),
   ].flatMap((root) => (root ? [normalizePathLike(root)] : []));
 }
 
@@ -109,7 +109,7 @@ function commandWrapperBelongsToRoot(command: string, wrapperRoot: string | unde
   );
 }
 
-export function isOpenClawLeaseAwareAcpxProcessCommand(params: {
+export function isMerClawLeaseAwareAcpxProcessCommand(params: {
   command: string | undefined;
   wrapperRoot?: string;
 }): boolean {
@@ -153,12 +153,12 @@ function liveCommandMatchesLeaseIdentity(params: {
   }
   const parts = splitCommandParts(params.command ?? "");
   return (
-    commandOptionEquals(parts, OPENCLAW_ACPX_LEASE_ID_ARG, params.expectedLeaseId) &&
-    commandOptionEquals(parts, OPENCLAW_GATEWAY_INSTANCE_ID_ARG, params.expectedGatewayInstanceId)
+    commandOptionEquals(parts, MERCLAW_ACPX_LEASE_ID_ARG, params.expectedLeaseId) &&
+    commandOptionEquals(parts, MERCLAW_GATEWAY_INSTANCE_ID_ARG, params.expectedGatewayInstanceId)
   );
 }
 
-export function isOpenClawOwnedAcpxProcessCommand(params: {
+export function isMerClawOwnedAcpxProcessCommand(params: {
   command: string | undefined;
   wrapperRoot?: string;
 }): boolean {
@@ -168,7 +168,7 @@ export function isOpenClawOwnedAcpxProcessCommand(params: {
   }
   const normalized = normalizePathLike(command);
   if (
-    isOpenClawLeaseAwareAcpxProcessCommand({
+    isMerClawLeaseAwareAcpxProcessCommand({
       command: normalized,
       wrapperRoot: params.wrapperRoot,
     })
@@ -178,7 +178,7 @@ export function isOpenClawOwnedAcpxProcessCommand(params: {
   if (commandBelongsToResolvedAcpPackage(normalized)) {
     return true;
   }
-  if (!normalized.includes(OPENCLAW_PLUGIN_DEPS_MARKER)) {
+  if (!normalized.includes(MERCLAW_PLUGIN_DEPS_MARKER)) {
     return false;
   }
   return ACP_PACKAGE_MARKERS.some((marker) => normalized.includes(marker));
@@ -289,7 +289,7 @@ async function terminatePids(
   return terminated;
 }
 
-export async function cleanupOpenClawOwnedAcpxProcessTree(params: {
+export async function cleanupMerClawOwnedAcpxProcessTree(params: {
   rootPid?: number;
   rootCommand?: string;
   expectedLeaseId?: string;
@@ -311,7 +311,7 @@ export async function cleanupOpenClawOwnedAcpxProcessTree(params: {
 
   const listedTree = collectProcessTree(processes, rootPid);
   // Session-store PIDs are stale data. If the live process table cannot prove
-  // that this PID still belongs to an OpenClaw-owned wrapper, fail closed to
+  // that this PID still belongs to an MerClaw-owned wrapper, fail closed to
   // avoid killing an unrelated process after PID reuse.
   if (listedTree.length === 0) {
     return { inspectedPids: [], terminatedPids: [], skippedReason: "unverified-root" };
@@ -327,7 +327,7 @@ export async function cleanupOpenClawOwnedAcpxProcessTree(params: {
     return {
       inspectedPids: listedTree.map((processInfo) => processInfo.pid),
       terminatedPids: [],
-      skippedReason: "not-openclaw-owned",
+      skippedReason: "not-merclaw-owned",
     };
   }
   if (
@@ -337,11 +337,11 @@ export async function cleanupOpenClawOwnedAcpxProcessTree(params: {
     return {
       inspectedPids: listedTree.map((processInfo) => processInfo.pid),
       terminatedPids: [],
-      skippedReason: "not-openclaw-owned",
+      skippedReason: "not-merclaw-owned",
     };
   }
   if (
-    !isOpenClawOwnedAcpxProcessCommand({
+    !isMerClawOwnedAcpxProcessCommand({
       command: rootCommand,
       wrapperRoot: params.wrapperRoot,
     })
@@ -349,7 +349,7 @@ export async function cleanupOpenClawOwnedAcpxProcessTree(params: {
     return {
       inspectedPids: listedTree.map((processInfo) => processInfo.pid),
       terminatedPids: [],
-      skippedReason: "not-openclaw-owned",
+      skippedReason: "not-merclaw-owned",
     };
   }
   if (
@@ -362,7 +362,7 @@ export async function cleanupOpenClawOwnedAcpxProcessTree(params: {
     return {
       inspectedPids: listedTree.map((processInfo) => processInfo.pid),
       terminatedPids: [],
-      skippedReason: "not-openclaw-owned",
+      skippedReason: "not-merclaw-owned",
     };
   }
 
@@ -373,7 +373,7 @@ export async function cleanupOpenClawOwnedAcpxProcessTree(params: {
   };
 }
 
-export async function reapStaleOpenClawOwnedAcpxOrphans(params: {
+export async function reapStaleMerClawOwnedAcpxOrphans(params: {
   wrapperRoot: string;
   deps?: AcpxProcessCleanupDeps;
 }): Promise<AcpxStartupReapResult> {
@@ -391,7 +391,7 @@ export async function reapStaleOpenClawOwnedAcpxOrphans(params: {
   const orphans = processes.filter(
     (processInfo) =>
       processInfo.ppid === 1 &&
-      isOpenClawOwnedAcpxProcessCommand({
+      isMerClawOwnedAcpxProcessCommand({
         command: processInfo.command,
         wrapperRoot: params.wrapperRoot,
       }),

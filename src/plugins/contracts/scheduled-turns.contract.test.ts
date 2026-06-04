@@ -1,8 +1,8 @@
-import { MAX_DATE_TIMESTAMP_MS } from "@openclaw/normalization-core/number-coercion";
+import { MAX_DATE_TIMESTAMP_MS } from "@merclaw/normalization-core/number-coercion";
 import {
   createPluginRegistryFixture,
   registerTestPlugin,
-} from "openclaw/plugin-sdk/plugin-test-contracts";
+} from "merclaw/plugin-sdk/plugin-test-contracts";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { CronServiceContract } from "../../cron/service-contract.js";
 import type { CronJob, CronJobCreate } from "../../cron/types.js";
@@ -22,12 +22,12 @@ import {
   schedulePluginSessionTurn,
   unschedulePluginSessionTurnsByTag,
 } from "../host-hook-scheduled-turns.js";
-import { clearPluginLoaderCache, loadOpenClawPlugins } from "../loader.js";
+import { clearPluginLoaderCache, loadMerClawPlugins } from "../loader.js";
 import { makeTempDir, writePlugin } from "../loader.test-fixtures.js";
 import { createEmptyPluginRegistry } from "../registry-empty.js";
 import { setActivePluginRegistry } from "../runtime.js";
 import { createPluginRecord } from "../status.test-helpers.js";
-import type { OpenClawPluginApi } from "../types.js";
+import type { MerClawPluginApi } from "../types.js";
 
 const workflowMocks = vi.hoisted(() => ({
   cronAdd: vi.fn(),
@@ -90,7 +90,7 @@ function createMockCronService(): CronServiceContract {
     stop: vi.fn(),
     status: vi.fn(async () => ({
       enabled: true,
-      storePath: "/tmp/openclaw-test-cron.json",
+      storePath: "/tmp/merclaw-test-cron.json",
       jobs: 0,
       nextWakeAtMs: null,
     })),
@@ -524,11 +524,11 @@ describe("plugin scheduled turns", () => {
 
     const registry = withEnv(
       {
-        OPENCLAW_BUNDLED_PLUGINS_DIR: bundledDir,
-        OPENCLAW_DISABLE_BUNDLED_PLUGINS: undefined,
+        MERCLAW_BUNDLED_PLUGINS_DIR: bundledDir,
+        MERCLAW_DISABLE_BUNDLED_PLUGINS: undefined,
       },
       () =>
-        loadOpenClawPlugins({
+        loadMerClawPlugins({
           cache: false,
           hostServices: { cron },
           config: {
@@ -661,11 +661,11 @@ describe("plugin scheduled turns", () => {
 
     const registry = withEnv(
       {
-        OPENCLAW_BUNDLED_PLUGINS_DIR: bundledDir,
-        OPENCLAW_DISABLE_BUNDLED_PLUGINS: undefined,
+        MERCLAW_BUNDLED_PLUGINS_DIR: bundledDir,
+        MERCLAW_DISABLE_BUNDLED_PLUGINS: undefined,
       },
       () =>
-        loadOpenClawPlugins({
+        loadMerClawPlugins({
           cache: false,
           hostServices: { cron },
           config: {
@@ -1050,7 +1050,7 @@ describe("plugin scheduled turns", () => {
   it("wires schedule and unschedule through the plugin API with stale-registry protection", async () => {
     workflowMocks.cronAdd.mockResolvedValue(makeCronJob({ id: "job-live" }));
     const { config, registry } = createPluginRegistryFixture({}, { hostServices: { cron } });
-    let capturedApi: OpenClawPluginApi | undefined;
+    let capturedApi: MerClawPluginApi | undefined;
     registerTestPlugin({
       registry,
       config,
@@ -1133,7 +1133,7 @@ describe("plugin scheduled turns", () => {
       },
     };
     const { config, registry } = createPluginRegistryFixture({}, { hostServices });
-    let capturedApi: OpenClawPluginApi | undefined;
+    let capturedApi: MerClawPluginApi | undefined;
     registerTestPlugin({
       registry,
       config,

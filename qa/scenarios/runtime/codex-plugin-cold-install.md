@@ -27,7 +27,7 @@ execution:
   kind: flow
   summary: Exercise the Codex lifecycle fixture for missing plugin repair and retry auth routing.
   config:
-    remediation: Codex plugin is required for Codex runtime. Run "openclaw doctor --fix" to install @openclaw/codex, then retry.
+    remediation: Codex plugin is required for Codex runtime. Run "merclaw doctor --fix" to install @merclaw/codex, then retry.
 ```
 
 ```yaml qa-flow

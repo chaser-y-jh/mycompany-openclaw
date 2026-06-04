@@ -1,6 +1,6 @@
-import { stringEnum } from "openclaw/plugin-sdk/channel-actions";
-import type { AnyAgentTool, OpenClawPluginToolContext } from "openclaw/plugin-sdk/core";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import { stringEnum } from "merclaw/plugin-sdk/channel-actions";
+import type { AnyAgentTool, MerClawPluginToolContext } from "merclaw/plugin-sdk/core";
+import { formatErrorMessage } from "merclaw/plugin-sdk/error-runtime";
 import { Type } from "typebox";
 import { sendImageZalouser, sendLinkZalouser, sendMessageZalouser } from "./send.js";
 import { parseZalouserOutboundTarget } from "./session-route.js";
@@ -41,7 +41,7 @@ type ToolParams = {
   url?: string;
 };
 
-type ZalouserToolContext = Pick<OpenClawPluginToolContext, "deliveryContext">;
+type ZalouserToolContext = Pick<MerClawPluginToolContext, "deliveryContext">;
 
 function json(payload: unknown): AgentToolResult {
   return {

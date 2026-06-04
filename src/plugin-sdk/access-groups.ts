@@ -5,12 +5,12 @@ import {
 } from "../channels/allow-from.js";
 import type { ChannelId } from "../channels/plugins/types.public.js";
 import type { AccessGroupConfig } from "../config/types.access-groups.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 
 export { ACCESS_GROUP_ALLOW_FROM_PREFIX, parseAccessGroupAllowFromEntry };
 
 export type AccessGroupMembershipResolver = (params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   name: string;
   group: AccessGroupConfig;
   channel: ChannelId;
@@ -125,7 +125,7 @@ export async function resolveAccessGroupAllowFromState(params: {
 }
 
 export async function resolveAccessGroupAllowFromMatches(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   allowFrom: Array<string | number> | null | undefined;
   channel: ChannelId;
   accountId: string;
@@ -155,7 +155,7 @@ export async function resolveAccessGroupAllowFromMatches(params: {
 }
 
 export async function expandAllowFromWithAccessGroups(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   allowFrom: Array<string | number> | null | undefined;
   channel: ChannelId;
   accountId: string;

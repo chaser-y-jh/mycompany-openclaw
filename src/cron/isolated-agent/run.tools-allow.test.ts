@@ -56,7 +56,7 @@ function requireEmbeddedAgentCall(): {
       }
     | undefined;
   if (!call) {
-    throw new Error("Expected embedded OpenClaw agent call for toolsAllow passthrough");
+    throw new Error("Expected embedded MerClaw agent call for toolsAllow passthrough");
   }
   return call;
 }
@@ -65,8 +65,8 @@ describe("runCronIsolatedAgentTurn toolsAllow passthrough", () => {
   let previousFastTestEnv: string | undefined;
 
   beforeEach(() => {
-    previousFastTestEnv = process.env.OPENCLAW_TEST_FAST;
-    vi.stubEnv("OPENCLAW_TEST_FAST", "1");
+    previousFastTestEnv = process.env.MERCLAW_TEST_FAST;
+    vi.stubEnv("MERCLAW_TEST_FAST", "1");
     resetRunCronIsolatedAgentTurnHarness();
     resolveDeliveryTargetMock.mockResolvedValue({
       channel: "forum",
@@ -83,10 +83,10 @@ describe("runCronIsolatedAgentTurn toolsAllow passthrough", () => {
   afterEach(() => {
     if (previousFastTestEnv == null) {
       vi.unstubAllEnvs();
-      delete process.env.OPENCLAW_TEST_FAST;
+      delete process.env.MERCLAW_TEST_FAST;
       return;
     }
-    vi.stubEnv("OPENCLAW_TEST_FAST", previousFastTestEnv);
+    vi.stubEnv("MERCLAW_TEST_FAST", previousFastTestEnv);
   });
 
   it(

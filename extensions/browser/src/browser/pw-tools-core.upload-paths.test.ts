@@ -35,7 +35,7 @@ describe("armFileUploadViaPlaywright upload path validation", () => {
   beforeEach(() => {
     pathMocks.resolveStrictExistingUploadPaths.mockResolvedValue({
       ok: true,
-      paths: ["/home/user/.openclaw/media/inbound/report.pdf"],
+      paths: ["/home/user/.merclaw/media/inbound/report.pdf"],
     });
   });
 
@@ -45,13 +45,13 @@ describe("armFileUploadViaPlaywright upload path validation", () => {
     await armFileUploadViaPlaywright({
       cdpUrl: "http://127.0.0.1:18792",
       targetId: "T1",
-      paths: ["/home/user/.openclaw/media/inbound/report.pdf"],
+      paths: ["/home/user/.merclaw/media/inbound/report.pdf"],
     });
     await Promise.resolve();
 
     await vi.waitFor(() => {
       expect(fileChooser.setFiles).toHaveBeenCalledWith([
-        "/home/user/.openclaw/media/inbound/report.pdf",
+        "/home/user/.merclaw/media/inbound/report.pdf",
       ]);
     });
   });

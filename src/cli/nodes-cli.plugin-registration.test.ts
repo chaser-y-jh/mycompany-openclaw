@@ -56,7 +56,7 @@ describe("registerNodesCli plugin registration", () => {
       return {};
     });
 
-    const program = await registerWithArgv(["node", "openclaw", "nodes", "list", "--json"]);
+    const program = await registerWithArgv(["node", "merclaw", "nodes", "list", "--json"]);
 
     expect(registerPluginCliCommandsFromValidatedConfig).toHaveBeenCalledWith(
       program,
@@ -75,7 +75,7 @@ describe("registerNodesCli plugin registration", () => {
       return {};
     });
 
-    await registerWithArgv(["node", "openclaw", "nodes", "invoke", "--", "--json"]);
+    await registerWithArgv(["node", "merclaw", "nodes", "invoke", "--", "--json"]);
 
     expect(forceStderrDuringRegistration).toBe(false);
     expect(loggingState.forceConsoleToStderr).toBe(false);

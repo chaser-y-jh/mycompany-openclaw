@@ -1,22 +1,22 @@
-import { isOpenClawMainPromptSurface } from "../plugins/agent-prompt-surface-kind.js";
+import { isMerClawMainPromptSurface } from "../plugins/agent-prompt-surface-kind.js";
 import type { AgentPromptSurfaceKind } from "../plugins/types.js";
 import { isAcpSessionKey, isSubagentSessionKey } from "../routing/session-key.js";
 
-export function buildOpenClawToolFallbackText(params: {
+export function buildMerClawToolFallbackText(params: {
   surface: AgentPromptSurfaceKind;
   execToolName: string;
   processToolName: string;
 }): string {
-  if (isOpenClawMainPromptSurface(params.surface)) {
+  if (isMerClawMainPromptSurface(params.surface)) {
     return [
-      "OpenClaw lists the standard tools above. This runtime enables:",
+      "MerClaw lists the standard tools above. This runtime enables:",
       "- grep: search file contents for patterns",
       "- find: find files by glob pattern",
       "- ls: list directory contents",
       "- apply_patch: apply multi-file patches",
       `- ${params.execToolName}: run shell commands (supports background via yieldMs/background)`,
       `- ${params.processToolName}: manage background exec sessions`,
-      "- browser: control OpenClaw's dedicated browser",
+      "- browser: control MerClaw's dedicated browser",
       "- canvas: present/eval/snapshot the Canvas",
       "- nodes: list/describe/notify/camera/screen on paired nodes",
       "- cron: manage cron jobs and wake events (use for reminders; when scheduling a reminder, write the systemEvent text as something that will read like a reminder when it fires, and mention that it is a reminder depending on the time gap between setting and firing; include recent context in reminder text if appropriate)",
@@ -30,14 +30,14 @@ export function buildOpenClawToolFallbackText(params: {
     ].join("\n");
   }
 
-  return "No OpenClaw tool list is injected for this runtime prompt surface. Use only tools exposed directly by the active backend.";
+  return "No MerClaw tool list is injected for this runtime prompt surface. Use only tools exposed directly by the active backend.";
 }
 
-export function shouldRenderOpenClawToolWorkflowHints(params: {
+export function shouldRenderMerClawToolWorkflowHints(params: {
   surface: AgentPromptSurfaceKind;
   hasToolList: boolean;
 }): boolean {
-  return isOpenClawMainPromptSurface(params.surface);
+  return isMerClawMainPromptSurface(params.surface);
 }
 
 export function resolveAgentPromptSurfaceForSessionKey(
@@ -46,5 +46,5 @@ export function resolveAgentPromptSurfaceForSessionKey(
   if (sessionKey && isAcpSessionKey(sessionKey)) {
     return "acp_backend";
   }
-  return sessionKey && isSubagentSessionKey(sessionKey) ? "subagent" : "openclaw_main";
+  return sessionKey && isSubagentSessionKey(sessionKey) ? "subagent" : "merclaw_main";
 }

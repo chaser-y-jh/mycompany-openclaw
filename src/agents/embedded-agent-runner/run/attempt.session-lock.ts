@@ -2,7 +2,7 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { statSync } from "node:fs";
 import fs from "node:fs/promises";
 import { isDeepStrictEqual } from "node:util";
-import { normalizeStringEntries } from "@openclaw/normalization-core/string-normalization";
+import { normalizeStringEntries } from "@merclaw/normalization-core/string-normalization";
 import { withOwnedSessionTranscriptWrites } from "../../../config/sessions/transcript-write-context.js";
 import { resolveGlobalSingleton } from "../../../shared/global-singleton.js";
 import { isSessionWriteLockAcquireError } from "../../session-write-lock-error.js";
@@ -33,7 +33,7 @@ type SessionWithAgentPrompt = {
 };
 
 type PromptReleaseStreamFn = ((...args: unknown[]) => unknown) & {
-  __openclawSessionLockPromptReleaseInstalled?: boolean;
+  __merclawSessionLockPromptReleaseInstalled?: boolean;
 };
 
 type SessionFileFingerprint =
@@ -47,7 +47,7 @@ type SessionFileFingerprint =
       ctimeNs: bigint;
     };
 
-const TRANSCRIPT_ONLY_OPENCLAW_ASSISTANT_MODELS = new Set(["delivery-mirror", "gateway-injected"]);
+const TRANSCRIPT_ONLY_MERCLAW_ASSISTANT_MODELS = new Set(["delivery-mirror", "gateway-injected"]);
 const MAX_BENIGN_SESSION_FENCE_ADVANCE_BYTES = 1024 * 1024;
 const MAX_BENIGN_SESSION_FENCE_REWRITE_BYTES = 8 * 1024 * 1024;
 const MAX_BENIGN_SESSION_FENCE_REWRITE_RESULT_BYTES =
@@ -93,7 +93,7 @@ function isJsonRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function isTranscriptOnlyOpenClawAssistantLine(line: string): boolean {
+function isTranscriptOnlyMerClawAssistantLine(line: string): boolean {
   try {
     const parsed = JSON.parse(line) as unknown;
     if (!isJsonRecord(parsed)) {
@@ -105,9 +105,9 @@ function isTranscriptOnlyOpenClawAssistantLine(line: string): boolean {
     }
     return (
       message.role === "assistant" &&
-      message.provider === "openclaw" &&
+      message.provider === "merclaw" &&
       typeof message.model === "string" &&
-      TRANSCRIPT_ONLY_OPENCLAW_ASSISTANT_MODELS.has(message.model)
+      TRANSCRIPT_ONLY_MERCLAW_ASSISTANT_MODELS.has(message.model)
     );
   } catch {
     return false;
@@ -251,7 +251,7 @@ async function sessionFenceAdvanceIsBenign(params: {
     return false;
   }
   const lines = normalizeStringEntries(text.split("\n"));
-  return lines.length > 0 && lines.every(isTranscriptOnlyOpenClawAssistantLine);
+  return lines.length > 0 && lines.every(isTranscriptOnlyMerClawAssistantLine);
 }
 
 async function sessionFenceRewriteIsBenign(params: {
@@ -296,7 +296,7 @@ async function sessionFenceRewriteIsBenign(params: {
     expectedParentId = lineMatch.nextPreviousId ?? expectedParentId;
   }
   const appendedLines = currentLines.slice(previousLines.length);
-  return appendedLines.every(isTranscriptOnlyOpenClawAssistantLine);
+  return appendedLines.every(isTranscriptOnlyMerClawAssistantLine);
 }
 
 type OwnedSessionFileWrite = {
@@ -309,9 +309,9 @@ type TrustedSessionFileState = {
   fingerprint: SessionFileFingerprint;
 };
 
-// Controllers in the same OpenClaw process can legitimately take turns writing
+// Controllers in the same MerClaw process can legitimately take turns writing
 // the same session file while another attempt is released for model I/O. Track
-// only fingerprints that changed while OpenClaw held the write lock so the
+// only fingerprints that changed while MerClaw held the write lock so the
 // takeover fence can distinguish those locked in-process writes from unowned
 // external file changes.
 const ownedSessionFileWrites = new Map<string, OwnedSessionFileWrite>();
@@ -340,7 +340,7 @@ type SessionFileOwnerState = {
 };
 
 const EMBEDDED_ATTEMPT_SESSION_FILE_OWNER_STATE_KEY = Symbol.for(
-  "openclaw.embeddedAttemptSessionFileOwnerState",
+  "merclaw.embeddedAttemptSessionFileOwnerState",
 );
 
 const sessionFileOwnerState = resolveGlobalSingleton(
@@ -1017,7 +1017,7 @@ export function installPromptSubmissionLockRelease(params: {
     return;
   }
   const currentStreamFn = agent.streamFn;
-  if (currentStreamFn["__openclawSessionLockPromptReleaseInstalled"] === true) {
+  if (currentStreamFn["__merclawSessionLockPromptReleaseInstalled"] === true) {
     return;
   }
   const originalStreamFn = currentStreamFn.bind(agent);
@@ -1041,6 +1041,6 @@ export function installPromptSubmissionLockRelease(params: {
       await params.reacquireAfterPrompt();
     }
   };
-  wrappedStreamFn["__openclawSessionLockPromptReleaseInstalled"] = true;
+  wrappedStreamFn["__merclawSessionLockPromptReleaseInstalled"] = true;
   agent.streamFn = wrappedStreamFn;
 }

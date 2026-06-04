@@ -1,5 +1,5 @@
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
-import { enqueueSystemEvent } from "openclaw/plugin-sdk/system-event-runtime";
+import type { RuntimeEnv } from "merclaw/plugin-sdk/runtime-env";
+import { enqueueSystemEvent } from "merclaw/plugin-sdk/system-event-runtime";
 
 export type IMessageReactionSystemEventDecision = {
   text: string;

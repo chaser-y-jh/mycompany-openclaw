@@ -1,7 +1,7 @@
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import { loadCombinedSessionStoreForGateway } from "../config/sessions/combined-store-gateway.js";
 import type { SessionEntry } from "../config/sessions/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 
 export type DirectChildSessionEntry = {
   sessionKey: string;
@@ -24,7 +24,7 @@ export function isDirectChildSessionEntry(params: {
 }
 
 export function findDirectChildSessionsForParent(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   parentKey: string;
 }): DirectChildSessionEntry[] {
   const { store } = loadCombinedSessionStoreForGateway(params.cfg);

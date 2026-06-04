@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-source scripts/lib/openclaw-e2e-instance.sh
+source scripts/lib/merclaw-e2e-instance.sh
 
 if [ -f dist/index.mjs ]; then
-  OPENCLAW_ENTRY="dist/index.mjs"
+  MERCLAW_ENTRY="dist/index.mjs"
 elif [ -f dist/index.js ]; then
-  OPENCLAW_ENTRY="dist/index.js"
+  MERCLAW_ENTRY="dist/index.js"
 else
   echo "Missing dist/index.(m)js (build output):"
   ls -la dist || true
   exit 1
 fi
-export OPENCLAW_ENTRY
+export MERCLAW_ENTRY
 
-openclaw_e2e_eval_test_state_from_b64 "${OPENCLAW_TEST_STATE_SCRIPT_B64:?missing OPENCLAW_TEST_STATE_SCRIPT_B64}"
+merclaw_e2e_eval_test_state_from_b64 "${MERCLAW_TEST_STATE_SCRIPT_B64:?missing MERCLAW_TEST_STATE_SCRIPT_B64}"
 
 probe="scripts/e2e/lib/bundled-plugin-install-uninstall/probe.mjs"
 runtime_smoke="scripts/e2e/lib/bundled-plugin-install-uninstall/runtime-smoke.mjs"
@@ -25,7 +25,7 @@ now_ms() {
 }
 
 lifecycle_trace_enabled() {
-  case "${OPENCLAW_PLUGIN_LIFECYCLE_TRACE:-}" in
+  case "${MERCLAW_PLUGIN_LIFECYCLE_TRACE:-}" in
     1 | true | TRUE | yes | YES)
       return 0
       ;;
@@ -44,16 +44,16 @@ for plugin_entry in "${plugin_entries[@]}"; do
   IFS=$'\t' read -r plugin_id plugin_dir _requires_config _plugin_root <<<"$plugin_entry"
   selected_labels+=("${plugin_id}@${plugin_dir}")
 done
-echo "Selected ${#plugin_entries[@]} bundled plugins for shard ${OPENCLAW_BUNDLED_PLUGIN_SWEEP_INDEX:-0}/${OPENCLAW_BUNDLED_PLUGIN_SWEEP_TOTAL:-1}: ${selected_labels[*]}"
+echo "Selected ${#plugin_entries[@]} bundled plugins for shard ${MERCLAW_BUNDLED_PLUGIN_SWEEP_INDEX:-0}/${MERCLAW_BUNDLED_PLUGIN_SWEEP_TOTAL:-1}: ${selected_labels[*]}"
 
 plugin_index=0
 for plugin_entry in "${plugin_entries[@]}"; do
   IFS=$'\t' read -r plugin_id plugin_dir requires_config plugin_root <<<"$plugin_entry"
-  install_log="/tmp/openclaw-install-${plugin_index}.log"
-  uninstall_log="/tmp/openclaw-uninstall-${plugin_index}.log"
+  install_log="/tmp/merclaw-install-${plugin_index}.log"
+  uninstall_log="/tmp/merclaw-uninstall-${plugin_index}.log"
   plugin_started_at="$(now_ms)"
   echo "Installing bundled plugin: $plugin_id ($plugin_dir)"
-  node "$OPENCLAW_ENTRY" plugins install "$plugin_id" >"$install_log" 2>&1 || {
+  node "$MERCLAW_ENTRY" plugins install "$plugin_id" >"$install_log" 2>&1 || {
     cat "$install_log"
     exit 1
   }
@@ -63,18 +63,18 @@ for plugin_entry in "${plugin_entries[@]}"; do
   install_finished_at="$(now_ms)"
   node "$probe" assert-installed "$plugin_id" "$plugin_dir" "$requires_config"
   installed_asserted_at="$(now_ms)"
-  if [[ "${OPENCLAW_BUNDLED_PLUGIN_RUNTIME_SMOKE:-1}" != "0" ]]; then
+  if [[ "${MERCLAW_BUNDLED_PLUGIN_RUNTIME_SMOKE:-1}" != "0" ]]; then
     echo "Running bundled plugin runtime smoke: $plugin_id ($plugin_dir)"
     node "$runtime_smoke" plugin "$plugin_id" "$plugin_dir" "$requires_config" "$plugin_index" "$plugin_root"
     node "$runtime_smoke" tts-global-disable "$plugin_id" "$plugin_dir" "$requires_config" "$plugin_index" "$plugin_root" ""
-    if [[ "$plugin_id" == "${OPENCLAW_BUNDLED_PLUGIN_TTS_LIVE_PROVIDER:-openai}" ]]; then
+    if [[ "$plugin_id" == "${MERCLAW_BUNDLED_PLUGIN_TTS_LIVE_PROVIDER:-openai}" ]]; then
       node "$runtime_smoke" tts-openai-live "$plugin_id" "$plugin_dir" "$requires_config" "$plugin_index"
     fi
   fi
   runtime_finished_at="$(now_ms)"
 
   echo "Uninstalling bundled plugin: $plugin_id ($plugin_dir)"
-  node "$OPENCLAW_ENTRY" plugins uninstall "$plugin_id" --force >"$uninstall_log" 2>&1 || {
+  node "$MERCLAW_ENTRY" plugins uninstall "$plugin_id" --force >"$uninstall_log" 2>&1 || {
     cat "$uninstall_log"
     exit 1
   }

@@ -9,7 +9,7 @@ import { createPnpmRunnerSpawnSpec } from "./pnpm-runner.mjs";
 export function parseArgs(argv) {
   const args = {
     mode: "",
-    outputDir: process.env.OPENCLAW_VITEST_PROFILE_DIR?.trim() || "",
+    outputDir: process.env.MERCLAW_VITEST_PROFILE_DIR?.trim() || "",
     vitestArgs: [],
   };
 
@@ -49,7 +49,7 @@ export function resolveVitestProfileDir({ mode, outputDir }) {
     return path.resolve(outputDir);
   }
 
-  return fs.mkdtempSync(path.join(os.tmpdir(), `openclaw-vitest-${mode}-profile-`));
+  return fs.mkdtempSync(path.join(os.tmpdir(), `merclaw-vitest-${mode}-profile-`));
 }
 
 export function buildVitestProfileCommand({ mode, outputDir }) {

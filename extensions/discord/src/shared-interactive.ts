@@ -1,10 +1,10 @@
-import { reduceInteractiveReply } from "openclaw/plugin-sdk/interactive-runtime";
+import { reduceInteractiveReply } from "merclaw/plugin-sdk/interactive-runtime";
 import type {
   InteractiveButtonStyle,
   InteractiveReply,
   MessagePresentation,
   MessagePresentationButton,
-} from "openclaw/plugin-sdk/interactive-runtime";
+} from "merclaw/plugin-sdk/interactive-runtime";
 import type {
   DiscordComponentButtonSpec,
   DiscordComponentButtonStyle,

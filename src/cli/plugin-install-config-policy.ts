@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { normalizeStringEntries } from "@openclaw/normalization-core/string-normalization";
+import { normalizeStringEntries } from "@merclaw/normalization-core/string-normalization";
 import type { Command } from "commander";
 import { tryReadJsonSync } from "../infra/json-files.js";
 import { findBundledPluginSource } from "../plugins/bundled-sources.js";
@@ -43,7 +43,7 @@ function readBundledInstallRecoveryMetadata(rootDir: string): {
   const manifest = loadPluginManifest(rootDir, false);
   const pluginId = manifest.ok ? manifest.manifest.id : undefined;
   const parsed = tryReadJsonSync<{
-    openclaw?: {
+    merclaw?: {
       install?: {
         allowInvalidConfigRecovery?: boolean;
       };
@@ -51,7 +51,7 @@ function readBundledInstallRecoveryMetadata(rootDir: string): {
   }>(packageJsonPath);
   return {
     ...(pluginId ? { pluginId } : {}),
-    allowInvalidConfigRecovery: parsed?.openclaw?.install?.allowInvalidConfigRecovery === true,
+    allowInvalidConfigRecovery: parsed?.merclaw?.install?.allowInvalidConfigRecovery === true,
   };
 }
 

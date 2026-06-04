@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { sortUniqueStrings } from "@openclaw/normalization-core/string-normalization";
+import { sortUniqueStrings } from "@merclaw/normalization-core/string-normalization";
 import { describe, expect, it } from "vitest";
 import { loadHostEnvSecurityPolicy } from "./host-env-security-policy.js";
 
@@ -20,11 +20,11 @@ describe("host env security policy parity", () => {
     const policyPath = path.join(repoRoot, "src/infra/host-env-security-policy.json");
     const generatedSwiftPath = path.join(
       repoRoot,
-      "apps/macos/Sources/OpenClaw/HostEnvSecurityPolicy.generated.swift",
+      "apps/macos/Sources/MerClaw/HostEnvSecurityPolicy.generated.swift",
     );
     const sanitizerSwiftPath = path.join(
       repoRoot,
-      "apps/macos/Sources/OpenClaw/HostEnvSanitizer.swift",
+      "apps/macos/Sources/MerClaw/HostEnvSanitizer.swift",
     );
 
     const rawPolicy = JSON.parse(fs.readFileSync(policyPath, "utf8"));

@@ -1,8 +1,8 @@
 import "../infra/fs-safe-defaults.js";
 import { createHash } from "node:crypto";
 import path from "node:path";
-import { redactSensitiveUrlLikeString } from "@openclaw/net-policy/redact-sensitive-url";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { redactSensitiveUrlLikeString } from "@merclaw/net-policy/redact-sensitive-url";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import { sanitizeForLog } from "../../packages/terminal-core/src/ansi.js";
 import { withTempDir } from "../infra/install-source-utils.js";
 import { replaceDirectoryAtomic } from "../infra/replace-file.js";
@@ -300,7 +300,7 @@ export async function installPluginFromGitSpec(
   }
 
   const persistentRepoDir = resolveGitInstallRepoDir({ gitDir: params.gitDir, source: parsed });
-  return await withTempDir("openclaw-git-plugin-", async (tmpDir) => {
+  return await withTempDir("merclaw-git-plugin-", async (tmpDir) => {
     const repoDir = path.join(tmpDir, "repo");
     params.logger?.info?.(
       `Cloning ${sanitizeForLog(redactSensitiveUrlLikeString(parsed.label))}...`,

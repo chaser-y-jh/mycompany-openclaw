@@ -1,6 +1,6 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { isProviderApiKeyConfigured } from "openclaw/plugin-sdk/provider-auth";
-import { resolveApiKeyForProvider } from "openclaw/plugin-sdk/provider-auth-runtime";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { isProviderApiKeyConfigured } from "merclaw/plugin-sdk/provider-auth";
+import { resolveApiKeyForProvider } from "merclaw/plugin-sdk/provider-auth-runtime";
 import {
   assertOkOrThrowHttpError,
   createProviderOperationDeadline,
@@ -9,8 +9,8 @@ import {
   resolveProviderHttpRequestConfig,
   resolveProviderOperationTimeoutMs,
   sanitizeConfiguredModelProviderRequest,
-} from "openclaw/plugin-sdk/provider-http";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/provider-http";
+import { normalizeOptionalString } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { parseOpenAiCompatibleImageResponse } from "./image-assets.js";
 import type {
   ImageGenerationProvider,
@@ -20,7 +20,7 @@ import type {
   ImageGenerationSourceImage,
 } from "./types.js";
 
-type ModelProviderConfig = NonNullable<NonNullable<OpenClawConfig["models"]>["providers"]>[string];
+type ModelProviderConfig = NonNullable<NonNullable<MerClawConfig["models"]>["providers"]>[string];
 
 export type OpenAiCompatibleImageRequestMode = "generate" | "edit";
 
@@ -83,7 +83,7 @@ export type OpenAiCompatibleImageProviderOptions = {
 };
 
 function readProviderConfig(
-  cfg: OpenClawConfig | undefined,
+  cfg: MerClawConfig | undefined,
   providerConfigKey: string,
 ): ModelProviderConfig | undefined {
   return cfg?.models?.providers?.[providerConfigKey];

@@ -1,13 +1,13 @@
-# @openclaw/openshell-sandbox
+# @merclaw/openshell-sandbox
 
-Official NVIDIA OpenShell sandbox backend for OpenClaw.
+Official NVIDIA OpenShell sandbox backend for MerClaw.
 
-This plugin lets OpenClaw use OpenShell-managed sandboxes with mirrored local workspaces and SSH command execution.
+This plugin lets MerClaw use OpenShell-managed sandboxes with mirrored local workspaces and SSH command execution.
 
 ## Install
 
 ```bash
-openclaw plugins install @openclaw/openshell-sandbox
+merclaw plugins install @merclaw/openshell-sandbox
 ```
 
 Restart the Gateway after installing or updating the plugin.
@@ -16,10 +16,10 @@ Restart the Gateway after installing or updating the plugin.
 
 Use the OpenShell docs for credentials, workspace mirroring, runtime selection, and troubleshooting:
 
-- https://docs.openclaw.ai/gateway/openshell
+- https://docs.merclaw.ai/gateway/openshell
 
 ## Package
 
 - Plugin id: `openshell`
-- Package: `@openclaw/openshell-sandbox`
-- Minimum OpenClaw host: `2026.5.12-beta.1`
+- Package: `@merclaw/openshell-sandbox`
+- Minimum MerClaw host: `2026.5.12-beta.1`

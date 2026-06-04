@@ -1,5 +1,5 @@
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { normalizeProviderId } from "@merclaw/model-catalog-core/provider-id";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import {
   resolvePluginCapabilityProvider,
   resolvePluginCapabilityProviders,
@@ -10,12 +10,12 @@ type RegisteredAdapterEntry<TAdapter> = {
   adapter: TAdapter;
 };
 type ConfiguredModelProvider = NonNullable<
-  NonNullable<OpenClawConfig["models"]>["providers"]
+  NonNullable<MerClawConfig["models"]>["providers"]
 >[string];
 
 function resolveConfiguredProviderConfig(
   providerId: string,
-  cfg?: OpenClawConfig,
+  cfg?: MerClawConfig,
 ): ConfiguredModelProvider | undefined {
   const providers = cfg?.models?.providers;
   if (!providers) {
@@ -32,7 +32,7 @@ function resolveConfiguredProviderConfig(
 
 export function readConfiguredProviderApiId(params: {
   providerId: string;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   resolveApiProviderId?: (normalizedApiId: string) => string | undefined;
   resolveMissingApiProviderId?: (providerConfig: ConfiguredModelProvider) => string | undefined;
 }): string | undefined {
@@ -50,8 +50,8 @@ export function readConfiguredProviderApiId(params: {
 
 export function resolveRuntimeEmbeddingProviderLookupIds(params: {
   id: string;
-  cfg?: OpenClawConfig;
-  resolveConfiguredProviderId: (id: string, cfg?: OpenClawConfig) => string | undefined;
+  cfg?: MerClawConfig;
+  resolveConfiguredProviderId: (id: string, cfg?: MerClawConfig) => string | undefined;
 }): string[] {
   const ids = [params.id];
   const configuredProviderId = params.resolveConfiguredProviderId(params.id, params.cfg);
@@ -66,7 +66,7 @@ export function resolveRuntimeEmbeddingProviderLookupIds(params: {
 
 export function listRuntimeEmbeddingProviderAdapters<TAdapter extends { id: string }>(params: {
   key: EmbeddingProviderCapabilityKey;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   registered: TAdapter[];
 }): TAdapter[] {
   const merged = new Map(params.registered.map((adapter) => [adapter.id, adapter]));
@@ -84,7 +84,7 @@ export function listRuntimeEmbeddingProviderAdapters<TAdapter extends { id: stri
 
 export function getRuntimeEmbeddingProviderAdapter<TAdapter extends { id: string }>(params: {
   key: EmbeddingProviderCapabilityKey;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   lookupIds: string[];
   getRegisteredProvider: (id: string) => RegisteredAdapterEntry<TAdapter> | undefined;
 }): TAdapter | undefined {

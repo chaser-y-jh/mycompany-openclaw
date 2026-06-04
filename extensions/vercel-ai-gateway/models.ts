@@ -1,9 +1,9 @@
-import { parseStrictFiniteNumber } from "openclaw/plugin-sdk/number-runtime";
-import { readProviderJsonArrayFieldResponse } from "openclaw/plugin-sdk/provider-http";
-import type { ModelDefinitionConfig } from "openclaw/plugin-sdk/provider-model-shared";
-import { createSubsystemLogger } from "openclaw/plugin-sdk/runtime-env";
-import { fetchWithSsrFGuard } from "openclaw/plugin-sdk/ssrf-runtime";
-import { asPositiveSafeInteger } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { parseStrictFiniteNumber } from "merclaw/plugin-sdk/number-runtime";
+import { readProviderJsonArrayFieldResponse } from "merclaw/plugin-sdk/provider-http";
+import type { ModelDefinitionConfig } from "merclaw/plugin-sdk/provider-model-shared";
+import { createSubsystemLogger } from "merclaw/plugin-sdk/runtime-env";
+import { fetchWithSsrFGuard } from "merclaw/plugin-sdk/ssrf-runtime";
+import { asPositiveSafeInteger } from "merclaw/plugin-sdk/string-coerce-runtime";
 
 export const VERCEL_AI_GATEWAY_PROVIDER_ID = "vercel-ai-gateway";
 export const VERCEL_AI_GATEWAY_BASE_URL = "https://ai-gateway.vercel.sh";

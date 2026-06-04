@@ -6,14 +6,14 @@ import { describe, expect, it } from "vitest";
 const SCRIPT_PATH = "scripts/test-install-sh-docker.sh";
 const DOCKER_SETUP_PATH = "scripts/docker/setup.sh";
 const PODMAN_SETUP_PATH = "scripts/podman/setup.sh";
-const PODMAN_RUN_PATH = "scripts/run-openclaw-podman.sh";
+const PODMAN_RUN_PATH = "scripts/run-merclaw-podman.sh";
 const SMOKE_RUNNER_PATH = "scripts/docker/install-sh-smoke/run.sh";
 const NONROOT_RUNNER_PATH = "scripts/docker/install-sh-nonroot/run.sh";
 const BUN_GLOBAL_SMOKE_PATH = "scripts/e2e/bun-global-install-smoke.sh";
 const BUN_GLOBAL_ASSERTIONS_PATH = "scripts/e2e/lib/bun-global-install/assertions.mjs";
 const INSTALL_SMOKE_WORKFLOW_PATH = ".github/workflows/install-smoke.yml";
-const RELEASE_CHECKS_WORKFLOW_PATH = ".github/workflows/openclaw-release-checks.yml";
-const LIVE_E2E_WORKFLOW_PATH = ".github/workflows/openclaw-live-and-e2e-checks-reusable.yml";
+const RELEASE_CHECKS_WORKFLOW_PATH = ".github/workflows/merclaw-release-checks.yml";
+const LIVE_E2E_WORKFLOW_PATH = ".github/workflows/merclaw-live-and-e2e-checks-reusable.yml";
 
 class ScriptExit extends Error {
   constructor(readonly status: number) {
@@ -75,7 +75,7 @@ describe("test-install-sh-docker", () => {
     const script = readFileSync(SCRIPT_PATH, "utf8");
 
     expect(script).toContain(
-      'UPDATE_EXPECT_VERSION="${OPENCLAW_INSTALL_SMOKE_UPDATE_EXPECT_VERSION:-}"',
+      'UPDATE_EXPECT_VERSION="${MERCLAW_INSTALL_SMOKE_UPDATE_EXPECT_VERSION:-}"',
     );
     expect(script).toContain('if [[ -z "$UPDATE_EXPECT_VERSION" ]]; then');
     expect(script).toContain('UPDATE_EXPECT_VERSION="$packed_update_version"');
@@ -90,17 +90,17 @@ describe("test-install-sh-docker", () => {
     const workflow = readFileSync(INSTALL_SMOKE_WORKFLOW_PATH, "utf8");
 
     expect(script).toContain(
-      'UPDATE_BASELINE_VERSION="${OPENCLAW_INSTALL_SMOKE_UPDATE_BASELINE:-latest}"',
+      'UPDATE_BASELINE_VERSION="${MERCLAW_INSTALL_SMOKE_UPDATE_BASELINE:-latest}"',
     );
     expect(script).toContain('quiet_npm pack "${PACKAGE_NAME}@${UPDATE_BASELINE_VERSION}"');
     expect(script).toContain('UPDATE_BASELINE_VERSION="$(');
     expect(runner).toContain(
-      'UPDATE_BASELINE_VERSION="${OPENCLAW_INSTALL_UPDATE_BASELINE:-latest}"',
+      'UPDATE_BASELINE_VERSION="${MERCLAW_INSTALL_UPDATE_BASELINE:-latest}"',
     );
     expect(runner).toContain("resolve_update_baseline_version");
     expect(runner).toContain('quiet_npm view "${PACKAGE_NAME}@${UPDATE_BASELINE_VERSION}" version');
     expect(workflow).toContain(
-      "OPENCLAW_INSTALL_SMOKE_UPDATE_BASELINE: ${{ inputs.update_baseline_version || 'latest' }}",
+      "MERCLAW_INSTALL_SMOKE_UPDATE_BASELINE: ${{ inputs.update_baseline_version || 'latest' }}",
     );
   });
 
@@ -108,11 +108,11 @@ describe("test-install-sh-docker", () => {
     const script = readFileSync(SCRIPT_PATH, "utf8");
     const dockerfile = readFileSync("Dockerfile", "utf8");
 
-    expect(script).toContain('UPDATE_DIST_IMAGE="${OPENCLAW_INSTALL_SMOKE_UPDATE_DIST_IMAGE:-}"');
+    expect(script).toContain('UPDATE_DIST_IMAGE="${MERCLAW_INSTALL_SMOKE_UPDATE_DIST_IMAGE:-}"');
     expect(script).toContain("restore_local_dist_from_image");
     expect(script).toContain('source "$ROOT_DIR/scripts/lib/docker-e2e-container.sh"');
     expect(script).toContain(
-      'DOCKER_COMMAND_TIMEOUT="${DOCKER_COMMAND_TIMEOUT:-${OPENCLAW_INSTALL_SMOKE_DOCKER_COMMAND_TIMEOUT:-600s}}"',
+      'DOCKER_COMMAND_TIMEOUT="${DOCKER_COMMAND_TIMEOUT:-${MERCLAW_INSTALL_SMOKE_DOCKER_COMMAND_TIMEOUT:-600s}}"',
     );
     expect(script).toContain('container_id="$(docker_e2e_docker_cmd create "$image")"');
     expect(script).toContain(
@@ -134,7 +134,7 @@ describe("test-install-sh-docker", () => {
     const script = readFileSync(SCRIPT_PATH, "utf8");
 
     expect(script).toContain(
-      'INSTALL_SMOKE_DOCKER_RUN_TIMEOUT="${OPENCLAW_INSTALL_SMOKE_DOCKER_RUN_TIMEOUT:-2700s}"',
+      'INSTALL_SMOKE_DOCKER_RUN_TIMEOUT="${MERCLAW_INSTALL_SMOKE_DOCKER_RUN_TIMEOUT:-2700s}"',
     );
     expect(script).toContain("run_install_smoke_container()");
     expect(script).toContain(
@@ -184,15 +184,15 @@ describe("test-install-sh-docker", () => {
   it("passes the baked browser build arg through Docker setup", () => {
     const script = readFileSync(DOCKER_SETUP_PATH, "utf8");
 
-    expect(script).toContain('export OPENCLAW_INSTALL_BROWSER="${OPENCLAW_INSTALL_BROWSER:-}"');
-    expect(script).toContain("OPENCLAW_INSTALL_BROWSER \\");
-    expect(script).toContain('--build-arg "OPENCLAW_INSTALL_BROWSER=${OPENCLAW_INSTALL_BROWSER}"');
+    expect(script).toContain('export MERCLAW_INSTALL_BROWSER="${MERCLAW_INSTALL_BROWSER:-}"');
+    expect(script).toContain("MERCLAW_INSTALL_BROWSER \\");
+    expect(script).toContain('--build-arg "MERCLAW_INSTALL_BROWSER=${MERCLAW_INSTALL_BROWSER}"');
   });
 
   it("bounds Docker setup image pulls", () => {
     const script = readFileSync(DOCKER_SETUP_PATH, "utf8");
 
-    expect(script).toContain('DOCKER_PULL_TIMEOUT="${OPENCLAW_DOCKER_SETUP_PULL_TIMEOUT:-600s}"');
+    expect(script).toContain('DOCKER_PULL_TIMEOUT="${MERCLAW_DOCKER_SETUP_PULL_TIMEOUT:-600s}"');
     expect(script).toContain("run_docker_pull()");
     expect(script).toContain("timeout --kill-after=1s 1s true");
     expect(script).toContain(
@@ -206,36 +206,36 @@ describe("test-install-sh-docker", () => {
   it("bounds Podman setup image pulls", () => {
     const script = readFileSync(PODMAN_SETUP_PATH, "utf8");
 
-    expect(script).toContain('PODMAN_PULL_TIMEOUT="${OPENCLAW_PODMAN_SETUP_PULL_TIMEOUT:-600s}"');
+    expect(script).toContain('PODMAN_PULL_TIMEOUT="${MERCLAW_PODMAN_SETUP_PULL_TIMEOUT:-600s}"');
     expect(script).toContain("run_podman_pull()");
     expect(script).toContain("timeout --kill-after=1s 1s true");
     expect(script).toContain(
       'timeout --kill-after=30s "$PODMAN_PULL_TIMEOUT" podman pull "$image"',
     );
     expect(script).toContain('timeout "$PODMAN_PULL_TIMEOUT" podman pull "$image"');
-    expect(script).toContain('run_podman_pull "$OPENCLAW_IMAGE"');
-    expect(script).not.toContain('podman pull "$OPENCLAW_IMAGE"');
+    expect(script).toContain('run_podman_pull "$MERCLAW_IMAGE"');
+    expect(script).not.toContain('podman pull "$MERCLAW_IMAGE"');
   });
 
   it("bounds Podman setup image builds", () => {
     const script = readFileSync(PODMAN_SETUP_PATH, "utf8");
 
     expect(script).toContain(
-      'PODMAN_BUILD_TIMEOUT="${OPENCLAW_PODMAN_SETUP_BUILD_TIMEOUT:-1800s}"',
+      'PODMAN_BUILD_TIMEOUT="${MERCLAW_PODMAN_SETUP_BUILD_TIMEOUT:-1800s}"',
     );
     expect(script).toContain("run_podman_build()");
     expect(script).toContain("timeout --kill-after=1s 1s true");
     expect(script).toContain('timeout --kill-after=30s "$PODMAN_BUILD_TIMEOUT" podman build "$@"');
     expect(script).toContain('timeout "$PODMAN_BUILD_TIMEOUT" podman build "$@"');
-    expect(script).toContain('run_podman_build -t "$OPENCLAW_IMAGE"');
-    expect(script).not.toContain('podman build -t "$OPENCLAW_IMAGE"');
+    expect(script).toContain('run_podman_build -t "$MERCLAW_IMAGE"');
+    expect(script).not.toContain('podman build -t "$MERCLAW_IMAGE"');
   });
 
   it("bounds detached Podman launches without timing out onboarding", () => {
     const script = readFileSync(PODMAN_RUN_PATH, "utf8");
 
-    expect(script).toContain('PODMAN_RUN_TIMEOUT="${OPENCLAW_PODMAN_RUN_TIMEOUT:-600s}"');
-    expect(script).toContain("OPENCLAW_PODMAN_RUN_TIMEOUT|OPENCLAW_PODMAN_GATEWAY_HOST_PORT");
+    expect(script).toContain('PODMAN_RUN_TIMEOUT="${MERCLAW_PODMAN_RUN_TIMEOUT:-600s}"');
+    expect(script).toContain("MERCLAW_PODMAN_RUN_TIMEOUT|MERCLAW_PODMAN_GATEWAY_HOST_PORT");
     expect(script).toContain("run_podman_detached()");
     expect(script).toContain("timeout --kill-after=1s 1s true");
     expect(script).toContain('timeout --kill-after=30s "$PODMAN_RUN_TIMEOUT" podman run "$@"');
@@ -250,23 +250,23 @@ describe("test-install-sh-docker", () => {
     const podmanSetup = readFileSync(PODMAN_SETUP_PATH, "utf8");
     const dockerfile = readFileSync("Dockerfile", "utf8");
 
-    expect(dockerfile).toContain("ARG OPENCLAW_IMAGE_PIP_PACKAGES");
+    expect(dockerfile).toContain("ARG MERCLAW_IMAGE_PIP_PACKAGES");
     expect(dockerfile).toContain(
-      "python3 -m pip install --no-cache-dir --break-system-packages $OPENCLAW_IMAGE_PIP_PACKAGES",
+      "python3 -m pip install --no-cache-dir --break-system-packages $MERCLAW_IMAGE_PIP_PACKAGES",
     );
     expect(dockerSetup).toContain(
-      'export OPENCLAW_IMAGE_PIP_PACKAGES="${OPENCLAW_IMAGE_PIP_PACKAGES:-}"',
+      'export MERCLAW_IMAGE_PIP_PACKAGES="${MERCLAW_IMAGE_PIP_PACKAGES:-}"',
     );
-    expect(dockerSetup).toContain("OPENCLAW_IMAGE_PIP_PACKAGES \\");
+    expect(dockerSetup).toContain("MERCLAW_IMAGE_PIP_PACKAGES \\");
     expect(dockerSetup).toContain(
-      '--build-arg "OPENCLAW_IMAGE_PIP_PACKAGES=${OPENCLAW_IMAGE_PIP_PACKAGES}"',
+      '--build-arg "MERCLAW_IMAGE_PIP_PACKAGES=${MERCLAW_IMAGE_PIP_PACKAGES}"',
     );
-    expect(dockerSetup).not.toContain("OPENCLAW_DOCKER_PIP_PACKAGES");
-    expect(podmanSetup).toContain('OPENCLAW_IMAGE_PIP_PACKAGES="${OPENCLAW_IMAGE_PIP_PACKAGES:-}"');
+    expect(dockerSetup).not.toContain("MERCLAW_DOCKER_PIP_PACKAGES");
+    expect(podmanSetup).toContain('MERCLAW_IMAGE_PIP_PACKAGES="${MERCLAW_IMAGE_PIP_PACKAGES:-}"');
     expect(podmanSetup).toContain(
-      'BUILD_ARGS+=(--build-arg "OPENCLAW_IMAGE_PIP_PACKAGES=${OPENCLAW_IMAGE_PIP_PACKAGES}")',
+      'BUILD_ARGS+=(--build-arg "MERCLAW_IMAGE_PIP_PACKAGES=${MERCLAW_IMAGE_PIP_PACKAGES}")',
     );
-    expect(podmanSetup).not.toContain("OPENCLAW_DOCKER_PIP_PACKAGES");
+    expect(podmanSetup).not.toContain("MERCLAW_DOCKER_PIP_PACKAGES");
   });
 
   it("allows repository branch history and release tags for secret-backed Docker release checks", () => {
@@ -281,7 +281,7 @@ describe("test-install-sh-docker", () => {
     expect(workflow).toContain(
       "git for-each-ref --format='%(refname:short)' --contains \"$selected_sha\" refs/remotes/origin",
     );
-    expect(workflow).toContain("reachable from an OpenClaw branch or release tag");
+    expect(workflow).toContain("reachable from an MerClaw branch or release tag");
   });
 
   it("prints package size audits for release smoke tarballs", () => {
@@ -308,14 +308,14 @@ describe("test-install-sh-docker", () => {
     expect(script).toContain("node --import tsx scripts/write-package-dist-inventory.ts");
     expect(script).toContain('node scripts/check-package-dist-imports.mjs "$ROOT_DIR"');
     expect(script).toContain("quiet_npm pack --ignore-scripts");
-    expect(script).toContain("node scripts/check-openclaw-package-tarball.mjs");
+    expect(script).toContain("node scripts/check-merclaw-package-tarball.mjs");
   });
 
   it("runs candidate tarballs through the installer script instead of direct npm", () => {
     const wrapper = readFileSync(SCRIPT_PATH, "utf8");
     const runner = readFileSync(SMOKE_RUNNER_PATH, "utf8");
 
-    expect(wrapper).toContain('-v "$ROOT_DIR/scripts/install.sh:/tmp/openclaw-install.sh:ro"');
+    expect(wrapper).toContain('-v "$ROOT_DIR/scripts/install.sh:/tmp/merclaw-install.sh:ro"');
     expect(runner).toContain("Run official installer one-liner for latest release tarball");
     expect(runner).toContain("run_installer_for_package_spec");
     expect(runner).toContain('bash -c "curl -fsSL \\"\\$1\\" | bash -s --');
@@ -329,7 +329,7 @@ describe("test-install-sh-docker", () => {
       'public_latest_version="$(quiet_npm view "$PACKAGE_NAME" version 2>/dev/null || true)"',
     );
     expect(wrapper).toContain('LATEST_VERSION="$public_latest_version"');
-    expect(wrapper).toContain('-e OPENCLAW_INSTALL_EXPECT_VERSION="$LATEST_VERSION"');
+    expect(wrapper).toContain('-e MERCLAW_INSTALL_EXPECT_VERSION="$LATEST_VERSION"');
   });
 });
 
@@ -338,10 +338,10 @@ describe("install-sh smoke runner", () => {
     const script = readFileSync(SMOKE_RUNNER_PATH, "utf8");
 
     expect(script).toContain(
-      'HEARTBEAT_INTERVAL="${OPENCLAW_INSTALL_SMOKE_HEARTBEAT_INTERVAL:-60}"',
+      'HEARTBEAT_INTERVAL="${MERCLAW_INSTALL_SMOKE_HEARTBEAT_INTERVAL:-60}"',
     );
     expect(script).toContain(
-      'INSTALL_COMMAND_TIMEOUT="${OPENCLAW_INSTALL_SMOKE_COMMAND_TIMEOUT:-900}"',
+      'INSTALL_COMMAND_TIMEOUT="${MERCLAW_INSTALL_SMOKE_COMMAND_TIMEOUT:-900}"',
     );
     expect(script).toContain("run_with_heartbeat");
     expect(script).toContain("npm_install_global");
@@ -349,7 +349,7 @@ describe("install-sh smoke runner", () => {
     expect(script).toContain("==> Still running");
     expect(script).toContain("print_install_audit");
     expect(script).toContain('install -g "$@"');
-    expect(script).toContain("openclaw update --tag");
+    expect(script).toContain("merclaw update --tag");
     expect(script).toContain("is_self_swapped_package_process_exit");
     expect(script).toContain("legacy updater process exited after self-swap");
     expect(script).toContain("parseFirstJsonObject");
@@ -360,8 +360,8 @@ describe("install-sh smoke runner", () => {
     const script = readFileSync(SCRIPT_PATH, "utf8");
     const runner = readFileSync(SMOKE_RUNNER_PATH, "utf8");
 
-    expect(script).toContain('SKIP_NPM_GLOBAL="${OPENCLAW_INSTALL_SMOKE_SKIP_NPM_GLOBAL:-0}"');
-    expect(script).toContain('NPM_CACHE_DIR="${OPENCLAW_INSTALL_SMOKE_NPM_CACHE_DIR:-}"');
+    expect(script).toContain('SKIP_NPM_GLOBAL="${MERCLAW_INSTALL_SMOKE_SKIP_NPM_GLOBAL:-0}"');
+    expect(script).toContain('NPM_CACHE_DIR="${MERCLAW_INSTALL_SMOKE_NPM_CACHE_DIR:-}"');
     expect(script).toContain("-e npm_config_cache=/npm-cache");
     expect(script).toContain('${NPM_CACHE_DOCKER_ARGS[@]+"${NPM_CACHE_DOCKER_ARGS[@]}"}');
     expect(script).toContain("remove_owned_npm_cache");
@@ -373,7 +373,7 @@ describe("install-sh smoke runner", () => {
       /Run CLI installer non-root test[\s\S]*"\$\{NPM_CACHE_DOCKER_ARGS\[@\]\}"/,
     );
     expect(script).toContain("==> Run direct npm global smoke");
-    expect(script).toContain("OPENCLAW_INSTALL_SMOKE_MODE=npm-global");
+    expect(script).toContain("MERCLAW_INSTALL_SMOKE_MODE=npm-global");
     expect(runner).toContain("run_npm_global_smoke");
     expect(runner).toContain("==> Direct npm global install candidate");
     expect(runner).toContain("==> Direct npm global update candidate");
@@ -384,12 +384,12 @@ describe("install-sh smoke runner", () => {
 
     expect(script).toContain("SMOKE_RUNNER_ENV_ARGS=()");
     for (const envName of [
-      "OPENCLAW_INSTALL_ALLOW_LEGACY_UPDATE_WARNING",
-      "OPENCLAW_INSTALL_SELF_UPDATE_WARNING_FIXED_VERSION",
-      "OPENCLAW_INSTALL_SMOKE_COMMAND_TIMEOUT",
-      "OPENCLAW_INSTALL_SMOKE_HEARTBEAT_INTERVAL",
-      "OPENCLAW_INSTALL_SMOKE_PREVIOUS",
-      "OPENCLAW_INSTALL_SMOKE_SKIP_PREVIOUS",
+      "MERCLAW_INSTALL_ALLOW_LEGACY_UPDATE_WARNING",
+      "MERCLAW_INSTALL_SELF_UPDATE_WARNING_FIXED_VERSION",
+      "MERCLAW_INSTALL_SMOKE_COMMAND_TIMEOUT",
+      "MERCLAW_INSTALL_SMOKE_HEARTBEAT_INTERVAL",
+      "MERCLAW_INSTALL_SMOKE_PREVIOUS",
+      "MERCLAW_INSTALL_SMOKE_SKIP_PREVIOUS",
     ]) {
       expect(script).toContain(envName);
     }
@@ -418,10 +418,10 @@ describe("bun global install smoke", () => {
     expect(script).toContain("infer image providers --json");
     expect(script).toContain("assert-image-providers");
     expect(assertions).toContain("image providers output is missing bundled provider");
-    expect(script).toContain("OPENCLAW_BUN_GLOBAL_SMOKE_DIST_IMAGE");
+    expect(script).toContain("MERCLAW_BUN_GLOBAL_SMOKE_DIST_IMAGE");
     expect(script).toContain('source "$ROOT_DIR/scripts/lib/docker-e2e-container.sh"');
     expect(script).toContain(
-      'DOCKER_COMMAND_TIMEOUT="${DOCKER_COMMAND_TIMEOUT:-${OPENCLAW_BUN_GLOBAL_SMOKE_DOCKER_COMMAND_TIMEOUT:-600s}}"',
+      'DOCKER_COMMAND_TIMEOUT="${DOCKER_COMMAND_TIMEOUT:-${MERCLAW_BUN_GLOBAL_SMOKE_DOCKER_COMMAND_TIMEOUT:-600s}}"',
     );
     expect(script).toContain('container_id="$(docker_e2e_docker_cmd create "$image")"');
     expect(script).toContain(
@@ -451,7 +451,7 @@ describe("bun global install smoke", () => {
     expect(workflow).toContain("Run Bun global install image-provider smoke");
     expect(workflow).toContain("bash scripts/e2e/bun-global-install-smoke.sh");
     expect(workflow).toContain(
-      "OPENCLAW_BUN_GLOBAL_SMOKE_DIST_IMAGE: ${{ needs.root_dockerfile_image.outputs.image_ref }}",
+      "MERCLAW_BUN_GLOBAL_SMOKE_DIST_IMAGE: ${{ needs.root_dockerfile_image.outputs.image_ref }}",
     );
     expect(workflow).toContain(
       "github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call'",
@@ -465,7 +465,7 @@ describe("bun global install smoke", () => {
     );
     expect(workflow).not.toContain("github.event_name == 'pull_request'");
     expect(workflow).not.toContain("node scripts/ci-changed-scope.mjs");
-    expect(workflow).toContain("OPENCLAW_CI_WORKFLOW_BUN_GLOBAL_INSTALL_SMOKE");
+    expect(workflow).toContain("MERCLAW_CI_WORKFLOW_BUN_GLOBAL_INSTALL_SMOKE");
     expect(workflow).toContain('if [ "$event_name" = "schedule" ]; then');
     expect(workflow).toContain('echo "run_bun_global_install_smoke=$run_bun_global_install_smoke"');
     expect(workflow).toContain("run_fast_install_smoke=true");
@@ -481,13 +481,13 @@ describe("bun global install smoke", () => {
     expect(workflow).not.toMatch(/(^|\n)\s+docker run --rm --entrypoint sh/u);
     expect(workflow).toContain("--progress=plain");
     expect(workflow).toContain("--load");
-    expect(workflow).toContain("OPENCLAW_INSTALL_URL: file:///tmp/openclaw-install.sh");
-    expect(workflow).toContain("OPENCLAW_INSTALL_CLI_URL: file:///tmp/openclaw-install-cli.sh");
-    expect(workflow).toContain('OPENCLAW_INSTALL_SMOKE_SKIP_CLI: "0"');
+    expect(workflow).toContain("MERCLAW_INSTALL_URL: file:///tmp/merclaw-install.sh");
+    expect(workflow).toContain("MERCLAW_INSTALL_CLI_URL: file:///tmp/merclaw-install-cli.sh");
+    expect(workflow).toContain('MERCLAW_INSTALL_SMOKE_SKIP_CLI: "0"');
     expect(workflow).toContain("Run Rocky Linux installer smoke");
     expect(workflow).toContain("Run Rocky Linux CLI installer smoke");
     expect(workflow).toContain("scripts/install-cli.sh:/tmp/install-cli.sh:ro");
-    expect(workflow).toContain("bash /tmp/install-cli.sh --prefix /tmp/openclaw-cli");
+    expect(workflow).toContain("bash /tmp/install-cli.sh --prefix /tmp/merclaw-cli");
     expect(workflow).toContain("rockylinux:9@sha256:");
     expect(workflow).toContain("pnpm-workspace.yaml");
     expect(workflow).toContain("workspace.patchedDependencies");
@@ -497,7 +497,7 @@ describe("bun global install smoke", () => {
     expect(workflow).not.toContain("--cache-from");
     expect(workflow).not.toContain("--cache-to");
     expect(workflow).not.toContain("type=gha");
-    expect(workflow).toContain('OPENCLAW_INSTALL_SMOKE_SKIP_NPM_GLOBAL: "1"');
+    expect(workflow).toContain('MERCLAW_INSTALL_SMOKE_SKIP_NPM_GLOBAL: "1"');
     expect(releaseChecks).toContain("install_smoke_release_checks:");
     expect(releaseChecks).toContain("uses: ./.github/workflows/install-smoke.yml");
     expect(releaseChecks).toContain("run_bun_global_install_smoke: true");
@@ -518,7 +518,7 @@ describe("bun global install smoke", () => {
         encoding: "utf8",
         env: {
           ...process.env,
-          OPENCLAW_BUN_GLOBAL_SMOKE_TIMEOUT_KILL_GRACE_MS: "50",
+          MERCLAW_BUN_GLOBAL_SMOKE_TIMEOUT_KILL_GRACE_MS: "50",
         },
         timeout: 5000,
       },

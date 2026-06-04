@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   listManagedPluginNpmRoots: vi.fn(),
   repairMissingConfiguredPluginInstalls: vi.fn(),
-  relinkOpenClawPeerDependenciesInManagedNpmRoot: vi.fn(),
+  relinkMerClawPeerDependenciesInManagedNpmRoot: vi.fn(),
   runPluginPayloadSmokeCheck: vi.fn(),
 }));
 
@@ -14,8 +14,8 @@ vi.mock("../../commands/doctor/shared/missing-configured-plugin-install.js", () 
   repairMissingConfiguredPluginInstalls: mocks.repairMissingConfiguredPluginInstalls,
 }));
 vi.mock("../../plugins/plugin-peer-link.js", () => ({
-  relinkOpenClawPeerDependenciesInManagedNpmRoot:
-    mocks.relinkOpenClawPeerDependenciesInManagedNpmRoot,
+  relinkMerClawPeerDependenciesInManagedNpmRoot:
+    mocks.relinkMerClawPeerDependenciesInManagedNpmRoot,
 }));
 vi.mock("../../plugins/npm-project-roots.js", () => ({
   listManagedPluginNpmRoots: mocks.listManagedPluginNpmRoots,
@@ -24,7 +24,7 @@ vi.mock("./plugin-payload-validation.js", () => ({
   runPluginPayloadSmokeCheck: mocks.runPluginPayloadSmokeCheck,
 }));
 
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { VERSION } from "../../version.js";
 import {
   convergenceWarningsToOutcomes,
@@ -45,7 +45,7 @@ describe("runPostCorePluginConvergence", () => {
       warnings: [],
       records: {},
     });
-    mocks.relinkOpenClawPeerDependenciesInManagedNpmRoot.mockResolvedValue({
+    mocks.relinkMerClawPeerDependenciesInManagedNpmRoot.mockResolvedValue({
       checked: 0,
       attempted: 0,
       repaired: 0,
@@ -61,7 +61,7 @@ describe("runPostCorePluginConvergence", () => {
   });
 
   function makeTempDir(): string {
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-post-core-convergence-"));
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-post-core-convergence-"));
     tempDirs.push(dir);
     return dir;
   }
@@ -71,7 +71,7 @@ describe("runPostCorePluginConvergence", () => {
     fs.mkdirSync(pluginDir, { recursive: true });
     fs.writeFileSync(path.join(pluginDir, "index.js"), "export default {};\n", "utf8");
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "merclaw.plugin.json"),
       JSON.stringify({
         id: pluginId,
         name: pluginId,
@@ -83,7 +83,7 @@ describe("runPostCorePluginConvergence", () => {
     fs.writeFileSync(
       path.join(pluginDir, "package.json"),
       JSON.stringify({
-        name: `@openclaw/${pluginId}`,
+        name: `@merclaw/${pluginId}`,
         version: "2026.5.20-beta.1",
       }),
       "utf8",
@@ -91,34 +91,34 @@ describe("runPostCorePluginConvergence", () => {
     return pluginDir;
   }
 
-  it("calls repair with OPENCLAW_UPDATE_POST_CORE_CONVERGENCE=1 set", async () => {
-    const cfg = { plugins: { entries: {} } } as unknown as OpenClawConfig;
+  it("calls repair with MERCLAW_UPDATE_POST_CORE_CONVERGENCE=1 set", async () => {
+    const cfg = { plugins: { entries: {} } } as unknown as MerClawConfig;
     await runPostCorePluginConvergence({
       cfg,
-      env: { OPENCLAW_UPDATE_IN_PROGRESS: "1" },
+      env: { MERCLAW_UPDATE_IN_PROGRESS: "1" },
     });
     expect(mocks.repairMissingConfiguredPluginInstalls).toHaveBeenCalledTimes(1);
     expect(mocks.repairMissingConfiguredPluginInstalls).toHaveBeenCalledWith({
       cfg,
       env: {
-        OPENCLAW_UPDATE_IN_PROGRESS: "1",
-        OPENCLAW_COMPATIBILITY_HOST_VERSION: VERSION,
-        OPENCLAW_UPDATE_POST_CORE_CONVERGENCE: "1",
+        MERCLAW_UPDATE_IN_PROGRESS: "1",
+        MERCLAW_COMPATIBILITY_HOST_VERSION: VERSION,
+        MERCLAW_UPDATE_POST_CORE_CONVERGENCE: "1",
       },
     });
   });
 
   it("uses the candidate runtime version over a stale inherited host version", async () => {
-    const cfg = { plugins: { entries: {} } } as unknown as OpenClawConfig;
+    const cfg = { plugins: { entries: {} } } as unknown as MerClawConfig;
     await runPostCorePluginConvergence({
       cfg,
-      env: { OPENCLAW_COMPATIBILITY_HOST_VERSION: "2026.5.12" },
+      env: { MERCLAW_COMPATIBILITY_HOST_VERSION: "2026.5.12" },
     });
     expect(mocks.repairMissingConfiguredPluginInstalls).toHaveBeenCalledWith({
       cfg,
       env: {
-        OPENCLAW_COMPATIBILITY_HOST_VERSION: VERSION,
-        OPENCLAW_UPDATE_POST_CORE_CONVERGENCE: "1",
+        MERCLAW_COMPATIBILITY_HOST_VERSION: VERSION,
+        MERCLAW_UPDATE_POST_CORE_CONVERGENCE: "1",
       },
     });
   });
@@ -132,7 +132,7 @@ describe("runPostCorePluginConvergence", () => {
     const result = await runPostCorePluginConvergence({
       cfg: {
         plugins: { entries: { discord: { enabled: true } } },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       env: {},
     });
     expect(result.errored).toBe(false);
@@ -147,7 +147,7 @@ describe("runPostCorePluginConvergence", () => {
       records: { discord: { source: "npm", installPath: "/p/discord" } },
     });
     const result = await runPostCorePluginConvergence({
-      cfg: { plugins: { entries: { discord: { enabled: true } } } } as unknown as OpenClawConfig,
+      cfg: { plugins: { entries: { discord: { enabled: true } } } } as unknown as MerClawConfig,
       env: {},
     });
     expect(result.installRecords).toEqual({
@@ -155,17 +155,17 @@ describe("runPostCorePluginConvergence", () => {
     });
   });
 
-  it("repairs managed npm openclaw peer links in every managed npm project before payload smoke checks", async () => {
+  it("repairs managed npm merclaw peer links in every managed npm project before payload smoke checks", async () => {
     mocks.repairMissingConfiguredPluginInstalls.mockResolvedValue({
       changes: [],
       warnings: [],
       records: { codex: { source: "npm", installPath: "/p/codex" } },
     });
     mocks.listManagedPluginNpmRoots.mockResolvedValue([
-      "/tmp/openclaw-state/npm",
-      "/tmp/openclaw-state/npm/projects/codex",
+      "/tmp/merclaw-state/npm",
+      "/tmp/merclaw-state/npm/projects/codex",
     ]);
-    mocks.relinkOpenClawPeerDependenciesInManagedNpmRoot
+    mocks.relinkMerClawPeerDependenciesInManagedNpmRoot
       .mockResolvedValueOnce({
         checked: 0,
         attempted: 0,
@@ -180,23 +180,23 @@ describe("runPostCorePluginConvergence", () => {
       });
 
     const result = await runPostCorePluginConvergence({
-      cfg: { plugins: { entries: { codex: { enabled: true } } } } as unknown as OpenClawConfig,
-      env: { OPENCLAW_STATE_DIR: "/tmp/openclaw-state" },
+      cfg: { plugins: { entries: { codex: { enabled: true } } } } as unknown as MerClawConfig,
+      env: { MERCLAW_STATE_DIR: "/tmp/merclaw-state" },
     });
 
-    expect(mocks.relinkOpenClawPeerDependenciesInManagedNpmRoot).toHaveBeenNthCalledWith(1, {
-      npmRoot: "/tmp/openclaw-state/npm",
+    expect(mocks.relinkMerClawPeerDependenciesInManagedNpmRoot).toHaveBeenNthCalledWith(1, {
+      npmRoot: "/tmp/merclaw-state/npm",
       logger: {},
     });
-    expect(mocks.relinkOpenClawPeerDependenciesInManagedNpmRoot).toHaveBeenNthCalledWith(2, {
-      npmRoot: "/tmp/openclaw-state/npm/projects/codex",
+    expect(mocks.relinkMerClawPeerDependenciesInManagedNpmRoot).toHaveBeenNthCalledWith(2, {
+      npmRoot: "/tmp/merclaw-state/npm/projects/codex",
       logger: {},
     });
     expect(result.changes).toEqual([
-      "Repaired OpenClaw host peer link(s) for 1 managed npm plugin package(s).",
+      "Repaired MerClaw host peer link(s) for 1 managed npm plugin package(s).",
     ]);
     expect(
-      mocks.relinkOpenClawPeerDependenciesInManagedNpmRoot.mock.invocationCallOrder[0],
+      mocks.relinkMerClawPeerDependenciesInManagedNpmRoot.mock.invocationCallOrder[0],
     ).toBeLessThan(mocks.runPluginPayloadSmokeCheck.mock.invocationCallOrder[0]);
   });
 
@@ -204,7 +204,7 @@ describe("runPostCorePluginConvergence", () => {
     const baseline = { matrix: { source: "npm" as const, installPath: "/p/matrix" } };
     const cfg = {
       plugins: { entries: { matrix: { enabled: true } } },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
     mocks.repairMissingConfiguredPluginInstalls.mockResolvedValue({
       changes: [],
       warnings: [],
@@ -219,8 +219,8 @@ describe("runPostCorePluginConvergence", () => {
     expect(mocks.repairMissingConfiguredPluginInstalls).toHaveBeenCalledWith({
       cfg,
       env: {
-        OPENCLAW_COMPATIBILITY_HOST_VERSION: VERSION,
-        OPENCLAW_UPDATE_POST_CORE_CONVERGENCE: "1",
+        MERCLAW_COMPATIBILITY_HOST_VERSION: VERSION,
+        MERCLAW_UPDATE_POST_CORE_CONVERGENCE: "1",
       },
       baselineRecords: baseline,
     });
@@ -244,13 +244,13 @@ describe("runPostCorePluginConvergence", () => {
     });
     const cfg = {
       plugins: { entries: { discord: { enabled: true }, brave: { enabled: true } } },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     const result = await runPostCorePluginConvergence({
       cfg,
       env: {
-        OPENCLAW_BUNDLED_PLUGINS_DIR: bundledRoot,
-        OPENCLAW_TEST_TRUST_BUNDLED_PLUGINS_DIR: "1",
+        MERCLAW_BUNDLED_PLUGINS_DIR: bundledRoot,
+        MERCLAW_TEST_TRUST_BUNDLED_PLUGINS_DIR: "1",
         VITEST: "true",
       },
       baselineInstallRecords: baseline,
@@ -259,11 +259,11 @@ describe("runPostCorePluginConvergence", () => {
     expect(mocks.repairMissingConfiguredPluginInstalls).toHaveBeenCalledWith({
       cfg,
       env: {
-        OPENCLAW_BUNDLED_PLUGINS_DIR: bundledRoot,
-        OPENCLAW_TEST_TRUST_BUNDLED_PLUGINS_DIR: "1",
+        MERCLAW_BUNDLED_PLUGINS_DIR: bundledRoot,
+        MERCLAW_TEST_TRUST_BUNDLED_PLUGINS_DIR: "1",
         VITEST: "true",
-        OPENCLAW_COMPATIBILITY_HOST_VERSION: VERSION,
-        OPENCLAW_UPDATE_POST_CORE_CONVERGENCE: "1",
+        MERCLAW_COMPATIBILITY_HOST_VERSION: VERSION,
+        MERCLAW_UPDATE_POST_CORE_CONVERGENCE: "1",
       },
       baselineRecords: {
         brave: baseline.brave,
@@ -279,24 +279,24 @@ describe("runPostCorePluginConvergence", () => {
     mocks.repairMissingConfiguredPluginInstalls.mockResolvedValue({
       changes: [],
       warnings: [
-        'Failed to install missing configured plugin "discord" from @openclaw/discord: ENETUNREACH.',
+        'Failed to install missing configured plugin "discord" from @merclaw/discord: ENETUNREACH.',
       ],
       records: {},
     });
     const result = await runPostCorePluginConvergence({
       cfg: {
         plugins: { entries: { discord: { enabled: true } } },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       env: {},
     });
     expect(result.errored).toBe(true);
     expect(result.warnings).toStrictEqual([
       {
         reason:
-          'Failed to install missing configured plugin "discord" from @openclaw/discord: ENETUNREACH.',
+          'Failed to install missing configured plugin "discord" from @merclaw/discord: ENETUNREACH.',
         message:
-          'Failed to install missing configured plugin "discord" from @openclaw/discord: ENETUNREACH.',
-        guidance: ["Run `openclaw doctor --fix` to retry plugin repair."],
+          'Failed to install missing configured plugin "discord" from @merclaw/discord: ENETUNREACH.',
+        guidance: ["Run `merclaw doctor --fix` to retry plugin repair."],
       },
     ]);
   });
@@ -321,7 +321,7 @@ describe("runPostCorePluginConvergence", () => {
     const result = await runPostCorePluginConvergence({
       cfg: {
         plugins: { entries: { brave: { enabled: true } } },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       env: {},
     });
     expect(result.errored).toBe(true);
@@ -333,8 +333,8 @@ describe("runPostCorePluginConvergence", () => {
         message:
           'Plugin "brave" failed post-core payload smoke check (missing-main-entry): Plugin main entry "dist/index.js" not found at /p/brave/dist/index.js',
         guidance: [
-          "Run `openclaw doctor --fix` to retry plugin repair.",
-          "Run `openclaw plugins inspect brave --runtime --json` for details.",
+          "Run `merclaw doctor --fix` to retry plugin repair.",
+          "Run `merclaw plugins inspect brave --runtime --json` for details.",
         ],
       },
     ]);
@@ -359,7 +359,7 @@ describe("runPostCorePluginConvergence", () => {
     const result = await runPostCorePluginConvergence({
       cfg: {
         plugins: { entries: { brave: { enabled: true } } },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       env: {},
     });
     expect(result.errored).toBe(true);
@@ -370,8 +370,8 @@ describe("runPostCorePluginConvergence", () => {
         message:
           'Plugin "brave" failed post-core payload smoke check (missing-install-path): Install path is missing from the plugin install record.',
         guidance: [
-          "Run `openclaw doctor --fix` to retry plugin repair.",
-          "Run `openclaw plugins inspect brave --runtime --json` for details.",
+          "Run `merclaw doctor --fix` to retry plugin repair.",
+          "Run `merclaw plugins inspect brave --runtime --json` for details.",
         ],
       },
     ]);
@@ -387,15 +387,15 @@ describe("runPostCorePluginConvergence", () => {
     await runPostCorePluginConvergence({
       cfg: {
         plugins: { entries: { brave: { enabled: true } } },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       env: {},
     });
     expect(mocks.runPluginPayloadSmokeCheck).toHaveBeenCalledTimes(1);
     expect(mocks.runPluginPayloadSmokeCheck).toHaveBeenCalledWith({
       records,
       env: {
-        OPENCLAW_COMPATIBILITY_HOST_VERSION: VERSION,
-        OPENCLAW_UPDATE_POST_CORE_CONVERGENCE: "1",
+        MERCLAW_COMPATIBILITY_HOST_VERSION: VERSION,
+        MERCLAW_UPDATE_POST_CORE_CONVERGENCE: "1",
       },
     });
   });
@@ -410,12 +410,12 @@ describe("convergenceWarningsToOutcomes", () => {
           pluginId: "brave",
           reason: "missing-main-entry: …",
           message: 'Plugin "brave" failed payload smoke check.',
-          guidance: ["Run `openclaw doctor --fix`."],
+          guidance: ["Run `merclaw doctor --fix`."],
         },
         {
           reason: "Failed install",
           message: "Failed install for some plugin.",
-          guidance: ["Run `openclaw doctor --fix`."],
+          guidance: ["Run `merclaw doctor --fix`."],
         },
       ],
       errored: true,
@@ -449,7 +449,7 @@ describe("filterRecordsToActive", () => {
     const filtered = filterRecordsToActive({
       cfg: {
         plugins: { enabled: true, entries: { enabled: { enabled: true } } },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       records,
     });
     expect(filtered).toEqual(records);
@@ -469,7 +469,7 @@ describe("filterRecordsToActive", () => {
             "active-plugin": { enabled: true },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       records,
     });
     expect(filtered).toEqual({
@@ -487,7 +487,7 @@ describe("filterRecordsToActive", () => {
           enabled: true,
           deny: ["denied"],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       records,
     });
     expect(filtered).toEqual({});
@@ -500,7 +500,7 @@ describe("filterRecordsToActive", () => {
     const records = {
       codex: {
         source: "npm" as const,
-        spec: "@openclaw/codex",
+        spec: "@merclaw/codex",
         installPath: "/p/codex",
         trustedSourceLinkedOfficial: true,
       },
@@ -511,7 +511,7 @@ describe("filterRecordsToActive", () => {
           enabled: true,
           entries: { codex: { enabled: false } },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       records,
     });
     expect(filtered).toEqual(records);

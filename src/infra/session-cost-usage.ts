@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import readline from "node:readline";
-import { asFiniteNumber } from "@openclaw/normalization-core/number-coercion";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { asFiniteNumber } from "@merclaw/normalization-core/number-coercion";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import type { NormalizedUsage, UsageLike } from "../agents/usage.js";
 import { normalizeUsage } from "../agents/usage.js";
 import { stripInboundMetadata } from "../auto-reply/reply/strip-inbound-meta.js";
@@ -18,7 +18,7 @@ import {
   resolveSessionTranscriptsDirForAgent,
 } from "../config/sessions/paths.js";
 import type { SessionEntry } from "../config/sessions/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { stripEnvelope, stripMessageIdHints } from "../shared/chat-envelope.js";
 import { runTasksWithConcurrency } from "../utils/run-with-concurrency.js";
@@ -95,7 +95,7 @@ const logger = createSubsystemLogger("usage-cost-cache");
 type UsageCostRefreshState = {
   agentId?: string;
   cachePath: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   fullRefreshRequested: boolean;
   pendingSessionFiles: Set<string>;
   running: boolean;
@@ -191,7 +191,7 @@ const addTotals = (target: CostUsageTotals, source: CostUsageTotals): void => {
   target.missingCostEntries += source.missingCostEntries;
 };
 
-function resolveUsageCostPricingFingerprint(config?: OpenClawConfig): string {
+function resolveUsageCostPricingFingerprint(config?: MerClawConfig): string {
   return resolveModelCostConfigFingerprint(config);
 }
 
@@ -1055,7 +1055,7 @@ type UsageCostResolver = (params: {
   model?: string;
 }) => ReturnType<typeof resolveModelCostConfig>;
 
-function createUsageCostResolver(config?: OpenClawConfig): UsageCostResolver {
+function createUsageCostResolver(config?: MerClawConfig): UsageCostResolver {
   const cache = new Map<string, ReturnType<typeof resolveModelCostConfig>>();
   return ({ provider, model }) => {
     const key = `${provider ?? ""}\0${model ?? ""}`;
@@ -1126,7 +1126,7 @@ async function* readJsonlRecords(
 
 async function scanTranscriptFile(params: {
   filePath: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   resolveCost?: UsageCostResolver;
   startOffset?: number;
   endOffset?: number;
@@ -1181,7 +1181,7 @@ async function scanTranscriptFile(params: {
 
 async function scanUsageFile(params: {
   filePath: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   resolveCost?: UsageCostResolver;
   startOffset?: number;
   endOffset?: number;
@@ -1277,7 +1277,7 @@ export async function loadCostUsageSummary(params?: {
   endMs?: number;
   /** @deprecated Use startMs/endMs. */
   days?: number;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentId?: string;
 }): Promise<CostUsageSummary> {
   const now = new Date();
@@ -1351,7 +1351,7 @@ export async function loadCostUsageSummary(params?: {
 
 async function scanUsageFileForCache(params: {
   file: UsageCostTranscriptFile;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   resolveCost?: UsageCostResolver;
   previous?: UsageCostCacheFileEntry;
   includeSessionSummary?: boolean;
@@ -1498,7 +1498,7 @@ async function scanUsageFileForCache(params: {
 }
 
 async function refreshCostUsageCacheForPath(params?: {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentId?: string;
   cachePath?: string;
   maxFiles?: number;
@@ -1571,7 +1571,7 @@ async function refreshCostUsageCacheForPath(params?: {
 }
 
 export async function refreshCostUsageCache(params?: {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentId?: string;
   maxFiles?: number;
   sessionFiles?: string[];
@@ -1583,7 +1583,7 @@ export async function refreshCostUsageCache(params?: {
 export async function loadCostUsageSummaryFromCache(params: {
   startMs: number;
   endMs: number;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentId?: string;
   requestRefresh?: boolean;
   refreshMode?: "background" | "sync-when-empty";
@@ -1644,7 +1644,7 @@ export async function loadSessionCostSummaryFromCache(params: {
   sessionId?: string;
   sessionEntry?: SessionEntry;
   sessionFile: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentId?: string;
   startMs?: number;
   endMs?: number;
@@ -1770,7 +1770,7 @@ export async function loadSessionCostSummaryFromCache(params: {
 }
 
 export function requestCostUsageCacheRefresh(params?: {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentId?: string;
   sessionFiles?: string[];
 }): void {
@@ -1798,7 +1798,7 @@ export function requestCostUsageCacheRefresh(params?: {
 function mergeUsageCostRefreshRequest(
   state: UsageCostRefreshState,
   params?: {
-    config?: OpenClawConfig;
+    config?: MerClawConfig;
     agentId?: string;
     sessionFiles?: string[];
   },
@@ -1976,7 +1976,7 @@ export async function loadSessionCostSummary(params: {
   sessionId?: string;
   sessionEntry?: SessionEntry;
   sessionFile?: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentId?: string;
   startMs?: number;
   endMs?: number;
@@ -2289,7 +2289,7 @@ export async function loadSessionUsageTimeSeries(params: {
   sessionId?: string;
   sessionEntry?: SessionEntry;
   sessionFile?: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentId?: string;
   maxPoints?: number;
 }): Promise<SessionUsageTimeSeries | null> {
@@ -2397,7 +2397,7 @@ export async function loadSessionLogs(params: {
   sessionId?: string;
   sessionEntry?: SessionEntry;
   sessionFile?: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentId?: string;
   limit?: number;
 }): Promise<SessionLogEntry[] | null> {

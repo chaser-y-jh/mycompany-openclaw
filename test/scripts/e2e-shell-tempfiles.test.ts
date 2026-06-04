@@ -42,9 +42,9 @@ describe("e2e shell tempfile hygiene", () => {
   it("checks local onboarding logs for systemd noise", async () => {
     const contents = await readFile("scripts/e2e/lib/onboard/scenario.sh", "utf8");
 
-    expect(contents).toContain("validate_local_basic_log /tmp/openclaw-onboard-local-basic.log");
+    expect(contents).toContain("validate_local_basic_log /tmp/merclaw-onboard-local-basic.log");
     expect(contents).toContain(
-      'openclaw_e2e_assert_log_not_contains "$log_path" "systemctl --user unavailable"',
+      'merclaw_e2e_assert_log_not_contains "$log_path" "systemctl --user unavailable"',
     );
   });
 });

@@ -1,18 +1,18 @@
 import path from "node:path";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { resolveTimerTimeoutMs } from "openclaw/plugin-sdk/number-runtime";
-import type { ProviderAuthContext } from "openclaw/plugin-sdk/plugin-entry";
-import { ensureGlobalUndiciEnvProxyDispatcher } from "openclaw/plugin-sdk/runtime-env";
-import { formatCliCommand } from "openclaw/plugin-sdk/setup-tools";
+import { formatErrorMessage } from "merclaw/plugin-sdk/error-runtime";
+import { resolveTimerTimeoutMs } from "merclaw/plugin-sdk/number-runtime";
+import type { ProviderAuthContext } from "merclaw/plugin-sdk/plugin-entry";
+import { ensureGlobalUndiciEnvProxyDispatcher } from "merclaw/plugin-sdk/runtime-env";
+import { formatCliCommand } from "merclaw/plugin-sdk/setup-tools";
 import { loginOpenAICodex } from "./openai-chatgpt-oauth-flow.runtime.js";
 import type { OAuthCredentials } from "./openai-chatgpt-oauth-types.runtime.js";
 
 const manualInputPromptMessage = "Paste the authorization code (or full redirect URL):";
-const openAICodexOAuthOriginator = "openclaw";
+const openAICodexOAuthOriginator = "merclaw";
 const localManualFallbackDelayMs = 15_000;
 const localManualFallbackGraceMs = 1_000;
 const openAIAuthProbeUrl =
-  "https://auth.openai.com/oauth/authorize?response_type=code&client_id=openclaw-preflight&redirect_uri=http%3A%2F%2Flocalhost%3A1455%2Fauth%2Fcallback&scope=openid+profile+email";
+  "https://auth.openai.com/oauth/authorize?response_type=code&client_id=merclaw-preflight&redirect_uri=http%3A%2F%2Flocalhost%3A1455%2Fauth%2Fcallback&scope=openid+profile+email";
 
 const tlsCertErrorCodes = new Set([
   "UNABLE_TO_GET_ISSUER_CERT_LOCALLY",
@@ -183,7 +183,7 @@ function rewriteOpenAICodexOAuthError(error: unknown): Error {
       "unsupported_region",
       [
         "OpenAI rejected the token exchange for this country, region, or network route.",
-        "If you normally use a proxy, verify HTTPS_PROXY, HTTP_PROXY, or ALL_PROXY is set for the OpenClaw process and then retry `openclaw models auth login --provider openai`.",
+        "If you normally use a proxy, verify HTTPS_PROXY, HTTP_PROXY, or ALL_PROXY is set for the MerClaw process and then retry `merclaw models auth login --provider openai`.",
       ].join(" "),
       error,
     );
@@ -283,7 +283,7 @@ export async function loginOpenAICodexOAuth(params: {
           "You are running in a remote/VPS environment.",
           "A URL will be shown for you to open in your LOCAL browser.",
           "Open it, sign in, then paste the redirect URL here.",
-          "If this OpenClaw process can receive the browser callback, sign-in may finish automatically before you paste.",
+          "If this MerClaw process can receive the browser callback, sign-in may finish automatically before you paste.",
         ].join("\n")
       : [
           "Browser will open for OpenAI authentication.",
@@ -350,7 +350,7 @@ export async function loginOpenAICodexOAuth(params: {
     stopProgress("OpenAI OAuth failed");
     const rewrittenError = rewriteOpenAICodexOAuthError(err);
     runtime.error(String(rewrittenError));
-    await prompter.note("Trouble with OAuth? See https://docs.openclaw.ai/start/faq", "OAuth help");
+    await prompter.note("Trouble with OAuth? See https://docs.merclaw.ai/start/faq", "OAuth help");
     throw rewrittenError;
   } finally {
     markLoginSettled();

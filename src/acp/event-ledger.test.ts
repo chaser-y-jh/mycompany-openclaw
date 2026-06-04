@@ -107,7 +107,7 @@ describe("ACP event ledger", () => {
   });
 
   it("persists file-backed replay state across ledger instances", async () => {
-    await withTempDir({ prefix: "openclaw-acp-ledger-" }, async (dir) => {
+    await withTempDir({ prefix: "merclaw-acp-ledger-" }, async (dir) => {
       const filePath = path.join(dir, "acp", "event-ledger.json");
       const first = createFileAcpEventLedger({ filePath, now: () => 1000 });
       await first.startSession({
@@ -322,7 +322,7 @@ describe("ACP event ledger", () => {
   });
 
   it("keeps the persisted ledger file under the serialized byte budget", async () => {
-    await withTempDir({ prefix: "openclaw-acp-ledger-" }, async (dir) => {
+    await withTempDir({ prefix: "merclaw-acp-ledger-" }, async (dir) => {
       const filePath = path.join(dir, "acp", "event-ledger.json");
       const ledger = createFileAcpEventLedger({ filePath, maxSerializedBytes: 1024 });
       await ledger.startSession({
@@ -351,7 +351,7 @@ describe("ACP event ledger", () => {
   });
 
   it("ignores corrupt ledger files instead of replaying unknown state", async () => {
-    await withTempDir({ prefix: "openclaw-acp-ledger-" }, async (dir) => {
+    await withTempDir({ prefix: "merclaw-acp-ledger-" }, async (dir) => {
       const filePath = path.join(dir, "event-ledger.json");
       await fs.writeFile(filePath, "{bad json", "utf8");
       const ledger = createFileAcpEventLedger({ filePath });
@@ -363,7 +363,7 @@ describe("ACP event ledger", () => {
   });
 
   it("reloads file-backed state under lock before writing", async () => {
-    await withTempDir({ prefix: "openclaw-acp-ledger-" }, async (dir) => {
+    await withTempDir({ prefix: "merclaw-acp-ledger-" }, async (dir) => {
       const filePath = path.join(dir, "acp", "event-ledger.json");
       const first = createFileAcpEventLedger({ filePath });
       const second = createFileAcpEventLedger({ filePath });

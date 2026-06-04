@@ -1,5 +1,5 @@
-import { embeddedAgentLog } from "openclaw/plugin-sdk/agent-harness-runtime";
-import { resolveTimerTimeoutMs } from "openclaw/plugin-sdk/number-runtime";
+import { embeddedAgentLog } from "merclaw/plugin-sdk/agent-harness-runtime";
+import { resolveTimerTimeoutMs } from "merclaw/plugin-sdk/number-runtime";
 
 type Timer = ReturnType<typeof setTimeout>;
 

@@ -1,4 +1,4 @@
-import { jsonResult, readStringParam, type AnyAgentTool } from "openclaw/plugin-sdk/core";
+import { jsonResult, readStringParam, type AnyAgentTool } from "merclaw/plugin-sdk/core";
 import { Type } from "typebox";
 import {
   redactCodexSupervisorEndpoint,
@@ -131,7 +131,7 @@ export function createCodexSupervisorTools({
     {
       name: "codex_sessions_list",
       label: "Codex Sessions List",
-      description: "List Codex sessions visible to the OpenClaw supervisor.",
+      description: "List Codex sessions visible to the MerClaw supervisor.",
       parameters: SessionsListParamsSchema,
       execute: async (_toolCallId, rawParams) => {
         const params = asRecord(rawParams);

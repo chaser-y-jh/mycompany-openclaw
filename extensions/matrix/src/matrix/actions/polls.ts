@@ -1,4 +1,4 @@
-import { uniqueStrings, uniqueValues } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { uniqueStrings, uniqueValues } from "merclaw/plugin-sdk/string-coerce-runtime";
 import {
   buildPollResponseContent,
   isPollStartType,

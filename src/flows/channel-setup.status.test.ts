@@ -259,8 +259,8 @@ describe("resolveChannelSetupSelectionContributions", () => {
   });
 
   it("localizes channel status note labels", async () => {
-    const previousLocale = process.env.OPENCLAW_LOCALE;
-    process.env.OPENCLAW_LOCALE = "zh-CN";
+    const previousLocale = process.env.MERCLAW_LOCALE;
+    process.env.MERCLAW_LOCALE = "zh-CN";
     listChatChannels.mockReturnValue([
       makeMeta("discord", "Discord"),
       makeMeta("telegram", "Telegram"),
@@ -288,16 +288,16 @@ describe("resolveChannelSetupSelectionContributions", () => {
       ]);
     } finally {
       if (previousLocale === undefined) {
-        delete process.env.OPENCLAW_LOCALE;
+        delete process.env.MERCLAW_LOCALE;
       } else {
-        process.env.OPENCLAW_LOCALE = previousLocale;
+        process.env.MERCLAW_LOCALE = previousLocale;
       }
     }
   });
 
   it("localizes channel status note title", async () => {
-    const previousLocale = process.env.OPENCLAW_LOCALE;
-    process.env.OPENCLAW_LOCALE = "zh-CN";
+    const previousLocale = process.env.MERCLAW_LOCALE;
+    process.env.MERCLAW_LOCALE = "zh-CN";
     const note = vi.fn(async () => {});
     listChatChannels.mockReturnValue([makeMeta("discord", "Discord")]);
     isChannelConfigured.mockReturnValue(true);
@@ -312,9 +312,9 @@ describe("resolveChannelSetupSelectionContributions", () => {
       expect(note).toHaveBeenCalledWith(expect.any(String), "频道状态");
     } finally {
       if (previousLocale === undefined) {
-        delete process.env.OPENCLAW_LOCALE;
+        delete process.env.MERCLAW_LOCALE;
       } else {
-        process.env.OPENCLAW_LOCALE = previousLocale;
+        process.env.MERCLAW_LOCALE = previousLocale;
       }
     }
   });
@@ -342,10 +342,10 @@ describe("resolveChannelSetupSelectionContributions", () => {
     expect(note).toHaveBeenCalledWith(
       [
         "Inbound DM safety defaults to pairing: unknown senders get a pairing code first.",
-        "Approve with: openclaw pairing approve <channel> <code>",
+        "Approve with: merclaw pairing approve <channel> <code>",
         'Open/public DMs require dmPolicy="open" plus allowFrom=["*"].',
-        'For multi-user DMs, isolate sessions with: openclaw config set session.dmScope "per-channel-peer" (or "per-account-channel-peer" for multi-account channels).',
-        "Docs: https://docs.openclaw.ai/channels/pairing",
+        'For multi-user DMs, isolate sessions with: merclaw config set session.dmScope "per-channel-peer" (or "per-account-channel-peer" for multi-account channels).',
+        "Docs: https://docs.merclaw.ai/channels/pairing",
         "",
         "bad\\nid: Blurb\\nline",
       ].join("\n"),
@@ -354,8 +354,8 @@ describe("resolveChannelSetupSelectionContributions", () => {
   });
 
   it("localizes built-in channel primer copy", async () => {
-    const previousLocale = process.env.OPENCLAW_LOCALE;
-    process.env.OPENCLAW_LOCALE = "zh-CN";
+    const previousLocale = process.env.MERCLAW_LOCALE;
+    process.env.MERCLAW_LOCALE = "zh-CN";
     const note = vi.fn(async () => undefined);
 
     try {
@@ -371,9 +371,9 @@ describe("resolveChannelSetupSelectionContributions", () => {
       );
     } finally {
       if (previousLocale === undefined) {
-        delete process.env.OPENCLAW_LOCALE;
+        delete process.env.MERCLAW_LOCALE;
       } else {
-        process.env.OPENCLAW_LOCALE = previousLocale;
+        process.env.MERCLAW_LOCALE = previousLocale;
       }
     }
 
@@ -429,13 +429,13 @@ describe("resolveChannelSetupSelectionContributions", () => {
     if (typeof docsLink !== "function") {
       throw new Error("Expected docs link formatter");
     }
-    expect(docsLink("/channels/zalo", "Docs")).toBe("https://docs.openclaw.ai/channels/zalo");
+    expect(docsLink("/channels/zalo", "Docs")).toBe("https://docs.merclaw.ai/channels/zalo");
     expect(lines).toEqual(["Zalo\\nBot — Setup\\nhelp"]);
   });
 
   it("localizes built-in channel blurbs before selection notes", () => {
-    const previousLocale = process.env.OPENCLAW_LOCALE;
-    process.env.OPENCLAW_LOCALE = "zh-CN";
+    const previousLocale = process.env.MERCLAW_LOCALE;
+    process.env.MERCLAW_LOCALE = "zh-CN";
     resolveChannelSetupEntries.mockReturnValue(
       makeChannelSetupEntries({
         entries: [
@@ -472,9 +472,9 @@ describe("resolveChannelSetupSelectionContributions", () => {
       expect(lines).toEqual(["Feishu — 飞书/Lark 企业消息。"]);
     } finally {
       if (previousLocale === undefined) {
-        delete process.env.OPENCLAW_LOCALE;
+        delete process.env.MERCLAW_LOCALE;
       } else {
-        process.env.OPENCLAW_LOCALE = previousLocale;
+        process.env.MERCLAW_LOCALE = previousLocale;
       }
     }
   });

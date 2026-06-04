@@ -1,5 +1,5 @@
-import OpenClawKit
-import OpenClawProtocol
+import MerClawKit
+import MerClawProtocol
 import SwiftUI
 
 struct AgentProTab: View {
@@ -103,8 +103,8 @@ struct AgentProTab: View {
 
         var color: Color {
             switch self {
-            case .online: OpenClawBrand.ok
-            case .busy: OpenClawBrand.warn
+            case .online: MerClawBrand.ok
+            case .busy: MerClawBrand.warn
             case .idle: Color(red: 0 / 255.0, green: 122 / 255.0, blue: 255 / 255.0)
             }
         }
@@ -127,7 +127,7 @@ struct AgentProTab: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                OpenClawProBackground()
+                MerClawProBackground()
                 ScrollView {
                     VStack(alignment: .leading, spacing: 18) {
                         self.rosterHeader
@@ -142,7 +142,7 @@ struct AgentProTab: View {
                 .refreshable {
                     await self.refreshOverview(force: true)
                 }
-                .safeAreaPadding(.bottom, OpenClawProMetric.bottomScrollInset)
+                .safeAreaPadding(.bottom, MerClawProMetric.bottomScrollInset)
             }
             .navigationBarHidden(true)
             .navigationDestination(for: AgentRoute.self) { route in

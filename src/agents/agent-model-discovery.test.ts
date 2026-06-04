@@ -22,7 +22,7 @@ function writeModelsJson(agentDir: string, modelId: string): void {
 
 describe("discoverModels", () => {
   it("clears cached find results when the agent model registry refreshes", () => {
-    const agentDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-agent-models-"));
+    const agentDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-agent-models-"));
     writeModelsJson(agentDir, "old-model");
     const authStorage = discoverAuthStorage(agentDir, { skipCredentials: true });
     const registry = discoverModels(authStorage, agentDir, { normalizeModels: false });

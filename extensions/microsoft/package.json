@@ -1,16 +1,16 @@
 {
-  "name": "@openclaw/microsoft-speech",
+  "name": "@merclaw/microsoft-speech",
   "version": "2026.5.31",
   "private": true,
-  "description": "OpenClaw Microsoft speech plugin",
+  "description": "MerClaw Microsoft speech plugin",
   "type": "module",
   "dependencies": {
     "node-edge-tts": "1.2.10"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@merclaw/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ]

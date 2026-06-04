@@ -85,7 +85,7 @@ const resolveDefaultModelForAgent = vi.hoisted(() =>
   vi.fn(() => ({ provider: "openai", model: "gpt-test" })),
 );
 const getAgentScopedMediaLocalRoots = vi.hoisted(() =>
-  vi.fn((_cfg: unknown, agentId: string) => [`/tmp/.openclaw/workspace-${agentId}`]),
+  vi.fn((_cfg: unknown, agentId: string) => [`/tmp/.merclaw/workspace-${agentId}`]),
 );
 const resolveChunkMode = vi.hoisted(() => vi.fn(() => undefined));
 const resolveMarkdownTableMode = vi.hoisted(() => vi.fn(() => "preserve"));
@@ -99,16 +99,16 @@ vi.mock("./draft-stream.js", () => ({
   createTelegramDraftStream,
 }));
 
-vi.mock("openclaw/plugin-sdk/channel-outbound", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("openclaw/plugin-sdk/channel-outbound")>();
+vi.mock("merclaw/plugin-sdk/channel-outbound", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("merclaw/plugin-sdk/channel-outbound")>();
   return {
     ...actual,
     deliverInboundReplyWithMessageSendContext,
   };
 });
 
-vi.mock("openclaw/plugin-sdk/agent-harness-runtime", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("openclaw/plugin-sdk/agent-harness-runtime")>();
+vi.mock("merclaw/plugin-sdk/agent-harness-runtime", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("merclaw/plugin-sdk/agent-harness-runtime")>();
   return {
     ...actual,
     appendSessionTranscriptMessage,
@@ -392,7 +392,7 @@ describe("dispatchTelegramMessage draft streaming", () => {
       removeAckAfterReply: false,
     } as unknown as TelegramMessageContext;
     base.turn = {
-      storePath: "/tmp/openclaw/telegram-sessions.json",
+      storePath: "/tmp/merclaw/telegram-sessions.json",
       recordInboundSession: vi.fn(async () => undefined),
       record: {
         onRecordError: vi.fn(),
@@ -544,7 +544,7 @@ describe("dispatchTelegramMessage draft streaming", () => {
     expect(draftStream.update).toHaveBeenCalledWith("Hello");
     const delivery = expectDeliverRepliesParams({ thread: { id: 777, scope: "dm" } });
     const mediaLocalRoots = delivery.mediaLocalRoots as string[] | undefined;
-    expect(mediaLocalRoots?.some((root) => /[\\/]\.openclaw[\\/]workspace-work$/u.test(root))).toBe(
+    expect(mediaLocalRoots?.some((root) => /[\\/]\.merclaw[\\/]workspace-work$/u.test(root))).toBe(
       true,
     );
     const dispatchParams = expectDispatchParams({});
@@ -625,7 +625,7 @@ describe("dispatchTelegramMessage draft streaming", () => {
         groupHistories,
         sendChatActionHandler,
         turn: {
-          storePath: "/tmp/openclaw/telegram-sessions.json",
+          storePath: "/tmp/merclaw/telegram-sessions.json",
           recordInboundSession,
           record: {
             updateLastRoute: {
@@ -1311,7 +1311,7 @@ describe("dispatchTelegramMessage draft streaming", () => {
   });
 
   it("records streamed final replies into the prompt context cache", async () => {
-    const storePath = `/tmp/openclaw-telegram-stream-context-${process.pid}-${Date.now()}.json`;
+    const storePath = `/tmp/merclaw-telegram-stream-context-${process.pid}-${Date.now()}.json`;
     const persistedPath = resolveTelegramMessageCachePath(storePath);
     try {
       setupDraftStreams({ answerMessageId: 1497 });
@@ -1404,7 +1404,7 @@ describe("dispatchTelegramMessage draft streaming", () => {
     });
     expectRecordFields(transcriptCall.message, {
       role: "assistant",
-      provider: "openclaw",
+      provider: "merclaw",
       model: "delivery-mirror",
       content: [{ type: "text", text: "Final answer" }],
     });
@@ -1458,7 +1458,7 @@ describe("dispatchTelegramMessage draft streaming", () => {
     });
     expectRecordFields(transcriptCall.message, {
       role: "assistant",
-      provider: "openclaw",
+      provider: "merclaw",
       model: "delivery-mirror",
       content: [{ type: "text", text: "Final answer" }],
     });
@@ -1500,7 +1500,7 @@ describe("dispatchTelegramMessage draft streaming", () => {
     });
     expectRecordFields(transcriptCall.message, {
       role: "assistant",
-      provider: "openclaw",
+      provider: "merclaw",
       model: "delivery-mirror",
       content: [{ type: "text", text: fullAnswer }],
     });
@@ -1535,7 +1535,7 @@ describe("dispatchTelegramMessage draft streaming", () => {
         role: "assistant",
         content: [{ type: "text", text: "Final sk-abc…0xyz" }],
         api: "openai-responses",
-        provider: "openclaw",
+        provider: "merclaw",
         model: "delivery-mirror",
         usage: {
           input: 0,

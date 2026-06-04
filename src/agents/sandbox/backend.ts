@@ -1,4 +1,4 @@
-import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalLowercaseString } from "@merclaw/normalization-core/string-coerce";
 import type {
   RegisteredSandboxBackend,
   SandboxBackendFactory,
@@ -22,7 +22,7 @@ export type {
   SandboxBackendHandle,
 } from "./backend-handle.types.js";
 
-const SANDBOX_BACKEND_FACTORIES_STATE_KEY = Symbol.for("openclaw.sandboxBackendFactories");
+const SANDBOX_BACKEND_FACTORIES_STATE_KEY = Symbol.for("merclaw.sandboxBackendFactories");
 
 function getSandboxBackendFactories(): Map<SandboxBackendId, RegisteredSandboxBackend> {
   const globalStore = globalThis as typeof globalThis & {

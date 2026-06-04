@@ -1,8 +1,8 @@
 import {
   MAX_DATE_TIMESTAMP_MS,
   resolveExpiresAtMsFromEpochSeconds,
-} from "openclaw/plugin-sdk/number-runtime";
-import { asFiniteNumber } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/number-runtime";
+import { asFiniteNumber } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { isJsonObject, type JsonObject, type JsonValue } from "./protocol.js";
 
 const CODEX_LIMIT_ID = "codex";
@@ -65,7 +65,7 @@ export function formatCodexUsageLimitErrorMessage(params: {
       if (usageSummary?.blockingPeriod && usageSummary.blockingReason) {
         parts.push(`Your ${usageSummary.blockingReason}.`);
       }
-      parts.push("OpenClaw could not determine a reset time from Codex.");
+      parts.push("MerClaw could not determine a reset time from Codex.");
     }
   }
   parts.push(

@@ -3,7 +3,7 @@ import {
   normalizeAgentModelRefForConfig,
 } from "../config/model-input.js";
 import type { AgentModelListConfig } from "../config/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 
 function resolvePrimaryModel(model?: AgentModelListConfig | string): string | undefined {
   if (typeof model === "string") {
@@ -16,10 +16,10 @@ function resolvePrimaryModel(model?: AgentModelListConfig | string): string | un
 }
 
 export function applyAgentDefaultPrimaryModel(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   model: string;
   legacyModels?: Set<string>;
-}): { next: OpenClawConfig; changed: boolean } {
+}): { next: MerClawConfig; changed: boolean } {
   const model = normalizeAgentModelRefForConfig(params.model);
   const current = resolvePrimaryModel(params.cfg.agents?.defaults?.model)?.trim();
   const normalizedCurrent = current && params.legacyModels?.has(current) ? model : current;
@@ -49,7 +49,7 @@ export function applyAgentDefaultPrimaryModel(params: {
   };
 }
 
-export function applyPrimaryModel(cfg: OpenClawConfig, model: string): OpenClawConfig {
+export function applyPrimaryModel(cfg: MerClawConfig, model: string): MerClawConfig {
   const normalizedModel = normalizeAgentModelRefForConfig(model);
   const defaults = cfg.agents?.defaults;
   const existingModel = defaults?.model;

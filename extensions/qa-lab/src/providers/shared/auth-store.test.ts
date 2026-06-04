@@ -7,7 +7,7 @@ import { writeQaAuthProfiles } from "./auth-store.js";
 const tempDirs: string[] = [];
 
 async function createTempDir(): Promise<string> {
-  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-qa-auth-store-"));
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-qa-auth-store-"));
   tempDirs.push(dir);
   return dir;
 }
@@ -147,7 +147,7 @@ describe("QA auth profile store", () => {
             provider: "openai",
             expires: 1_900_000_000_000,
             oauthRef: {
-              source: "openclaw-credentials",
+              source: "merclaw-credentials",
               provider: "openai",
               id: "0123456789abcdef0123456789abcdef",
             },
@@ -188,7 +188,7 @@ describe("QA auth profile store", () => {
       provider: "openai",
       expires: 1_900_000_000_000,
       oauthRef: {
-        source: "openclaw-credentials",
+        source: "merclaw-credentials",
         provider: "openai",
         id: "0123456789abcdef0123456789abcdef",
       },

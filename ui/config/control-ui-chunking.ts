@@ -6,7 +6,7 @@ export function moduleIdIncludesPackage(id: string, packageName: string): boolea
   const normalized = normalizeModuleId(id);
   return (
     normalized.includes(`/node_modules/${packageName}/`) ||
-    normalized.includes(`/openclaw-pnpm-node-modules/${packageName}/`)
+    normalized.includes(`/merclaw-pnpm-node-modules/${packageName}/`)
   );
 }
 

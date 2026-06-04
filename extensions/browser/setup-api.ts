@@ -1,6 +1,6 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/plugin-entry";
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
-import { normalizeOptionalLowercaseString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { MerClawConfig } from "merclaw/plugin-sdk/plugin-entry";
+import { definePluginEntry } from "merclaw/plugin-sdk/plugin-entry";
+import { normalizeOptionalLowercaseString } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { isRecord } from "./src/record-shared.js";
 
 function listContainsBrowser(value: unknown): boolean {
@@ -16,7 +16,7 @@ function toolPolicyReferencesBrowser(value: unknown): boolean {
   );
 }
 
-function hasBrowserToolReference(config: OpenClawConfig): boolean {
+function hasBrowserToolReference(config: MerClawConfig): boolean {
   if (toolPolicyReferencesBrowser(config.tools)) {
     return true;
   }

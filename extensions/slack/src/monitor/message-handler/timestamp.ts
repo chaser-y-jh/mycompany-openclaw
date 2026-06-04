@@ -1,4 +1,4 @@
-import { asFiniteNumberInRange, parseStrictFiniteNumber } from "openclaw/plugin-sdk/number-runtime";
+import { asFiniteNumberInRange, parseStrictFiniteNumber } from "merclaw/plugin-sdk/number-runtime";
 
 const SLACK_TIMESTAMP_RE = /^\d+(?:\.\d+)?$/;
 const MAX_SAFE_SLACK_TIMESTAMP_SECONDS = Number.MAX_SAFE_INTEGER / 1000;

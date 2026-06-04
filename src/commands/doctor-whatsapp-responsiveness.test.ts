@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 
 const noteMock = vi.hoisted(() => vi.fn());
 const spawnSyncMock = vi.hoisted(() => vi.fn());
 
 vi.mock("node:child_process", async () => {
-  const { mockNodeChildProcessSpawnSync } = await import("openclaw/plugin-sdk/test-node-mocks");
+  const { mockNodeChildProcessSpawnSync } = await import("merclaw/plugin-sdk/test-node-mocks");
   return mockNodeChildProcessSpawnSync(spawnSyncMock, () =>
     vi.importActual<typeof import("node:child_process")>("node:child_process"),
   );
@@ -27,21 +27,21 @@ describe("doctor WhatsApp responsiveness", () => {
     spawnSyncMock.mockReturnValue({
       status: 0,
       stdout: [
-        " 101 openclaw-tui",
-        " 102 /usr/bin/node /usr/lib/node_modules/openclaw/dist/index.js gateway --port 18789",
-        " 103 openclaw channels",
-        " 104 openclaw tui --local",
-        " 105 /usr/bin/openclaw chat",
-        " 106 helper --note 'openclaw tui'",
-        " 107 openclaw-helper openclaw terminal",
-        " 108 openclaw --flag tui",
+        " 101 merclaw-tui",
+        " 102 /usr/bin/node /usr/lib/node_modules/merclaw/dist/index.js gateway --port 18789",
+        " 103 merclaw channels",
+        " 104 merclaw tui --local",
+        " 105 /usr/bin/merclaw chat",
+        " 106 helper --note 'merclaw tui'",
+        " 107 merclaw-helper merclaw terminal",
+        " 108 merclaw --flag tui",
       ].join("\n"),
     });
 
     expect(listLocalTuiProcesses()).toEqual([
-      { pid: 101, command: "openclaw-tui" },
-      { pid: 104, command: "openclaw tui --local" },
-      { pid: 105, command: "/usr/bin/openclaw chat" },
+      { pid: 101, command: "merclaw-tui" },
+      { pid: 104, command: "merclaw tui --local" },
+      { pid: 105, command: "/usr/bin/merclaw chat" },
     ]);
   });
 
@@ -67,7 +67,7 @@ describe("doctor WhatsApp responsiveness", () => {
 
     await expect(
       terminateLocalTuiProcesses({
-        processes: [{ pid: 101, command: "openclaw-tui" }],
+        processes: [{ pid: 101, command: "merclaw-tui" }],
         controller,
         graceMs: 0,
       }),
@@ -82,7 +82,7 @@ describe("doctor WhatsApp responsiveness", () => {
 
   it("warns and repairs local TUI pressure when WhatsApp is enabled and the gateway is degraded", async () => {
     const terminate = vi.fn().mockResolvedValue({ stopped: [101], failed: [] });
-    const cfg = { channels: { whatsapp: { enabled: true } } } as OpenClawConfig;
+    const cfg = { channels: { whatsapp: { enabled: true } } } as MerClawConfig;
 
     await noteWhatsappResponsivenessHealth({
       cfg,
@@ -98,12 +98,12 @@ describe("doctor WhatsApp responsiveness", () => {
         },
       },
       shouldRepair: true,
-      listLocalTuiProcesses: () => [{ pid: 101, command: "openclaw-tui" }],
+      listLocalTuiProcesses: () => [{ pid: 101, command: "merclaw-tui" }],
       terminateLocalTuiProcesses: terminate,
     });
 
     expect(terminate).toHaveBeenCalledWith({
-      processes: [{ pid: 101, command: "openclaw-tui" }],
+      processes: [{ pid: 101, command: "merclaw-tui" }],
     });
     expect(noteMock).toHaveBeenCalledWith(
       [
@@ -121,7 +121,7 @@ describe("doctor WhatsApp responsiveness", () => {
     const cfg = {
       channels: { whatsapp: { enabled: true } },
       agents: { defaults: { model: { primary: "openai-codex/gpt-5.5" } } },
-    } as OpenClawConfig;
+    } as MerClawConfig;
 
     await noteWhatsappResponsivenessHealth({
       cfg,

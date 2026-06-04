@@ -1,6 +1,6 @@
 import type { APIMessage, APIUser } from "discord-api-types/v10";
-import { logVerbose } from "openclaw/plugin-sdk/runtime-env";
-import { readStringValue as readString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { logVerbose } from "merclaw/plugin-sdk/runtime-env";
+import { readStringValue as readString } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { getChannelMessage, Message as DiscordMessage, type Message } from "../internal/discord.js";
 import { resolveDiscordMessageText, type DiscordChannelInfo } from "./message-utils.js";
 

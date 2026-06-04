@@ -10,7 +10,7 @@ export const DEFAULT_GITHUB_API_TIMEOUT_MS = 30_000;
 export const GITHUB_API_RESPONSE_BODY_MAX_BYTES = 1024 * 1024;
 
 export const CLAWSWEEPER_PROOF_VERDICT_STATUS = "clawsweeper_exact_head_pass";
-const CLAWSWEEPER_BOT_LOGINS = new Set(["clawsweeper[bot]", "openclaw-clawsweeper[bot]"]);
+const CLAWSWEEPER_BOT_LOGINS = new Set(["clawsweeper[bot]", "merclaw-clawsweeper[bot]"]);
 
 const privilegedAuthorAssociations = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
 
@@ -73,7 +73,7 @@ const evidenceDescriptorRegex =
   /\b(?:screenshot|screen\s*recording|recording|terminal\s+(?:capture|screenshot|transcript|output)|console\s+(?:output|log)|runtime\s+logs?|redacted\s+logs?|live\s+output|actual\s+output|observed\s+output|stdout|stderr|stack trace|trace excerpt|log excerpt|linked\s+artifacts?|artifact\s+links?)\b|```[\s\S]*\n[\s\S]*\n```/i;
 
 const liveCommandRegex =
-  /\b(?:openclaw|node|docker|curl|gh|ssh|adb|xcrun|xcodebuild|open|npm\s+run|pnpm\s+openclaw)\b/i;
+  /\b(?:merclaw|node|docker|curl|gh|ssh|adb|xcrun|xcodebuild|open|npm\s+run|pnpm\s+merclaw)\b/i;
 
 const mockOnlyEvidenceStripRegex =
   /\b(?:pnpm|npm|yarn|bun)\s+(?:run\s+)?(?:test|vitest|lint|typecheck|tsgo|build|check)\b|\b(?:vitest|unit tests?|mock(?:ed|s)?|snapshots?|lint|typechecks?|tsgo|ci(?:\s+passes?)?|tests?|passed|passes|green|success|succeeded|with|and|the|branch|only|output|transcript|capture|fenced)\b/gi;

@@ -1,4 +1,4 @@
-import { uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { uniqueStrings } from "merclaw/plugin-sdk/string-coerce-runtime";
 
 const QA_AGENTIC_PARITY_PACK = "agentic";
 

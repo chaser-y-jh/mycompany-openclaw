@@ -1,10 +1,10 @@
-import type { StreamFn } from "openclaw/plugin-sdk/agent-core";
-import { streamSimple } from "openclaw/plugin-sdk/llm";
-import { createSubsystemLogger } from "openclaw/plugin-sdk/logging-core";
-import type { ProviderWrapStreamFnContext } from "openclaw/plugin-sdk/plugin-entry";
-import { createPlainTextToolCallCompatWrapper } from "openclaw/plugin-sdk/provider-stream-shared";
-import { ssrfPolicyFromHttpBaseUrlAllowedHostname } from "openclaw/plugin-sdk/ssrf-runtime";
-import { asPositiveSafeInteger } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { StreamFn } from "merclaw/plugin-sdk/agent-core";
+import { streamSimple } from "merclaw/plugin-sdk/llm";
+import { createSubsystemLogger } from "merclaw/plugin-sdk/logging-core";
+import type { ProviderWrapStreamFnContext } from "merclaw/plugin-sdk/plugin-entry";
+import { createPlainTextToolCallCompatWrapper } from "merclaw/plugin-sdk/provider-stream-shared";
+import { ssrfPolicyFromHttpBaseUrlAllowedHostname } from "merclaw/plugin-sdk/ssrf-runtime";
+import { asPositiveSafeInteger } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { LMSTUDIO_PROVIDER_ID } from "./defaults.js";
 import { ensureLmstudioModelLoaded } from "./models.fetch.js";
 import { resolveLmstudioInferenceBase } from "./models.js";

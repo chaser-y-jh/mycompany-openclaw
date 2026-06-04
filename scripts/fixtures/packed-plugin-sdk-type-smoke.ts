@@ -1,9 +1,9 @@
 type PublicPluginSdkModules = [
-  typeof import("openclaw/plugin-sdk"),
-  typeof import("openclaw/plugin-sdk/channel-entry-contract"),
-  typeof import("openclaw/plugin-sdk/config-contracts"),
-  typeof import("openclaw/plugin-sdk/provider-entry"),
-  typeof import("openclaw/plugin-sdk/runtime-env"),
+  typeof import("merclaw/plugin-sdk"),
+  typeof import("merclaw/plugin-sdk/channel-entry-contract"),
+  typeof import("merclaw/plugin-sdk/config-contracts"),
+  typeof import("merclaw/plugin-sdk/provider-entry"),
+  typeof import("merclaw/plugin-sdk/runtime-env"),
 ];
 
 const resolvedModules = null as unknown as PublicPluginSdkModules;

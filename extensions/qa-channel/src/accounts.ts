@@ -1,7 +1,7 @@
-import { createAccountListHelpers } from "openclaw/plugin-sdk/account-helpers";
-import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "openclaw/plugin-sdk/account-id";
-import { resolveMergedAccountConfig } from "openclaw/plugin-sdk/account-resolution-runtime";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { createAccountListHelpers } from "merclaw/plugin-sdk/account-helpers";
+import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "merclaw/plugin-sdk/account-id";
+import { resolveMergedAccountConfig } from "merclaw/plugin-sdk/account-resolution-runtime";
+import { normalizeOptionalString } from "merclaw/plugin-sdk/string-coerce-runtime";
 import type { CoreConfig, QaChannelAccountConfig, ResolvedQaChannelAccount } from "./types.js";
 
 const DEFAULT_POLL_TIMEOUT_MS = 1_000;
@@ -37,8 +37,8 @@ export function resolveQaChannelAccount(params: {
   const baseEnabled = params.cfg.channels?.["qa-channel"]?.enabled !== false;
   const enabled = baseEnabled && merged.enabled !== false;
   const baseUrl = merged.baseUrl?.trim() ?? "";
-  const botUserId = merged.botUserId?.trim() || "openclaw";
-  const botDisplayName = merged.botDisplayName?.trim() || "OpenClaw QA";
+  const botUserId = merged.botUserId?.trim() || "merclaw";
+  const botDisplayName = merged.botDisplayName?.trim() || "MerClaw QA";
   return {
     accountId,
     enabled,

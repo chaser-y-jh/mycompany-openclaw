@@ -1,7 +1,7 @@
-import { sortUniqueStrings } from "@openclaw/normalization-core/string-normalization";
+import { sortUniqueStrings } from "@merclaw/normalization-core/string-normalization";
 import { normalizeProviderId } from "../agents/model-selection.js";
 import type { ModelProviderConfig } from "../config/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { createLazyImportLoader } from "../shared/lazy-promise.js";
 import { listManifestProviderContributionIds } from "./manifest-contribution-ids.js";
 import type { PluginMetadataRegistryView } from "./plugin-metadata-snapshot.types.js";
@@ -35,7 +35,7 @@ function isSafeProviderConfigKey(value: string): boolean {
 }
 
 export type ResolveRuntimePluginDiscoveryProvidersParams = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   bundledProviderVitestCompat?: boolean;
@@ -139,7 +139,7 @@ export function normalizePluginDiscoveryResult(params: {
 
 export function runProviderCatalog(params: {
   provider: ProviderPlugin;
-  config: OpenClawConfig;
+  config: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
@@ -170,7 +170,7 @@ export function runProviderCatalog(params: {
 
 export function runProviderStaticCatalog(params: {
   provider: ProviderPlugin;
-  config: OpenClawConfig;
+  config: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;

@@ -79,7 +79,7 @@ describe("scripts/ui windows spawn behavior", () => {
   });
 
   it("routes Windows Corepack pnpm entrypoints through node", () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-pnpm-runner-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-pnpm-runner-"));
     const npmExecPath = path.join(tempDir, "pnpm.mjs");
     fs.writeFileSync(npmExecPath, "console.log('pnpm');\n");
 
@@ -137,8 +137,8 @@ describe("scripts/ui windows spawn behavior", () => {
   });
 
   it("detects direct execution through a junctioned script path", () => {
-    const realScriptPath = path.resolve("repo/openclaw/scripts/ui.js");
-    const junctionScriptPath = path.resolve("linked/openclaw/scripts/ui.js");
+    const realScriptPath = path.resolve("repo/merclaw/scripts/ui.js");
+    const junctionScriptPath = path.resolve("linked/merclaw/scripts/ui.js");
     const realpath = (entry: string) => (entry === junctionScriptPath ? realScriptPath : entry);
 
     expect(isDirectScriptExecution(junctionScriptPath, realScriptPath, realpath)).toBe(true);
@@ -150,7 +150,7 @@ describe("scripts/ui windows spawn behavior", () => {
       encoding: "utf8",
       env: {
         ...process.env,
-        OPENCLAW_BUILD_ALL_NO_PNPM: "1",
+        MERCLAW_BUILD_ALL_NO_PNPM: "1",
         PATH: "",
       },
     });

@@ -19,7 +19,7 @@ function runAssertion(args: string[]) {
 
 describe("release scenario assertions", () => {
   it("scans large files when checking release scenario output text", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-release-scenarios-"));
+    const root = mkdtempSync(path.join(tmpdir(), "merclaw-release-scenarios-"));
     const outputPath = path.join(root, "output.log");
 
     try {
@@ -44,7 +44,7 @@ describe("release scenario assertions", () => {
   });
 
   it("bounds release output text assertion diagnostics", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-release-scenarios-"));
+    const root = mkdtempSync(path.join(tmpdir(), "merclaw-release-scenarios-"));
     const outputPath = path.join(root, "output.log");
 
     try {
@@ -66,7 +66,7 @@ describe("release scenario assertions", () => {
   });
 
   it("scans large request logs for image describe responses", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-release-scenarios-"));
+    const root = mkdtempSync(path.join(tmpdir(), "merclaw-release-scenarios-"));
     const outputPath = path.join(root, "describe.json");
     const requestLogPath = path.join(root, "requests.jsonl");
 
@@ -74,7 +74,7 @@ describe("release scenario assertions", () => {
       writeJson(outputPath, {
         capability: "image.describe",
         ok: true,
-        outputs: [{ provider: "openai", text: "OPENCLAW_E2E_OK describe" }],
+        outputs: [{ provider: "openai", text: "MERCLAW_E2E_OK describe" }],
       });
       const endpointPrefix = "/v1/res";
       writeFileSync(
@@ -93,7 +93,7 @@ describe("release scenario assertions", () => {
   });
 
   it("scans large request logs for image generation requests", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-release-scenarios-"));
+    const root = mkdtempSync(path.join(tmpdir(), "merclaw-release-scenarios-"));
     const outputPath = path.join(root, "generate.json");
     const requestLogPath = path.join(root, "requests.jsonl");
     const imagePath = path.join(root, "generated.png");
@@ -123,12 +123,12 @@ describe("release scenario assertions", () => {
   });
 
   it("passes when the installed package version matches the candidate version", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-release-scenarios-"));
-    const packageRoot = path.join(root, "openclaw");
+    const root = mkdtempSync(path.join(tmpdir(), "merclaw-release-scenarios-"));
+    const packageRoot = path.join(root, "merclaw");
 
     try {
       writeJson(path.join(packageRoot, "package.json"), {
-        name: "openclaw",
+        name: "merclaw",
         version: "2026.5.26",
       });
 
@@ -147,12 +147,12 @@ describe("release scenario assertions", () => {
   });
 
   it("fails when the global install still points at the baseline version", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-release-scenarios-"));
-    const packageRoot = path.join(root, "openclaw");
+    const root = mkdtempSync(path.join(tmpdir(), "merclaw-release-scenarios-"));
+    const packageRoot = path.join(root, "merclaw");
 
     try {
       writeJson(path.join(packageRoot, "package.json"), {
-        name: "openclaw",
+        name: "merclaw",
         version: "2026.5.22",
       });
 

@@ -1,5 +1,5 @@
-import { resolveTimerTimeoutMs } from "openclaw/plugin-sdk/number-runtime";
-import { asOptionalRecord as readRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { resolveTimerTimeoutMs } from "merclaw/plugin-sdk/number-runtime";
+import { asOptionalRecord as readRecord } from "merclaw/plugin-sdk/string-coerce-runtime";
 import {
   readCodexNotificationThreadId,
   readCodexNotificationTurnId,

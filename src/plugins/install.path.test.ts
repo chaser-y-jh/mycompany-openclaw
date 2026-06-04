@@ -16,7 +16,7 @@ vi.mock("../process/exec.js", () => ({
   runCommandWithTimeout: vi.fn(),
 }));
 
-const suiteTempRootTracker = createSuiteTempRootTracker("openclaw-plugin-install-path");
+const suiteTempRootTracker = createSuiteTempRootTracker("merclaw-plugin-install-path");
 let dualFormatArchiveCase: {
   nodeModulesExists: boolean;
   result: Awaited<ReturnType<typeof installPluginFromPath>>;
@@ -80,15 +80,15 @@ function setupDualFormatInstallFixture(params: { bundleFormat: "codex" | "claude
   fs.writeFileSync(
     path.join(pluginDir, "package.json"),
     JSON.stringify({
-      name: "@openclaw/native-dual",
+      name: "@merclaw/native-dual",
       version: "0.0.1",
-      openclaw: { extensions: ["./dist/index.js"] },
+      merclaw: { extensions: ["./dist/index.js"] },
       dependencies: { "left-pad": "1.3.0" },
     }),
     "utf-8",
   );
   fs.writeFileSync(
-    path.join(pluginDir, "openclaw.plugin.json"),
+    path.join(pluginDir, "merclaw.plugin.json"),
     JSON.stringify({
       id: "native-dual",
       configSchema: { type: "object", properties: {} },
@@ -119,12 +119,12 @@ function setupNativePluginInstallFixture() {
     JSON.stringify({
       name: "symlink-plugin",
       version: "1.0.0",
-      openclaw: { extensions: ["./dist/index.js"] },
+      merclaw: { extensions: ["./dist/index.js"] },
     }),
     "utf-8",
   );
   fs.writeFileSync(
-    path.join(pluginDir, "openclaw.plugin.json"),
+    path.join(pluginDir, "merclaw.plugin.json"),
     JSON.stringify({
       id: "symlink-plugin",
       configSchema: { type: "object", properties: {} },

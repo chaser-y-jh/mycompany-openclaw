@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { CURRENT_SESSION_VERSION } from "openclaw/plugin-sdk/agent-sessions";
+import { CURRENT_SESSION_VERSION } from "merclaw/plugin-sdk/agent-sessions";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   buildCliSessionHistoryPrompt,
@@ -104,9 +104,9 @@ describe("loadCliSessionHistoryMessages", () => {
   });
 
   it("reads the canonical session transcript instead of an arbitrary external path", async () => {
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-state-"));
-    const outsideDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-outside-"));
-    vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-cli-state-"));
+    const outsideDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-cli-outside-"));
+    vi.stubEnv("MERCLAW_STATE_DIR", stateDir);
     createSessionTranscript({
       rootDir: stateDir,
       sessionId: "session-test",
@@ -135,9 +135,9 @@ describe("loadCliSessionHistoryMessages", () => {
   });
 
   it("detects canonical transcripts when callers pass stale external session paths", async () => {
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-state-"));
-    const outsideDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-outside-"));
-    vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-cli-state-"));
+    const outsideDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-cli-outside-"));
+    vi.stubEnv("MERCLAW_STATE_DIR", stateDir);
     createSessionTranscript({
       rootDir: stateDir,
       sessionId: "session-test",
@@ -166,8 +166,8 @@ describe("loadCliSessionHistoryMessages", () => {
   });
 
   it("keeps only the newest bounded history window", async () => {
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-state-"));
-    vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-cli-state-"));
+    vi.stubEnv("MERCLAW_STATE_DIR", stateDir);
     const sessionFile = createSessionTranscript({
       rootDir: stateDir,
       sessionId: "session-bounded",
@@ -196,8 +196,8 @@ describe("loadCliSessionHistoryMessages", () => {
   });
 
   it("keeps complete history for context-engine snapshots", async () => {
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-state-"));
-    vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-cli-state-"));
+    vi.stubEnv("MERCLAW_STATE_DIR", stateDir);
     const sessionFile = createSessionTranscript({
       rootDir: stateDir,
       sessionId: "session-context-engine-history",
@@ -226,8 +226,8 @@ describe("loadCliSessionHistoryMessages", () => {
   });
 
   it("uses the latest compaction summary and complete tail for context-engine snapshots", async () => {
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-state-"));
-    vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-cli-state-"));
+    vi.stubEnv("MERCLAW_STATE_DIR", stateDir);
     const sessionFile = createSessionTranscript({
       rootDir: stateDir,
       sessionId: "session-context-engine-compacted",
@@ -305,9 +305,9 @@ describe("loadCliSessionHistoryMessages", () => {
   });
 
   it("rejects symlinked transcripts instead of following them outside the sessions directory", async () => {
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-state-"));
-    const outsideDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-outside-"));
-    vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-cli-state-"));
+    const outsideDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-cli-outside-"));
+    vi.stubEnv("MERCLAW_STATE_DIR", stateDir);
     const canonicalSessionFile = path.join(
       stateDir,
       "agents",
@@ -340,8 +340,8 @@ describe("loadCliSessionHistoryMessages", () => {
   });
 
   it("drops oversized transcript files instead of loading them into hook payloads", async () => {
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-state-"));
-    vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-cli-state-"));
+    vi.stubEnv("MERCLAW_STATE_DIR", stateDir);
     const sessionFile = path.join(
       stateDir,
       "agents",
@@ -367,9 +367,9 @@ describe("loadCliSessionHistoryMessages", () => {
   });
 
   it("honors custom session store roots when resolving hook history transcripts", async () => {
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-state-"));
-    const customStoreDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-store-"));
-    vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-cli-state-"));
+    const customStoreDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-cli-store-"));
+    vi.stubEnv("MERCLAW_STATE_DIR", stateDir);
     const storePath = path.join(customStoreDir, "sessions.json");
     fs.writeFileSync(storePath, "{}", "utf-8");
     const sessionFile = createSessionTranscript({
@@ -406,8 +406,8 @@ describe("loadCliSessionReseedMessages", () => {
   });
 
   it("does not reseed fresh CLI sessions from raw transcript history before compaction", async () => {
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-state-"));
-    vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-cli-state-"));
+    vi.stubEnv("MERCLAW_STATE_DIR", stateDir);
     const sessionFile = createSessionTranscript({
       rootDir: stateDir,
       sessionId: "session-no-compaction",
@@ -429,8 +429,8 @@ describe("loadCliSessionReseedMessages", () => {
   });
 
   it("reseeds safe invalidated sessions from a bounded raw message tail when explicitly opted in", async () => {
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-state-"));
-    vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-cli-state-"));
+    vi.stubEnv("MERCLAW_STATE_DIR", stateDir);
     const sessionFile = createSessionTranscript({
       rootDir: stateDir,
       sessionId: "session-opt-in-raw-tail",
@@ -464,8 +464,8 @@ describe("loadCliSessionReseedMessages", () => {
   });
 
   it("does not raw-reseed auth-boundary invalidations even when opted in", async () => {
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-state-"));
-    vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-cli-state-"));
+    vi.stubEnv("MERCLAW_STATE_DIR", stateDir);
     const sessionFile = createSessionTranscript({
       rootDir: stateDir,
       sessionId: "session-auth-boundary",
@@ -499,8 +499,8 @@ describe("loadCliSessionReseedMessages", () => {
   });
 
   it("reseeds fresh CLI sessions from the latest compaction summary and post-compaction tail", async () => {
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-state-"));
-    vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-cli-state-"));
+    vi.stubEnv("MERCLAW_STATE_DIR", stateDir);
     const sessionFile = createSessionTranscript({
       rootDir: stateDir,
       sessionId: "session-compacted",
@@ -555,7 +555,7 @@ describe("loadCliSessionReseedMessages", () => {
 });
 
 describe("buildCliSessionHistoryPrompt", () => {
-  it("renders OpenClaw transcript history around the next user message", () => {
+  it("renders MerClaw transcript history around the next user message", () => {
     const prompt = buildCliSessionHistoryPrompt({
       messages: [
         { role: "user", content: "old ask" },
@@ -588,7 +588,7 @@ describe("buildCliSessionHistoryPrompt", () => {
       maxHistoryChars: 20,
     });
 
-    expect(prompt).toContain("[OpenClaw reseed history truncated; older turns dropped]");
+    expect(prompt).toContain("[MerClaw reseed history truncated; older turns dropped]");
     expect(prompt).toContain("<next_user_message>\ncurrent ask must survive\n</next_user_message>");
     // Older 100-char prefix must be dropped by the tail slice; the
     // post-cap rendered tail is shorter than the dropped prefix.
@@ -624,7 +624,7 @@ describe("buildCliSessionHistoryPrompt", () => {
     expect(prompt).toBeDefined();
     expect(prompt).toContain("FINAL_USER_MARKER");
     expect(prompt).toContain("FINAL_ASSISTANT_MARKER");
-    expect(prompt).toContain("[OpenClaw reseed history truncated; older turns dropped]");
+    expect(prompt).toContain("[MerClaw reseed history truncated; older turns dropped]");
     // The oldest 8000-char block must have been dropped — a head-slice
     // would have kept it instead of the recent tail.
     expect(prompt).not.toContain("x".repeat(8000));
@@ -654,7 +654,7 @@ describe("buildCliSessionHistoryPrompt", () => {
     // Recent tail still preserved within the post-summary budget.
     expect(prompt).toContain("POST_SUMMARY_FINAL_USER");
     expect(prompt).toContain("POST_SUMMARY_FINAL_ASSISTANT");
-    expect(prompt).toContain("[OpenClaw reseed history truncated; older turns dropped]");
+    expect(prompt).toContain("[MerClaw reseed history truncated; older turns dropped]");
     // Head of post-summary tail (oldest 8000-char `z` block) must be
     // dropped so the cap is honored.
     expect(prompt).not.toContain("z".repeat(8000));
@@ -692,7 +692,7 @@ describe("buildCliSessionHistoryPrompt", () => {
     expect(prompt).toContain("Compaction summary:");
     // The leading truncation marker is present so the prompt announces
     // what was discarded.
-    expect(prompt).toContain("[OpenClaw reseed history truncated; older turns dropped]");
+    expect(prompt).toContain("[MerClaw reseed history truncated; older turns dropped]");
     // The cap is honored: the rendered <conversation_history> block
     // must not blow past `maxHistoryChars` plus a small wrapper allowance.
     const historyMatch = prompt?.match(
@@ -745,7 +745,7 @@ describe("buildCliSessionHistoryPrompt", () => {
     const renderedHistory = historyMatch?.[1] ?? "";
     expect(renderedHistory.length).toBeLessThanOrEqual(maxHistoryChars);
     // Marker is still present so the prompt announces what was discarded.
-    expect(prompt).toContain("[OpenClaw reseed history truncated; older turns dropped]");
+    expect(prompt).toContain("[MerClaw reseed history truncated; older turns dropped]");
     // Near-cap summaries still reserve room for the newest exact turns.
     expect(prompt).toContain("POST_SUMMARY_TAIL_USER");
     expect(prompt).toContain("POST_SUMMARY_TAIL_ASSISTANT");

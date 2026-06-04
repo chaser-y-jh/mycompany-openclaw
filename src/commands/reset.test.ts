@@ -29,7 +29,7 @@ describe("resetCommand", () => {
 
     expect(
       cleanupCommandLogMessages(runtime).some((message) =>
-        message.includes("openclaw backup create"),
+        message.includes("merclaw backup create"),
       ),
     ).toBe(true);
   });
@@ -44,7 +44,7 @@ describe("resetCommand", () => {
 
     expect(
       cleanupCommandLogMessages(runtime).some((message) =>
-        message.includes("openclaw backup create"),
+        message.includes("merclaw backup create"),
       ),
     ).toBe(false);
   });

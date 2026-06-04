@@ -22,20 +22,20 @@ function resolveInstallerVersionCases(params: { stdinCwd: string }): string[] {
     [
       "-c",
       `${versionHelperSource}
-fake_openclaw_decorated() { printf '%s\\n' 'OpenClaw 2026.3.10 (abcdef0)'; }
-fake_openclaw_raw() { printf '%s\\n' "OpenClaw dev's build"; }
-OPENCLAW_BIN=fake_openclaw_decorated resolve_openclaw_version
-OPENCLAW_BIN=fake_openclaw_raw resolve_openclaw_version
+fake_merclaw_decorated() { printf '%s\\n' 'MerClaw 2026.3.10 (abcdef0)'; }
+fake_merclaw_raw() { printf '%s\\n' "MerClaw dev's build"; }
+MERCLAW_BIN=fake_merclaw_decorated resolve_merclaw_version
+MERCLAW_BIN=fake_merclaw_raw resolve_merclaw_version
 (
   cd "$1"
-  source /dev/stdin <<'OPENCLAW_STDIN_INSTALLER'
+  source /dev/stdin <<'MERCLAW_STDIN_INSTALLER'
 ${versionHelperSource}
-fake_openclaw_stdin() { printf '%s\\n' 'OpenClaw 2026.3.10 (abcdef0)'; }
-OPENCLAW_BIN=fake_openclaw_stdin
-resolve_openclaw_version
-OPENCLAW_STDIN_INSTALLER
+fake_merclaw_stdin() { printf '%s\\n' 'MerClaw 2026.3.10 (abcdef0)'; }
+MERCLAW_BIN=fake_merclaw_stdin
+resolve_merclaw_version
+MERCLAW_STDIN_INSTALLER
 )`,
-      "openclaw-version-test",
+      "merclaw-version-test",
       params.stdinCwd,
     ],
     {
@@ -43,7 +43,7 @@ OPENCLAW_STDIN_INSTALLER
       encoding: "utf-8",
       env: {
         ...process.env,
-        OPENCLAW_INSTALL_SH_NO_RUN: "1",
+        MERCLAW_INSTALL_SH_NO_RUN: "1",
       },
     },
   );
@@ -58,7 +58,7 @@ describe("install.sh version resolution", () => {
   it.runIf(process.platform !== "win32")(
     "parses CLI versions and keeps stdin helpers isolated from cwd",
     () => {
-      const hostileCwd = makeTempDir(tempRoots, "openclaw-install-stdin-");
+      const hostileCwd = makeTempDir(tempRoots, "merclaw-install-stdin-");
       const hostileHelper = path.join(
         hostileCwd,
         "docker",
@@ -69,7 +69,7 @@ describe("install.sh version resolution", () => {
       fs.writeFileSync(
         hostileHelper,
         `#!/usr/bin/env bash
-extract_openclaw_semver() {
+extract_merclaw_semver() {
   printf '%s' 'poisoned'
 }
 `,
@@ -80,7 +80,7 @@ extract_openclaw_semver() {
         resolveInstallerVersionCases({
           stdinCwd: hostileCwd,
         }),
-      ).toEqual(["2026.3.10", "OpenClaw dev's build", "2026.3.10"]);
+      ).toEqual(["2026.3.10", "MerClaw dev's build", "2026.3.10"]);
     },
   );
 });

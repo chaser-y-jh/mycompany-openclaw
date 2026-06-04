@@ -10,19 +10,19 @@
  * Issue #69546.
  */
 
-import type { OpenClawConfig } from "openclaw/plugin-sdk/core";
-import { getRuntimeConfig } from "openclaw/plugin-sdk/runtime-config-snapshot";
+import type { MerClawConfig } from "merclaw/plugin-sdk/core";
+import { getRuntimeConfig } from "merclaw/plugin-sdk/runtime-config-snapshot";
 
-export type GatewayCfg = OpenClawConfig;
+export type GatewayCfg = MerClawConfig;
 
-export type GatewayCfgLoader = () => OpenClawConfig;
+export type GatewayCfgLoader = () => MerClawConfig;
 
 export interface ActiveCfgProvider {
-  getActiveCfg(): OpenClawConfig;
+  getActiveCfg(): MerClawConfig;
 }
 
 export interface ActiveCfgProviderOptions {
-  fallback: OpenClawConfig;
+  fallback: MerClawConfig;
   load?: GatewayCfgLoader;
 }
 
@@ -30,7 +30,7 @@ export function createActiveCfgProvider(options: ActiveCfgProviderOptions): Acti
   const loader = options.load ?? defaultGatewayCfgLoader;
   const fallback = options.fallback;
   return {
-    getActiveCfg(): OpenClawConfig {
+    getActiveCfg(): MerClawConfig {
       return resolveActiveCfg(loader, fallback);
     },
   };
@@ -38,8 +38,8 @@ export function createActiveCfgProvider(options: ActiveCfgProviderOptions): Acti
 
 export function resolveActiveCfg(
   loader: GatewayCfgLoader,
-  fallback: OpenClawConfig,
-): OpenClawConfig {
+  fallback: MerClawConfig,
+): MerClawConfig {
   try {
     return loader();
   } catch {
@@ -47,6 +47,6 @@ export function resolveActiveCfg(
   }
 }
 
-function defaultGatewayCfgLoader(): OpenClawConfig {
+function defaultGatewayCfgLoader(): MerClawConfig {
   return getRuntimeConfig();
 }

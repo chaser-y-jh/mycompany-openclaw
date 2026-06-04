@@ -1,7 +1,7 @@
 import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { Model } from "openclaw/plugin-sdk/llm";
+import type { Model } from "merclaw/plugin-sdk/llm";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const {
@@ -23,7 +23,7 @@ const {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/provider-transport-runtime", async (importOriginal) => ({
+vi.mock("merclaw/plugin-sdk/provider-transport-runtime", async (importOriginal) => ({
   ...(await importOriginal()),
   buildGuardedModelFetch: buildGuardedModelFetchMock,
 }));
@@ -42,7 +42,7 @@ let resolveGoogleVertexAuthorizedUserHeaders: typeof import("./vertex-adc.js").r
 let resetGoogleVertexAuthorizedUserTokenCacheForTest: typeof import("./vertex-adc.js").resetGoogleVertexAuthorizedUserTokenCacheForTest;
 
 const MODEL_PROVIDER_REQUEST_TRANSPORT_SYMBOL = Symbol.for(
-  "openclaw.modelProviderRequestTransport",
+  "merclaw.modelProviderRequestTransport",
 );
 
 function attachModelProviderRequestTransport<TModel extends object>(
@@ -313,7 +313,7 @@ describe("google transport stream", () => {
   });
 
   afterAll(() => {
-    vi.doUnmock("openclaw/plugin-sdk/provider-transport-runtime");
+    vi.doUnmock("merclaw/plugin-sdk/provider-transport-runtime");
     vi.doUnmock("google-auth-library");
     vi.resetModules();
   });
@@ -568,7 +568,7 @@ describe("google transport stream", () => {
   });
 
   it("rejects non-integer Gemini 3 first-response retry env values", () => {
-    const envName = "OPENCLAW_GOOGLE_GEMINI_FIRST_RESPONSE_RETRY_MS";
+    const envName = "MERCLAW_GOOGLE_GEMINI_FIRST_RESPONSE_RETRY_MS";
 
     expect(resolveGoogleGemini3FirstResponseRetryMs({ [envName]: "1200" })).toBe(1200);
     expect(resolveGoogleGemini3FirstResponseRetryMs({ [envName]: "0" })).toBe(0);
@@ -631,7 +631,7 @@ describe("google transport stream", () => {
   });
 
   it("retries Gemini 3 requests with lean thinking when the first attempt has no first response", async () => {
-    vi.stubEnv("OPENCLAW_GOOGLE_GEMINI_FIRST_RESPONSE_RETRY_MS", "10");
+    vi.stubEnv("MERCLAW_GOOGLE_GEMINI_FIRST_RESPONSE_RETRY_MS", "10");
     guardedFetchMock
       .mockImplementationOnce(
         (_url: string, init?: RequestInit) =>
@@ -696,7 +696,7 @@ describe("google transport stream", () => {
   });
 
   it("keeps streaming after the first Gemini 3 chunk arrives before the retry deadline", async () => {
-    vi.stubEnv("OPENCLAW_GOOGLE_GEMINI_FIRST_RESPONSE_RETRY_MS", "10");
+    vi.stubEnv("MERCLAW_GOOGLE_GEMINI_FIRST_RESPONSE_RETRY_MS", "10");
     guardedFetchMock.mockResolvedValueOnce(
       buildDelayedSecondSseResponse({
         first: {
@@ -776,7 +776,7 @@ describe("google transport stream", () => {
   });
 
   it("detects supported Vertex ADC sources synchronously", async () => {
-    const tempDir = await mkdtemp(path.join(os.tmpdir(), "openclaw-google-vertex-adc-detect-"));
+    const tempDir = await mkdtemp(path.join(os.tmpdir(), "merclaw-google-vertex-adc-detect-"));
     for (const type of ["authorized_user", "external_account", "service_account"]) {
       const credentialsPath = path.join(tempDir, `${type}.json`);
       await writeFile(credentialsPath, JSON.stringify({ type }), "utf8");
@@ -797,7 +797,7 @@ describe("google transport stream", () => {
   });
 
   it("resolves non-file Vertex ADC through google-auth-library without OAuth refresh fetch", async () => {
-    const tempDir = await mkdtemp(path.join(os.tmpdir(), "openclaw-google-vertex-authlib-"));
+    const tempDir = await mkdtemp(path.join(os.tmpdir(), "merclaw-google-vertex-authlib-"));
     vi.stubEnv("GOOGLE_APPLICATION_CREDENTIALS", "");
     vi.stubEnv("HOME", path.join(tempDir, "home"));
     vi.stubEnv("APPDATA", "");
@@ -816,7 +816,7 @@ describe("google transport stream", () => {
   });
 
   it("does not cache google-auth ADC tokens when fallback expiry would exceed Date range", async () => {
-    const tempDir = await mkdtemp(path.join(os.tmpdir(), "openclaw-google-vertex-authlib-expiry-"));
+    const tempDir = await mkdtemp(path.join(os.tmpdir(), "merclaw-google-vertex-authlib-expiry-"));
     vi.useFakeTimers();
     vi.setSystemTime(new Date(8_640_000_000_000_000));
     vi.stubEnv("GOOGLE_APPLICATION_CREDENTIALS", "");
@@ -839,7 +839,7 @@ describe("google transport stream", () => {
   });
 
   it("uses google-auth-library bearer auth for Google Vertex credential marker requests", async () => {
-    const tempDir = await mkdtemp(path.join(os.tmpdir(), "openclaw-google-vertex-authlib-stream-"));
+    const tempDir = await mkdtemp(path.join(os.tmpdir(), "merclaw-google-vertex-authlib-stream-"));
     vi.stubEnv("GOOGLE_APPLICATION_CREDENTIALS", "");
     vi.stubEnv("HOME", path.join(tempDir, "home"));
     vi.stubEnv("APPDATA", "");
@@ -882,7 +882,7 @@ describe("google transport stream", () => {
   });
 
   it("refreshes authorized_user ADC before Google Vertex requests", async () => {
-    const tempDir = await mkdtemp(path.join(os.tmpdir(), "openclaw-google-vertex-adc-"));
+    const tempDir = await mkdtemp(path.join(os.tmpdir(), "merclaw-google-vertex-adc-"));
     const credentialsPath = path.join(tempDir, "application_default_credentials.json");
     await writeFile(
       credentialsPath,
@@ -952,7 +952,7 @@ describe("google transport stream", () => {
   });
 
   it("does not reuse authorized_user ADC tokens with unsafe expiry lifetimes", async () => {
-    const tempDir = await mkdtemp(path.join(os.tmpdir(), "openclaw-google-vertex-unsafe-adc-"));
+    const tempDir = await mkdtemp(path.join(os.tmpdir(), "merclaw-google-vertex-unsafe-adc-"));
     const credentialsPath = path.join(tempDir, "application_default_credentials.json");
     await writeFile(
       credentialsPath,
@@ -994,7 +994,7 @@ describe("google transport stream", () => {
   });
 
   it("refreshes authorized_user ADC from the Windows APPDATA fallback for Google Vertex requests", async () => {
-    const tempDir = await mkdtemp(path.join(os.tmpdir(), "openclaw-google-vertex-appdata-adc-"));
+    const tempDir = await mkdtemp(path.join(os.tmpdir(), "merclaw-google-vertex-appdata-adc-"));
     const homeDir = path.join(tempDir, "home");
     const appDataDir = path.join(tempDir, "AppData", "Roaming");
     const fallbackDir = path.join(appDataDir, "gcloud");
@@ -1160,8 +1160,8 @@ describe("google transport stream", () => {
         id: "gemini-3.1-pro-preview",
         name: "Gemini 3.1 Pro Preview",
       }),
-      api: "openclaw-google-generative-ai-transport",
-    } as Model<"openclaw-google-generative-ai-transport">;
+      api: "merclaw-google-generative-ai-transport",
+    } as Model<"merclaw-google-generative-ai-transport">;
 
     const params = buildGoogleGenerativeAiParams(model, {
       messages: [
@@ -1188,8 +1188,8 @@ describe("google transport stream", () => {
         id: "gemini-3.1-pro-preview",
         name: "Gemini 3.1 Pro Preview",
       }),
-      api: "openclaw-google-generative-ai-transport",
-    } as Model<"openclaw-google-generative-ai-transport">;
+      api: "merclaw-google-generative-ai-transport",
+    } as Model<"merclaw-google-generative-ai-transport">;
 
     const params = buildGoogleGenerativeAiParams(model, {
       messages: [

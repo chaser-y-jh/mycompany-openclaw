@@ -1,29 +1,29 @@
-import { logInboundDrop } from "openclaw/plugin-sdk/channel-inbound";
+import { logInboundDrop } from "merclaw/plugin-sdk/channel-inbound";
 import {
   channelIngressRoutes,
   createChannelIngressResolver,
   defineStableChannelIngressIdentity,
-} from "openclaw/plugin-sdk/channel-ingress-runtime";
-import { createChannelPairingController } from "openclaw/plugin-sdk/channel-pairing";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { isDangerousNameMatchingEnabled } from "openclaw/plugin-sdk/dangerous-name-runtime";
-import { resolveInboundRouteEnvelopeBuilderWithRuntime } from "openclaw/plugin-sdk/inbound-envelope";
+} from "merclaw/plugin-sdk/channel-ingress-runtime";
+import { createChannelPairingController } from "merclaw/plugin-sdk/channel-pairing";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { isDangerousNameMatchingEnabled } from "merclaw/plugin-sdk/dangerous-name-runtime";
+import { resolveInboundRouteEnvelopeBuilderWithRuntime } from "merclaw/plugin-sdk/inbound-envelope";
 import {
   deliverFormattedTextWithAttachments,
   type OutboundReplyPayload,
-} from "openclaw/plugin-sdk/reply-payload";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime";
+} from "merclaw/plugin-sdk/reply-payload";
+import type { RuntimeEnv } from "merclaw/plugin-sdk/runtime";
 import {
   GROUP_POLICY_BLOCKED_LABEL,
   resolveAllowlistProviderRuntimeGroupPolicy,
   resolveDefaultGroupPolicy,
   warnMissingProviderGroupPolicyFallbackOnce,
-} from "openclaw/plugin-sdk/runtime-group-policy";
+} from "merclaw/plugin-sdk/runtime-group-policy";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
   normalizeStringEntries,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/string-coerce-runtime";
 import type { ResolvedIrcAccount } from "./accounts.js";
 import { buildIrcAllowlistCandidates, normalizeIrcAllowEntry } from "./normalize.js";
 import { resolveIrcGroupMatch, resolveIrcRequireMention } from "./policy.js";
@@ -216,11 +216,11 @@ export async function handleIrcInbound(params: {
   });
 
   const allowTextCommands = core.channel.commands.shouldHandleTextCommands({
-    cfg: config as OpenClawConfig,
+    cfg: config as MerClawConfig,
     surface: CHANNEL_ID,
   });
-  const hasControlCommand = core.channel.text.hasControlCommand(rawBody, config as OpenClawConfig);
-  const mentionRegexes = core.channel.mentions.buildMentionRegexes(config as OpenClawConfig);
+  const hasControlCommand = core.channel.text.hasControlCommand(rawBody, config as MerClawConfig);
+  const mentionRegexes = core.channel.mentions.buildMentionRegexes(config as MerClawConfig);
   const mentionNick = connectedNick?.trim() || account.nick;
   const explicitMentionRegex = mentionNick
     ? new RegExp(`\\b${escapeIrcRegexLiteral(mentionNick)}\\b[:,]?`, "i")
@@ -248,7 +248,7 @@ export async function handleIrcInbound(params: {
     channelId: CHANNEL_ID,
     accountId: account.accountId,
     identity: ircIngressIdentity,
-    cfg: config as OpenClawConfig,
+    cfg: config as MerClawConfig,
     readStoreAllowFrom: async () => await pairing.readAllowFromStore(),
   }).message({
     subject: createIrcIngressSubject(message),
@@ -351,7 +351,7 @@ export async function handleIrcInbound(params: {
       : `#${message.target}`;
   const peerId = message.isGroup ? channelTarget : message.senderNick;
   const { route, buildEnvelope } = resolveInboundRouteEnvelopeBuilderWithRuntime({
-    cfg: config as OpenClawConfig,
+    cfg: config as MerClawConfig,
     channel: CHANNEL_ID,
     accountId: account.accountId,
     peer: {
@@ -397,7 +397,7 @@ export async function handleIrcInbound(params: {
   });
 
   await core.channel.inbound.dispatchReply({
-    cfg: config as OpenClawConfig,
+    cfg: config as MerClawConfig,
     channel: CHANNEL_ID,
     accountId: account.accountId,
     agentId: route.agentId,

@@ -1,5 +1,5 @@
-import type { ModelCompatConfig } from "openclaw/plugin-sdk/provider-model-shared";
-import { uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { ModelCompatConfig } from "merclaw/plugin-sdk/provider-model-shared";
+import { uniqueStrings } from "merclaw/plugin-sdk/string-coerce-runtime";
 
 export const VOLCENGINE_UNSUPPORTED_TOOL_SCHEMA_KEYWORDS = [
   "minLength",

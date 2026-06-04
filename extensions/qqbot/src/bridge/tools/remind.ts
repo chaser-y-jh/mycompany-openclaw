@@ -1,9 +1,9 @@
-import { callGatewayTool } from "openclaw/plugin-sdk/agent-harness-runtime";
+import { callGatewayTool } from "merclaw/plugin-sdk/agent-harness-runtime";
 import type {
   AnyAgentTool,
-  OpenClawPluginApi,
-  OpenClawPluginToolContext,
-} from "openclaw/plugin-sdk/core";
+  MerClawPluginApi,
+  MerClawPluginToolContext,
+} from "merclaw/plugin-sdk/core";
 import { RemindSchema, executeScheduledRemind } from "../../engine/tools/remind-logic.js";
 import type { RemindCronAction, RemindParams } from "../../engine/tools/remind-logic.js";
 import { getRequestContext } from "../../engine/utils/request-context.js";
@@ -43,7 +43,7 @@ const defaultDeps: RemindToolDeps = {
 };
 
 export function createRemindTool(
-  toolContext: OpenClawPluginToolContext = {},
+  toolContext: MerClawPluginToolContext = {},
   deps: RemindToolDeps = defaultDeps,
 ): AnyAgentTool {
   return {
@@ -72,6 +72,6 @@ export function createRemindTool(
   };
 }
 
-export function registerRemindTool(api: OpenClawPluginApi): void {
+export function registerRemindTool(api: MerClawPluginApi): void {
   api.registerTool((ctx) => createRemindTool(ctx), { name: "qqbot_remind" });
 }

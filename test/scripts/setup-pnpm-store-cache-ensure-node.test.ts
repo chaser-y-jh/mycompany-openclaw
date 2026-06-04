@@ -42,7 +42,7 @@ function runEnsureNode(root: string, requested: string, extraEnv: NodeJS.Process
         "set -e",
         ...(pathOverride ? [`export PATH=${JSON.stringify(pathOverride)}`] : []),
         `source "${ensureNodeScript}"`,
-        `openclaw_ensure_node "${requested}"`,
+        `merclaw_ensure_node "${requested}"`,
         "command -v node",
         "node -p 'process.versions.node'",
       ].join("; "),
@@ -66,7 +66,7 @@ function runVersionMatch(actual: string, requested: string) {
       "-c",
       [
         `source "${ensureNodeScript}"`,
-        `openclaw_node_version_matches "${actual}" "${requested}"`,
+        `merclaw_node_version_matches "${actual}" "${requested}"`,
       ].join("; "),
     ],
     { encoding: "utf8", env: process.env },
@@ -75,7 +75,7 @@ function runVersionMatch(actual: string, requested: string) {
 
 describe("setup-pnpm-store-cache ensure-node", () => {
   beforeAll(() => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-ensure-node-"));
+    const root = mkdtempSync(join(tmpdir(), "merclaw-ensure-node-"));
     try {
       const result = spawnSync(
         "bash",
@@ -84,7 +84,7 @@ describe("setup-pnpm-store-cache ensure-node", () => {
           [
             "set -euo pipefail",
             `source "${ensureNodeScript}"`,
-            `openclaw_find_toolcache_node "99.99.99"`,
+            `merclaw_find_toolcache_node "99.99.99"`,
           ].join("; "),
         ],
         {
@@ -94,7 +94,7 @@ describe("setup-pnpm-store-cache ensure-node", () => {
             RUNNER_TOOL_CACHE: join(root, "missing-toolcache"),
             AGENT_TOOLSDIRECTORY: join(root, "missing-agent-tools"),
             ACTIONS_RUNNER_TOOL_CACHE: join(root, "missing-actions-cache"),
-            OPENCLAW_CONTAINER_TOOL_CACHE: join(root, "missing-container-cache"),
+            MERCLAW_CONTAINER_TOOL_CACHE: join(root, "missing-container-cache"),
           },
         },
       );
@@ -108,7 +108,7 @@ describe("setup-pnpm-store-cache ensure-node", () => {
   });
 
   it("uses a matching active node", () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-ensure-node-"));
+    const root = mkdtempSync(join(tmpdir(), "merclaw-ensure-node-"));
     try {
       const activeBin = join(root, "active", "bin");
       const activeNode = writeFakeNode(activeBin, "24.15.0");
@@ -126,7 +126,7 @@ describe("setup-pnpm-store-cache ensure-node", () => {
   });
 
   it("repairs PATH from the toolcache when setup-node leaves an old node active", () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-ensure-node-"));
+    const root = mkdtempSync(join(tmpdir(), "merclaw-ensure-node-"));
     try {
       const activeBin = join(root, "active", "bin");
       writeFakeNode(activeBin, "20.20.0");
@@ -146,7 +146,7 @@ describe("setup-pnpm-store-cache ensure-node", () => {
   });
 
   it("normalizes Windows toolcache paths for Git Bash before prepending PATH", () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-ensure-node-"));
+    const root = mkdtempSync(join(tmpdir(), "merclaw-ensure-node-"));
     try {
       const activeBin = join(root, "active", "bin");
       writeFakeNode(activeBin, "22.22.3");
@@ -180,7 +180,7 @@ exit 1
             `export PATH=${JSON.stringify(`${helperBin}:${activeBin}:${process.env.PATH ?? ""}`)}`,
             `export GITHUB_PATH=${JSON.stringify(githubPath)}`,
             `source "${ensureNodeScript}"`,
-            `openclaw_prepend_node_bin "C:\\\\hostedtoolcache\\\\windows/node/24.15.0/x64"`,
+            `merclaw_prepend_node_bin "C:\\\\hostedtoolcache\\\\windows/node/24.15.0/x64"`,
             "command -v node",
             "node -p 'process.versions.node'",
             `cat "${githubPath}"`,
@@ -198,7 +198,7 @@ exit 1
   });
 
   it("repairs PATH from the container-mounted GitHub Actions toolcache", () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-ensure-node-"));
+    const root = mkdtempSync(join(tmpdir(), "merclaw-ensure-node-"));
     try {
       const activeBin = join(root, "active", "bin");
       writeFakeNode(activeBin, "20.20.0");
@@ -206,7 +206,7 @@ exit 1
       const toolcacheNode = writeFakeNode(toolcacheBin, "24.99.99");
       const result = runEnsureNode(root, "24.99.99", {
         PATH: `${activeBin}:${process.env.PATH ?? ""}`,
-        OPENCLAW_CONTAINER_TOOL_CACHE: join(root, "__t"),
+        MERCLAW_CONTAINER_TOOL_CACHE: join(root, "__t"),
         RUNNER_TOOL_CACHE: join(root, "hostedtoolcache"),
       });
 
@@ -219,7 +219,7 @@ exit 1
   });
 
   it("accepts major wildcard requests when selecting a toolcache node", () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-ensure-node-"));
+    const root = mkdtempSync(join(tmpdir(), "merclaw-ensure-node-"));
     try {
       const activeBin = join(root, "active", "bin");
       writeFakeNode(activeBin, "20.20.0");
@@ -238,7 +238,7 @@ exit 1
   });
 
   it("keeps the Node 22 wildcard at the supported minimum", () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-ensure-node-"));
+    const root = mkdtempSync(join(tmpdir(), "merclaw-ensure-node-"));
     try {
       const activeBin = join(root, "active", "bin");
       writeFakeNode(activeBin, "22.18.0");
@@ -263,7 +263,7 @@ exit 1
   });
 
   it("fails clearly when no matching node is available", () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-ensure-node-"));
+    const root = mkdtempSync(join(tmpdir(), "merclaw-ensure-node-"));
     try {
       const activeBin = join(root, "active", "bin");
       writeFakeNode(activeBin, "20.20.0");

@@ -8,7 +8,7 @@ const expectedBranch = process.env.EXPECTED_WORKFLOW_BRANCH ?? "";
 const directRecovery = process.env.DIRECT_RELEASE_RECOVERY === "true";
 
 const checks = [
-  ["workflowName", "OpenClaw Release Publish"],
+  ["workflowName", "MerClaw Release Publish"],
   ["headBranch", expectedBranch],
   ["event", "workflow_dispatch"],
 ];

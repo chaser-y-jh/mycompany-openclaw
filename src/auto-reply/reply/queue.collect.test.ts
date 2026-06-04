@@ -269,7 +269,7 @@ describe("followup queue collect routing", () => {
     enqueueFollowupRun(
       key,
       createRun({
-        prompt: "[OpenClaw room event]",
+        prompt: "[MerClaw room event]",
         originatingChannel: "telegram",
         originatingTo: "-100123",
       }),
@@ -298,7 +298,7 @@ describe("followup queue collect routing", () => {
     await done.promise;
 
     expect(calls).toHaveLength(2);
-    expect(calls[0]?.prompt).toBe("[OpenClaw room event]");
+    expect(calls[0]?.prompt).toBe("[MerClaw room event]");
     expect(calls[0]?.currentInboundEventKind).toBe("room_event");
     expect(calls[0]?.currentInboundContext?.text).toBe("room event body");
     expect(calls[0]?.abortSignal).toBe(controller.signal);

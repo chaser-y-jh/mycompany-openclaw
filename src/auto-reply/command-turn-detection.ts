@@ -1,5 +1,5 @@
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { isControlCommandMessage } from "./command-detection.js";
 import {
   isExplicitCommandTurn,
@@ -38,7 +38,7 @@ function hasCommandSourceMetadata(input: CommandTurnContextInput): boolean {
 
 export function isExplicitCommandTurnContext(
   input: CommandTurnContextInput,
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
 ): boolean {
   if (isExplicitCommandTurn(resolveCommandTurnContext(input))) {
     return true;

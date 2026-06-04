@@ -9,7 +9,7 @@ describe("buildGatewayRuntimeHints", () => {
           status: "running",
           pid: 1234,
           systemd: {
-            unit: "openclaw-gateway.service",
+            unit: "merclaw-gateway.service",
             killMode: "process",
             tasksCurrent: 807,
             memoryCurrent: 11_918_534_246,
@@ -20,9 +20,9 @@ describe("buildGatewayRuntimeHints", () => {
     ).toEqual([
       "Systemd cgroup hygiene looks elevated: cgroup hygiene: KillMode=process, tasks=807, memory=11.1GiB.",
       "This usually means old helper or browser processes may still be attached to the gateway service.",
-      "Run: systemctl --user show openclaw-gateway.service -p KillMode -p TasksCurrent -p MemoryCurrent -p MainPID",
-      "Run: systemd-cgls --user-unit openclaw-gateway.service",
-      "After reviewing service settings, run: openclaw gateway restart",
+      "Run: systemctl --user show merclaw-gateway.service -p KillMode -p TasksCurrent -p MemoryCurrent -p MainPID",
+      "Run: systemd-cgls --user-unit merclaw-gateway.service",
+      "After reviewing service settings, run: merclaw gateway restart",
     ]);
   });
 
@@ -33,7 +33,7 @@ describe("buildGatewayRuntimeHints", () => {
           status: "running",
           pid: 1234,
           systemd: {
-            unit: "openclaw-gateway.service",
+            unit: "merclaw-gateway.service",
             killMode: "control-group",
             tasksCurrent: 7,
             memoryCurrent: 132_120_576,

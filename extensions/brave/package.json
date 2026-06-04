@@ -1,21 +1,21 @@
 {
-  "name": "@openclaw/brave-plugin",
+  "name": "@merclaw/brave-plugin",
   "version": "2026.5.31",
-  "description": "OpenClaw Brave Search provider plugin for web search.",
+  "description": "MerClaw Brave Search provider plugin for web search.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/openclaw/openclaw"
+    "url": "https://github.com/merclaw/merclaw"
   },
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@merclaw/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ],
     "install": {
-      "npmSpec": "@openclaw/brave-plugin",
+      "npmSpec": "@merclaw/brave-plugin",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.4.10",
       "allowInvalidConfigRecovery": true
@@ -24,7 +24,7 @@
       "pluginApi": ">=2026.5.31"
     },
     "build": {
-      "openclawVersion": "2026.5.31"
+      "merclawVersion": "2026.5.31"
     },
     "release": {
       "publishToClawHub": true,

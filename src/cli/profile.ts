@@ -3,7 +3,7 @@ import path from "node:path";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/normalization-core/string-coerce";
 import { isValueToken } from "../infra/cli-root-options.js";
 import { resolveRequiredHomeDir } from "../infra/home-dir.js";
 import { resolveCliArgvInvocation } from "./argv-invocation.js";
@@ -80,7 +80,7 @@ function resolveProfileStateDir(
   homedir: () => string,
 ): string {
   const suffix = normalizeLowercaseStringOrEmpty(profile) === "default" ? "" : `-${profile}`;
-  return path.join(resolveRequiredHomeDir(env as NodeJS.ProcessEnv, homedir), `.openclaw${suffix}`);
+  return path.join(resolveRequiredHomeDir(env as NodeJS.ProcessEnv, homedir), `.merclaw${suffix}`);
 }
 
 export function applyCliProfileEnv(params: {
@@ -96,19 +96,19 @@ export function applyCliProfileEnv(params: {
   }
 
   // Convenience only: fill defaults, never override explicit env values.
-  env.OPENCLAW_PROFILE = profile;
+  env.MERCLAW_PROFILE = profile;
 
-  const existingStateDir = normalizeOptionalString(env.OPENCLAW_STATE_DIR);
+  const existingStateDir = normalizeOptionalString(env.MERCLAW_STATE_DIR);
   const stateDir = existingStateDir || resolveProfileStateDir(profile, env, homedir);
   if (!existingStateDir) {
-    env.OPENCLAW_STATE_DIR = stateDir;
+    env.MERCLAW_STATE_DIR = stateDir;
   }
 
-  if (!normalizeOptionalString(env.OPENCLAW_CONFIG_PATH)) {
-    env.OPENCLAW_CONFIG_PATH = path.join(stateDir, "openclaw.json");
+  if (!normalizeOptionalString(env.MERCLAW_CONFIG_PATH)) {
+    env.MERCLAW_CONFIG_PATH = path.join(stateDir, "merclaw.json");
   }
 
-  if (profile === "dev" && !env.OPENCLAW_GATEWAY_PORT?.trim()) {
-    env.OPENCLAW_GATEWAY_PORT = "19001";
+  if (profile === "dev" && !env.MERCLAW_GATEWAY_PORT?.trim()) {
+    env.MERCLAW_GATEWAY_PORT = "19001";
   }
 }

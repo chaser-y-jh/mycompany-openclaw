@@ -1,5 +1,5 @@
 /**
- * OpenClaw Memory (LanceDB) Plugin
+ * MerClaw Memory (LanceDB) Plugin
  *
  * Long-term memory with vector search for AI conversations.
  * Uses LanceDB for storage and OpenAI for embeddings.
@@ -9,27 +9,27 @@
 import { Buffer } from "node:buffer";
 import { randomUUID } from "node:crypto";
 import type * as LanceDB from "@lancedb/lancedb";
-import type { AgentToolResult } from "openclaw/plugin-sdk/agent-core";
+import type { AgentToolResult } from "merclaw/plugin-sdk/agent-core";
 import {
   optionalFiniteNumberSchema,
   optionalPositiveIntegerSchema,
-} from "openclaw/plugin-sdk/channel-actions";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { MemoryEmbeddingProvider } from "openclaw/plugin-sdk/memory-core-host-engine-embeddings";
+} from "merclaw/plugin-sdk/channel-actions";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import type { MemoryEmbeddingProvider } from "merclaw/plugin-sdk/memory-core-host-engine-embeddings";
 import {
   parseStrictPositiveInteger,
   resolveTimerTimeoutMs,
-} from "openclaw/plugin-sdk/number-runtime";
-import { readFiniteNumberParam, readPositiveIntegerParam } from "openclaw/plugin-sdk/param-readers";
-import { resolveLivePluginConfigObject } from "openclaw/plugin-sdk/plugin-config-runtime";
-import { ensureGlobalUndiciEnvProxyDispatcher } from "openclaw/plugin-sdk/runtime-env";
+} from "merclaw/plugin-sdk/number-runtime";
+import { readFiniteNumberParam, readPositiveIntegerParam } from "merclaw/plugin-sdk/param-readers";
+import { resolveLivePluginConfigObject } from "merclaw/plugin-sdk/plugin-config-runtime";
+import { ensureGlobalUndiciEnvProxyDispatcher } from "merclaw/plugin-sdk/runtime-env";
 import {
   asOptionalRecord as asRecord,
   normalizeLowercaseStringOrEmpty,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "merclaw/plugin-sdk/string-coerce-runtime";
+import { truncateUtf16Safe } from "merclaw/plugin-sdk/text-utility-runtime";
 import { Type } from "typebox";
-import { definePluginEntry, type OpenClawPluginApi } from "./api.js";
+import { definePluginEntry, type MerClawPluginApi } from "./api.js";
 import {
   DEFAULT_CAPTURE_MAX_CHARS,
   DEFAULT_RECALL_MAX_CHARS,
@@ -84,23 +84,23 @@ function loadOpenAiModule(): Promise<typeof import("openai")> {
 }
 
 let memoryEmbeddingProviderModulePromise:
-  | Promise<typeof import("openclaw/plugin-sdk/memory-core-host-engine-embeddings")>
+  | Promise<typeof import("merclaw/plugin-sdk/memory-core-host-engine-embeddings")>
   | undefined;
 function loadMemoryEmbeddingProviderModule(): Promise<
-  typeof import("openclaw/plugin-sdk/memory-core-host-engine-embeddings")
+  typeof import("merclaw/plugin-sdk/memory-core-host-engine-embeddings")
 > {
   memoryEmbeddingProviderModulePromise ??=
-    import("openclaw/plugin-sdk/memory-core-host-engine-embeddings");
+    import("merclaw/plugin-sdk/memory-core-host-engine-embeddings");
   return memoryEmbeddingProviderModulePromise;
 }
 
 let memoryHostCoreModulePromise:
-  | Promise<typeof import("openclaw/plugin-sdk/memory-host-core")>
+  | Promise<typeof import("merclaw/plugin-sdk/memory-host-core")>
   | undefined;
 function loadMemoryHostCoreModule(): Promise<
-  typeof import("openclaw/plugin-sdk/memory-host-core")
+  typeof import("merclaw/plugin-sdk/memory-host-core")
 > {
-  memoryHostCoreModulePromise ??= import("openclaw/plugin-sdk/memory-host-core");
+  memoryHostCoreModulePromise ??= import("merclaw/plugin-sdk/memory-host-core");
   return memoryHostCoreModulePromise;
 }
 
@@ -396,7 +396,7 @@ class ProviderAdapterEmbeddings implements Embeddings {
   private providerPromise: Promise<MemoryEmbeddingProvider> | undefined;
 
   constructor(
-    private api: OpenClawPluginApi,
+    private api: MerClawPluginApi,
     private embedding: MemoryConfig["embedding"],
   ) {}
 
@@ -411,7 +411,7 @@ class ProviderAdapterEmbeddings implements Embeddings {
   }
 
   private async createProvider(): Promise<MemoryEmbeddingProvider> {
-    const cfg = (this.api.runtime.config?.current?.() ?? this.api.config) as OpenClawConfig;
+    const cfg = (this.api.runtime.config?.current?.() ?? this.api.config) as MerClawConfig;
     const providerId = this.embedding.provider;
     const { getMemoryEmbeddingProvider } = await loadMemoryEmbeddingProviderModule();
     const adapter = getMemoryEmbeddingProvider(providerId, cfg);
@@ -525,7 +525,7 @@ export const testing = {
   runWithTimeout,
 } as const;
 
-function createEmbeddings(api: OpenClawPluginApi, cfg: MemoryConfig): Embeddings {
+function createEmbeddings(api: MerClawPluginApi, cfg: MemoryConfig): Embeddings {
   const { provider, model, dimensions, apiKey, baseUrl } = cfg.embedding;
   if (provider === "openai" && apiKey) {
     return new OpenAiCompatibleEmbeddings(apiKey, model, baseUrl, dimensions);
@@ -701,7 +701,7 @@ export default definePluginEntry({
   kind: "memory" as const,
   configSchema: memoryConfigSchema,
 
-  register(api: OpenClawPluginApi) {
+  register(api: MerClawPluginApi) {
     let cfg: MemoryConfig;
     try {
       cfg = memoryConfigSchema.parse(api.pluginConfig);
@@ -728,7 +728,7 @@ export default definePluginEntry({
     const resolveCurrentHookConfig = () => {
       const runtimePluginConfig = resolveLivePluginConfigObject(
         api.runtime.config?.current
-          ? () => api.runtime.config.current() as OpenClawConfig
+          ? () => api.runtime.config.current() as MerClawConfig
           : undefined,
         "memory-lancedb",
         api.pluginConfig as Record<string, unknown>,

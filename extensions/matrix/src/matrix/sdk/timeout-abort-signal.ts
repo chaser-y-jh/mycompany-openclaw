@@ -1,1 +1,1 @@
-export { buildTimeoutAbortSignal } from "openclaw/plugin-sdk/extension-shared";
+export { buildTimeoutAbortSignal } from "merclaw/plugin-sdk/extension-shared";

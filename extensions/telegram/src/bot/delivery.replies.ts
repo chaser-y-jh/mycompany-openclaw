@@ -2,33 +2,33 @@ import { type Bot, GrammyError, InputFile } from "grammy";
 import {
   createOutboundPayloadPlan,
   projectOutboundPayloadPlanForDelivery,
-} from "openclaw/plugin-sdk/channel-outbound";
-import type { ReplyToMode } from "openclaw/plugin-sdk/config-contracts";
-import type { MarkdownTableMode } from "openclaw/plugin-sdk/config-contracts";
-import { fireAndForgetHook } from "openclaw/plugin-sdk/hook-runtime";
-import { createInternalHookEvent, triggerInternalHook } from "openclaw/plugin-sdk/hook-runtime";
+} from "merclaw/plugin-sdk/channel-outbound";
+import type { ReplyToMode } from "merclaw/plugin-sdk/config-contracts";
+import type { MarkdownTableMode } from "merclaw/plugin-sdk/config-contracts";
+import { fireAndForgetHook } from "merclaw/plugin-sdk/hook-runtime";
+import { createInternalHookEvent, triggerInternalHook } from "merclaw/plugin-sdk/hook-runtime";
 import {
   buildCanonicalSentMessageHookContext,
   toInternalMessageSentContext,
   toPluginMessageContext,
   toPluginMessageSentEvent,
-} from "openclaw/plugin-sdk/hook-runtime";
-import type { ReplyPayloadDelivery } from "openclaw/plugin-sdk/interactive-runtime";
-import { normalizeMessagePresentation } from "openclaw/plugin-sdk/interactive-runtime";
+} from "merclaw/plugin-sdk/hook-runtime";
+import type { ReplyPayloadDelivery } from "merclaw/plugin-sdk/interactive-runtime";
+import { normalizeMessagePresentation } from "merclaw/plugin-sdk/interactive-runtime";
 import {
   buildOutboundMediaLoadOptions,
   isGifMedia,
   kindFromMime,
   probeVideoDimensions,
-} from "openclaw/plugin-sdk/media-runtime";
-import { getGlobalHookRunner } from "openclaw/plugin-sdk/plugin-runtime";
-import { chunkMarkdownTextWithMode, type ChunkMode } from "openclaw/plugin-sdk/reply-chunking";
-import type { ReplyPayload } from "openclaw/plugin-sdk/reply-payload";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
-import { danger, logVerbose } from "openclaw/plugin-sdk/runtime-env";
-import { createSubsystemLogger } from "openclaw/plugin-sdk/runtime-env";
-import { formatErrorMessage } from "openclaw/plugin-sdk/ssrf-runtime";
-import { loadWebMedia } from "openclaw/plugin-sdk/web-media";
+} from "merclaw/plugin-sdk/media-runtime";
+import { getGlobalHookRunner } from "merclaw/plugin-sdk/plugin-runtime";
+import { chunkMarkdownTextWithMode, type ChunkMode } from "merclaw/plugin-sdk/reply-chunking";
+import type { ReplyPayload } from "merclaw/plugin-sdk/reply-payload";
+import type { RuntimeEnv } from "merclaw/plugin-sdk/runtime-env";
+import { danger, logVerbose } from "merclaw/plugin-sdk/runtime-env";
+import { createSubsystemLogger } from "merclaw/plugin-sdk/runtime-env";
+import { formatErrorMessage } from "merclaw/plugin-sdk/ssrf-runtime";
+import { loadWebMedia } from "merclaw/plugin-sdk/web-media";
 import { resolveTelegramInlineButtons, type TelegramInlineButtons } from "../button-types.js";
 import { splitTelegramCaption } from "../caption.js";
 import {
@@ -685,7 +685,7 @@ export function emitTelegramMessageSentHooks(params: EmitMessageSentHookParams):
 
 export async function deliverReplies(params: {
   replies: ReplyPayload[];
-  cfg?: import("openclaw/plugin-sdk/config-contracts").OpenClawConfig;
+  cfg?: import("merclaw/plugin-sdk/config-contracts").MerClawConfig;
   chatId: string;
   accountId?: string;
   sessionKeyForInternalHooks?: string;

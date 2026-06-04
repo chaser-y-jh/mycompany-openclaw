@@ -5,7 +5,7 @@ import {
 } from "../../infra/clawhub.js";
 import type { buildWorkspaceSkillStatus } from "../discovery/status.js";
 
-export type OpenClawSkillSecurityVerdictItem = Omit<
+export type MerClawSkillSecurityVerdictItem = Omit<
   ClawHubSkillSecurityVerdictItem,
   "decision" | "error" | "security"
 > & {
@@ -38,8 +38,8 @@ function readSecurityPassed(security: unknown): boolean | null | undefined {
 export function projectClawHubVerdictItem(
   item: ClawHubSkillSecurityVerdictItem,
   registry: string,
-): OpenClawSkillSecurityVerdictItem {
-  const projected: OpenClawSkillSecurityVerdictItem = {
+): MerClawSkillSecurityVerdictItem {
+  const projected: MerClawSkillSecurityVerdictItem = {
     registry,
     ok: item.ok,
     decision: item.decision,
@@ -83,7 +83,7 @@ export function projectClawHubVerdictItem(
     projected.securityPassed = securityPassed;
   }
   if (item.error) {
-    const error: OpenClawSkillSecurityVerdictItem["error"] = {};
+    const error: MerClawSkillSecurityVerdictItem["error"] = {};
     if (typeof item.error.code === "string") {
       error.code = item.error.code;
     }
@@ -135,9 +135,9 @@ export function collectClawHubVerdictTargets(
   return [...targets.values()];
 }
 
-export async function fetchOpenClawSkillSecurityVerdicts(
+export async function fetchMerClawSkillSecurityVerdicts(
   targets: Array<{ registry: string; slug: string; version: string }>,
-): Promise<OpenClawSkillSecurityVerdictItem[]> {
+): Promise<MerClawSkillSecurityVerdictItem[]> {
   const byRegistry = new Map<string, Array<{ slug: string; version: string }>>();
   for (const target of targets) {
     const registryTargets = byRegistry.get(target.registry) ?? [];
@@ -145,7 +145,7 @@ export async function fetchOpenClawSkillSecurityVerdicts(
     byRegistry.set(target.registry, registryTargets);
   }
 
-  const items: OpenClawSkillSecurityVerdictItem[] = [];
+  const items: MerClawSkillSecurityVerdictItem[] = [];
   for (const [registry, registryTargets] of byRegistry) {
     const response = await fetchClawHubSkillSecurityVerdicts({
       baseUrl: registry,

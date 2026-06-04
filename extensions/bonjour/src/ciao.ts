@@ -1,4 +1,4 @@
-import { collectErrorGraphCandidates } from "openclaw/plugin-sdk/error-runtime";
+import { collectErrorGraphCandidates } from "merclaw/plugin-sdk/error-runtime";
 import { formatBonjourError } from "./errors.js";
 
 const CIAO_CANCELLATION_MESSAGE_RE = /^CIAO (?:ANNOUNCEMENT|PROBING) CANCELLED\b/u;

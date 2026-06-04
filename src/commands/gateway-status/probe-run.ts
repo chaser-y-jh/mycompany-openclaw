@@ -1,8 +1,8 @@
 import {
   normalizeOptionalString,
   readStringValue,
-} from "@openclaw/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../../config/types.js";
+} from "@merclaw/normalization-core/string-coerce";
+import type { MerClawConfig } from "../../config/types.js";
 import { probeGateway } from "../../gateway/probe.js";
 import {
   discoverGatewayBeacons,
@@ -28,7 +28,7 @@ export type GatewayStatusProbedTarget = {
 };
 
 export async function runGatewayStatusProbePass(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   opts: {
     token?: string;
     password?: string;

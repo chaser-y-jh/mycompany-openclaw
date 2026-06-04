@@ -1,22 +1,22 @@
-import { resolveAccountEntry } from "openclaw/plugin-sdk/account-core";
-import { CHANNEL_APPROVAL_NATIVE_RUNTIME_CONTEXT_CAPABILITY } from "openclaw/plugin-sdk/approval-handler-runtime";
-import { resolveInboundDebounceMs } from "openclaw/plugin-sdk/channel-inbound-debounce";
-import { registerChannelRuntimeContext } from "openclaw/plugin-sdk/channel-runtime-context";
-import { formatCliCommand } from "openclaw/plugin-sdk/cli-runtime";
-import { isControlCommandMessage } from "openclaw/plugin-sdk/command-detection";
-import { drainPendingDeliveries } from "openclaw/plugin-sdk/delivery-queue-runtime";
-import { DEFAULT_GROUP_HISTORY_LIMIT } from "openclaw/plugin-sdk/reply-history";
-import { resolveAgentRoute } from "openclaw/plugin-sdk/routing";
-import { logVerbose } from "openclaw/plugin-sdk/runtime-env";
-import { registerUnhandledRejectionHandler } from "openclaw/plugin-sdk/runtime-env";
-import { getChildLogger } from "openclaw/plugin-sdk/runtime-env";
+import { resolveAccountEntry } from "merclaw/plugin-sdk/account-core";
+import { CHANNEL_APPROVAL_NATIVE_RUNTIME_CONTEXT_CAPABILITY } from "merclaw/plugin-sdk/approval-handler-runtime";
+import { resolveInboundDebounceMs } from "merclaw/plugin-sdk/channel-inbound-debounce";
+import { registerChannelRuntimeContext } from "merclaw/plugin-sdk/channel-runtime-context";
+import { formatCliCommand } from "merclaw/plugin-sdk/cli-runtime";
+import { isControlCommandMessage } from "merclaw/plugin-sdk/command-detection";
+import { drainPendingDeliveries } from "merclaw/plugin-sdk/delivery-queue-runtime";
+import { DEFAULT_GROUP_HISTORY_LIMIT } from "merclaw/plugin-sdk/reply-history";
+import { resolveAgentRoute } from "merclaw/plugin-sdk/routing";
+import { logVerbose } from "merclaw/plugin-sdk/runtime-env";
+import { registerUnhandledRejectionHandler } from "merclaw/plugin-sdk/runtime-env";
+import { getChildLogger } from "merclaw/plugin-sdk/runtime-env";
 import {
   defaultRuntime,
   formatDurationPrecise,
   warn,
   type RuntimeEnv,
-} from "openclaw/plugin-sdk/runtime-env";
-import { enqueueSystemEvent } from "openclaw/plugin-sdk/system-event-runtime";
+} from "merclaw/plugin-sdk/runtime-env";
+import { enqueueSystemEvent } from "merclaw/plugin-sdk/system-event-runtime";
 import { resolveWhatsAppAccount, resolveWhatsAppMediaMaxBytes } from "../accounts.js";
 import { WHATSAPP_AUTH_UNSTABLE_CODE, WhatsAppAuthUnstableError } from "../auth-store.js";
 import {
@@ -178,7 +178,7 @@ async function clearTerminalWebAuthState(params: {
       "web reconnect: failed clearing cached auth after terminal close",
     );
     params.runtime.error(
-      `WhatsApp Web cleanup failed after terminal close (status ${params.statusLabel}). Run \`${formatCliCommand("openclaw channels logout --channel whatsapp")}\`, then relink with \`${formatCliCommand("openclaw channels login --channel whatsapp")}\`.`,
+      `WhatsApp Web cleanup failed after terminal close (status ${params.statusLabel}). Run \`${formatCliCommand("merclaw channels logout --channel whatsapp")}\`, then relink with \`${formatCliCommand("merclaw channels login --channel whatsapp")}\`.`,
     );
   }
 }
@@ -427,7 +427,7 @@ export async function monitorWebChannel(
               "web reconnect: 428 during opening; max attempts reached",
             );
             runtime.error(
-              `WhatsApp Web connection closed during setup (status 428) after ${retryDecision.reconnectAttempts}/${reconnectPolicy.maxAttempts} attempts. Relink with \`${formatCliCommand("openclaw channels login --channel whatsapp")}\` if the issue persists.`,
+              `WhatsApp Web connection closed during setup (status 428) after ${retryDecision.reconnectAttempts}/${reconnectPolicy.maxAttempts} attempts. Relink with \`${formatCliCommand("merclaw channels login --channel whatsapp")}\` if the issue persists.`,
             );
             await controller.shutdown();
             break;
@@ -648,7 +648,7 @@ export async function monitorWebChannel(
             log: reconnectLogger,
           });
           runtime.error(
-            `WhatsApp session logged out. Run \`${formatCliCommand("openclaw channels login --channel whatsapp")}\` to relink.`,
+            `WhatsApp session logged out. Run \`${formatCliCommand("merclaw channels login --channel whatsapp")}\` to relink.`,
           );
         } else if (decision.healthState === "conflict") {
           await clearTerminalWebAuthState({
@@ -667,7 +667,7 @@ export async function monitorWebChannel(
             "web reconnect: non-retryable close status; stopping monitor",
           );
           runtime.error(
-            `WhatsApp Web connection closed (status ${decision.normalized.statusLabel}: session conflict). Resolve conflicting WhatsApp Web sessions, then relink with \`${formatCliCommand("openclaw channels login --channel whatsapp")}\`. Stopping web monitoring.`,
+            `WhatsApp Web connection closed (status ${decision.normalized.statusLabel}: session conflict). Resolve conflicting WhatsApp Web sessions, then relink with \`${formatCliCommand("merclaw channels login --channel whatsapp")}\`. Stopping web monitoring.`,
           );
         } else {
           reconnectLogger.warn(

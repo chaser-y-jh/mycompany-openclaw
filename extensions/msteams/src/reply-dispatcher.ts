@@ -5,13 +5,13 @@ import {
   resolveChannelStreamingBlockEnabled,
   resolveChannelStreamingPreviewToolProgress,
   resolveChannelStreamingSuppressDefaultToolProgressMessages,
-} from "openclaw/plugin-sdk/channel-outbound";
-import { normalizeOptionalLowercaseString } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/channel-outbound";
+import { normalizeOptionalLowercaseString } from "merclaw/plugin-sdk/string-coerce-runtime";
 import {
   createChannelMessageReplyPipeline,
   logTypingFailure,
   resolveChannelMediaMaxBytes,
-  type OpenClawConfig,
+  type MerClawConfig,
   type MSTeamsReplyStyle,
   type ReplyPayload,
   type RuntimeEnv,
@@ -41,7 +41,7 @@ import type { MSTeamsApp } from "./sdk.js";
 export { pickInformativeStatusText } from "./reply-stream-controller.js";
 
 export function createMSTeamsReplyDispatcher(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentId: string;
   sessionKey: string;
   accountId?: string;
@@ -537,7 +537,7 @@ export function createMSTeamsReplyDispatcher(params: {
           }
         : {}),
       ...progressCallbacks,
-      // When progress mode is active, suppress openclaw's default block-style
+      // When progress mode is active, suppress merclaw's default block-style
       // tool-progress messages so they don't duplicate alongside the
       // streaming card's progress lines.
       ...(shouldSuppressDefaultToolProgressMessages

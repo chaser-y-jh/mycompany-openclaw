@@ -21,7 +21,7 @@ function runDockerRunArgs(pathPrefix: string) {
   const script = [
     "source scripts/lib/live-docker-auth.sh",
     "ARGS=()",
-    "openclaw_live_init_docker_run_args ARGS 42s || exit $?",
+    "merclaw_live_init_docker_run_args ARGS 42s || exit $?",
     "printf '%s\\n' \"${ARGS[@]}\"",
   ].join("\n");
 
@@ -51,7 +51,7 @@ afterEach(() => {
 
 describe("scripts/lib/live-docker-auth.sh", () => {
   it("adds a kill-after grace period when timeout supports it", () => {
-    const binDir = makeTempBin("openclaw-live-docker-auth-gnu-");
+    const binDir = makeTempBin("merclaw-live-docker-auth-gnu-");
     writeExecutable(
       path.join(binDir, "timeout"),
       [
@@ -74,7 +74,7 @@ describe("scripts/lib/live-docker-auth.sh", () => {
   });
 
   it("falls back to plain timeout when kill-after is unavailable", () => {
-    const binDir = makeTempBin("openclaw-live-docker-auth-plain-");
+    const binDir = makeTempBin("merclaw-live-docker-auth-plain-");
     writeExecutable(
       path.join(binDir, "timeout"),
       [
@@ -91,7 +91,7 @@ describe("scripts/lib/live-docker-auth.sh", () => {
   });
 
   it("uses gtimeout when timeout is unavailable", () => {
-    const binDir = makeTempBin("openclaw-live-docker-auth-gtimeout-");
+    const binDir = makeTempBin("merclaw-live-docker-auth-gtimeout-");
     writeExecutable(
       path.join(binDir, "gtimeout"),
       [
@@ -114,7 +114,7 @@ describe("scripts/lib/live-docker-auth.sh", () => {
   });
 
   it("fails fast when no timeout wrapper is available", () => {
-    const binDir = makeTempBin("openclaw-live-docker-auth-no-timeout-");
+    const binDir = makeTempBin("merclaw-live-docker-auth-no-timeout-");
 
     const result = runDockerRunArgs(binDir);
     expect(result.status).toBe(127);

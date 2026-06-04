@@ -1,5 +1,5 @@
 ---
-summary: "OpenClaw Anthropic Vertex provider plugin for Claude models on Google Vertex AI."
+summary: "MerClaw Anthropic Vertex provider plugin for Claude models on Google Vertex AI."
 read_when:
   - You are installing, configuring, or auditing the anthropic-vertex plugin
 title: "Anthropic Vertex plugin"
@@ -7,11 +7,11 @@ title: "Anthropic Vertex plugin"
 
 # Anthropic Vertex plugin
 
-OpenClaw Anthropic Vertex provider plugin for Claude models on Google Vertex AI.
+MerClaw Anthropic Vertex provider plugin for Claude models on Google Vertex AI.
 
 ## Distribution
 
-- Package: `@openclaw/anthropic-vertex-provider`
+- Package: `@merclaw/anthropic-vertex-provider`
 - Install route: npm; ClawHub
 
 ## Surface

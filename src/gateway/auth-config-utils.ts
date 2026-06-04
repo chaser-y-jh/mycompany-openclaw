@@ -1,5 +1,5 @@
 import type { GatewayAuthConfig } from "../config/types.gateway.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { hasConfiguredSecretInput } from "../config/types.secrets.js";
 import { resolveRequiredConfiguredSecretRefInputString } from "./resolve-configured-secret-input-string.js";
 import {
@@ -14,7 +14,7 @@ type GatewayAuthSecretInputPath = Extract<
 >;
 
 type GatewayAuthSecretRefResolutionParams = {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env: NodeJS.ProcessEnv;
   mode?: GatewayAuthConfig["mode"];
   hasPasswordCandidate: boolean;
@@ -23,7 +23,7 @@ type GatewayAuthSecretRefResolutionParams = {
 
 /** Check whether a local Gateway auth input is configured directly or through defaults. */
 export function hasConfiguredGatewayAuthSecretInput(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   path: GatewayAuthSecretInputPath,
 ): boolean {
   return hasConfiguredSecretInput(readGatewaySecretInputValue(cfg, path), cfg.secrets?.defaults);
@@ -78,7 +78,7 @@ function shouldResolveGatewayPasswordSecretRef(
 }
 
 async function resolveGatewayAuthSecretRefValue(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env: NodeJS.ProcessEnv;
   path: GatewayAuthSecretInputPath;
   shouldResolve: boolean;
@@ -123,11 +123,11 @@ export async function resolveGatewayPasswordSecretRefValue(
 }
 
 async function resolveGatewayAuthSecretRef(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env: NodeJS.ProcessEnv;
   path: GatewayAuthSecretInputPath;
   shouldResolve: boolean;
-}): Promise<OpenClawConfig> {
+}): Promise<MerClawConfig> {
   const value = await resolveGatewayAuthSecretRefValue(params);
   if (!value) {
     return params.cfg;
@@ -144,12 +144,12 @@ async function resolveGatewayAuthSecretRef(params: {
 }
 
 async function resolveGatewayPasswordSecretRef(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env: NodeJS.ProcessEnv;
   mode?: GatewayAuthConfig["mode"];
   hasPasswordCandidate: boolean;
   hasTokenCandidate: boolean;
-}): Promise<OpenClawConfig> {
+}): Promise<MerClawConfig> {
   return resolveGatewayAuthSecretRef({
     cfg: params.cfg,
     env: params.env,
@@ -161,7 +161,7 @@ async function resolveGatewayPasswordSecretRef(params: {
 /** Materialize active local Gateway auth secret refs on a cloned config. */
 export async function materializeGatewayAuthSecretRefs(
   params: GatewayAuthSecretRefResolutionParams,
-): Promise<OpenClawConfig> {
+): Promise<MerClawConfig> {
   const cfgWithToken = await resolveGatewayAuthSecretRef({
     cfg: params.cfg,
     env: params.env,

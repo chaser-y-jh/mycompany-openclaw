@@ -1,7 +1,7 @@
 import type {
   CodexBundleMcpThreadConfig,
   EmbeddedRunAttemptParams,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "merclaw/plugin-sdk/agent-harness-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { startCodexAttemptThread } from "./attempt-startup.js";
 import { defaultLeasedCodexAppServerClientFactory } from "./client-factory.js";
@@ -94,7 +94,7 @@ async function answerInitialize(harness: ClientHarness): Promise<void> {
     timeout: 5_000,
   });
   const initialize = JSON.parse(harness.writes[0] ?? "{}") as { id?: number };
-  harness.send({ id: initialize.id, result: { userAgent: "openclaw/0.125.0 (macOS; test)" } });
+  harness.send({ id: initialize.id, result: { userAgent: "merclaw/0.125.0 (macOS; test)" } });
 }
 
 async function waitForRequest(

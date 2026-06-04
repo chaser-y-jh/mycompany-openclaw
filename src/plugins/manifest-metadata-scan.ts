@@ -2,8 +2,8 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { isRecord } from "@openclaw/normalization-core/record-coerce";
-import { normalizeOptionalString as normalizeTrimmedString } from "@openclaw/normalization-core/string-coerce";
+import { isRecord } from "@merclaw/normalization-core/record-coerce";
+import { normalizeOptionalString as normalizeTrimmedString } from "@merclaw/normalization-core/string-coerce";
 import { parseJsonWithJson5Fallback } from "../utils/parse-json-compat.js";
 
 type PluginManifestMetadataRecord = {
@@ -19,8 +19,8 @@ type CandidateDir = {
   origin?: string;
 };
 
-const OPENCLAW_PACKAGE_ROOT = fileURLToPath(new URL("../..", import.meta.url));
-const PLUGIN_MANIFEST_FILENAME = "openclaw.plugin.json";
+const MERCLAW_PACKAGE_ROOT = fileURLToPath(new URL("../..", import.meta.url));
+const PLUGIN_MANIFEST_FILENAME = "merclaw.plugin.json";
 let manifestMetadataCache:
   | {
       key: string;
@@ -30,23 +30,23 @@ let manifestMetadataCache:
 
 function resolveUserPath(value: string, env: NodeJS.ProcessEnv): string {
   if (value === "~" || value.startsWith("~/")) {
-    const home = env.OPENCLAW_HOME ?? env.HOME ?? env.USERPROFILE ?? os.homedir();
+    const home = env.MERCLAW_HOME ?? env.HOME ?? env.USERPROFILE ?? os.homedir();
     return path.join(home, value.slice(2));
   }
   return path.resolve(value);
 }
 
 function resolveStateDir(env: NodeJS.ProcessEnv): string {
-  const override = normalizeTrimmedString(env.OPENCLAW_STATE_DIR);
+  const override = normalizeTrimmedString(env.MERCLAW_STATE_DIR);
   if (override) {
     return resolveUserPath(override, env);
   }
-  const home = env.OPENCLAW_HOME ?? env.HOME ?? env.USERPROFILE ?? os.homedir();
-  return path.join(home, ".openclaw");
+  const home = env.MERCLAW_HOME ?? env.HOME ?? env.USERPROFILE ?? os.homedir();
+  return path.join(home, ".merclaw");
 }
 
 function areBundledPluginsDisabled(env: NodeJS.ProcessEnv): boolean {
-  const value = normalizeTrimmedString(env.OPENCLAW_DISABLE_BUNDLED_PLUGINS)?.toLowerCase();
+  const value = normalizeTrimmedString(env.MERCLAW_DISABLE_BUNDLED_PLUGINS)?.toLowerCase();
   return value === "1" || value === "true";
 }
 
@@ -59,14 +59,14 @@ function resolveBundledPluginRoot(env: NodeJS.ProcessEnv): string | undefined {
     return undefined;
   }
 
-  const override = normalizeTrimmedString(env.OPENCLAW_BUNDLED_PLUGINS_DIR);
+  const override = normalizeTrimmedString(env.MERCLAW_BUNDLED_PLUGINS_DIR);
   if (override) {
     return resolveUserPath(override, env);
   }
 
-  const sourceRoot = path.join(OPENCLAW_PACKAGE_ROOT, "extensions");
-  const runtimeRoot = path.join(OPENCLAW_PACKAGE_ROOT, "dist-runtime", "extensions");
-  const distRoot = path.join(OPENCLAW_PACKAGE_ROOT, "dist", "extensions");
+  const sourceRoot = path.join(MERCLAW_PACKAGE_ROOT, "extensions");
+  const runtimeRoot = path.join(MERCLAW_PACKAGE_ROOT, "dist-runtime", "extensions");
+  const distRoot = path.join(MERCLAW_PACKAGE_ROOT, "dist", "extensions");
   return [sourceRoot, runtimeRoot, distRoot].find(hasManifestDir);
 }
 
@@ -164,7 +164,7 @@ function uniqueCandidateDirs(candidates: CandidateDir[]): CandidateDir[] {
   );
 }
 
-export function listOpenClawPluginManifestMetadata(
+export function listMerClawPluginManifestMetadata(
   env: NodeJS.ProcessEnv = process.env,
 ): PluginManifestMetadataRecord[] {
   const candidates: CandidateDir[] = [];

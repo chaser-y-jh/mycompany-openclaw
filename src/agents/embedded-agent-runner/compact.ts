@@ -3,7 +3,7 @@ import os from "node:os";
 import { isAcpRuntimeSpawnAvailable } from "../../acp/runtime/availability.js";
 import type { ThinkLevel } from "../../auto-reply/thinking.js";
 import { resolveAgentModelFallbackValues } from "../../config/model-input.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import {
   captureCompactionCheckpointSnapshotAsync,
   cleanupCompactionCheckpointSnapshot,
@@ -56,7 +56,7 @@ import {
   applyAgentCompactionSettingsFromConfig,
   isSilentOverflowProneModel,
 } from "../agent-settings.js";
-import { createOpenClawCodingTools, resolveProcessToolScopeKey } from "../agent-tools.js";
+import { createMerClawCodingTools, resolveProcessToolScopeKey } from "../agent-tools.js";
 import { listActiveProcessSessionReferences } from "../bash-process-references.js";
 import {
   makeBootstrapWarn,
@@ -75,7 +75,7 @@ import {
 import { resolveContextWindowInfo } from "../context-window-guard.js";
 import { formatUserTime, resolveUserTimeFormat, resolveUserTimezone } from "../date-time.js";
 import { DEFAULT_CONTEXT_TOKENS, DEFAULT_MODEL, DEFAULT_PROVIDER } from "../defaults.js";
-import { resolveOpenClawReferencePaths } from "../docs-path.js";
+import { resolveMerClawReferencePaths } from "../docs-path.js";
 import { ensureSessionHeader } from "../embedded-agent-helpers.js";
 import { pickFallbackThinkingLevel } from "../embedded-agent-helpers.js";
 import { coerceToFailoverError, describeFailoverError } from "../failover-error.js";
@@ -91,7 +91,7 @@ import {
 } from "../model-auth.js";
 import { isFallbackSummaryError, runWithModelFallback } from "../model-fallback.js";
 import { supportsModelTools } from "../model-tool-support.js";
-import { ensureOpenClawModelsJson } from "../models-config.js";
+import { ensureMerClawModelsJson } from "../models-config.js";
 import { wrapStreamFnTextTransforms } from "../plugin-text-transforms.js";
 import { resolveAgentPromptSurfaceForSessionKey } from "../prompt-surface.js";
 import { registerProviderStreamForModel } from "../provider-stream.js";
@@ -192,7 +192,7 @@ function prepareCompactionSessionAgent(params: {
   effectiveModel: ProviderRuntimeModel;
   resolvedApiKey?: string;
   authStorage: unknown;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   provider: string;
   modelId: string;
   thinkLevel: ThinkLevel;
@@ -248,7 +248,7 @@ function prepareCompactionSessionAgent(params: {
 
 function resolveCompactionProviderStream(params: {
   effectiveModel: ProviderRuntimeModel;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentDir: string;
   effectiveWorkspace: string;
 }) {
@@ -582,7 +582,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
         : undefined,
     };
   };
-  await ensureOpenClawModelsJson(params.config, agentDir, {
+  await ensureMerClawModelsJson(params.config, agentDir, {
     workspaceDir: resolvedWorkspace,
   });
   const { model, error, authStorage, modelRegistry } = await resolveModelAsync(
@@ -772,7 +772,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
       });
 
     const runAbortController = new AbortController();
-    const toolsRaw = createOpenClawCodingTools({
+    const toolsRaw = createMerClawCodingTools({
       exec: {
         ...params.execOverrides,
         config: params.config,
@@ -853,7 +853,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
       sandboxToolPolicy: sandbox?.tools,
       sessionKey: sandboxSessionKey,
       // Intentionally omit explicit agentId: the core tools just built with
-      // createOpenClawCodingTools(...) also omit it, so both paths resolve
+      // createMerClawCodingTools(...) also omit it, so both paths resolve
       // agentId the same way via resolveAgentIdFromSessionKey(sessionKey).
       // Passing effectiveSkillAgentId here would diverge from the core-tool
       // policy for legacy/non-agent session keys where the two sources fall
@@ -981,7 +981,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
     const nativeCommandGuidanceLines = listRegisteredPluginAgentPromptGuidance({
       surface: promptSurface,
     });
-    const openClawReferences = await resolveOpenClawReferencePaths({
+    const merClawReferences = await resolveMerClawReferencePaths({
       workspaceDir: effectiveWorkspace,
       argv1: process.argv[1],
       cwd: effectiveCwd,
@@ -1018,8 +1018,8 @@ async function compactEmbeddedAgentSessionDirectOnce(
           defaultAgentId,
         }),
         skillsPrompt,
-        docsPath: openClawReferences.docsPath ?? undefined,
-        sourcePath: openClawReferences.sourcePath ?? undefined,
+        docsPath: merClawReferences.docsPath ?? undefined,
+        sourcePath: merClawReferences.sourcePath ?? undefined,
         promptMode,
         promptSurface,
         sourceReplyDeliveryMode: params.sourceReplyDeliveryMode,
@@ -1122,9 +1122,9 @@ async function compactEmbeddedAgentSessionDirectOnce(
         extensionFactories,
       });
       await resourceLoader.reload();
-      // DefaultResourceLoader.reload() rehydrates settings from disk and can drop OpenClaw
+      // DefaultResourceLoader.reload() rehydrates settings from disk and can drop MerClaw
       // compaction overrides applied in createPreparedEmbeddedAgentSettingsManager — same
-      // rehydration also restores OpenClaw runtime's auto-compaction (openclaw#75799), so re-apply
+      // rehydration also restores MerClaw runtime's auto-compaction (merclaw#75799), so re-apply
       // both guards. effectiveModel.baseUrl matches the surrounding scope so
       // auth-profile-injected baseUrls reach the endpoint-class detector.
       applyAgentCompactionSettingsFromConfig({
@@ -1158,7 +1158,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
         },
       });
       // The session runtime treats `tools` as a name allowlist during session creation. Pass the
-      // exact OpenClaw-managed registrations so custom tools survive startup.
+      // exact MerClaw-managed registrations so custom tools survive startup.
       const sessionToolAllowlist = toSessionToolAllowlist(collectRegisteredToolNames(customTools));
 
       const providerStreamFn = resolveCompactionProviderStream({

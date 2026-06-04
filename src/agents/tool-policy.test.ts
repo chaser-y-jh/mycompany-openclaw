@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { MerClawConfig } from "../config/config.js";
 import { pickSandboxToolPolicy } from "./sandbox-tool-policy.js";
 import { isToolAllowed, resolveSandboxToolPolicyForAgent } from "./sandbox/tool-policy.js";
 import type { SandboxToolPolicy } from "./sandbox/types.js";
@@ -34,8 +34,8 @@ describe("tool-policy", () => {
     expect(resolveToolProfilePolicy("nope")).toBeUndefined();
   });
 
-  it("includes core tool groups in group:openclaw", () => {
-    const group = TOOL_GROUPS["group:openclaw"];
+  it("includes core tool groups in group:merclaw", () => {
+    const group = TOOL_GROUPS["group:merclaw"];
     expect(group).toContain("browser");
     expect(group).toContain("message");
     expect(group).toContain("subagents");
@@ -126,7 +126,7 @@ describe("resolveSandboxToolPolicyForAgent", () => {
   it("keeps allow-all semantics when allow is []", () => {
     const cfg = {
       tools: { sandbox: { tools: { allow: [], deny: ["browser"] } } },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     const resolved = resolveSandboxToolPolicyForAgent(cfg, undefined);
     expect(resolved.sources.allow).toEqual({
@@ -144,7 +144,7 @@ describe("resolveSandboxToolPolicyForAgent", () => {
   it("auto-adds image to explicit allowlists unless denied", () => {
     const cfg = {
       tools: { sandbox: { tools: { allow: ["read"], deny: ["browser"] } } },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     const resolved = resolveSandboxToolPolicyForAgent(cfg, undefined);
     expect(resolved.allow).toEqual(["read", "image"]);
@@ -154,7 +154,7 @@ describe("resolveSandboxToolPolicyForAgent", () => {
   it("does not auto-add image when explicitly denied", () => {
     const cfg = {
       tools: { sandbox: { tools: { allow: ["read"], deny: ["image"] } } },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     const resolved = resolveSandboxToolPolicyForAgent(cfg, undefined);
     expect(resolved.allow).toEqual(["read"]);

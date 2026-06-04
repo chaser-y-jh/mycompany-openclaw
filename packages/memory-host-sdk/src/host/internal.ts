@@ -24,11 +24,11 @@ import {
   detectMime,
   estimateStringChars,
   runTasksWithConcurrency,
-} from "./openclaw-runtime-io.js";
+} from "./merclaw-runtime-io.js";
 import {
   resolveCanonicalRootMemoryFile,
   shouldSkipRootMemoryAuxiliaryPath,
-} from "./openclaw-runtime-memory.js";
+} from "./merclaw-runtime-memory.js";
 import { normalizeStringEntries, uniqueStrings } from "./string-utils.js";
 
 export { hashText } from "./hash.js";
@@ -125,7 +125,7 @@ function shouldDescendMemoryEntry(
   if (shouldSkipPath?.(entry.path)) {
     return false;
   }
-  return entry.kind === "directory" && entry.name !== ".openclaw-repair";
+  return entry.kind === "directory" && entry.name !== ".merclaw-repair";
 }
 
 async function collectMemoryFilesFromDir(

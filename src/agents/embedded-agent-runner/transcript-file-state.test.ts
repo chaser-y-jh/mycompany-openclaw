@@ -19,7 +19,7 @@ afterEach(async () => {
 
 describe("readTranscriptFileState", () => {
   it("skips malformed session entries without moving the active leaf", async () => {
-    const root = await makeRoot("openclaw-transcript-state-malformed-");
+    const root = await makeRoot("merclaw-transcript-state-malformed-");
     const sessionFile = path.join(root, "session.jsonl");
     await fs.writeFile(
       sessionFile,
@@ -148,7 +148,7 @@ describe("readTranscriptFileState", () => {
   });
 
   it("keeps assistant rows with legacy string content", async () => {
-    const root = await makeRoot("openclaw-transcript-state-assistant-string-");
+    const root = await makeRoot("merclaw-transcript-state-assistant-string-");
     const sessionFile = path.join(root, "session.jsonl");
     await fs.writeFile(
       sessionFile,
@@ -188,7 +188,7 @@ describe("readTranscriptFileState", () => {
   });
 
   it("preserves repair-supported assistant tool call payload shapes", async () => {
-    const root = await makeRoot("openclaw-transcript-state-tool-input-");
+    const root = await makeRoot("merclaw-transcript-state-tool-input-");
     const sessionFile = path.join(root, "session.jsonl");
     await fs.writeFile(
       sessionFile,
@@ -260,8 +260,8 @@ describe("readTranscriptFileState", () => {
     ]);
   });
 
-  it("preserves OpenClaw-authored non-model content blocks", async () => {
-    const root = await makeRoot("openclaw-transcript-state-openclaw-blocks-");
+  it("preserves MerClaw-authored non-model content blocks", async () => {
+    const root = await makeRoot("merclaw-transcript-state-merclaw-blocks-");
     const sessionFile = path.join(root, "session.jsonl");
     await fs.writeFile(
       sessionFile,
@@ -333,7 +333,7 @@ describe("readTranscriptFileState", () => {
   });
 
   it("preserves empty compaction summary entries as the active leaf", async () => {
-    const root = await makeRoot("openclaw-transcript-state-empty-compaction-");
+    const root = await makeRoot("merclaw-transcript-state-empty-compaction-");
     const sessionFile = path.join(root, "session.jsonl");
     await fs.writeFile(
       sessionFile,
@@ -383,7 +383,7 @@ describe("readTranscriptFileState", () => {
   });
 
   it("skips JSON-valid non-object rows", async () => {
-    const root = await makeRoot("openclaw-transcript-state-null-row-");
+    const root = await makeRoot("merclaw-transcript-state-null-row-");
     const sessionFile = path.join(root, "session.jsonl");
     await fs.writeFile(
       sessionFile,
@@ -416,7 +416,7 @@ describe("readTranscriptFileState", () => {
   });
 
   it("skips JSON-valid non-object rows before legacy migration", async () => {
-    const root = await makeRoot("openclaw-transcript-state-v1-null-row-");
+    const root = await makeRoot("merclaw-transcript-state-v1-null-row-");
     const sessionFile = path.join(root, "session.jsonl");
     await fs.writeFile(
       sessionFile,
@@ -455,7 +455,7 @@ describe("readTranscriptFileState", () => {
   });
 
   it("preserves legacy compaction keep indexes across JSON-valid non-object rows", async () => {
-    const root = await makeRoot("openclaw-transcript-state-v1-compaction-null-row-");
+    const root = await makeRoot("merclaw-transcript-state-v1-compaction-null-row-");
     const sessionFile = path.join(root, "session.jsonl");
     await fs.writeFile(
       sessionFile,
@@ -509,7 +509,7 @@ describe("readTranscriptFileState", () => {
   });
 
   it("relinks valid current rows past malformed parents", async () => {
-    const root = await makeRoot("openclaw-transcript-state-current-suffix-");
+    const root = await makeRoot("merclaw-transcript-state-current-suffix-");
     const sessionFile = path.join(root, "session.jsonl");
     await fs.writeFile(
       sessionFile,
@@ -554,7 +554,7 @@ describe("readTranscriptFileState", () => {
   });
 
   it("remaps compaction keep markers past malformed rows", async () => {
-    const root = await makeRoot("openclaw-transcript-state-compaction-marker-");
+    const root = await makeRoot("merclaw-transcript-state-compaction-marker-");
     const sessionFile = path.join(root, "session.jsonl");
     await fs.writeFile(
       sessionFile,
@@ -612,7 +612,7 @@ describe("readTranscriptFileState", () => {
   });
 
   it("keeps valid suffixes when a compaction marker points at a malformed root", async () => {
-    const root = await makeRoot("openclaw-transcript-state-compaction-root-marker-");
+    const root = await makeRoot("merclaw-transcript-state-compaction-root-marker-");
     const sessionFile = path.join(root, "session.jsonl");
     await fs.writeFile(
       sessionFile,
@@ -670,7 +670,7 @@ describe("readTranscriptFileState", () => {
   });
 
   it("remaps compaction keep markers through consecutive malformed rows", async () => {
-    const root = await makeRoot("openclaw-transcript-state-compaction-chain-marker-");
+    const root = await makeRoot("merclaw-transcript-state-compaction-chain-marker-");
     const sessionFile = path.join(root, "session.jsonl");
     await fs.writeFile(
       sessionFile,
@@ -735,7 +735,7 @@ describe("readTranscriptFileState", () => {
   });
 
   it("remaps malformed compaction markers to descendants on the active branch", async () => {
-    const root = await makeRoot("openclaw-transcript-state-compaction-branch-marker-");
+    const root = await makeRoot("merclaw-transcript-state-compaction-branch-marker-");
     const sessionFile = path.join(root, "session.jsonl");
     await fs.writeFile(
       sessionFile,
@@ -800,7 +800,7 @@ describe("readTranscriptFileState", () => {
   });
 
   it("does not hang on rejected parent cycles", async () => {
-    const root = await makeRoot("openclaw-transcript-state-rejected-cycle-");
+    const root = await makeRoot("merclaw-transcript-state-rejected-cycle-");
     const sessionFile = path.join(root, "session.jsonl");
     await fs.writeFile(
       sessionFile,
@@ -839,7 +839,7 @@ describe("readTranscriptFileState", () => {
   });
 
   it("drops missing parents reached through rejected rows before rewrite replay", async () => {
-    const root = await makeRoot("openclaw-transcript-state-rejected-missing-parent-");
+    const root = await makeRoot("merclaw-transcript-state-rejected-missing-parent-");
     const sessionFile = path.join(root, "session.jsonl");
     await fs.writeFile(
       sessionFile,
@@ -889,7 +889,7 @@ describe("readTranscriptFileState", () => {
   });
 
   it("drops labels targeting rejected entries before transcript rewrite replay", async () => {
-    const root = await makeRoot("openclaw-transcript-state-rejected-label-");
+    const root = await makeRoot("merclaw-transcript-state-rejected-label-");
     const sessionFile = path.join(root, "session.jsonl");
     await fs.writeFile(
       sessionFile,
@@ -965,7 +965,7 @@ describe("readTranscriptFileState", () => {
   });
 
   it("keeps legacy roots that are missing tree metadata", async () => {
-    const root = await makeRoot("openclaw-transcript-state-legacy-root-");
+    const root = await makeRoot("merclaw-transcript-state-legacy-root-");
     const sessionFile = path.join(root, "session.jsonl");
     await fs.writeFile(
       sessionFile,
@@ -1001,7 +1001,7 @@ describe("readTranscriptFileState", () => {
   });
 
   it("relinks migrated legacy suffixes past malformed rows", async () => {
-    const root = await makeRoot("openclaw-transcript-state-legacy-suffix-");
+    const root = await makeRoot("merclaw-transcript-state-legacy-suffix-");
     const sessionFile = path.join(root, "session.jsonl");
     await fs.writeFile(
       sessionFile,

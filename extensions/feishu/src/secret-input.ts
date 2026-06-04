@@ -1,1 +1,1 @@
-export { buildSecretInputSchema, hasConfiguredSecretInput } from "openclaw/plugin-sdk/secret-input";
+export { buildSecretInputSchema, hasConfiguredSecretInput } from "merclaw/plugin-sdk/secret-input";

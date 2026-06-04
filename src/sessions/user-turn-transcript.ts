@@ -1,5 +1,5 @@
 import path from "node:path";
-import { mimeTypeFromFilePath } from "@openclaw/media-core/mime";
+import { mimeTypeFromFilePath } from "@merclaw/media-core/mime";
 import type { AgentMessage } from "../agents/runtime/index.js";
 import { appendSessionTranscriptMessage } from "../config/sessions/transcript-append.js";
 import {
@@ -318,7 +318,7 @@ function isUserMessage(message: AgentMessage): message is PersistedUserTurnMessa
 }
 
 function isBeforeAgentRunBlockedMessage(message: AgentMessage): boolean {
-  const marker = (message as { __openclaw?: { beforeAgentRunBlocked?: unknown } })["__openclaw"]
+  const marker = (message as { __merclaw?: { beforeAgentRunBlocked?: unknown } })["__merclaw"]
     ?.beforeAgentRunBlocked;
   return marker !== undefined;
 }

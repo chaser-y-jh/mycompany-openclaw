@@ -1,12 +1,12 @@
 import type { Block, KnownBlock } from "@slack/web-api";
-import { reduceInteractiveReply } from "openclaw/plugin-sdk/interactive-runtime";
+import { reduceInteractiveReply } from "merclaw/plugin-sdk/interactive-runtime";
 import type {
   InteractiveReply,
   MessagePresentation,
   MessagePresentationButtonsBlock,
   MessagePresentationSelectBlock,
-} from "openclaw/plugin-sdk/interactive-runtime";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/interactive-runtime";
+import { normalizeOptionalString } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { SLACK_REPLY_BUTTON_ACTION_ID, SLACK_REPLY_SELECT_ACTION_ID } from "./reply-action-ids.js";
 import { truncateSlackText } from "./truncate.js";
 
@@ -54,7 +54,7 @@ function readSlackBlockId(block: SlackBlock): string | undefined {
   return typeof value === "string" ? value : undefined;
 }
 
-function readSlackOpenClawBlockIndex(blockId: string, prefix: string): number | undefined {
+function readSlackMerClawBlockIndex(blockId: string, prefix: string): number | undefined {
   if (!blockId.startsWith(prefix)) {
     return undefined;
   }
@@ -62,7 +62,7 @@ function readSlackOpenClawBlockIndex(blockId: string, prefix: string): number | 
   return Number.isSafeInteger(value) && value > 0 ? value : undefined;
 }
 
-/** Resolve existing OpenClaw Block Kit indexes so appended controls keep stable unique IDs. */
+/** Resolve existing MerClaw Block Kit indexes so appended controls keep stable unique IDs. */
 export function resolveSlackInteractiveBlockOffsets(
   blocks?: readonly SlackBlock[],
 ): SlackInteractiveBlockRenderOptions {
@@ -75,11 +75,11 @@ export function resolveSlackInteractiveBlockOffsets(
     }
     buttonIndexOffset = Math.max(
       buttonIndexOffset,
-      readSlackOpenClawBlockIndex(blockId, "openclaw_reply_buttons_") ?? 0,
+      readSlackMerClawBlockIndex(blockId, "merclaw_reply_buttons_") ?? 0,
     );
     selectIndexOffset = Math.max(
       selectIndexOffset,
-      readSlackOpenClawBlockIndex(blockId, "openclaw_reply_select_") ?? 0,
+      readSlackMerClawBlockIndex(blockId, "merclaw_reply_select_") ?? 0,
     );
   }
   return { buttonIndexOffset, selectIndexOffset };
@@ -148,7 +148,7 @@ export function buildSlackInteractiveBlocks(
       }
       state.blocks.push({
         type: "actions",
-        block_id: `openclaw_reply_buttons_${++state.buttonIndex}`,
+        block_id: `merclaw_reply_buttons_${++state.buttonIndex}`,
         elements,
       });
       return state;
@@ -161,7 +161,7 @@ export function buildSlackInteractiveBlocks(
     }
     state.blocks.push({
       type: "actions",
-      block_id: `openclaw_reply_select_${++state.selectIndex}`,
+      block_id: `merclaw_reply_select_${++state.selectIndex}`,
       elements: [
         {
           type: "static_select",
@@ -288,7 +288,7 @@ function buildSlackPresentationButtonBlock(
   return elements.length > 0
     ? {
         type: "actions",
-        block_id: `openclaw_reply_buttons_${buttonIndex}`,
+        block_id: `merclaw_reply_buttons_${buttonIndex}`,
         elements,
       }
     : undefined;
@@ -304,7 +304,7 @@ function buildSlackPresentationSelectBlock(
   return options.length > 0
     ? {
         type: "actions",
-        block_id: `openclaw_reply_select_${selectIndex}`,
+        block_id: `merclaw_reply_select_${selectIndex}`,
         elements: [
           {
             type: "static_select",

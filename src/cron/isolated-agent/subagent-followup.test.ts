@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // vi.hoisted runs before module imports, ensuring FAST_TEST_MODE is picked up.
 vi.hoisted(() => {
-  process.env.OPENCLAW_TEST_FAST = "1";
+  process.env.MERCLAW_TEST_FAST = "1";
 });
 
 import { expectsSubagentFollowup, isLikelyInterimCronMessage } from "./subagent-followup-hints.js";
@@ -163,7 +163,7 @@ describe("readDescendantSubagentFallbackReply", () => {
     vi.mocked(listDescendantRunsForRequester).mockReturnValue([
       createDescendantRun({
         resultText: "fresh recovered output",
-        executionTranscriptFile: "/tmp/openclaw-internal-run.jsonl",
+        executionTranscriptFile: "/tmp/merclaw-internal-run.jsonl",
       }),
     ]);
     vi.mocked(readLatestAssistantReply).mockResolvedValue("stale visible transcript");
@@ -178,7 +178,7 @@ describe("readDescendantSubagentFallbackReply", () => {
     vi.mocked(listDescendantRunsForRequester).mockReturnValue([
       createDescendantRun({
         resultText: null,
-        executionTranscriptFile: "/tmp/openclaw-empty-internal-run.jsonl",
+        executionTranscriptFile: "/tmp/merclaw-empty-internal-run.jsonl",
       }),
     ]);
     vi.mocked(readLatestAssistantReply).mockClear();

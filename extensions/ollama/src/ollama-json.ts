@@ -1,4 +1,4 @@
 export {
   parseJsonObjectPreservingUnsafeIntegers,
   parseJsonPreservingUnsafeIntegers,
-} from "openclaw/plugin-sdk/json-unsafe-integers";
+} from "merclaw/plugin-sdk/json-unsafe-integers";

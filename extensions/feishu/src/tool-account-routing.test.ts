@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import type { OpenClawPluginApi } from "../runtime-api.js";
+import type { MerClawPluginApi } from "../runtime-api.js";
 import { createToolFactoryHarness } from "./tool-factory-test-harness.js";
 
 const createFeishuClientMock = vi.fn((account: { appId?: string } | undefined) => ({
@@ -35,7 +35,7 @@ function createConfig(params: {
     perm?: boolean;
   };
   defaultAccount?: string;
-}): OpenClawPluginApi["config"] {
+}): MerClawPluginApi["config"] {
   return {
     channels: {
       feishu: {
@@ -55,7 +55,7 @@ function createConfig(params: {
         },
       },
     },
-  } as OpenClawPluginApi["config"];
+  } as MerClawPluginApi["config"];
 }
 
 function clientAppIdAt(index: number): string | undefined {
@@ -236,7 +236,7 @@ describe("feishu tool account routing", () => {
           },
         },
       },
-    } as OpenClawPluginApi["config"]);
+    } as MerClawPluginApi["config"]);
     registerFeishuWikiTools(api);
 
     const tool = resolveTool("feishu_wiki", { agentAccountId: "b" });

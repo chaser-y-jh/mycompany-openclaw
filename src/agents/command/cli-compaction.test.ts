@@ -1,10 +1,10 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { CURRENT_SESSION_VERSION } from "openclaw/plugin-sdk/agent-sessions";
+import { CURRENT_SESSION_VERSION } from "merclaw/plugin-sdk/agent-sessions";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { SessionEntry } from "../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import type { ContextEngine } from "../../context-engine/types.js";
 import {
   resetCliCompactionTestDeps,
@@ -75,7 +75,7 @@ describe("runCliTurnCompactionLifecycle", () => {
   let tmpDir: string;
 
   beforeEach(async () => {
-    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-cli-compaction-"));
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-cli-compaction-"));
   });
 
   afterEach(async () => {
@@ -139,7 +139,7 @@ describe("runCliTurnCompactionLifecycle", () => {
     });
 
     const updatedEntry = await runCliTurnCompactionLifecycle({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as MerClawConfig,
       sessionId,
       sessionKey,
       sessionEntry,
@@ -243,7 +243,7 @@ describe("runCliTurnCompactionLifecycle", () => {
     });
 
     const updatedEntry = await runCliTurnCompactionLifecycle({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as MerClawConfig,
       sessionId,
       sessionKey,
       sessionEntry,
@@ -325,7 +325,7 @@ describe("runCliTurnCompactionLifecycle", () => {
     });
 
     const updatedEntry = await runCliTurnCompactionLifecycle({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as MerClawConfig,
       sessionId,
       sessionKey,
       sessionEntry,
@@ -432,7 +432,7 @@ describe("runCliTurnCompactionLifecycle", () => {
     });
 
     const updatedEntry = await runCliTurnCompactionLifecycle({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as MerClawConfig,
       sessionId,
       sessionKey,
       sessionEntry,
@@ -452,10 +452,10 @@ describe("runCliTurnCompactionLifecycle", () => {
   });
 
   it("ignores stale native harness ids when the active provider no longer matches", async () => {
-    const sessionKey = "agent:main:openclaw-after-codex";
-    const sessionId = "session-openclaw-after-codex";
-    const sessionFile = path.join(tmpDir, "session-openclaw-after-codex.jsonl");
-    const storePath = path.join(tmpDir, "sessions-openclaw-after-codex.json");
+    const sessionKey = "agent:main:merclaw-after-codex";
+    const sessionId = "session-merclaw-after-codex";
+    const sessionFile = path.join(tmpDir, "session-merclaw-after-codex.jsonl");
+    const storePath = path.join(tmpDir, "sessions-merclaw-after-codex.json");
     await writeSessionFile({ sessionFile, sessionId });
 
     const sessionEntry: SessionEntry = {
@@ -498,7 +498,7 @@ describe("runCliTurnCompactionLifecycle", () => {
     });
 
     await runCliTurnCompactionLifecycle({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as MerClawConfig,
       sessionId,
       sessionKey,
       sessionEntry,
@@ -507,7 +507,7 @@ describe("runCliTurnCompactionLifecycle", () => {
       sessionAgentId: "main",
       workspaceDir: tmpDir,
       agentDir: tmpDir,
-      provider: "openclaw",
+      provider: "merclaw",
       model: "sonnet-4.6",
     });
 
@@ -566,7 +566,7 @@ describe("runCliTurnCompactionLifecycle", () => {
 
     await expect(
       runCliTurnCompactionLifecycle({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as MerClawConfig,
         sessionId,
         sessionKey,
         sessionEntry,
@@ -646,7 +646,7 @@ describe("runCliTurnCompactionLifecycle", () => {
     });
 
     const result = await runCliTurnCompactionLifecycle({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as MerClawConfig,
       sessionId,
       sessionKey,
       sessionEntry,
@@ -718,7 +718,7 @@ describe("runCliTurnCompactionLifecycle", () => {
 
     await expect(
       runCliTurnCompactionLifecycle({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as MerClawConfig,
         sessionId,
         sessionKey,
         sessionEntry,
@@ -812,7 +812,7 @@ describe("runCliTurnCompactionLifecycle", () => {
     });
 
     await runCliTurnCompactionLifecycle({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as MerClawConfig,
       sessionId,
       sessionKey,
       sessionEntry,
@@ -893,7 +893,7 @@ describe("runCliTurnCompactionLifecycle", () => {
     });
 
     const updatedEntry = await runCliTurnCompactionLifecycle({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as MerClawConfig,
       sessionId,
       sessionKey,
       sessionEntry,
@@ -977,7 +977,7 @@ describe("runCliTurnCompactionLifecycle", () => {
     });
 
     const updatedEntry = await runCliTurnCompactionLifecycle({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as MerClawConfig,
       sessionId,
       sessionKey,
       sessionEntry,
@@ -1073,7 +1073,7 @@ describe("runCliTurnCompactionLifecycle", () => {
     });
 
     const updatedEntry = await runCliTurnCompactionLifecycle({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as MerClawConfig,
       sessionId,
       sessionKey,
       sessionEntry,
@@ -1151,7 +1151,7 @@ describe("runCliTurnCompactionLifecycle", () => {
     });
 
     const updatedEntry = await runCliTurnCompactionLifecycle({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as MerClawConfig,
       sessionId,
       sessionKey,
       sessionEntry,
@@ -1233,7 +1233,7 @@ describe("runCliTurnCompactionLifecycle", () => {
     });
 
     const updatedEntry = await runCliTurnCompactionLifecycle({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as MerClawConfig,
       sessionId,
       sessionKey,
       sessionEntry,
@@ -1295,7 +1295,7 @@ describe("runCliTurnCompactionLifecycle", () => {
     });
 
     await runCliTurnCompactionLifecycle({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as MerClawConfig,
       sessionId,
       sessionKey,
       sessionEntry,
@@ -1366,7 +1366,7 @@ describe("runCliTurnCompactionLifecycle", () => {
 
     vi.useFakeTimers();
     const pending = runCliTurnCompactionLifecycle({
-      cfg: { agents: { defaults: { compaction: { timeoutSeconds: 1 } } } } as OpenClawConfig,
+      cfg: { agents: { defaults: { compaction: { timeoutSeconds: 1 } } } } as MerClawConfig,
       sessionId,
       sessionKey,
       sessionEntry,

@@ -6,7 +6,7 @@ import {
   createPluginStateKeyedStoreForTests,
   createPluginStateSyncKeyedStoreForTests,
   resetPluginStateStoreForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
+} from "merclaw/plugin-sdk/plugin-state-test-runtime";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   TELEGRAM_MESSAGE_DISPATCH_DEDUPE_MAX_ENTRIES,
@@ -27,7 +27,7 @@ type SyncMessageDispatchDedupeStore = Extract<MessageDispatchDedupeStore, { entr
 const tempDirs: string[] = [];
 
 function createStorePath(): string {
-  const dir = mkdtempSync(path.join(tmpdir(), "openclaw-telegram-dispatch-dedupe-"));
+  const dir = mkdtempSync(path.join(tmpdir(), "merclaw-telegram-dispatch-dedupe-"));
   tempDirs.push(dir);
   return path.join(dir, "sessions.json");
 }

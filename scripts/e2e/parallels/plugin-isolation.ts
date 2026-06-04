@@ -15,7 +15,7 @@ export function providerOnlyPluginId(modelId: string, fallbackPluginId: string):
 export function posixProviderOnlyPluginIsolationScript(options: PluginIsolationOptions): string {
   const nodeCommand = shellQuote(options.nodeCommand ?? "node");
   const homeEnv = options.homeFallback
-    ? `OPENCLAW_PARALLELS_HOME=${shellQuote(options.homeFallback)} `
+    ? `MERCLAW_PARALLELS_HOME=${shellQuote(options.homeFallback)} `
     : "";
   return `/usr/bin/env ${homeEnv}${nodeCommand} - <<'JS'
 ${providerOnlyPluginIsolationNodeScript(options)}
@@ -27,17 +27,17 @@ export function windowsProviderOnlyPluginIsolationScript(options: PluginIsolatio
     modelId: options.modelId,
     pluginId: providerOnlyPluginId(options.modelId, options.fallbackPluginId),
   });
-  return `$env:OPENCLAW_PARALLELS_PLUGIN_ISOLATION = @'
+  return `$env:MERCLAW_PARALLELS_PLUGIN_ISOLATION = @'
 ${payloadJson}
 '@
-$isolationScriptPath = Join-Path ([System.IO.Path]::GetTempPath()) 'openclaw-parallels-plugin-isolation.cjs'
+$isolationScriptPath = Join-Path ([System.IO.Path]::GetTempPath()) 'merclaw-parallels-plugin-isolation.cjs'
 @'
 ${providerOnlyPluginIsolationNodeSource()}
 '@ | Set-Content -Path $isolationScriptPath -Encoding UTF8
 node.exe $isolationScriptPath
 if ($LASTEXITCODE -ne 0) { throw "plugin isolation failed with exit code $LASTEXITCODE" }
 Remove-Item $isolationScriptPath -Force -ErrorAction SilentlyContinue
-Remove-Item Env:OPENCLAW_PARALLELS_PLUGIN_ISOLATION -Force -ErrorAction SilentlyContinue`;
+Remove-Item Env:MERCLAW_PARALLELS_PLUGIN_ISOLATION -Force -ErrorAction SilentlyContinue`;
 }
 
 function providerOnlyPluginIsolationNodeScript(options: PluginIsolationOptions): string {
@@ -46,7 +46,7 @@ function providerOnlyPluginIsolationNodeScript(options: PluginIsolationOptions):
     modelId: options.modelId,
     pluginId: providerOnlyPluginId(options.modelId, options.fallbackPluginId),
   });
-  return `process.env.OPENCLAW_PARALLELS_PLUGIN_ISOLATION = ${JSON.stringify(payloadJson)};
+  return `process.env.MERCLAW_PARALLELS_PLUGIN_ISOLATION = ${JSON.stringify(payloadJson)};
 ${providerOnlyPluginIsolationNodeSource()}`;
 }
 
@@ -54,14 +54,14 @@ function providerOnlyPluginIsolationNodeSource(): string {
   return String.raw`const fs = require("node:fs");
 const path = require("node:path");
 
-const payload = JSON.parse(process.env.OPENCLAW_PARALLELS_PLUGIN_ISOLATION || "{}");
+const payload = JSON.parse(process.env.MERCLAW_PARALLELS_PLUGIN_ISOLATION || "{}");
 const home =
-  process.env.OPENCLAW_PARALLELS_HOME ||
+  process.env.MERCLAW_PARALLELS_HOME ||
   payload.homeFallback ||
   process.env.HOME ||
   process.env.USERPROFILE ||
   "/root";
-const configPath = path.join(home, ".openclaw", "openclaw.json");
+const configPath = path.join(home, ".merclaw", "merclaw.json");
 const stateDir = path.dirname(configPath);
 const modelId = String(payload.modelId || "");
 const allowedPluginId = String(payload.pluginId || "").trim();
@@ -117,7 +117,7 @@ if (providerEntry && typeof providerEntry === "object" && !Array.isArray(provide
   }
 }
 
-fs.rmSync(path.join(stateDir, "npm", "node_modules", "@openclaw", "codex"), {
+fs.rmSync(path.join(stateDir, "npm", "node_modules", "@merclaw", "codex"), {
   recursive: true,
   force: true,
 });

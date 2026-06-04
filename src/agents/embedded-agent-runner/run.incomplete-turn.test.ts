@@ -1,5 +1,5 @@
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { MerClawConfig } from "../../config/config.js";
 import {
   hasCommittedMessagingToolDeliveryEvidence,
   hasOutboundDeliveryEvidence,
@@ -307,7 +307,7 @@ describe("runEmbeddedAgent incomplete-turn safety", () => {
             },
           ],
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
     });
 
     expect(mockedRunEmbeddedAttempt).toHaveBeenCalledTimes(3);
@@ -346,7 +346,7 @@ describe("runEmbeddedAgent incomplete-turn safety", () => {
           },
           list: [{ id: "main" }],
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
     });
 
     expect(result.payloads).toEqual([
@@ -421,7 +421,7 @@ describe("runEmbeddedAgent incomplete-turn safety", () => {
         agents: {
           list: [{ id: "main" }],
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
     });
 
     // Two retries (strict-agentic retry cap) plus the original attempt = 3 calls.
@@ -470,7 +470,7 @@ describe("runEmbeddedAgent incomplete-turn safety", () => {
           },
           list: [{ id: "main" }],
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
     });
 
     // Default contract: 1 retry then falls through. Should NOT surface the
@@ -2674,7 +2674,7 @@ describe("runEmbeddedAgent incomplete-turn safety", () => {
     const result = await runEmbeddedAgent({
       ...overflowBaseRunParams,
       prompt:
-        "made a bunch of improvements to the student's source code (openclaw) this weekend, along with a few other maintainers. hopefully he will be more proactive now",
+        "made a bunch of improvements to the student's source code (merclaw) this weekend, along with a few other maintainers. hopefully he will be more proactive now",
       provider: "openai",
       model: "gpt-5.4",
       runId: "run-strict-agentic-casual-discord-status",
@@ -2682,7 +2682,7 @@ describe("runEmbeddedAgent incomplete-turn safety", () => {
         agents: {
           list: [{ id: "main" }],
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
     });
 
     expect(mockedRunEmbeddedAttempt).toHaveBeenCalledTimes(1);

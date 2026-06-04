@@ -1,8 +1,8 @@
 {
-  "name": "@openclaw/qa-channel",
+  "name": "@merclaw/qa-channel",
   "version": "2026.5.31",
   "private": true,
-  "description": "OpenClaw QA synthetic channel plugin",
+  "description": "MerClaw QA synthetic channel plugin",
   "type": "module",
   "exports": {
     ".": "./index.ts",
@@ -15,18 +15,18 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*",
-    "openclaw": "2026.5.28"
+    "@merclaw/plugin-sdk": "workspace:*",
+    "merclaw": "2026.5.28"
   },
   "peerDependencies": {
-    "openclaw": ">=2026.5.31"
+    "merclaw": ">=2026.5.31"
   },
   "peerDependenciesMeta": {
-    "openclaw": {
+    "merclaw": {
       "optional": true
     }
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ],
@@ -38,7 +38,7 @@
       "detailLabel": "QA Channel",
       "docsPath": "/channels/qa-channel",
       "docsLabel": "qa-channel",
-      "blurb": "Synthetic Slack-class transport for automated OpenClaw QA scenarios.",
+      "blurb": "Synthetic Slack-class transport for automated MerClaw QA scenarios.",
       "systemImage": "checklist",
       "order": 999,
       "exposure": {

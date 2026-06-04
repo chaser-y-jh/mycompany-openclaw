@@ -1,5 +1,5 @@
 import type { MessageOptions, SessionEvent, SessionEventType } from "@github/copilot-sdk";
-import type { AgentMessage } from "openclaw/plugin-sdk/agent-harness-runtime";
+import type { AgentMessage } from "merclaw/plugin-sdk/agent-harness-runtime";
 import {
   buildCopilotAssistantUsage,
   normalizeCopilotUsage,

@@ -3,13 +3,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DEFAULT_CONTEXT_TOKENS } from "../agents/defaults.js";
 import type { PluginManifestRegistry } from "../plugins/manifest-registry.js";
 import { applyModelDefaults } from "./defaults.js";
-import type { OpenClawConfig } from "./types.js";
+import type { MerClawConfig } from "./types.js";
 import { validateConfigObjectWithPlugins } from "./validation.js";
 
 describe("applyModelDefaults", () => {
   beforeEach(() => {
     vi.stubEnv(
-      "OPENCLAW_BUNDLED_PLUGINS_DIR",
+      "MERCLAW_BUNDLED_PLUGINS_DIR",
       path.resolve(import.meta.dirname, "../../extensions"),
     );
   });
@@ -40,7 +40,7 @@ describe("applyModelDefaults", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies MerClawConfig;
   }
 
   function buildMistralProviderConfig(overrides?: {
@@ -69,7 +69,7 @@ describe("applyModelDefaults", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies MerClawConfig;
   }
 
   function buildCustomProviderManifestRegistry() {
@@ -85,7 +85,7 @@ describe("applyModelDefaults", () => {
           origin: "config",
           rootDir: "/tmp/custom-provider-plugin",
           source: "test",
-          manifestPath: "/tmp/custom-provider-plugin/openclaw.plugin.json",
+          manifestPath: "/tmp/custom-provider-plugin/merclaw.plugin.json",
           modelIdNormalization: {
             providers: {
               myproxy: {
@@ -112,7 +112,7 @@ describe("applyModelDefaults", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies MerClawConfig;
     const next = applyModelDefaults(cfg);
 
     expect(next.agents?.defaults?.models?.["anthropic/claude-opus-4-8"]?.alias).toBe("opus");
@@ -128,7 +128,7 @@ describe("applyModelDefaults", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies MerClawConfig;
 
     const next = applyModelDefaults(cfg);
 
@@ -146,7 +146,7 @@ describe("applyModelDefaults", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies MerClawConfig;
 
     const next = applyModelDefaults(cfg);
 
@@ -168,7 +168,7 @@ describe("applyModelDefaults", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies MerClawConfig;
 
     const next = applyModelDefaults(cfg);
 
@@ -187,7 +187,7 @@ describe("applyModelDefaults", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies MerClawConfig;
 
     const next = applyModelDefaults(cfg);
 
@@ -210,7 +210,7 @@ describe("applyModelDefaults", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies MerClawConfig;
 
     const next = applyModelDefaults(cfg);
 
@@ -239,7 +239,7 @@ describe("applyModelDefaults", () => {
           },
         ],
       },
-    } satisfies OpenClawConfig;
+    } satisfies MerClawConfig;
 
     const next = applyModelDefaults(cfg);
 
@@ -274,7 +274,7 @@ describe("applyModelDefaults", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies MerClawConfig;
 
     const next = applyModelDefaults(cfg);
 
@@ -303,7 +303,7 @@ describe("applyModelDefaults", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies MerClawConfig;
 
     const next = applyModelDefaults(cfg);
 
@@ -420,7 +420,7 @@ describe("applyModelDefaults", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies MerClawConfig;
 
     const next = applyModelDefaults(cfg);
     const provider = next.models?.providers?.anthropic;

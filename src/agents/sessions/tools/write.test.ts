@@ -16,7 +16,7 @@ describe("write tool", () => {
   });
 
   async function createTempPath(name = "demo.txt") {
-    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-write-tool-"));
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-write-tool-"));
     return path.join(tmpDir, name);
   }
 

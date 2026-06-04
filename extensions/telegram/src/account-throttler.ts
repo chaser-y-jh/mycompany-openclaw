@@ -1,4 +1,4 @@
-import { parseStrictInteger } from "openclaw/plugin-sdk/number-runtime";
+import { parseStrictInteger } from "merclaw/plugin-sdk/number-runtime";
 import { apiThrottler } from "./bot.runtime.js";
 
 type ApiThrottlerTransformer = ReturnType<typeof apiThrottler>;

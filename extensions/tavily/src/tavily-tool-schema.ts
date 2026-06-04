@@ -1,1 +1,1 @@
-export { optionalStringEnum } from "openclaw/plugin-sdk/channel-actions";
+export { optionalStringEnum } from "merclaw/plugin-sdk/channel-actions";

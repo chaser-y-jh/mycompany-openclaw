@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { parseFiniteNumber } from "openclaw/plugin-sdk/number-runtime";
+import { parseFiniteNumber } from "merclaw/plugin-sdk/number-runtime";
 
 export type MemoryConfig = {
   embedding: {
@@ -31,7 +31,7 @@ const LEGACY_STATE_DIRS: string[] = [];
 
 function resolveDefaultDbPath(): string {
   const home = homedir();
-  const preferred = join(home, ".openclaw", "memory", "lancedb");
+  const preferred = join(home, ".merclaw", "memory", "lancedb");
   try {
     if (fs.existsSync(preferred)) {
       return preferred;
@@ -284,7 +284,7 @@ export const memoryConfigSchema = {
     },
     dbPath: {
       label: "Database Path",
-      placeholder: "~/.openclaw/memory/lancedb",
+      placeholder: "~/.merclaw/memory/lancedb",
       advanced: true,
       help: "Local filesystem path or cloud storage URI (s3://, gs://) for LanceDB database",
     },

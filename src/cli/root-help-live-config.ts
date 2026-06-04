@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import type { RootHelpRenderOptions } from "./program/root-help.js";
 
 function hasEntries(value: object | undefined): boolean {
@@ -9,7 +9,7 @@ function hasListEntries(value: string[] | undefined): boolean {
   return Array.isArray(value) && value.length > 0;
 }
 
-export function hasPluginHelpAffectingConfig(config: OpenClawConfig | null | undefined): boolean {
+export function hasPluginHelpAffectingConfig(config: MerClawConfig | null | undefined): boolean {
   const plugins = config?.plugins;
   if (!plugins) {
     return false;
@@ -27,7 +27,7 @@ export function hasPluginHelpAffectingConfig(config: OpenClawConfig | null | und
 
 export function hasPluginHelpAffectingEnv(env: NodeJS.ProcessEnv): boolean {
   return Boolean(
-    env.OPENCLAW_BUNDLED_PLUGINS_DIR?.trim() || env.OPENCLAW_DISABLE_BUNDLED_PLUGINS?.trim(),
+    env.MERCLAW_BUNDLED_PLUGINS_DIR?.trim() || env.MERCLAW_DISABLE_BUNDLED_PLUGINS?.trim(),
   );
 }
 

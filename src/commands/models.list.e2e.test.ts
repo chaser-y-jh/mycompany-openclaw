@@ -382,11 +382,11 @@ describe("models list/status", () => {
   }
 
   async function writeWorkspaceAuthEvidencePlugin(workspaceDir: string) {
-    const pluginDir = path.join(workspaceDir, ".openclaw", "extensions", "workspace-cloud");
+    const pluginDir = path.join(workspaceDir, ".merclaw", "extensions", "workspace-cloud");
     await fs.mkdir(pluginDir, { recursive: true });
     await fs.writeFile(path.join(pluginDir, "index.ts"), "export default {}\n", "utf8");
     await fs.writeFile(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "merclaw.plugin.json"),
       JSON.stringify({
         id: "workspace-cloud",
         configSchema: { type: "object" },
@@ -511,7 +511,7 @@ describe("models list/status", () => {
   });
 
   it("models list uses trusted workspace plugin auth evidence for configured rows", async () => {
-    const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-models-list-auth-"));
+    const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-models-list-auth-"));
     const workspaceDir = path.join(tempRoot, "workspace");
     const bundledDir = path.join(tempRoot, "bundled");
     const stateDir = path.join(tempRoot, "state");
@@ -552,8 +552,8 @@ describe("models list/status", () => {
     try {
       await withEnvAsync(
         {
-          OPENCLAW_BUNDLED_PLUGINS_DIR: bundledDir,
-          OPENCLAW_STATE_DIR: stateDir,
+          MERCLAW_BUNDLED_PLUGINS_DIR: bundledDir,
+          MERCLAW_STATE_DIR: stateDir,
           WORKSPACE_CLOUD_CREDENTIALS: credentialsPath,
         },
         () => modelsListCommand({ all: true, provider: "workspace-cloud", json: true }, runtime),

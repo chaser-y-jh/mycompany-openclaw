@@ -1,4 +1,4 @@
-import { optionalPositiveIntegerSchema } from "openclaw/plugin-sdk/channel-actions";
+import { optionalPositiveIntegerSchema } from "merclaw/plugin-sdk/channel-actions";
 import { Type } from "typebox";
 
 export function createTelegramPollExtraToolSchemas() {

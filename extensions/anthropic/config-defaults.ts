@@ -1,8 +1,8 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/plugin-entry";
+import type { MerClawConfig } from "merclaw/plugin-sdk/plugin-entry";
 import {
   isRecord,
   normalizeLowercaseStringOrEmpty,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/string-coerce-runtime";
 import {
   resolveClaudeCliAnthropicModelRefs,
   resolveKnownAnthropicModelRef,
@@ -21,7 +21,7 @@ function normalizeProviderId(provider: string): string {
 }
 
 function resolveAnthropicDefaultAuthMode(
-  config: OpenClawConfig,
+  config: MerClawConfig,
   env: NodeJS.ProcessEnv,
 ): "api_key" | "oauth" | null {
   const profiles = config.auth?.profiles ?? {};
@@ -126,7 +126,7 @@ function isAnthropicCacheRetentionTarget(
   );
 }
 
-function usesClaudeCliModelSelection(config: OpenClawConfig): boolean {
+function usesClaudeCliModelSelection(config: MerClawConfig): boolean {
   const primary = resolveModelPrimaryValue(
     config.agents?.defaults?.model as
       | string
@@ -150,7 +150,7 @@ function usesClaudeCliModelSelection(config: OpenClawConfig): boolean {
   });
 }
 
-function usesSelectedClaudeCliAuthProfile(config: OpenClawConfig): boolean {
+function usesSelectedClaudeCliAuthProfile(config: MerClawConfig): boolean {
   const profiles = config.auth?.profiles ?? {};
   const orderedProfileIds = [
     ...(config.auth?.order?.anthropic ?? []),
@@ -236,7 +236,7 @@ function collectClaudeCliRuntimeRefsFromModelMap(
   return [...refs];
 }
 
-function collectClaudeCliRuntimeRefsFromConfig(config: OpenClawConfig): string[] {
+function collectClaudeCliRuntimeRefsFromConfig(config: MerClawConfig): string[] {
   const refs = new Set<string>(
     collectClaudeCliRuntimeRefs(
       config.agents?.defaults?.model as
@@ -285,9 +285,9 @@ export function normalizeAnthropicProviderConfigForProvider<
 }
 
 export function applyAnthropicConfigDefaults(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   env: NodeJS.ProcessEnv;
-}): OpenClawConfig {
+}): MerClawConfig {
   const defaults = params.config.agents?.defaults;
   if (!defaults) {
     return params.config;

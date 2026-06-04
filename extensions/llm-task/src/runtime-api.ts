@@ -1,1 +1,1 @@
-export { resolvePreferredOpenClawTmpDir, withTempWorkspace } from "openclaw/plugin-sdk/temp-path";
+export { resolvePreferredMerClawTmpDir, withTempWorkspace } from "merclaw/plugin-sdk/temp-path";

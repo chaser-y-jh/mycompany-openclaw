@@ -1,9 +1,9 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { CURRENT_SESSION_VERSION } from "openclaw/plugin-sdk/agent-sessions";
+import { CURRENT_SESSION_VERSION } from "merclaw/plugin-sdk/agent-sessions";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { registerLegacyContextEngine } from "../../context-engine/legacy.registration.js";
 import {
   registerContextEngine,
@@ -84,26 +84,26 @@ const mockBuildActiveMusicGenerationTaskPromptContextForSession = vi.mocked(
 );
 
 function wrappedPluginSystemContext(text: string): string {
-  return `---\n\nOpenClaw plugin-injected system context. This block is not workspace file content.\n\n${text}\n\n---`;
+  return `---\n\nMerClaw plugin-injected system context. This block is not workspace file content.\n\n${text}\n\n---`;
 }
 
 function createTestMcpLoopbackServerConfig(port: number) {
   return {
     mcpServers: {
-      openclaw: {
+      merclaw: {
         type: "http",
         url: `http://127.0.0.1:${port}/mcp`,
         headers: {
-          Authorization: "Bearer ${OPENCLAW_MCP_TOKEN}",
-          "x-session-key": "${OPENCLAW_MCP_SESSION_KEY}",
-          "x-openclaw-agent-id": "${OPENCLAW_MCP_AGENT_ID}",
-          "x-openclaw-account-id": "${OPENCLAW_MCP_ACCOUNT_ID}",
-          "x-openclaw-message-channel": "${OPENCLAW_MCP_MESSAGE_CHANNEL}",
-          "x-openclaw-current-channel-id": "${OPENCLAW_MCP_CURRENT_CHANNEL_ID}",
-          "x-openclaw-current-thread-ts": "${OPENCLAW_MCP_CURRENT_THREAD_TS}",
-          "x-openclaw-current-message-id": "${OPENCLAW_MCP_CURRENT_MESSAGE_ID}",
-          "x-openclaw-inbound-event-kind": "${OPENCLAW_MCP_INBOUND_EVENT_KIND}",
-          "x-openclaw-source-reply-delivery-mode": "${OPENCLAW_MCP_SOURCE_REPLY_DELIVERY_MODE}",
+          Authorization: "Bearer ${MERCLAW_MCP_TOKEN}",
+          "x-session-key": "${MERCLAW_MCP_SESSION_KEY}",
+          "x-merclaw-agent-id": "${MERCLAW_MCP_AGENT_ID}",
+          "x-merclaw-account-id": "${MERCLAW_MCP_ACCOUNT_ID}",
+          "x-merclaw-message-channel": "${MERCLAW_MCP_MESSAGE_CHANNEL}",
+          "x-merclaw-current-channel-id": "${MERCLAW_MCP_CURRENT_CHANNEL_ID}",
+          "x-merclaw-current-thread-ts": "${MERCLAW_MCP_CURRENT_THREAD_TS}",
+          "x-merclaw-current-message-id": "${MERCLAW_MCP_CURRENT_MESSAGE_ID}",
+          "x-merclaw-inbound-event-kind": "${MERCLAW_MCP_INBOUND_EVENT_KIND}",
+          "x-merclaw-source-reply-delivery-mode": "${MERCLAW_MCP_SOURCE_REPLY_DELIVERY_MODE}",
         },
       },
     },
@@ -122,7 +122,7 @@ function createCliBackendConfig(
     bundleMcp?: boolean;
     reseedFromRawTranscriptWhenUncompacted?: boolean;
   } = {},
-): OpenClawConfig {
+): MerClawConfig {
   return {
     agents: {
       defaults: {
@@ -145,7 +145,7 @@ function createCliBackendConfig(
         },
       },
     },
-  } satisfies OpenClawConfig;
+  } satisfies MerClawConfig;
 }
 
 function setClaudeCliBackendForPrepareTest() {
@@ -170,8 +170,8 @@ function setClaudeCliBackendForPrepareTest() {
 }
 
 function createSessionFile() {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-prepare-"));
-  vi.stubEnv("OPENCLAW_STATE_DIR", dir);
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-cli-prepare-"));
+  vi.stubEnv("MERCLAW_STATE_DIR", dir);
   const sessionFile = path.join(dir, "agents", "main", "sessions", "session-test.jsonl");
   fs.mkdirSync(path.dirname(sessionFile), { recursive: true });
   fs.writeFileSync(
@@ -229,7 +229,7 @@ describe("shouldSkipLocalCliCredentialEpoch", () => {
         senderIsOwner ? runtime.ownerToken : runtime.nonOwnerToken,
       ),
       resolveMcpLoopbackScopedTools: vi.fn(() => ({ agentId: "main", tools: [] })),
-      resolveOpenClawReferencePaths: vi.fn(async () => ({ docsPath: null, sourcePath: null })),
+      resolveMerClawReferencePaths: vi.fn(async () => ({ docsPath: null, sourcePath: null })),
       prepareClaudeCliSkillsPlugin: vi.fn(async () => ({
         args: [],
         cleanup: vi.fn(async () => undefined),
@@ -478,7 +478,7 @@ describe("shouldSkipLocalCliCredentialEpoch", () => {
         trigger: "user",
         sessionFile,
         workspaceDir: dir,
-        prompt: "[OpenClaw room event]",
+        prompt: "[MerClaw room event]",
         currentInboundEventKind: "room_event",
         currentInboundContext: {
           text: "Room context:\nAlice: lunch?\n\nCurrent event:\nBob: yes",
@@ -497,9 +497,9 @@ describe("shouldSkipLocalCliCredentialEpoch", () => {
       });
 
       expect(context.reusableCliSession).toEqual({ sessionId: "cli-session" });
-      expect(context.params.prompt).toBe("Current event:\nBob: yes\n\n[OpenClaw room event]");
-      expect(context.openClawHistoryPrompt).toContain("Room context:\nAlice: lunch?");
-      expect(context.openClawHistoryPrompt).toContain("Current event:\nBob: yes");
+      expect(context.params.prompt).toBe("Current event:\nBob: yes\n\n[MerClaw room event]");
+      expect(context.merClawHistoryPrompt).toContain("Room context:\nAlice: lunch?");
+      expect(context.merClawHistoryPrompt).toContain("Current event:\nBob: yes");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -668,7 +668,7 @@ describe("shouldSkipLocalCliCredentialEpoch", () => {
 
       expect(context.params.prompt).toBe("latest ask");
       expect(context.systemPrompt).toContain(
-        "You are a personal assistant running inside OpenClaw.",
+        "You are a personal assistant running inside MerClaw.",
       );
       expect(context.systemPrompt).toContain("Current model identity: test-cli/test-model.");
       expect(context.systemPrompt).not.toContain("hook exploded");
@@ -693,7 +693,7 @@ describe("shouldSkipLocalCliCredentialEpoch", () => {
     });
     registerContextEngine(engineId, factory);
     setCliRunnerPrepareTestDeps({
-      resolveOpenClawReferencePaths: vi.fn(async () => {
+      resolveMerClawReferencePaths: vi.fn(async () => {
         throw new Error("reference path lookup failed");
       }),
     });
@@ -790,7 +790,7 @@ describe("shouldSkipLocalCliCredentialEpoch", () => {
           hostRequirements: {
             "agent-run": {
               requiredCapabilities: ["assemble-before-prompt"],
-              unsupportedMessage: "Use the native Codex or OpenClaw embedded runtime.",
+              unsupportedMessage: "Use the native Codex or MerClaw embedded runtime.",
             },
           },
         },
@@ -833,7 +833,7 @@ describe("shouldSkipLocalCliCredentialEpoch", () => {
         list: [{ id: "main", default: true, agentDir: runtimeAgentDir }],
       },
       plugins: { slots: { contextEngine: engineId } },
-    } satisfies OpenClawConfig;
+    } satisfies MerClawConfig;
     const factory = vi.fn((_ctx: unknown): ContextEngine => {
       return {
         info: { id: engineId, name: "CLI runtime config engine" },
@@ -922,7 +922,7 @@ describe("shouldSkipLocalCliCredentialEpoch", () => {
 
   it("uses cwd for CLI system prompt workspace guidance", async () => {
     const { dir, sessionFile } = createSessionFile();
-    const taskDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-task-"));
+    const taskDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-cli-task-"));
     try {
       const context = await prepareCliRunContext({
         sessionId: "session-test",
@@ -1011,8 +1011,8 @@ describe("shouldSkipLocalCliCredentialEpoch", () => {
       });
 
       expect(context.reusableCliSession).toEqual({ invalidatedReason: "system-prompt" });
-      expect(context.openClawHistoryPrompt).toContain("prior no-compaction ask");
-      expect(context.openClawHistoryPrompt).toContain("latest ask");
+      expect(context.merClawHistoryPrompt).toContain("prior no-compaction ask");
+      expect(context.merClawHistoryPrompt).toContain("latest ask");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -1051,8 +1051,8 @@ describe("shouldSkipLocalCliCredentialEpoch", () => {
       });
 
       expect(context.reusableCliSession).toEqual({ sessionId: "cli-session" });
-      expect(context.openClawHistoryPrompt).toContain("prior resumable ask");
-      expect(context.openClawHistoryPrompt).toContain("latest ask");
+      expect(context.merClawHistoryPrompt).toContain("prior resumable ask");
+      expect(context.merClawHistoryPrompt).toContain("latest ask");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -1371,12 +1371,12 @@ describe("shouldSkipLocalCliCredentialEpoch", () => {
       });
 
       expect(context.preparedBackend.env).toMatchObject({
-        OPENCLAW_MCP_MESSAGE_CHANNEL: "telegram",
-        OPENCLAW_MCP_CURRENT_CHANNEL_ID: "telegram:-100123:topic:42",
-        OPENCLAW_MCP_CURRENT_THREAD_TS: "42",
-        OPENCLAW_MCP_CURRENT_MESSAGE_ID: "reply-message-1",
-        OPENCLAW_MCP_INBOUND_EVENT_KIND: "room_event",
-        OPENCLAW_MCP_SOURCE_REPLY_DELIVERY_MODE: "message_tool_only",
+        MERCLAW_MCP_MESSAGE_CHANNEL: "telegram",
+        MERCLAW_MCP_CURRENT_CHANNEL_ID: "telegram:-100123:topic:42",
+        MERCLAW_MCP_CURRENT_THREAD_TS: "42",
+        MERCLAW_MCP_CURRENT_MESSAGE_ID: "reply-message-1",
+        MERCLAW_MCP_INBOUND_EVENT_KIND: "room_event",
+        MERCLAW_MCP_SOURCE_REPLY_DELIVERY_MODE: "message_tool_only",
       });
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
@@ -1725,9 +1725,9 @@ describe("shouldSkipLocalCliCredentialEpoch", () => {
       });
       setCliRunnerPrepareTestDeps({
         prepareClaudeCliSkillsPlugin: vi.fn(async () => ({
-          args: ["--plugin-dir", path.join(dir, "openclaw-skills")],
+          args: ["--plugin-dir", path.join(dir, "merclaw-skills")],
           cleanup: vi.fn(async () => undefined),
-          pluginDir: path.join(dir, "openclaw-skills"),
+          pluginDir: path.join(dir, "merclaw-skills"),
         })),
       });
 
@@ -1777,7 +1777,7 @@ describe("shouldSkipLocalCliCredentialEpoch", () => {
       expect(context.systemPromptReport.skills.promptChars).toBe(0);
       expect(context.claudeSkillsPluginArgs).toEqual([
         "--plugin-dir",
-        path.join(dir, "openclaw-skills"),
+        path.join(dir, "merclaw-skills"),
       ]);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
@@ -2023,9 +2023,9 @@ describe("shouldSkipLocalCliCredentialEpoch", () => {
         config: createCliBackendConfig(),
       });
 
-      expect(context.openClawHistoryPrompt).toBeDefined();
-      expect(context.openClawHistoryPrompt).toContain(summaryMarker);
-      expect(context.openClawHistoryPrompt).not.toContain("OpenClaw reseed history truncated");
+      expect(context.merClawHistoryPrompt).toBeDefined();
+      expect(context.merClawHistoryPrompt).toContain(summaryMarker);
+      expect(context.merClawHistoryPrompt).not.toContain("MerClaw reseed history truncated");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -2078,9 +2078,9 @@ describe("shouldSkipLocalCliCredentialEpoch", () => {
         config: createCliBackendConfig(),
       });
 
-      expect(context.openClawHistoryPrompt).toBeDefined();
-      expect(context.openClawHistoryPrompt).toContain(summaryMarker);
-      expect(context.openClawHistoryPrompt).not.toContain("OpenClaw reseed history truncated");
+      expect(context.merClawHistoryPrompt).toBeDefined();
+      expect(context.merClawHistoryPrompt).toContain(summaryMarker);
+      expect(context.merClawHistoryPrompt).not.toContain("MerClaw reseed history truncated");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -2112,8 +2112,8 @@ describe("shouldSkipLocalCliCredentialEpoch", () => {
         config: createCliBackendConfig(),
       });
 
-      expect(context.openClawHistoryPrompt).toBeDefined();
-      expect(context.openClawHistoryPrompt).toContain("OpenClaw reseed history truncated");
+      expect(context.merClawHistoryPrompt).toBeDefined();
+      expect(context.merClawHistoryPrompt).toContain("MerClaw reseed history truncated");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -2188,10 +2188,10 @@ describe("shouldSkipLocalCliCredentialEpoch", () => {
       });
 
       expect(context.reusableCliSession).toEqual({ sessionId: "cli-session" });
-      expect(context.openClawHistoryPrompt).toBeDefined();
-      expect(context.openClawHistoryPrompt).toContain(recentMarker);
-      expect(context.openClawHistoryPrompt).toContain("EARLIEST_USER");
-      expect(context.openClawHistoryPrompt).not.toContain("OpenClaw reseed history truncated");
+      expect(context.merClawHistoryPrompt).toBeDefined();
+      expect(context.merClawHistoryPrompt).toContain(recentMarker);
+      expect(context.merClawHistoryPrompt).toContain("EARLIEST_USER");
+      expect(context.merClawHistoryPrompt).not.toContain("MerClaw reseed history truncated");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }

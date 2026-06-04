@@ -80,7 +80,7 @@ export type GetReplyOptions = {
   suppressToolErrorWarnings?: boolean;
   /** Dynamic form used when verbose progress visibility can change mid-run. */
   shouldSuppressToolErrorWarnings?: () => boolean | undefined;
-  /** If true, run the model without OpenClaw tools for this turn. */
+  /** If true, run the model without MerClaw tools for this turn. */
   disableTools?: boolean;
   /** If true, include the heartbeat response tool for structured heartbeat outcomes. */
   enableHeartbeatTool?: boolean;

@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { resetPluginStateStoreForTests } from "openclaw/plugin-sdk/plugin-state-test-runtime";
+import { resetPluginStateStoreForTests } from "merclaw/plugin-sdk/plugin-state-test-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { setMSTeamsRuntime } from "./runtime.js";
 import { createMSTeamsSsoTokenStoreFs } from "./sso-token-store.js";
@@ -18,7 +18,7 @@ describe("msteams sso token store (plugin state)", () => {
   });
 
   it("keeps distinct tokens when connectionName and userId contain the legacy delimiter", async () => {
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-sso-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-msteams-sso-"));
     const storePath = path.join(stateDir, "msteams-sso-tokens.json");
     const store = createMSTeamsSsoTokenStoreFs({ storePath });
 
@@ -43,12 +43,12 @@ describe("msteams sso token store (plugin state)", () => {
 
     await expect(fs.access(storePath)).rejects.toThrow();
     await expect(
-      fs.access(path.join(stateDir, "state", "openclaw.sqlite")),
+      fs.access(path.join(stateDir, "state", "merclaw.sqlite")),
     ).resolves.toBeUndefined();
   });
 
   it("loads legacy flat-key files by rebuilding keys from stored token payloads", async () => {
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-sso-legacy-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-msteams-sso-legacy-"));
     const storePath = path.join(stateDir, "msteams-sso-tokens.json");
     await fs.writeFile(
       storePath,
@@ -86,7 +86,7 @@ describe("msteams sso token store (plugin state)", () => {
   });
 
   it("keeps plugin-state keys bounded for long Teams identifiers", async () => {
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-sso-long-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-msteams-sso-long-"));
     const store = createMSTeamsSsoTokenStoreFs({ stateDir });
     const token = {
       connectionName: `conn-${"c".repeat(1000)}`,
@@ -102,7 +102,7 @@ describe("msteams sso token store (plugin state)", () => {
   });
 
   it("imports a legacy token file that appears after an empty migration marker", async () => {
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-sso-late-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-msteams-sso-late-"));
     const storePath = path.join(stateDir, "msteams-sso-tokens.json");
     const store = createMSTeamsSsoTokenStoreFs({ storePath });
 
@@ -133,7 +133,7 @@ describe("msteams sso token store (plugin state)", () => {
   });
 
   it("does not resurrect removed tokens when a migrated legacy file cannot be deleted", async () => {
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-sso-stale-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-msteams-sso-stale-"));
     const storePath = path.join(stateDir, "msteams-sso-tokens.json");
     await fs.writeFile(
       storePath,

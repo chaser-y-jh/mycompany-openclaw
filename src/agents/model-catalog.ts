@@ -1,12 +1,12 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
+import { normalizeProviderId } from "@merclaw/model-catalog-core/provider-id";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/normalization-core/string-coerce";
 import { getRuntimeConfig } from "../config/config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { planManifestModelCatalogRows } from "../model-catalog/manifest-planner.js";
 import { getCurrentPluginMetadataSnapshot } from "../plugins/current-plugin-metadata-snapshot.js";
@@ -32,7 +32,7 @@ import {
   buildConfiguredModelCatalog,
   hasConfiguredProviderModelRows,
 } from "./model-selection-shared.js";
-import { ensureOpenClawModelsJson } from "./models-config.js";
+import { ensureMerClawModelsJson } from "./models-config.js";
 import {
   filterGeneratedPluginModelCatalogProviders,
   listPluginModelCatalogFiles,
@@ -69,7 +69,7 @@ type ManifestModelCatalogCacheEntry = {
   snapshot: PluginMetadataSnapshot;
   rows: ModelCatalogEntry[];
 };
-let manifestModelCatalogCache = new WeakMap<OpenClawConfig, ManifestModelCatalogCacheEntry>();
+let manifestModelCatalogCache = new WeakMap<MerClawConfig, ManifestModelCatalogCacheEntry>();
 const defaultImportAgentDiscovery = () => import("./agent-model-discovery.js");
 let importAgentDiscovery = defaultImportAgentDiscovery;
 const modelSuppressionLoader = createLazyImportLoader(
@@ -80,7 +80,7 @@ const providerApiKeyResolverLoader = createLazyImportLoader(
 );
 
 function shouldLogModelCatalogTiming(): boolean {
-  return process.env.OPENCLAW_DEBUG_INGRESS_TIMING === "1";
+  return process.env.MERCLAW_DEBUG_INGRESS_TIMING === "1";
 }
 
 function loadModelSuppression() {
@@ -178,7 +178,7 @@ function mergeConfiguredCatalogEntries(
 }
 
 export function loadManifestModelCatalog(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   fallbackToMetadataScan?: boolean;
@@ -354,7 +354,7 @@ async function loadReadOnlyPersistedProviderRows(
 }
 
 async function loadReadOnlyPersistedModelCatalog(params?: {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   metadataSnapshot?: PluginMetadataSnapshot;
 }): Promise<ModelCatalogEntry[]> {
   const cfg = params?.config ?? getRuntimeConfig();
@@ -418,7 +418,7 @@ async function loadReadOnlyPersistedModelCatalog(params?: {
   return sortModelCatalogEntries(models);
 }
 
-function hasConfiguredProviderRowsNeedingManifestLookup(cfg: OpenClawConfig): boolean {
+function hasConfiguredProviderRowsNeedingManifestLookup(cfg: MerClawConfig): boolean {
   const providers = cfg.models?.providers;
   if (!providers || typeof providers !== "object") {
     return false;
@@ -430,7 +430,7 @@ function hasConfiguredProviderRowsNeedingManifestLookup(cfg: OpenClawConfig): bo
 }
 
 function loadReadOnlyStaticModelCatalog(params?: {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   metadataSnapshot?: PluginMetadataSnapshot;
 }): ModelCatalogEntry[] {
   const cfg = params?.config ?? getRuntimeConfig();
@@ -471,7 +471,7 @@ function loadReadOnlyStaticModelCatalog(params?: {
 }
 
 export async function loadModelCatalog(params?: {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   useCache?: boolean;
   readOnly?: boolean;
   metadataSnapshot?: PluginMetadataSnapshot;
@@ -526,7 +526,7 @@ export async function loadModelCatalog(params?: {
         return manifestPlugins;
       };
       if (!readOnly) {
-        await ensureOpenClawModelsJson(cfg);
+        await ensureMerClawModelsJson(cfg);
         logStage("models-json-ready");
       }
       // Keep discovery inside try/catch so transient filesystem/config failures do not poison

@@ -1,12 +1,12 @@
 import path from "node:path";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import { resolveAgentWorkspaceDir } from "../agents/agent-scope.js";
 import { resolveGroupToolPolicy } from "../agents/agent-tools.policy.js";
 import { resolvePathFromInput } from "../agents/path-policy.js";
 import { resolveEffectiveToolFsRootExpansionAllowed } from "../agents/tool-fs-policy.js";
 import { isToolAllowedByPolicies } from "../agents/tool-policy-match.js";
 import { resolveWorkspaceRoot } from "../agents/workspace-dir.js";
-import type { OpenClawConfig } from "../config/types.js";
+import type { MerClawConfig } from "../config/types.js";
 import { readLocalFileSafely } from "../infra/fs-safe.js";
 import type { OutboundMediaAccess, OutboundMediaReadFile } from "./load-options.js";
 import {
@@ -29,7 +29,7 @@ type OutboundHostMediaPolicyContext = {
 
 function isAgentScopedHostMediaReadAllowed(
   params: {
-    cfg: OpenClawConfig;
+    cfg: MerClawConfig;
     agentId?: string;
   } & OutboundHostMediaPolicyContext,
 ): boolean {
@@ -63,7 +63,7 @@ function isAgentScopedHostMediaReadAllowed(
 
 export function createAgentScopedHostMediaReadFile(
   params: {
-    cfg: OpenClawConfig;
+    cfg: MerClawConfig;
     agentId?: string;
     workspaceDir?: string;
   } & OutboundHostMediaPolicyContext,
@@ -100,7 +100,7 @@ function appendWorkspaceDirToLocalRoots(
 
 export function resolveAgentScopedOutboundMediaAccess(
   params: {
-    cfg: OpenClawConfig;
+    cfg: MerClawConfig;
     agentId?: string;
     mediaSources?: readonly string[];
     workspaceDir?: string;

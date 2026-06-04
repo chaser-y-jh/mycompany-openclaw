@@ -1,13 +1,13 @@
 {
-  "name": "@openclaw/inworld-speech",
+  "name": "@merclaw/inworld-speech",
   "version": "2026.5.31",
   "private": true,
-  "description": "OpenClaw Inworld speech plugin",
+  "description": "MerClaw Inworld speech plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@merclaw/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ]

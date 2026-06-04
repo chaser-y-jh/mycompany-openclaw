@@ -1,5 +1,5 @@
 import path from "node:path";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { evaluateEntryRequirementsForCurrentPlatform } from "../../shared/entry-status.js";
 import type { RequirementConfigCheck, Requirements } from "../../shared/requirements.js";
 import { CONFIG_DIR } from "../../utils.js";
@@ -238,7 +238,7 @@ function normalizeInstallOptions(
 }
 
 type BuildSkillStatusContext = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   prefs: SkillsInstallPreferences;
   eligibility?: SkillEligibilityContext;
   allowBundled: ReadonlySet<string> | undefined;
@@ -324,7 +324,7 @@ function buildSkillStatus(
 export function buildWorkspaceSkillStatus(
   workspaceDir: string,
   opts?: {
-    config?: OpenClawConfig;
+    config?: MerClawConfig;
     managedSkillsDir?: string;
     entries?: SkillEntry[];
     eligibility?: SkillEligibilityContext;

@@ -61,7 +61,7 @@ describe("scripts/test-docker-all scheduler", () => {
     expect(result.status).toBe(0);
     expect(result.stderr).toBe("");
     expect(result.stdout).toContain("Usage: node scripts/test-docker-all.mjs [--plan-json]");
-    expect(result.stdout).toContain("OPENCLAW_DOCKER_ALL_* env vars");
+    expect(result.stdout).toContain("MERCLAW_DOCKER_ALL_* env vars");
   });
 
   it("rejects unknown CLI options without a stack trace", () => {
@@ -83,36 +83,36 @@ describe("scripts/test-docker-all scheduler", () => {
       encoding: "utf8",
       env: {
         ...process.env,
-        OPENCLAW_DOCKER_ALL_PARALLELISM: "1e3",
+        MERCLAW_DOCKER_ALL_PARALLELISM: "1e3",
       },
     });
 
     expect(result.status).toBe(1);
     expect(result.stdout).toBe("");
-    expect(result.stderr).toContain("OPENCLAW_DOCKER_ALL_PARALLELISM must be a positive integer");
+    expect(result.stderr).toContain("MERCLAW_DOCKER_ALL_PARALLELISM must be a positive integer");
     expect(result.stderr).not.toContain("at ");
   });
 
   it("rejects loose numeric resource limit env vars before scheduling lanes", () => {
-    const logDir = mkdtempSync(`${tmpdir()}/openclaw-docker-all-`);
+    const logDir = mkdtempSync(`${tmpdir()}/merclaw-docker-all-`);
     try {
       const result = spawnSync(process.execPath, ["scripts/test-docker-all.mjs"], {
         cwd: process.cwd(),
         encoding: "utf8",
         env: {
           ...process.env,
-          OPENCLAW_DOCKER_ALL_BUILD: "0",
-          OPENCLAW_DOCKER_ALL_DOCKER_LIMIT: "1e3",
-          OPENCLAW_DOCKER_ALL_DRY_RUN: "1",
-          OPENCLAW_DOCKER_ALL_LOG_DIR: logDir,
-          OPENCLAW_DOCKER_ALL_PREFLIGHT: "0",
-          OPENCLAW_DOCKER_ALL_TIMINGS: "0",
+          MERCLAW_DOCKER_ALL_BUILD: "0",
+          MERCLAW_DOCKER_ALL_DOCKER_LIMIT: "1e3",
+          MERCLAW_DOCKER_ALL_DRY_RUN: "1",
+          MERCLAW_DOCKER_ALL_LOG_DIR: logDir,
+          MERCLAW_DOCKER_ALL_PREFLIGHT: "0",
+          MERCLAW_DOCKER_ALL_TIMINGS: "0",
         },
       });
 
       expect(result.status).toBe(1);
       expect(result.stderr).toContain(
-        "OPENCLAW_DOCKER_ALL_DOCKER_LIMIT must be a positive integer",
+        "MERCLAW_DOCKER_ALL_DOCKER_LIMIT must be a positive integer",
       );
       expect(result.stderr).not.toContain("at ");
     } finally {
@@ -258,22 +258,22 @@ describe("scripts/test-docker-all scheduler", () => {
   it("cleans stale stopped containers from all named Docker E2E lanes", () => {
     expect(
       dockerPreflightContainerNames(`
-openclaw-gateway-e2e-123 Exited (1) 2 minutes ago
-openclaw-config-reload-e2e-234 Created
-openclaw-plugin-binding-command-escape-e2e-345 Dead
-openclaw-kitchen-sink-rpc-e2e-456 Exited (137) 10 seconds ago
-openclaw-openwebui-gateway-567 Exited (1) 3 minutes ago
-openclaw-openwebui-678 Created
-openclaw-not-an-e2e-container Exited (1) 2 minutes ago
+merclaw-gateway-e2e-123 Exited (1) 2 minutes ago
+merclaw-config-reload-e2e-234 Created
+merclaw-plugin-binding-command-escape-e2e-345 Dead
+merclaw-kitchen-sink-rpc-e2e-456 Exited (137) 10 seconds ago
+merclaw-openwebui-gateway-567 Exited (1) 3 minutes ago
+merclaw-openwebui-678 Created
+merclaw-not-an-e2e-container Exited (1) 2 minutes ago
 postgres Created
 `),
     ).toEqual([
-      "openclaw-gateway-e2e-123",
-      "openclaw-config-reload-e2e-234",
-      "openclaw-plugin-binding-command-escape-e2e-345",
-      "openclaw-kitchen-sink-rpc-e2e-456",
-      "openclaw-openwebui-gateway-567",
-      "openclaw-openwebui-678",
+      "merclaw-gateway-e2e-123",
+      "merclaw-config-reload-e2e-234",
+      "merclaw-plugin-binding-command-escape-e2e-345",
+      "merclaw-kitchen-sink-rpc-e2e-456",
+      "merclaw-openwebui-gateway-567",
+      "merclaw-openwebui-678",
     ]);
   });
 

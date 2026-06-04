@@ -10,7 +10,7 @@ const probePath = path.resolve("scripts/e2e/lib/upgrade-survivor/probe-gateway.m
 const tempDirs: string[] = [];
 
 function makeTempDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-upgrade-probe-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-upgrade-probe-"));
   tempDirs.push(dir);
   return dir;
 }
@@ -118,13 +118,13 @@ describe("scripts/e2e/lib/upgrade-survivor/probe-gateway.mjs", () => {
       ],
       5_000,
       {
-        OPENCLAW_UPGRADE_SURVIVOR_PROBE_MAX_BODY_BYTES: "64bytes",
+        MERCLAW_UPGRADE_SURVIVOR_PROBE_MAX_BODY_BYTES: "64bytes",
       },
     );
 
     expect(bodyLimitResult.status).not.toBe(0);
     expect(bodyLimitResult.stderr).toContain(
-      "invalid OPENCLAW_UPGRADE_SURVIVOR_PROBE_MAX_BODY_BYTES: 64bytes",
+      "invalid MERCLAW_UPGRADE_SURVIVOR_PROBE_MAX_BODY_BYTES: 64bytes",
     );
   });
 

@@ -1,14 +1,14 @@
-import { isDiagnosticFlagEnabled } from "openclaw/plugin-sdk/diagnostic-runtime";
+import { isDiagnosticFlagEnabled } from "merclaw/plugin-sdk/diagnostic-runtime";
 import type {
   SearchConfigRecord,
   WebSearchProviderPlugin,
   WebSearchProviderToolDefinition,
-} from "openclaw/plugin-sdk/provider-web-search";
+} from "merclaw/plugin-sdk/provider-web-search";
 import {
   mergeScopedSearchConfig,
   resolveProviderWebSearchPluginConfig,
-} from "openclaw/plugin-sdk/provider-web-search-config-contract";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/provider-web-search-config-contract";
+import { isRecord } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { buildBraveWebSearchProviderBase } from "../web-search-shared.js";
 
 type BraveWebSearchRuntime = typeof import("./brave-web-search-provider.runtime.js");

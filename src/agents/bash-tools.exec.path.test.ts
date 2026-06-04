@@ -40,8 +40,8 @@ vi.mock("../process/supervisor/index.js", () => ({
     }) => {
       const command = input.argv?.at(-1) ?? "";
       const env = input.env ?? {};
-      if (command.includes("OPENCLAW_SHELL")) {
-        input.onStdout?.(env.OPENCLAW_SHELL ?? "");
+      if (command.includes("MERCLAW_SHELL")) {
+        input.onStdout?.(env.MERCLAW_SHELL ?? "");
       } else if (command.includes("SSLKEYLOGFILE")) {
         input.onStdout?.(env.SSLKEYLOGFILE ?? "");
       } else if (command.includes("$PATH")) {
@@ -144,8 +144,8 @@ describe("exec PATH login shell merge", () => {
   });
 
   beforeEach(() => {
-    envSnapshot = captureEnv(["OPENCLAW_EXEC_SHELL_SNAPSHOT", "PATH", "SHELL"]);
-    process.env.OPENCLAW_EXEC_SHELL_SNAPSHOT = "0";
+    envSnapshot = captureEnv(["MERCLAW_EXEC_SHELL_SNAPSHOT", "PATH", "SHELL"]);
+    process.env.MERCLAW_EXEC_SHELL_SNAPSHOT = "0";
     shellEnvMocks.getShellPathFromLoginShell.mockReset();
     shellEnvMocks.getShellPathFromLoginShell.mockReturnValue("/custom/bin:/opt/bin");
     shellEnvMocks.resolveShellEnvFallbackTimeoutMs.mockReset();
@@ -157,7 +157,7 @@ describe("exec PATH login shell merge", () => {
   });
 
   it("strips malformed XML arg-value suffixes from exec command and routing options", async () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-exec-xml-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-exec-xml-"));
     try {
       const tool = createExecTool({ host: "gateway", security: "full", ask: "off" });
       const malformedArgs = {
@@ -199,14 +199,14 @@ describe("exec PATH login shell merge", () => {
     expect(shellPathMock).toHaveBeenCalledTimes(1);
   });
 
-  it("sets OPENCLAW_SHELL for host=gateway commands", async () => {
+  it("sets MERCLAW_SHELL for host=gateway commands", async () => {
     if (isWin) {
       return;
     }
 
     const tool = createExecTool({ host: "gateway", security: "full", ask: "off" });
-    const result = await tool.execute("call-openclaw-shell", {
-      command: 'printf "%s" "${OPENCLAW_SHELL:-}"',
+    const result = await tool.execute("call-merclaw-shell", {
+      command: 'printf "%s" "${MERCLAW_SHELL:-}"',
       yieldMs: FOREGROUND_TEST_YIELD_MS,
     });
     const value = normalizeText(result.content.find((c) => c.type === "text")?.text);
@@ -256,7 +256,7 @@ describe("exec PATH login shell merge", () => {
       return;
     }
     process.env.PATH = "/usr/bin";
-    const shellDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-shell-env-"));
+    const shellDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-shell-env-"));
     const unregisteredShellPath = path.join(shellDir, "unregistered-shell");
     fs.writeFileSync(unregisteredShellPath, '#!/bin/sh\nexec /bin/sh "$@"\n', {
       encoding: "utf8",
@@ -293,8 +293,8 @@ describe("exec host env validation", () => {
   let envSnapshot: ReturnType<typeof captureEnv>;
 
   beforeEach(() => {
-    envSnapshot = captureEnv(["OPENCLAW_EXEC_SHELL_SNAPSHOT"]);
-    process.env.OPENCLAW_EXEC_SHELL_SNAPSHOT = "0";
+    envSnapshot = captureEnv(["MERCLAW_EXEC_SHELL_SNAPSHOT"]);
+    process.env.MERCLAW_EXEC_SHELL_SNAPSHOT = "0";
   });
 
   afterEach(() => {
@@ -333,7 +333,7 @@ describe("exec host env validation", () => {
       return;
     }
     const original = process.env.SSLKEYLOGFILE;
-    process.env.SSLKEYLOGFILE = "/tmp/openclaw-ssl-keys.log";
+    process.env.SSLKEYLOGFILE = "/tmp/merclaw-ssl-keys.log";
     try {
       const tool = createExecTool({ host: "gateway", security: "full", ask: "off" });
       const result = await tool.execute("call1", {
@@ -341,7 +341,7 @@ describe("exec host env validation", () => {
         yieldMs: FOREGROUND_TEST_YIELD_MS,
       });
       const output = normalizeText(result.content.find((c) => c.type === "text")?.text);
-      expect(output).not.toContain("/tmp/openclaw-ssl-keys.log");
+      expect(output).not.toContain("/tmp/merclaw-ssl-keys.log");
     } finally {
       if (original === undefined) {
         delete process.env.SSLKEYLOGFILE;
@@ -386,16 +386,16 @@ describe("exec host env validation", () => {
     "env -iS'/approve abc123' deny",
     "command /approve abc123 deny",
     "command -p /approve abc123 deny",
-    "exec -a openclaw /approve abc123 deny",
+    "exec -a merclaw /approve abc123 deny",
     "sudo /approve abc123 allow-once",
     "sudo -E /approve abc123 allow-once",
     "sudo -EH /approve abc123 allow-once",
     "sudo -k /approve abc123 allow-once",
     "sudo --reset-timestamp /approve abc123 allow-once",
     "sudo --command-timeout=1 /approve abc123 allow-once",
-    "sudo OPENCLAW_APPROVE=1 /approve abc123 allow-once",
+    "sudo MERCLAW_APPROVE=1 /approve abc123 allow-once",
     "sudo -uroot bash -lc '/approve abc123 allow-once'",
-    "sudo -u root OPENCLAW_APPROVE=1 bash -lc '/approve abc123 allow-once'",
+    "sudo -u root MERCLAW_APPROVE=1 bash -lc '/approve abc123 allow-once'",
     "sudo -EH bash -lc '/approve abc123 allow-once'",
     "doas -uroot bash -lc '/approve abc123 deny'",
     "env env env env env env /approve abc123 allow-once",

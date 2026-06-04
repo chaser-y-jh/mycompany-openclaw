@@ -1,6 +1,6 @@
 export {
   definePluginEntry,
-  type OpenClawPluginApi,
-  type OpenClawPluginHttpRouteHandler,
+  type MerClawPluginApi,
+  type MerClawPluginHttpRouteHandler,
   type PluginLogger,
-} from "openclaw/plugin-sdk/plugin-entry";
+} from "merclaw/plugin-sdk/plugin-entry";

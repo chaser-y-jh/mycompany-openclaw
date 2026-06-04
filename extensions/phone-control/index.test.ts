@@ -1,24 +1,24 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { createTestPluginApi } from "openclaw/plugin-sdk/plugin-test-api";
+import { createTestPluginApi } from "merclaw/plugin-sdk/plugin-test-api";
 import { describe, expect, it, vi } from "vitest";
 import registerPhoneControl from "./index.js";
 import type {
-  OpenClawPluginApi,
-  OpenClawPluginCommandDefinition,
+  MerClawPluginApi,
+  MerClawPluginCommandDefinition,
   PluginCommandContext,
 } from "./runtime-api.js";
 
-const PHONE_CONTROL_STATE_PREFIX = "openclaw-phone-control-test-";
+const PHONE_CONTROL_STATE_PREFIX = "merclaw-phone-control-test-";
 const WRITE_COMMANDS = ["calendar.add", "contacts.add", "reminders.add", "sms.send"] as const;
 
 function createApi(params: {
   stateDir: string;
   getConfig: () => Record<string, unknown>;
   writeConfig: (next: Record<string, unknown>) => Promise<void>;
-  registerCommand: (command: OpenClawPluginCommandDefinition) => void;
-}): OpenClawPluginApi {
+  registerCommand: (command: MerClawPluginCommandDefinition) => void;
+}): MerClawPluginApi {
   return createTestPluginApi({
     id: "phone-control",
     name: "phone-control",
@@ -40,7 +40,7 @@ function createApi(params: {
           mutate(nextConfig);
           await params.writeConfig(nextConfig);
           return {
-            path: "/tmp/openclaw.json",
+            path: "/tmp/merclaw.json",
             previousHash: null,
             persistedHash: null,
             snapshot: {},
@@ -53,7 +53,7 @@ function createApi(params: {
         replaceConfigFile: ({ nextConfig }: { nextConfig: unknown }) =>
           params.writeConfig(nextConfig as Record<string, unknown>),
       },
-    } as unknown as OpenClawPluginApi["runtime"],
+    } as unknown as MerClawPluginApi["runtime"],
     registerCommand: params.registerCommand,
   });
 }
@@ -87,7 +87,7 @@ function createPhoneControlConfig(): Record<string, unknown> {
 
 async function withRegisteredPhoneControl(
   run: (params: {
-    command: OpenClawPluginCommandDefinition;
+    command: MerClawPluginCommandDefinition;
     writeConfigFile: ReturnType<typeof vi.fn>;
     getConfig: () => Record<string, unknown>;
   }) => Promise<void>,
@@ -99,7 +99,7 @@ async function withRegisteredPhoneControl(
       config = next;
     });
 
-    let command: OpenClawPluginCommandDefinition | undefined;
+    let command: MerClawPluginCommandDefinition | undefined;
     registerPhoneControl.register(
       createApi({
         stateDir,

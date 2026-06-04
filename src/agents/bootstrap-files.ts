@@ -1,8 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import type { AgentContextInjection } from "../config/types.agent-defaults.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { resolveUserPath } from "../utils.js";
 import { resolveAgentConfig, resolveSessionAgentIds } from "./agent-scope.js";
 import { getOrLoadBootstrapFiles } from "./bootstrap-cache.js";
@@ -29,7 +29,7 @@ type BootstrapContextRunKind = "default" | "heartbeat" | "cron";
 
 const CONTINUATION_SCAN_MAX_TAIL_BYTES = 256 * 1024;
 const CONTINUATION_SCAN_MAX_RECORDS = 500;
-export const FULL_BOOTSTRAP_COMPLETED_CUSTOM_TYPE = "openclaw:bootstrap-context:full";
+export const FULL_BOOTSTRAP_COMPLETED_CUSTOM_TYPE = "merclaw:bootstrap-context:full";
 const BOOTSTRAP_WARNING_DEDUPE_LIMIT = 1024;
 const seenBootstrapWarnings = new Set<string>();
 const bootstrapWarningOrder: string[] = [];
@@ -55,7 +55,7 @@ export function resetBootstrapWarningCacheForTest(): void {
 }
 
 export function resolveContextInjectionMode(
-  config?: OpenClawConfig,
+  config?: MerClawConfig,
   agentId?: string | null,
 ): AgentContextInjection {
   const agentMode =
@@ -205,7 +205,7 @@ function applyContextModeFilter(params: {
 }
 
 function shouldExcludeHeartbeatBootstrapFile(params: {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   sessionKey?: string;
   sessionId?: string;
   agentId?: string;
@@ -276,7 +276,7 @@ async function isWorkspaceSetupCompletedForContext(workspaceDir: string): Promis
 
 export async function resolveBootstrapFilesForRun(params: {
   workspaceDir: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   sessionKey?: string;
   sessionId?: string;
   agentId?: string;
@@ -325,7 +325,7 @@ export async function resolveBootstrapFilesForRun(params: {
 
 export async function resolveBootstrapContextForRun(params: {
   workspaceDir: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   sessionKey?: string;
   sessionId?: string;
   agentId?: string;
@@ -344,7 +344,7 @@ export async function resolveBootstrapContextForRun(params: {
 export function buildBootstrapContextForFiles(
   bootstrapFiles: WorkspaceBootstrapFile[],
   params: {
-    config?: OpenClawConfig;
+    config?: MerClawConfig;
     agentId?: string | null;
     warn?: (message: string) => void;
   },

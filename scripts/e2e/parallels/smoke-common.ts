@@ -7,7 +7,7 @@ import { runSmokeLane, type SmokeLane, type SmokeLaneStatus } from "./lane-runne
 import {
   packageBuildCommitFromTgz,
   packageVersionFromTgz,
-  packOpenClaw,
+  packMerClaw,
 } from "./package-artifact.ts";
 import type { HostServer, Mode, PackageArtifact, Provider, SnapshotInfo } from "./types.ts";
 
@@ -188,7 +188,7 @@ export async function packAndServeSmokeArtifact(
   label: string,
   requireControlUi = false,
 ): Promise<readonly [artifact: PackageArtifact, server: HostServer, hostPort: number]> {
-  const artifact = await packOpenClaw({
+  const artifact = await packMerClaw({
     destination: tgzDir,
     packageSpec,
     requireControlUi,
@@ -296,7 +296,7 @@ export async function expectedPackageBuildCommit(artifact: PackageArtifact): Pro
   return artifact.buildCommitShort || (await packageBuildCommitFromTgz(artifact.path)).slice(0, 7);
 }
 
-export async function extractLastOpenClawVersion(
+export async function extractLastMerClawVersion(
   runDir: string,
   phaseName: string,
   pattern: RegExp,

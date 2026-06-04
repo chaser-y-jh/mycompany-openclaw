@@ -32,7 +32,7 @@ async function pathExists(filePath: string): Promise<boolean> {
 }
 
 beforeAll(async () => {
-  fixtureRoot = await fsPromises.mkdtemp(path.join(os.tmpdir(), "openclaw-plugin-skills-sync-"));
+  fixtureRoot = await fsPromises.mkdtemp(path.join(os.tmpdir(), "merclaw-plugin-skills-sync-"));
 });
 
 afterAll(async () => {
@@ -51,7 +51,7 @@ describe("syncSkillsToWorkspace for plugin skills", () => {
       description: "Wiki maintenance skill for sandboxed agents",
     });
 
-    const pluginSkillsDir = path.join(sourceWorkspace, ".openclaw", "plugin-skills");
+    const pluginSkillsDir = path.join(sourceWorkspace, ".merclaw", "plugin-skills");
     await fsPromises.mkdir(pluginSkillsDir, { recursive: true });
     const symlinkPath = path.join(pluginSkillsDir, "wiki-maintainer");
 
@@ -108,7 +108,7 @@ describe("syncSkillsToWorkspace for plugin skills", () => {
     });
 
     // Create plugin-skills directory with symlinks
-    const pluginSkillsDir = path.join(sourceWorkspace, ".openclaw", "plugin-skills");
+    const pluginSkillsDir = path.join(sourceWorkspace, ".merclaw", "plugin-skills");
     await fsPromises.mkdir(pluginSkillsDir, { recursive: true });
 
     fs.symlinkSync(
@@ -155,7 +155,7 @@ describe("syncSkillsToWorkspace for plugin skills", () => {
     });
 
     // Create plugin-skills with symlink to escaped skill
-    const pluginSkillsDir = path.join(sourceWorkspace, ".openclaw", "plugin-skills");
+    const pluginSkillsDir = path.join(sourceWorkspace, ".merclaw", "plugin-skills");
     await fsPromises.mkdir(pluginSkillsDir, { recursive: true });
     fs.symlinkSync(
       escapedSkillDir,

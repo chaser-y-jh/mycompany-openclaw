@@ -30,7 +30,7 @@ describe("runEmbeddedAttempt cwd/workspace split", () => {
 
   it("uses workspace for bootstrap and cwd for runtime tools", async () => {
     const bootstrap = createContextEngineBootstrapAndAssemble();
-    const taskRepo = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-task-repo-"));
+    const taskRepo = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-task-repo-"));
     tempPaths.push(taskRepo);
 
     await createContextEngineAttemptRunner({
@@ -49,7 +49,7 @@ describe("runEmbeddedAttempt cwd/workspace split", () => {
     expect(bootstrapCall?.workspaceDir).not.toBe("/tmp/task-repo");
     expect(bootstrapCall?.agentId).toBe("main");
 
-    const toolsCall = hoisted.createOpenClawCodingToolsMock.mock.calls[0]?.[0] as
+    const toolsCall = hoisted.createMerClawCodingToolsMock.mock.calls[0]?.[0] as
       | { cwd?: string; workspaceDir?: string; spawnWorkspaceDir?: string }
       | undefined;
     expect(toolsCall?.cwd).toBe(taskRepo);
@@ -66,7 +66,7 @@ describe("runEmbeddedAttempt cwd/workspace split", () => {
     hoisted.resolveSandboxContextMock.mockResolvedValueOnce({
       enabled: true,
       workspaceAccess: "ro",
-      workspaceDir: "/tmp/openclaw-sandbox-copy",
+      workspaceDir: "/tmp/merclaw-sandbox-copy",
     });
 
     await expect(
@@ -79,6 +79,6 @@ describe("runEmbeddedAttempt cwd/workspace split", () => {
         },
       }),
     ).rejects.toThrow("cwd override is not supported");
-    expect(hoisted.createOpenClawCodingToolsMock).not.toHaveBeenCalled();
+    expect(hoisted.createMerClawCodingToolsMock).not.toHaveBeenCalled();
   });
 });

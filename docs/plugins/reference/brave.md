@@ -1,5 +1,5 @@
 ---
-summary: "OpenClaw Brave Search provider plugin for web search."
+summary: "MerClaw Brave Search provider plugin for web search."
 read_when:
   - You are installing, configuring, or auditing the brave plugin
 title: "Brave plugin"
@@ -7,11 +7,11 @@ title: "Brave plugin"
 
 # Brave plugin
 
-OpenClaw Brave Search provider plugin for web search.
+MerClaw Brave Search provider plugin for web search.
 
 ## Distribution
 
-- Package: `@openclaw/brave-plugin`
+- Package: `@merclaw/brave-plugin`
 - Install route: npm; ClawHub
 
 ## Surface

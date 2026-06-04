@@ -118,7 +118,7 @@ vi.mock("@opentelemetry/exporter-logs-otlp-proto", () => ({
   },
 }));
 
-vi.mock("openclaw/plugin-sdk/runtime-env", () => ({
+vi.mock("merclaw/plugin-sdk/runtime-env", () => ({
   registerUnhandledRejectionHandler: unhandledRejectionHandlerState.register,
 }));
 
@@ -161,13 +161,13 @@ import {
   onInternalDiagnosticEvent,
   resetDiagnosticEventsForTest,
   type DiagnosticEventPrivateData,
-} from "openclaw/plugin-sdk/diagnostic-runtime";
-import { onTrustedInternalDiagnosticEvent } from "openclaw/plugin-sdk/plugin-test-runtime";
-import type { OpenClawPluginServiceContext } from "../api.js";
+} from "merclaw/plugin-sdk/diagnostic-runtime";
+import { onTrustedInternalDiagnosticEvent } from "merclaw/plugin-sdk/plugin-test-runtime";
+import type { MerClawPluginServiceContext } from "../api.js";
 import { emitDiagnosticEvent } from "../api.js";
 import { createDiagnosticsOtelService } from "./service.js";
 
-const OTEL_TEST_STATE_DIR = "/tmp/openclaw-diagnostics-otel-test";
+const OTEL_TEST_STATE_DIR = "/tmp/merclaw-diagnostics-otel-test";
 const OTEL_TEST_ENDPOINT = "http://otel-collector:4318";
 const OTEL_TEST_PROTOCOL = "http/protobuf";
 const TRACE_ID = "4bf92f3577b34da6a3ce929d0e0e4736";
@@ -178,7 +178,7 @@ const TOOL_SPAN_ID = "3333333333333333";
 const PROTO_KEY = "__proto__";
 const MAX_TEST_OTEL_CONTENT_ATTRIBUTE_CHARS = 128 * 1024;
 const OTEL_TRUNCATED_SUFFIX_MAX_CHARS = 20;
-const ORIGINAL_OPENCLAW_OTEL_PRELOADED = process.env.OPENCLAW_OTEL_PRELOADED;
+const ORIGINAL_MERCLAW_OTEL_PRELOADED = process.env.MERCLAW_OTEL_PRELOADED;
 const ORIGINAL_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT;
 const ORIGINAL_OTEL_EXPORTER_OTLP_METRICS_ENDPOINT =
   process.env.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT;
@@ -199,13 +199,13 @@ type OtelContextFlags = {
   metrics?: boolean;
   logs?: boolean;
   captureContent?: NonNullable<
-    NonNullable<OpenClawPluginServiceContext["config"]["diagnostics"]>["otel"]
+    NonNullable<MerClawPluginServiceContext["config"]["diagnostics"]>["otel"]
   >["captureContent"];
 };
 function createOtelContext(
   endpoint: string,
   { traces = false, metrics = false, logs = false, captureContent }: OtelContextFlags = {},
-): OpenClawPluginServiceContext {
+): MerClawPluginServiceContext {
   return {
     config: {
       diagnostics: {
@@ -230,7 +230,7 @@ function createOtelContext(
   };
 }
 
-function createTraceOnlyContext(endpoint: string): OpenClawPluginServiceContext {
+function createTraceOnlyContext(endpoint: string): MerClawPluginServiceContext {
   return createOtelContext(endpoint, { traces: true });
 }
 
@@ -382,7 +382,7 @@ afterAll(() => {
 describe("diagnostics-otel service", () => {
   beforeEach(() => {
     resetDiagnosticEventsForTest();
-    delete process.env.OPENCLAW_OTEL_PRELOADED;
+    delete process.env.MERCLAW_OTEL_PRELOADED;
     delete process.env.OTEL_SEMCONV_STABILITY_OPT_IN;
     telemetryState.counters.clear();
     telemetryState.histograms.clear();
@@ -408,10 +408,10 @@ describe("diagnostics-otel service", () => {
 
   afterEach(() => {
     resetDiagnosticEventsForTest();
-    if (ORIGINAL_OPENCLAW_OTEL_PRELOADED === undefined) {
-      delete process.env.OPENCLAW_OTEL_PRELOADED;
+    if (ORIGINAL_MERCLAW_OTEL_PRELOADED === undefined) {
+      delete process.env.MERCLAW_OTEL_PRELOADED;
     } else {
-      process.env.OPENCLAW_OTEL_PRELOADED = ORIGINAL_OPENCLAW_OTEL_PRELOADED;
+      process.env.MERCLAW_OTEL_PRELOADED = ORIGINAL_MERCLAW_OTEL_PRELOADED;
     }
     if (ORIGINAL_OTEL_SEMCONV_STABILITY_OPT_IN === undefined) {
       delete process.env.OTEL_SEMCONV_STABILITY_OPT_IN;
@@ -465,28 +465,28 @@ describe("diagnostics-otel service", () => {
       },
     });
 
-    expect(emitCall.attributes?.["openclaw.provider"]).toBe("openai");
+    expect(emitCall.attributes?.["merclaw.provider"]).toBe("openai");
     for (const key of [
-      "openclaw.callId",
-      "openclaw.call_id",
-      "openclaw.chatId",
-      "openclaw.chat_id",
-      "openclaw.messageId",
-      "openclaw.message_id",
-      "openclaw.parentSpanId",
-      "openclaw.parent_span_id",
-      "openclaw.runId",
-      "openclaw.run_id",
-      "openclaw.sessionId",
-      "openclaw.session_id",
-      "openclaw.sessionKey",
-      "openclaw.session_key",
-      "openclaw.spanId",
-      "openclaw.span_id",
-      "openclaw.toolCallId",
-      "openclaw.tool_call_id",
-      "openclaw.traceId",
-      "openclaw.trace_id",
+      "merclaw.callId",
+      "merclaw.call_id",
+      "merclaw.chatId",
+      "merclaw.chat_id",
+      "merclaw.messageId",
+      "merclaw.message_id",
+      "merclaw.parentSpanId",
+      "merclaw.parent_span_id",
+      "merclaw.runId",
+      "merclaw.run_id",
+      "merclaw.sessionId",
+      "merclaw.session_id",
+      "merclaw.sessionKey",
+      "merclaw.session_key",
+      "merclaw.spanId",
+      "merclaw.span_id",
+      "merclaw.toolCallId",
+      "merclaw.tool_call_id",
+      "merclaw.traceId",
+      "merclaw.trace_id",
     ]) {
       expect(Object.hasOwn(emitCall.attributes ?? {}, key)).toBe(false);
     }
@@ -577,115 +577,115 @@ describe("diagnostics-otel service", () => {
       attempt: 2,
     });
 
-    expect(telemetryState.counters.get("openclaw.webhook.received")?.add).toHaveBeenCalledWith(1, {
-      "openclaw.channel": "telegram",
-      "openclaw.webhook": "telegram-post",
+    expect(telemetryState.counters.get("merclaw.webhook.received")?.add).toHaveBeenCalledWith(1, {
+      "merclaw.channel": "telegram",
+      "merclaw.webhook": "telegram-post",
     });
     expect(
-      telemetryState.histograms.get("openclaw.webhook.duration_ms")?.record,
+      telemetryState.histograms.get("merclaw.webhook.duration_ms")?.record,
     ).toHaveBeenCalledWith(120, {
-      "openclaw.channel": "telegram",
-      "openclaw.webhook": "telegram-post",
+      "merclaw.channel": "telegram",
+      "merclaw.webhook": "telegram-post",
     });
-    expect(telemetryState.counters.get("openclaw.message.queued")?.add).toHaveBeenCalledWith(1, {
-      "openclaw.channel": "telegram",
-      "openclaw.source": "telegram",
+    expect(telemetryState.counters.get("merclaw.message.queued")?.add).toHaveBeenCalledWith(1, {
+      "merclaw.channel": "telegram",
+      "merclaw.source": "telegram",
     });
-    expect(telemetryState.histograms.get("openclaw.queue.depth")?.record).toHaveBeenCalledTimes(2);
-    expect(telemetryState.histograms.get("openclaw.queue.depth")?.record).toHaveBeenCalledWith(2, {
-      "openclaw.channel": "telegram",
-      "openclaw.source": "telegram",
+    expect(telemetryState.histograms.get("merclaw.queue.depth")?.record).toHaveBeenCalledTimes(2);
+    expect(telemetryState.histograms.get("merclaw.queue.depth")?.record).toHaveBeenCalledWith(2, {
+      "merclaw.channel": "telegram",
+      "merclaw.source": "telegram",
     });
-    expect(telemetryState.histograms.get("openclaw.queue.depth")?.record).toHaveBeenCalledWith(3, {
-      "openclaw.lane": "main",
+    expect(telemetryState.histograms.get("merclaw.queue.depth")?.record).toHaveBeenCalledWith(3, {
+      "merclaw.lane": "main",
     });
-    expect(telemetryState.counters.get("openclaw.message.processed")?.add).toHaveBeenCalledWith(1, {
-      "openclaw.channel": "telegram",
-      "openclaw.outcome": "completed",
+    expect(telemetryState.counters.get("merclaw.message.processed")?.add).toHaveBeenCalledWith(1, {
+      "merclaw.channel": "telegram",
+      "merclaw.outcome": "completed",
     });
-    expect(telemetryState.counters.get("openclaw.message.received")?.add).toHaveBeenCalledWith(1, {
-      "openclaw.channel": "telegram",
-      "openclaw.source": "webhook",
+    expect(telemetryState.counters.get("merclaw.message.received")?.add).toHaveBeenCalledWith(1, {
+      "merclaw.channel": "telegram",
+      "merclaw.source": "webhook",
     });
-    expect(telemetryState.counters.get("openclaw.message.received")?.add).toHaveBeenCalledWith(1, {
-      "openclaw.channel": "unknown",
-      "openclaw.source": "unknown",
+    expect(telemetryState.counters.get("merclaw.message.received")?.add).toHaveBeenCalledWith(1, {
+      "merclaw.channel": "unknown",
+      "merclaw.source": "unknown",
     });
     expect(
-      telemetryState.counters.get("openclaw.message.dispatch.started")?.add,
+      telemetryState.counters.get("merclaw.message.dispatch.started")?.add,
     ).toHaveBeenCalledWith(1, {
-      "openclaw.channel": "telegram",
-      "openclaw.source": "webhook",
+      "merclaw.channel": "telegram",
+      "merclaw.source": "webhook",
     });
     expect(
-      telemetryState.counters.get("openclaw.message.dispatch.started")?.add,
+      telemetryState.counters.get("merclaw.message.dispatch.started")?.add,
     ).toHaveBeenCalledWith(1, {
-      "openclaw.channel": "unknown",
-      "openclaw.source": "unknown",
+      "merclaw.channel": "unknown",
+      "merclaw.source": "unknown",
     });
     expect(
-      telemetryState.counters.get("openclaw.message.dispatch.completed")?.add,
+      telemetryState.counters.get("merclaw.message.dispatch.completed")?.add,
     ).toHaveBeenCalledWith(
       1,
       expect.objectContaining({
-        "openclaw.channel": "telegram",
-        "openclaw.outcome": "completed",
-        "openclaw.source": "webhook",
+        "merclaw.channel": "telegram",
+        "merclaw.outcome": "completed",
+        "merclaw.source": "webhook",
       }),
     );
     expect(
-      telemetryState.counters.get("openclaw.message.dispatch.completed")?.add,
+      telemetryState.counters.get("merclaw.message.dispatch.completed")?.add,
     ).toHaveBeenCalledWith(
       1,
       expect.objectContaining({
-        "openclaw.channel": "unknown",
-        "openclaw.reason": "none",
-        "openclaw.source": "unknown",
+        "merclaw.channel": "unknown",
+        "merclaw.reason": "none",
+        "merclaw.source": "unknown",
       }),
     );
     expect(
-      telemetryState.histograms.get("openclaw.message.dispatch.duration_ms")?.record,
+      telemetryState.histograms.get("merclaw.message.dispatch.duration_ms")?.record,
     ).toHaveBeenCalledWith(
       25,
       expect.objectContaining({
-        "openclaw.channel": "telegram",
-        "openclaw.outcome": "completed",
-        "openclaw.source": "webhook",
+        "merclaw.channel": "telegram",
+        "merclaw.outcome": "completed",
+        "merclaw.source": "webhook",
       }),
     );
     expect(
-      telemetryState.histograms.get("openclaw.message.dispatch.duration_ms")?.record,
+      telemetryState.histograms.get("merclaw.message.dispatch.duration_ms")?.record,
     ).toHaveBeenCalledWith(
       30,
       expect.objectContaining({
-        "openclaw.channel": "unknown",
-        "openclaw.reason": "none",
-        "openclaw.source": "unknown",
+        "merclaw.channel": "unknown",
+        "merclaw.reason": "none",
+        "merclaw.source": "unknown",
       }),
     );
     expect(
-      telemetryState.histograms.get("openclaw.message.duration_ms")?.record,
+      telemetryState.histograms.get("merclaw.message.duration_ms")?.record,
     ).toHaveBeenCalledWith(55, {
-      "openclaw.channel": "telegram",
-      "openclaw.outcome": "completed",
+      "merclaw.channel": "telegram",
+      "merclaw.outcome": "completed",
     });
-    expect(telemetryState.histograms.get("openclaw.queue.wait_ms")?.record).toHaveBeenCalledWith(
+    expect(telemetryState.histograms.get("merclaw.queue.wait_ms")?.record).toHaveBeenCalledWith(
       10,
       {
-        "openclaw.lane": "main",
+        "merclaw.lane": "main",
       },
     );
-    expect(telemetryState.counters.get("openclaw.session.stuck")?.add).toHaveBeenCalledTimes(1);
-    expect(telemetryState.counters.get("openclaw.session.stuck")?.add).toHaveBeenCalledWith(1, {
-      "openclaw.state": "processing",
+    expect(telemetryState.counters.get("merclaw.session.stuck")?.add).toHaveBeenCalledTimes(1);
+    expect(telemetryState.counters.get("merclaw.session.stuck")?.add).toHaveBeenCalledWith(1, {
+      "merclaw.state": "processing",
     });
     expect(
-      telemetryState.histograms.get("openclaw.session.stuck_age_ms")?.record,
+      telemetryState.histograms.get("merclaw.session.stuck_age_ms")?.record,
     ).toHaveBeenCalledWith(125_000, {
-      "openclaw.state": "processing",
+      "merclaw.state": "processing",
     });
-    expect(telemetryState.counters.get("openclaw.run.attempt")?.add).toHaveBeenCalledWith(1, {
-      "openclaw.attempt": 2,
+    expect(telemetryState.counters.get("merclaw.run.attempt")?.add).toHaveBeenCalledWith(1, {
+      "merclaw.attempt": 2,
     });
 
     emitDiagnosticEvent({
@@ -695,28 +695,28 @@ describe("diagnostics-otel service", () => {
       channel: "telegram",
       trigger: "user",
     });
-    expect(telemetryState.counters.get("openclaw.session.turn.created")?.add).toHaveBeenCalledWith(
+    expect(telemetryState.counters.get("merclaw.session.turn.created")?.add).toHaveBeenCalledWith(
       1,
       {
-        "openclaw.agent": "agent.default",
-        "openclaw.channel": "telegram",
-        "openclaw.trigger": "user",
+        "merclaw.agent": "agent.default",
+        "merclaw.channel": "telegram",
+        "merclaw.trigger": "user",
       },
     );
 
     const spanNames = telemetryState.tracer.startSpan.mock.calls.map((call) => call[0]);
-    expect(spanNames).toContain("openclaw.webhook.processed");
-    expect(spanNames).toContain("openclaw.message.processed");
-    expect(spanNames).toContain("openclaw.session.stuck");
-    const webhookSpanOptions = startedSpanOptions("openclaw.webhook.processed");
-    expect(webhookSpanOptions?.attributes).not.toHaveProperty("openclaw.chatId");
+    expect(spanNames).toContain("merclaw.webhook.processed");
+    expect(spanNames).toContain("merclaw.message.processed");
+    expect(spanNames).toContain("merclaw.session.stuck");
+    const webhookSpanOptions = startedSpanOptions("merclaw.webhook.processed");
+    expect(webhookSpanOptions?.attributes).not.toHaveProperty("merclaw.chatId");
     expect(webhookSpanOptions?.startTime).toBeTypeOf("number");
-    const messageSpanOptions = startedSpanOptions("openclaw.message.processed");
-    expect(messageSpanOptions?.attributes?.["openclaw.channel"]).toBe("telegram");
-    expect(messageSpanOptions?.attributes?.["openclaw.outcome"]).toBe("completed");
-    expect(messageSpanOptions?.attributes?.["openclaw.reason"]).toBe("unknown");
-    expect(messageSpanOptions?.attributes).not.toHaveProperty("openclaw.chatId");
-    expect(messageSpanOptions?.attributes).not.toHaveProperty("openclaw.messageId");
+    const messageSpanOptions = startedSpanOptions("merclaw.message.processed");
+    expect(messageSpanOptions?.attributes?.["merclaw.channel"]).toBe("telegram");
+    expect(messageSpanOptions?.attributes?.["merclaw.outcome"]).toBe("completed");
+    expect(messageSpanOptions?.attributes?.["merclaw.reason"]).toBe("unknown");
+    expect(messageSpanOptions?.attributes).not.toHaveProperty("merclaw.chatId");
+    expect(messageSpanOptions?.attributes).not.toHaveProperty("merclaw.messageId");
     expect(messageSpanOptions?.startTime).toBeTypeOf("number");
 
     emitDiagnosticEvent({
@@ -812,7 +812,7 @@ describe("diagnostics-otel service", () => {
   });
 
   test("uses a preloaded OpenTelemetry SDK without dropping diagnostic listeners", async () => {
-    process.env.OPENCLAW_OTEL_PRELOADED = "1";
+    process.env.MERCLAW_OTEL_PRELOADED = "1";
     const service = createDiagnosticsOtelService();
     const ctx = createOtelContext(OTEL_TEST_ENDPOINT, { traces: true, metrics: true, logs: true });
     await service.start(ctx);
@@ -838,13 +838,13 @@ describe("diagnostics-otel service", () => {
     });
     await flushDiagnosticEvents();
 
-    const runDurationRecordCall = lastHistogramRecord("openclaw.run.duration_ms");
+    const runDurationRecordCall = lastHistogramRecord("merclaw.run.duration_ms");
     expect(runDurationRecordCall?.[0]).toBe(100);
     const runDurationAttributes = runDurationRecordCall?.[1];
-    expect(runDurationAttributes?.["openclaw.provider"]).toBe("openai");
-    expect(runDurationAttributes?.["openclaw.model"]).toBe("gpt-5.4");
-    const runSpanOptions = startedSpanOptions("openclaw.run");
-    expect(runSpanOptions?.attributes?.["openclaw.outcome"]).toBe("completed");
+    expect(runDurationAttributes?.["merclaw.provider"]).toBe("openai");
+    expect(runDurationAttributes?.["merclaw.model"]).toBe("gpt-5.4");
+    const runSpanOptions = startedSpanOptions("merclaw.run");
+    expect(runSpanOptions?.attributes?.["merclaw.outcome"]).toBe("completed");
     expect(logEmit).toHaveBeenCalled();
 
     await service.stop?.(ctx);
@@ -873,12 +873,12 @@ describe("diagnostics-otel service", () => {
       expect(event?.reason).toBe("configured");
     }
     expect(
-      telemetryState.counters.get("openclaw.telemetry.exporter.events")?.add,
+      telemetryState.counters.get("merclaw.telemetry.exporter.events")?.add,
     ).toHaveBeenCalledWith(1, {
-      "openclaw.exporter": "diagnostics-otel",
-      "openclaw.signal": "logs",
-      "openclaw.status": "started",
-      "openclaw.reason": "configured",
+      "merclaw.exporter": "diagnostics-otel",
+      "merclaw.signal": "logs",
+      "merclaw.status": "started",
+      "merclaw.reason": "configured",
     });
 
     unsubscribe();
@@ -907,26 +907,26 @@ describe("diagnostics-otel service", () => {
     });
     await flushDiagnosticEvents();
 
-    expect(telemetryState.counters.get("openclaw.liveness.warning")?.add).toHaveBeenCalledWith(1, {
-      "openclaw.liveness.reason": "event_loop_delay:cpu",
+    expect(telemetryState.counters.get("merclaw.liveness.warning")?.add).toHaveBeenCalledWith(1, {
+      "merclaw.liveness.reason": "event_loop_delay:cpu",
     });
     expect(
-      telemetryState.histograms.get("openclaw.liveness.event_loop_delay_p99_ms")?.record,
+      telemetryState.histograms.get("merclaw.liveness.event_loop_delay_p99_ms")?.record,
     ).toHaveBeenCalledWith(250, {
-      "openclaw.liveness.reason": "event_loop_delay:cpu",
+      "merclaw.liveness.reason": "event_loop_delay:cpu",
     });
     expect(
-      telemetryState.histograms.get("openclaw.liveness.cpu_core_ratio")?.record,
+      telemetryState.histograms.get("merclaw.liveness.cpu_core_ratio")?.record,
     ).toHaveBeenCalledWith(1.4, {
-      "openclaw.liveness.reason": "event_loop_delay:cpu",
+      "merclaw.liveness.reason": "event_loop_delay:cpu",
     });
-    const livenessSpanOptions = startedSpanOptions("openclaw.liveness.warning");
-    expect(livenessSpanOptions?.attributes?.["openclaw.liveness.reason"]).toBe(
+    const livenessSpanOptions = startedSpanOptions("merclaw.liveness.warning");
+    expect(livenessSpanOptions?.attributes?.["merclaw.liveness.reason"]).toBe(
       "event_loop_delay:cpu",
     );
-    expect(livenessSpanOptions?.attributes?.["openclaw.liveness.active"]).toBe(2);
-    expect(livenessSpanOptions?.attributes?.["openclaw.liveness.queued"]).toBe(4);
-    const span = telemetryState.spans.find((item) => item.name === "openclaw.liveness.warning");
+    expect(livenessSpanOptions?.attributes?.["merclaw.liveness.active"]).toBe(2);
+    expect(livenessSpanOptions?.attributes?.["merclaw.liveness.queued"]).toBe(4);
+    const span = telemetryState.spans.find((item) => item.name === "merclaw.liveness.warning");
     expect(span?.setStatus).toHaveBeenCalledWith({
       code: 2,
       message: "event_loop_delay:cpu",
@@ -952,21 +952,21 @@ describe("diagnostics-otel service", () => {
     });
     await flushDiagnosticEvents();
 
-    expect(telemetryState.counters.get("openclaw.payload.large")?.add).toHaveBeenCalledWith(1, {
-      "openclaw.payload.action": "rejected",
-      "openclaw.payload.surface": "gateway.frame",
-      "openclaw.channel": "web",
-      "openclaw.plugin": "none",
-      "openclaw.reason": "body-too-large",
+    expect(telemetryState.counters.get("merclaw.payload.large")?.add).toHaveBeenCalledWith(1, {
+      "merclaw.payload.action": "rejected",
+      "merclaw.payload.surface": "gateway.frame",
+      "merclaw.channel": "web",
+      "merclaw.plugin": "none",
+      "merclaw.reason": "body-too-large",
     });
     expect(
-      telemetryState.histograms.get("openclaw.payload.large_bytes")?.record,
+      telemetryState.histograms.get("merclaw.payload.large_bytes")?.record,
     ).toHaveBeenCalledWith(2048, {
-      "openclaw.payload.action": "rejected",
-      "openclaw.payload.surface": "gateway.frame",
-      "openclaw.channel": "web",
-      "openclaw.plugin": "none",
-      "openclaw.reason": "body-too-large",
+      "merclaw.payload.action": "rejected",
+      "merclaw.payload.surface": "gateway.frame",
+      "merclaw.channel": "web",
+      "merclaw.plugin": "none",
+      "merclaw.reason": "body-too-large",
     });
 
     await service.stop?.(ctx);
@@ -1002,13 +1002,13 @@ describe("diagnostics-otel service", () => {
     expect(failureEvent?.reason).toBe("emit_failed");
     expect(failureEvent?.errorCategory).toBe("TypeError");
     expect(
-      telemetryState.counters.get("openclaw.telemetry.exporter.events")?.add,
+      telemetryState.counters.get("merclaw.telemetry.exporter.events")?.add,
     ).toHaveBeenCalledWith(1, {
-      "openclaw.exporter": "diagnostics-otel",
-      "openclaw.signal": "logs",
-      "openclaw.status": "failure",
-      "openclaw.reason": "emit_failed",
-      "openclaw.errorCategory": "TypeError",
+      "merclaw.exporter": "diagnostics-otel",
+      "merclaw.signal": "logs",
+      "merclaw.status": "failure",
+      "merclaw.reason": "emit_failed",
+      "merclaw.errorCategory": "TypeError",
     });
 
     unsubscribe();
@@ -1020,7 +1020,7 @@ describe("diagnostics-otel service", () => {
     const ctx = createOtelContext(OTEL_TEST_ENDPOINT, { metrics: true });
 
     await service.start(ctx);
-    telemetryState.counters.get("openclaw.telemetry.exporter.events")?.add.mockClear();
+    telemetryState.counters.get("merclaw.telemetry.exporter.events")?.add.mockClear();
     emitDiagnosticEvent({
       type: "telemetry.exporter",
       exporter: "spoofed-plugin-exporter",
@@ -1030,7 +1030,7 @@ describe("diagnostics-otel service", () => {
     });
 
     expect(
-      telemetryState.counters.get("openclaw.telemetry.exporter.events")?.add,
+      telemetryState.counters.get("merclaw.telemetry.exporter.events")?.add,
     ).not.toHaveBeenCalled();
 
     await service.stop?.(ctx);
@@ -1052,17 +1052,17 @@ describe("diagnostics-otel service", () => {
     });
     await flushDiagnosticEvents();
 
-    const runDurationRecordCall = lastHistogramRecord("openclaw.run.duration_ms");
+    const runDurationRecordCall = lastHistogramRecord("merclaw.run.duration_ms");
     expect(runDurationRecordCall?.[0]).toBe(100);
-    expect(runDurationRecordCall?.[1]?.["openclaw.outcome"]).toBe("blocked");
-    expect(runDurationRecordCall?.[1]?.["openclaw.blocked_by"]).toBe("policy-plugin");
+    expect(runDurationRecordCall?.[1]?.["merclaw.outcome"]).toBe("blocked");
+    expect(runDurationRecordCall?.[1]?.["merclaw.blocked_by"]).toBe("policy-plugin");
     expect(JSON.stringify(telemetryState)).not.toContain("matched secret prompt");
 
     await service.stop?.(ctx);
   });
 
   test("honors disabled traces when an OpenTelemetry SDK is preloaded", async () => {
-    process.env.OPENCLAW_OTEL_PRELOADED = "1";
+    process.env.MERCLAW_OTEL_PRELOADED = "1";
     const service = createDiagnosticsOtelService();
     const ctx = createOtelContext(OTEL_TEST_ENDPOINT, { traces: false, metrics: true });
     await service.start(ctx);
@@ -1078,9 +1078,9 @@ describe("diagnostics-otel service", () => {
     await flushDiagnosticEvents();
 
     expect(sdkStart).not.toHaveBeenCalled();
-    const runDurationRecordCall = lastHistogramRecord("openclaw.run.duration_ms");
+    const runDurationRecordCall = lastHistogramRecord("merclaw.run.duration_ms");
     expect(runDurationRecordCall?.[0]).toBe(100);
-    expect(runDurationRecordCall?.[1]?.["openclaw.provider"]).toBe("openai");
+    expect(runDurationRecordCall?.[1]?.["merclaw.provider"]).toBe("openai");
     expect(telemetryState.tracer.startSpan).not.toHaveBeenCalled();
 
     await service.stop?.(ctx);
@@ -1109,11 +1109,11 @@ describe("diagnostics-otel service", () => {
     await flushDiagnosticEvents();
 
     const modelCall = telemetryState.tracer.startSpan.mock.calls.find(
-      (call) => call[0] === "openclaw.model.call",
+      (call) => call[0] === "merclaw.model.call",
     );
     const attrs = (modelCall?.[1] as { attributes?: Record<string, unknown> } | undefined)
       ?.attributes;
-    expect(attrs?.["openclaw.content.input_messages"]).toBe("user prompt");
+    expect(attrs?.["merclaw.content.input_messages"]).toBe("user prompt");
 
     await service.stop?.(ctx);
   });
@@ -1304,7 +1304,7 @@ describe("diagnostics-otel service", () => {
       },
     });
 
-    const tokenAttr = emitCall?.attributes?.["openclaw.token"];
+    const tokenAttr = emitCall?.attributes?.["merclaw.token"];
     expect(tokenAttr).not.toBe("ghp_abcdefghijklmnopqrstuvwxyz123456"); // pragma: allowlist secret
     if (typeof tokenAttr === "string") {
       expect(tokenAttr).toContain("…");
@@ -1325,9 +1325,9 @@ describe("diagnostics-otel service", () => {
       },
     });
 
-    expect(Object.hasOwn(emitCall?.attributes ?? {}, "openclaw.traceId")).toBe(false);
-    expect(Object.hasOwn(emitCall?.attributes ?? {}, "openclaw.spanId")).toBe(false);
-    expect(Object.hasOwn(emitCall?.attributes ?? {}, "openclaw.traceFlags")).toBe(false);
+    expect(Object.hasOwn(emitCall?.attributes ?? {}, "merclaw.traceId")).toBe(false);
+    expect(Object.hasOwn(emitCall?.attributes ?? {}, "merclaw.spanId")).toBe(false);
+    expect(Object.hasOwn(emitCall?.attributes ?? {}, "merclaw.traceFlags")).toBe(false);
     expect(telemetryState.tracer.setSpanContext).not.toHaveBeenCalled();
     expect(emitCall?.context).toBeUndefined();
   });
@@ -1377,10 +1377,10 @@ describe("diagnostics-otel service", () => {
       message: "x".repeat(6000),
       attributes,
       code: {
-        filepath: "/Users/alice/openclaw/src/private.ts",
+        filepath: "/Users/alice/merclaw/src/private.ts",
         line: 42,
         functionName: "handler",
-        location: "/Users/alice/openclaw/src/private.ts:42",
+        location: "/Users/alice/merclaw/src/private.ts:42",
       },
     } as Parameters<typeof emitDiagnosticEvent>[0]);
     await flushDiagnosticEvents();
@@ -1390,22 +1390,22 @@ describe("diagnostics-otel service", () => {
       body: string;
     };
     expect(emitCall.body.length).toBeLessThanOrEqual(4200);
-    expect(String(emitCall.attributes["openclaw.good"])).toMatch(/^y+/);
+    expect(String(emitCall.attributes["merclaw.good"])).toMatch(/^y+/);
     expect(emitCall.attributes["code.lineno"]).toBe(42);
     expect(emitCall.attributes["code.function"]).toBe("handler");
-    expect(String(emitCall.attributes["openclaw.good"]).length).toBeLessThanOrEqual(4200);
-    expect(Object.hasOwn(emitCall.attributes, `openclaw.${PROTO_KEY}`)).toBe(false);
-    expect(Object.hasOwn(emitCall.attributes, "openclaw.constructor")).toBe(false);
-    expect(Object.hasOwn(emitCall.attributes, "openclaw.prototype")).toBe(false);
+    expect(String(emitCall.attributes["merclaw.good"]).length).toBeLessThanOrEqual(4200);
+    expect(Object.hasOwn(emitCall.attributes, `merclaw.${PROTO_KEY}`)).toBe(false);
+    expect(Object.hasOwn(emitCall.attributes, "merclaw.constructor")).toBe(false);
+    expect(Object.hasOwn(emitCall.attributes, "merclaw.prototype")).toBe(false);
     expect(
       Object.hasOwn(
         emitCall.attributes,
-        "openclaw.sk-1234567890abcdef1234567890abcdef", // pragma: allowlist secret
+        "merclaw.sk-1234567890abcdef1234567890abcdef", // pragma: allowlist secret
       ),
     ).toBe(false);
-    expect(Object.hasOwn(emitCall.attributes, "openclaw.bad key")).toBe(false);
+    expect(Object.hasOwn(emitCall.attributes, "merclaw.bad key")).toBe(false);
     expect(Object.hasOwn(emitCall.attributes, "code.filepath")).toBe(false);
-    expect(Object.hasOwn(emitCall.attributes, "openclaw.code.location")).toBe(false);
+    expect(Object.hasOwn(emitCall.attributes, "merclaw.code.location")).toBe(false);
     await service.stop?.(ctx);
   });
 
@@ -1467,7 +1467,7 @@ describe("diagnostics-otel service", () => {
     });
 
     const modelUsageCall = telemetryState.tracer.startSpan.mock.calls.find(
-      (call) => call[0] === "openclaw.model.usage",
+      (call) => call[0] === "merclaw.model.usage",
     );
     expect(telemetryState.tracer.setSpanContext).not.toHaveBeenCalled();
     expect(modelUsageCall?.[2]).toBeUndefined();
@@ -1504,13 +1504,13 @@ describe("diagnostics-otel service", () => {
       expect(tokenUsageBoundaries).toContain(boundary);
     }
     const genAiTokenUsage = telemetryState.histograms.get("gen_ai.client.token.usage");
-    const tokens = telemetryState.counters.get("openclaw.tokens");
+    const tokens = telemetryState.counters.get("merclaw.tokens");
     expect(tokens?.add).toHaveBeenCalledWith(12, {
-      "openclaw.channel": "webchat",
-      "openclaw.agent": "ops",
-      "openclaw.provider": "openai",
-      "openclaw.model": "gpt-5.4",
-      "openclaw.token": "input",
+      "merclaw.channel": "webchat",
+      "merclaw.agent": "ops",
+      "merclaw.provider": "openai",
+      "merclaw.model": "gpt-5.4",
+      "merclaw.token": "input",
     });
     expect(genAiTokenUsage?.record).toHaveBeenCalledTimes(2);
     expect(genAiTokenUsage?.record).toHaveBeenCalledWith(12, {
@@ -1543,15 +1543,15 @@ describe("diagnostics-otel service", () => {
     });
     await flushDiagnosticEvents();
 
-    expect(telemetryState.counters.get("openclaw.tokens")?.add).toHaveBeenCalledWith(2, {
-      "openclaw.channel": "unknown",
-      "openclaw.agent": "unknown",
-      "openclaw.provider": "openai",
-      "openclaw.model": "gpt-5.4",
-      "openclaw.token": "input",
+    expect(telemetryState.counters.get("merclaw.tokens")?.add).toHaveBeenCalledWith(2, {
+      "merclaw.channel": "unknown",
+      "merclaw.agent": "unknown",
+      "merclaw.provider": "openai",
+      "merclaw.model": "gpt-5.4",
+      "merclaw.token": "input",
     });
     expect(
-      JSON.stringify(telemetryState.counters.get("openclaw.tokens")?.add.mock.calls),
+      JSON.stringify(telemetryState.counters.get("merclaw.tokens")?.add.mock.calls),
     ).not.toContain("sk-test-secret-value");
     await service.stop?.(ctx);
   });
@@ -1570,15 +1570,15 @@ describe("diagnostics-otel service", () => {
     });
     await flushDiagnosticEvents();
 
-    expect(telemetryState.counters.get("openclaw.tokens")?.add).toHaveBeenCalledWith(2, {
-      "openclaw.channel": "unknown",
-      "openclaw.agent": "unknown",
-      "openclaw.provider": "openai",
-      "openclaw.model": "gpt-5.4",
-      "openclaw.token": "input",
+    expect(telemetryState.counters.get("merclaw.tokens")?.add).toHaveBeenCalledWith(2, {
+      "merclaw.channel": "unknown",
+      "merclaw.agent": "unknown",
+      "merclaw.provider": "openai",
+      "merclaw.model": "gpt-5.4",
+      "merclaw.token": "input",
     });
     expect(
-      JSON.stringify(telemetryState.counters.get("openclaw.tokens")?.add.mock.calls),
+      JSON.stringify(telemetryState.counters.get("merclaw.tokens")?.add.mock.calls),
     ).not.toContain("Agent:qa:otel-trace-smoke");
     await service.stop?.(ctx);
   });
@@ -1595,14 +1595,14 @@ describe("diagnostics-otel service", () => {
     });
     await flushDiagnosticEvents();
 
-    expect(telemetryState.counters.get("openclaw.queue.lane.enqueue")?.add).toHaveBeenCalledWith(
+    expect(telemetryState.counters.get("merclaw.queue.lane.enqueue")?.add).toHaveBeenCalledWith(
       1,
       {
-        "openclaw.lane": "session",
+        "merclaw.lane": "session",
       },
     );
     expect(
-      JSON.stringify(telemetryState.counters.get("openclaw.queue.lane.enqueue")?.add.mock.calls),
+      JSON.stringify(telemetryState.counters.get("merclaw.queue.lane.enqueue")?.add.mock.calls),
     ).not.toContain("Agent:qa:otel-trace-smoke");
     await service.stop?.(ctx);
   });
@@ -1619,14 +1619,14 @@ describe("diagnostics-otel service", () => {
     });
     await flushDiagnosticEvents();
 
-    expect(telemetryState.counters.get("openclaw.queue.lane.enqueue")?.add).toHaveBeenCalledWith(
+    expect(telemetryState.counters.get("merclaw.queue.lane.enqueue")?.add).toHaveBeenCalledWith(
       1,
       {
-        "openclaw.lane": "dreaming-narrative",
+        "merclaw.lane": "dreaming-narrative",
       },
     );
     expect(
-      JSON.stringify(telemetryState.counters.get("openclaw.queue.lane.enqueue")?.add.mock.calls),
+      JSON.stringify(telemetryState.counters.get("merclaw.queue.lane.enqueue")?.add.mock.calls),
     ).not.toContain("session-main");
     await service.stop?.(ctx);
   });
@@ -1678,7 +1678,7 @@ describe("diagnostics-otel service", () => {
     });
     await flushDiagnosticEvents();
 
-    const modelUsageOptions = startedSpanOptions("openclaw.model.usage");
+    const modelUsageOptions = startedSpanOptions("merclaw.model.usage");
     expect(modelUsageOptions?.attributes?.["gen_ai.operation.name"]).toBe("chat");
     expect(modelUsageOptions?.attributes?.["gen_ai.system"]).toBe("anthropic");
     expect(modelUsageOptions?.attributes?.["gen_ai.request.model"]).toBe("claude-sonnet-4.6");
@@ -1686,8 +1686,8 @@ describe("diagnostics-otel service", () => {
     expect(modelUsageOptions?.attributes?.["gen_ai.usage.output_tokens"]).toBe(40);
     expect(modelUsageOptions?.attributes?.["gen_ai.usage.cache_read.input_tokens"]).toBe(30);
     expect(modelUsageOptions?.attributes?.["gen_ai.usage.cache_creation.input_tokens"]).toBe(20);
-    expect(Object.hasOwn(modelUsageOptions?.attributes ?? {}, "openclaw.sessionKey")).toBe(false);
-    expect(Object.hasOwn(modelUsageOptions?.attributes ?? {}, "openclaw.sessionId")).toBe(false);
+    expect(Object.hasOwn(modelUsageOptions?.attributes ?? {}, "merclaw.sessionKey")).toBe(false);
+    expect(Object.hasOwn(modelUsageOptions?.attributes ?? {}, "merclaw.sessionId")).toBe(false);
     expect(Object.hasOwn(modelUsageOptions?.attributes ?? {}, "gen_ai.provider.name")).toBe(false);
     expect(Object.hasOwn(modelUsageOptions?.attributes ?? {}, "gen_ai.input.messages")).toBe(false);
     expect(Object.hasOwn(modelUsageOptions?.attributes ?? {}, "gen_ai.output.messages")).toBe(
@@ -1776,18 +1776,18 @@ describe("diagnostics-otel service", () => {
     await flushDiagnosticEvents();
 
     const expectedAttrs = {
-      "openclaw.agent": "main",
-      "openclaw.skill.activation": "read",
-      "openclaw.skill.name": "tiny-llm-brainstorm",
-      "openclaw.skill.source": "workspace",
-      "openclaw.toolName": "read",
+      "merclaw.agent": "main",
+      "merclaw.skill.activation": "read",
+      "merclaw.skill.name": "tiny-llm-brainstorm",
+      "merclaw.skill.source": "workspace",
+      "merclaw.toolName": "read",
     };
-    expect(telemetryState.counters.get("openclaw.skill.used")?.add).toHaveBeenCalledWith(
+    expect(telemetryState.counters.get("merclaw.skill.used")?.add).toHaveBeenCalledWith(
       1,
       expectedAttrs,
     );
     const skillSpanCall = telemetryState.tracer.startSpan.mock.calls.find(
-      (call) => call[0] === "openclaw.skill.used",
+      (call) => call[0] === "merclaw.skill.used",
     );
     expect(skillSpanCall?.[1]).toMatchObject({ attributes: expectedAttrs });
     expect(JSON.stringify(skillSpanCall)).not.toContain("run-should-not-export");
@@ -1875,114 +1875,114 @@ describe("diagnostics-otel service", () => {
     await flushDiagnosticEvents();
 
     const spanNames = telemetryState.tracer.startSpan.mock.calls.map((call) => call[0]);
-    expect(spanNames).toContain("openclaw.run");
-    expect(spanNames).toContain("openclaw.model.call");
-    expect(spanNames).toContain("openclaw.harness.run");
-    expect(spanNames).toContain("openclaw.tool.execution");
+    expect(spanNames).toContain("merclaw.run");
+    expect(spanNames).toContain("merclaw.model.call");
+    expect(spanNames).toContain("merclaw.harness.run");
+    expect(spanNames).toContain("merclaw.tool.execution");
 
-    const runOptions = startedSpanOptions("openclaw.run");
-    expect(runOptions?.attributes?.["openclaw.outcome"]).toBe("completed");
-    expect(runOptions?.attributes?.["openclaw.provider"]).toBe("openai");
-    expect(runOptions?.attributes?.["openclaw.model"]).toBe("gpt-5.4");
-    expect(runOptions?.attributes?.["openclaw.channel"]).toBe("webchat");
+    const runOptions = startedSpanOptions("merclaw.run");
+    expect(runOptions?.attributes?.["merclaw.outcome"]).toBe("completed");
+    expect(runOptions?.attributes?.["merclaw.provider"]).toBe("openai");
+    expect(runOptions?.attributes?.["merclaw.model"]).toBe("gpt-5.4");
+    expect(runOptions?.attributes?.["merclaw.channel"]).toBe("webchat");
     expect(Object.hasOwn(runOptions?.attributes ?? {}, "gen_ai.system")).toBe(false);
     expect(Object.hasOwn(runOptions?.attributes ?? {}, "gen_ai.request.model")).toBe(false);
-    expect(Object.hasOwn(runOptions?.attributes ?? {}, "openclaw.runId")).toBe(false);
-    expect(Object.hasOwn(runOptions?.attributes ?? {}, "openclaw.sessionKey")).toBe(false);
-    expect(Object.hasOwn(runOptions?.attributes ?? {}, "openclaw.traceId")).toBe(false);
+    expect(Object.hasOwn(runOptions?.attributes ?? {}, "merclaw.runId")).toBe(false);
+    expect(Object.hasOwn(runOptions?.attributes ?? {}, "merclaw.sessionKey")).toBe(false);
+    expect(Object.hasOwn(runOptions?.attributes ?? {}, "merclaw.traceId")).toBe(false);
     expect(runOptions?.startTime).toBeTypeOf("number");
 
-    const modelCall = startedSpanCall("openclaw.model.call");
+    const modelCall = startedSpanCall("merclaw.model.call");
     const modelOptions = modelCall?.[1];
     expect(modelOptions?.attributes?.["gen_ai.system"]).toBe("openai");
     expect(modelOptions?.attributes?.["gen_ai.request.model"]).toBe("gpt-5.4");
     expect(modelOptions?.attributes?.["gen_ai.operation.name"]).toBe("text_completion");
     expect(Object.hasOwn(modelOptions?.attributes ?? {}, "gen_ai.provider.name")).toBe(false);
-    expect(Object.hasOwn(modelOptions?.attributes ?? {}, "openclaw.callId")).toBe(false);
-    expect(Object.hasOwn(modelOptions?.attributes ?? {}, "openclaw.runId")).toBe(false);
-    expect(Object.hasOwn(modelOptions?.attributes ?? {}, "openclaw.sessionKey")).toBe(false);
+    expect(Object.hasOwn(modelOptions?.attributes ?? {}, "merclaw.callId")).toBe(false);
+    expect(Object.hasOwn(modelOptions?.attributes ?? {}, "merclaw.runId")).toBe(false);
+    expect(Object.hasOwn(modelOptions?.attributes ?? {}, "merclaw.sessionKey")).toBe(false);
     expect(modelOptions?.startTime).toBeTypeOf("number");
     expect(Object.hasOwn(modelOptions ?? {}, "kind")).toBe(false);
     expect(modelCall?.[2]).toBeUndefined();
 
-    const harnessCall = startedSpanCall("openclaw.harness.run");
+    const harnessCall = startedSpanCall("merclaw.harness.run");
     const harnessOptions = harnessCall?.[1];
-    expect(harnessOptions?.attributes?.["openclaw.harness.id"]).toBe("codex");
-    expect(harnessOptions?.attributes?.["openclaw.harness.plugin"]).toBe("codex-plugin");
-    expect(harnessOptions?.attributes?.["openclaw.outcome"]).toBe("completed");
-    expect(harnessOptions?.attributes?.["openclaw.provider"]).toBe("codex");
-    expect(harnessOptions?.attributes?.["openclaw.model"]).toBe("gpt-5.4");
-    expect(harnessOptions?.attributes?.["openclaw.channel"]).toBe("qa");
-    expect(harnessOptions?.attributes?.["openclaw.harness.result_classification"]).toBe(
+    expect(harnessOptions?.attributes?.["merclaw.harness.id"]).toBe("codex");
+    expect(harnessOptions?.attributes?.["merclaw.harness.plugin"]).toBe("codex-plugin");
+    expect(harnessOptions?.attributes?.["merclaw.outcome"]).toBe("completed");
+    expect(harnessOptions?.attributes?.["merclaw.provider"]).toBe("codex");
+    expect(harnessOptions?.attributes?.["merclaw.model"]).toBe("gpt-5.4");
+    expect(harnessOptions?.attributes?.["merclaw.channel"]).toBe("qa");
+    expect(harnessOptions?.attributes?.["merclaw.harness.result_classification"]).toBe(
       "reasoning-only",
     );
-    expect(harnessOptions?.attributes?.["openclaw.harness.yield_detected"]).toBe(true);
-    expect(harnessOptions?.attributes?.["openclaw.harness.items.started"]).toBe(3);
-    expect(harnessOptions?.attributes?.["openclaw.harness.items.completed"]).toBe(2);
-    expect(harnessOptions?.attributes?.["openclaw.harness.items.active"]).toBe(1);
-    expect(Object.hasOwn(harnessOptions?.attributes ?? {}, "openclaw.runId")).toBe(false);
-    expect(Object.hasOwn(harnessOptions?.attributes ?? {}, "openclaw.sessionId")).toBe(false);
-    expect(Object.hasOwn(harnessOptions?.attributes ?? {}, "openclaw.sessionKey")).toBe(false);
-    expect(Object.hasOwn(harnessOptions?.attributes ?? {}, "openclaw.traceId")).toBe(false);
+    expect(harnessOptions?.attributes?.["merclaw.harness.yield_detected"]).toBe(true);
+    expect(harnessOptions?.attributes?.["merclaw.harness.items.started"]).toBe(3);
+    expect(harnessOptions?.attributes?.["merclaw.harness.items.completed"]).toBe(2);
+    expect(harnessOptions?.attributes?.["merclaw.harness.items.active"]).toBe(1);
+    expect(Object.hasOwn(harnessOptions?.attributes ?? {}, "merclaw.runId")).toBe(false);
+    expect(Object.hasOwn(harnessOptions?.attributes ?? {}, "merclaw.sessionId")).toBe(false);
+    expect(Object.hasOwn(harnessOptions?.attributes ?? {}, "merclaw.sessionKey")).toBe(false);
+    expect(Object.hasOwn(harnessOptions?.attributes ?? {}, "merclaw.traceId")).toBe(false);
     expect(harnessOptions?.startTime).toBeTypeOf("number");
     expect(harnessCall?.[2]).toBeUndefined();
 
-    const toolCall = startedSpanCall("openclaw.tool.execution");
+    const toolCall = startedSpanCall("merclaw.tool.execution");
     const toolOptions = toolCall?.[1];
-    expect(toolOptions?.attributes?.["openclaw.toolName"]).toBe("read");
-    expect(toolOptions?.attributes?.["openclaw.tool.source"]).toBe("core");
-    expect(toolOptions?.attributes?.["openclaw.errorCategory"]).toBe("TypeError");
-    expect(toolOptions?.attributes?.["openclaw.errorCode"]).toBe("429");
-    expect(toolOptions?.attributes?.["openclaw.tool.params.kind"]).toBe("object");
+    expect(toolOptions?.attributes?.["merclaw.toolName"]).toBe("read");
+    expect(toolOptions?.attributes?.["merclaw.tool.source"]).toBe("core");
+    expect(toolOptions?.attributes?.["merclaw.errorCategory"]).toBe("TypeError");
+    expect(toolOptions?.attributes?.["merclaw.errorCode"]).toBe("429");
+    expect(toolOptions?.attributes?.["merclaw.tool.params.kind"]).toBe("object");
     expect(toolOptions?.attributes?.["gen_ai.tool.name"]).toBe("read");
-    expect(Object.hasOwn(toolOptions?.attributes ?? {}, "openclaw.toolCallId")).toBe(false);
-    expect(Object.hasOwn(toolOptions?.attributes ?? {}, "openclaw.runId")).toBe(false);
-    expect(Object.hasOwn(toolOptions?.attributes ?? {}, "openclaw.sessionKey")).toBe(false);
+    expect(Object.hasOwn(toolOptions?.attributes ?? {}, "merclaw.toolCallId")).toBe(false);
+    expect(Object.hasOwn(toolOptions?.attributes ?? {}, "merclaw.runId")).toBe(false);
+    expect(Object.hasOwn(toolOptions?.attributes ?? {}, "merclaw.sessionKey")).toBe(false);
     expect(toolOptions?.startTime).toBeTypeOf("number");
     expect(toolCall?.[2]).toBeUndefined();
 
-    const modelCallDuration = lastHistogramRecord("openclaw.model_call.duration_ms");
+    const modelCallDuration = lastHistogramRecord("merclaw.model_call.duration_ms");
     expect(modelCallDuration?.[0]).toBe(80);
-    expect(modelCallDuration?.[1]?.["openclaw.provider"]).toBe("openai");
-    expect(modelCallDuration?.[1]?.["openclaw.model"]).toBe("gpt-5.4");
-    const requestBytes = lastHistogramRecord("openclaw.model_call.request_bytes");
+    expect(modelCallDuration?.[1]?.["merclaw.provider"]).toBe("openai");
+    expect(modelCallDuration?.[1]?.["merclaw.model"]).toBe("gpt-5.4");
+    const requestBytes = lastHistogramRecord("merclaw.model_call.request_bytes");
     expect(requestBytes?.[0]).toBe(1234);
-    expect(requestBytes?.[1]?.["openclaw.provider"]).toBe("openai");
-    expect(requestBytes?.[1]?.["openclaw.model"]).toBe("gpt-5.4");
-    const responseBytes = lastHistogramRecord("openclaw.model_call.response_bytes");
+    expect(requestBytes?.[1]?.["merclaw.provider"]).toBe("openai");
+    expect(requestBytes?.[1]?.["merclaw.model"]).toBe("gpt-5.4");
+    const responseBytes = lastHistogramRecord("merclaw.model_call.response_bytes");
     expect(responseBytes?.[0]).toBe(567);
-    expect(responseBytes?.[1]?.["openclaw.provider"]).toBe("openai");
-    expect(responseBytes?.[1]?.["openclaw.model"]).toBe("gpt-5.4");
-    const timeToFirstByte = lastHistogramRecord("openclaw.model_call.time_to_first_byte_ms");
+    expect(responseBytes?.[1]?.["merclaw.provider"]).toBe("openai");
+    expect(responseBytes?.[1]?.["merclaw.model"]).toBe("gpt-5.4");
+    const timeToFirstByte = lastHistogramRecord("merclaw.model_call.time_to_first_byte_ms");
     expect(timeToFirstByte?.[0]).toBe(45);
-    expect(timeToFirstByte?.[1]?.["openclaw.provider"]).toBe("openai");
-    expect(timeToFirstByte?.[1]?.["openclaw.model"]).toBe("gpt-5.4");
-    const modelSpanAttributes = firstSpanAttributes("openclaw.model.call");
-    expect(modelSpanAttributes["openclaw.model_call.request_bytes"]).toBe(1234);
-    expect(modelSpanAttributes["openclaw.model_call.response_bytes"]).toBe(567);
-    expect(modelSpanAttributes["openclaw.model_call.time_to_first_byte_ms"]).toBe(45);
-    const runDuration = lastHistogramRecord("openclaw.run.duration_ms");
+    expect(timeToFirstByte?.[1]?.["merclaw.provider"]).toBe("openai");
+    expect(timeToFirstByte?.[1]?.["merclaw.model"]).toBe("gpt-5.4");
+    const modelSpanAttributes = firstSpanAttributes("merclaw.model.call");
+    expect(modelSpanAttributes["merclaw.model_call.request_bytes"]).toBe(1234);
+    expect(modelSpanAttributes["merclaw.model_call.response_bytes"]).toBe(567);
+    expect(modelSpanAttributes["merclaw.model_call.time_to_first_byte_ms"]).toBe(45);
+    const runDuration = lastHistogramRecord("merclaw.run.duration_ms");
     expect(runDuration?.[0]).toBe(100);
-    expect(Object.hasOwn(runDuration?.[1] ?? {}, "openclaw.runId")).toBe(false);
-    const harnessDuration = lastHistogramRecord("openclaw.harness.duration_ms");
+    expect(Object.hasOwn(runDuration?.[1] ?? {}, "merclaw.runId")).toBe(false);
+    const harnessDuration = lastHistogramRecord("merclaw.harness.duration_ms");
     expect(harnessDuration?.[0]).toBe(90);
-    expect(harnessDuration?.[1]?.["openclaw.harness.id"]).toBe("codex");
-    expect(harnessDuration?.[1]?.["openclaw.harness.plugin"]).toBe("codex-plugin");
-    expect(harnessDuration?.[1]?.["openclaw.outcome"]).toBe("completed");
-    expect(Object.hasOwn(harnessDuration?.[1] ?? {}, "openclaw.runId")).toBe(false);
-    expect(Object.hasOwn(harnessDuration?.[1] ?? {}, "openclaw.sessionKey")).toBe(false);
-    const toolDuration = lastHistogramRecord("openclaw.tool.execution.duration_ms");
+    expect(harnessDuration?.[1]?.["merclaw.harness.id"]).toBe("codex");
+    expect(harnessDuration?.[1]?.["merclaw.harness.plugin"]).toBe("codex-plugin");
+    expect(harnessDuration?.[1]?.["merclaw.outcome"]).toBe("completed");
+    expect(Object.hasOwn(harnessDuration?.[1] ?? {}, "merclaw.runId")).toBe(false);
+    expect(Object.hasOwn(harnessDuration?.[1] ?? {}, "merclaw.sessionKey")).toBe(false);
+    const toolDuration = lastHistogramRecord("merclaw.tool.execution.duration_ms");
     expect(toolDuration?.[0]).toBe(20);
-    expect(toolDuration?.[1]?.["openclaw.tool.source"]).toBe("core");
-    expect(Object.hasOwn(toolDuration?.[1] ?? {}, "openclaw.errorCode")).toBe(false);
-    expect(Object.hasOwn(toolDuration?.[1] ?? {}, "openclaw.runId")).toBe(false);
+    expect(toolDuration?.[1]?.["merclaw.tool.source"]).toBe("core");
+    expect(Object.hasOwn(toolDuration?.[1] ?? {}, "merclaw.errorCode")).toBe(false);
+    expect(Object.hasOwn(toolDuration?.[1] ?? {}, "merclaw.runId")).toBe(false);
 
-    const toolSpan = spanByName("openclaw.tool.execution");
+    const toolSpan = spanByName("merclaw.tool.execution");
     expect(toolSpan?.setStatus).toHaveBeenCalledWith({
       code: 2,
       message: "TypeError",
     });
-    expect(firstSpanEndTime("openclaw.tool.execution")).toBeTypeOf("number");
+    expect(firstSpanEndTime("merclaw.tool.execution")).toBeTypeOf("number");
     expect(telemetryState.tracer.setSpanContext).not.toHaveBeenCalled();
     await service.stop?.(ctx);
   });
@@ -2006,29 +2006,29 @@ describe("diagnostics-otel service", () => {
     });
     await flushDiagnosticEvents();
 
-    const failoverOptions = startedSpanOptions("openclaw.model.failover");
-    expect(failoverOptions?.attributes?.["openclaw.provider"]).toBe("anthropic");
-    expect(failoverOptions?.attributes?.["openclaw.model"]).toBe("claude-opus-4-6");
-    expect(failoverOptions?.attributes?.["openclaw.failover.to_provider"]).toBe("openai");
-    expect(failoverOptions?.attributes?.["openclaw.failover.to_model"]).toBe("gpt-5.4");
-    expect(failoverOptions?.attributes?.["openclaw.failover.reason"]).toBe("overloaded");
-    expect(failoverOptions?.attributes?.["openclaw.failover.suspended"]).toBe(true);
-    expect(failoverOptions?.attributes?.["openclaw.failover.cascade_depth"]).toBe(1);
-    expect(failoverOptions?.attributes?.["openclaw.lane"]).toBe("main");
-    expect(Object.hasOwn(failoverOptions?.attributes ?? {}, "openclaw.sessionId")).toBe(false);
-    expect(Object.hasOwn(failoverOptions?.attributes ?? {}, "openclaw.sessionKey")).toBe(false);
+    const failoverOptions = startedSpanOptions("merclaw.model.failover");
+    expect(failoverOptions?.attributes?.["merclaw.provider"]).toBe("anthropic");
+    expect(failoverOptions?.attributes?.["merclaw.model"]).toBe("claude-opus-4-6");
+    expect(failoverOptions?.attributes?.["merclaw.failover.to_provider"]).toBe("openai");
+    expect(failoverOptions?.attributes?.["merclaw.failover.to_model"]).toBe("gpt-5.4");
+    expect(failoverOptions?.attributes?.["merclaw.failover.reason"]).toBe("overloaded");
+    expect(failoverOptions?.attributes?.["merclaw.failover.suspended"]).toBe(true);
+    expect(failoverOptions?.attributes?.["merclaw.failover.cascade_depth"]).toBe(1);
+    expect(failoverOptions?.attributes?.["merclaw.lane"]).toBe("main");
+    expect(Object.hasOwn(failoverOptions?.attributes ?? {}, "merclaw.sessionId")).toBe(false);
+    expect(Object.hasOwn(failoverOptions?.attributes ?? {}, "merclaw.sessionKey")).toBe(false);
     expect(failoverOptions?.startTime).toBeTypeOf("number");
-    expect(firstSpanEndTime("openclaw.model.failover")).toBeTypeOf("number");
-    expect(firstCounterAddCall("openclaw.model.failover")).toStrictEqual([
+    expect(firstSpanEndTime("merclaw.model.failover")).toBeTypeOf("number");
+    expect(firstCounterAddCall("merclaw.model.failover")).toStrictEqual([
       1,
       {
-        "openclaw.failover.reason": "overloaded",
-        "openclaw.failover.suspended": "true",
-        "openclaw.lane": "main",
-        "openclaw.model": "claude-opus-4-6",
-        "openclaw.provider": "anthropic",
-        "openclaw.failover.to_model": "gpt-5.4",
-        "openclaw.failover.to_provider": "openai",
+        "merclaw.failover.reason": "overloaded",
+        "merclaw.failover.suspended": "true",
+        "merclaw.lane": "main",
+        "merclaw.model": "claude-opus-4-6",
+        "merclaw.provider": "anthropic",
+        "merclaw.failover.to_model": "gpt-5.4",
+        "merclaw.failover.to_provider": "openai",
       },
     ]);
     await service.stop?.(ctx);
@@ -2051,19 +2051,19 @@ describe("diagnostics-otel service", () => {
     });
     await flushDiagnosticEvents();
 
-    expect(firstCounterAddCall("openclaw.tool.execution.blocked")).toStrictEqual([
+    expect(firstCounterAddCall("merclaw.tool.execution.blocked")).toStrictEqual([
       1,
       {
-        "openclaw.toolName": "browser",
-        "openclaw.tool.source": "mcp",
+        "merclaw.toolName": "browser",
+        "merclaw.tool.source": "mcp",
         "gen_ai.tool.name": "browser",
-        "openclaw.tool.owner": "browser-tools",
-        "openclaw.tool.params.kind": "object",
-        "openclaw.deniedReason": "tools.deny",
+        "merclaw.tool.owner": "browser-tools",
+        "merclaw.tool.params.kind": "object",
+        "merclaw.deniedReason": "tools.deny",
       },
     ]);
     expect(telemetryState.tracer.startSpan).not.toHaveBeenCalledWith(
-      "openclaw.tool.execution",
+      "merclaw.tool.execution",
       expect.anything(),
       expect.anything(),
     );
@@ -2085,8 +2085,8 @@ describe("diagnostics-otel service", () => {
     });
     await flushDiagnosticEvents();
 
-    const failoverOptions = startedSpanOptions("openclaw.model.failover");
-    expect(failoverOptions?.attributes?.["openclaw.lane"]).toBe("session");
+    const failoverOptions = startedSpanOptions("merclaw.model.failover");
+    expect(failoverOptions?.attributes?.["merclaw.lane"]).toBe("session");
     expect(JSON.stringify(failoverOptions?.attributes)).not.toContain("Agent:qa:otel-trace-smoke");
     await service.stop?.(ctx);
   });
@@ -2127,7 +2127,7 @@ describe("diagnostics-otel service", () => {
     await flushDiagnosticEvents();
 
     const modelCallAttrs = telemetryState.tracer.startSpan.mock.calls
-      .filter((call) => call[0] === "openclaw.model.call")
+      .filter((call) => call[0] === "merclaw.model.call")
       .map((call) => (call[1] as { attributes?: Record<string, unknown> }).attributes);
     expect(modelCallAttrs).toHaveLength(3);
     expect(modelCallAttrs[0]?.["gen_ai.system"]).toBe("openai");
@@ -2168,7 +2168,7 @@ describe("diagnostics-otel service", () => {
     });
     await flushDiagnosticEvents();
 
-    expect(startedSpanOptions("openclaw.model.call")).toBeUndefined();
+    expect(startedSpanOptions("merclaw.model.call")).toBeUndefined();
     const modelCallOptions = startedSpanOptions("text_completion gpt-5.4");
     expect(modelCallOptions?.attributes?.["gen_ai.provider.name"]).toBe("openai");
     expect(modelCallOptions?.attributes?.["gen_ai.request.model"]).toBe("gpt-5.4");
@@ -2176,7 +2176,7 @@ describe("diagnostics-otel service", () => {
     expect(Object.hasOwn(modelCallOptions?.attributes ?? {}, "gen_ai.system")).toBe(false);
     expect(modelCallOptions?.startTime).toBeTypeOf("number");
     expect(modelCallOptions?.kind).toBe(2);
-    const modelUsageOptions = startedSpanOptions("openclaw.model.usage");
+    const modelUsageOptions = startedSpanOptions("merclaw.model.usage");
     expect(modelUsageOptions?.attributes?.["gen_ai.provider.name"]).toBe("openai");
     expect(modelUsageOptions?.attributes?.["gen_ai.request.model"]).toBe("gpt-5.4");
     expect(modelUsageOptions?.attributes?.["gen_ai.operation.name"]).toBe("chat");
@@ -2204,20 +2204,20 @@ describe("diagnostics-otel service", () => {
     });
     await flushDiagnosticEvents();
 
-    const modelCallOptions = startedSpanOptions("openclaw.model.call");
-    expect(modelCallOptions?.attributes?.["openclaw.failureKind"]).toBe("terminated");
+    const modelCallOptions = startedSpanOptions("merclaw.model.call");
+    expect(modelCallOptions?.attributes?.["merclaw.failureKind"]).toBe("terminated");
     expect(
-      Object.hasOwn(modelCallOptions?.attributes ?? {}, "openclaw.upstreamRequestIdHash"),
+      Object.hasOwn(modelCallOptions?.attributes ?? {}, "merclaw.upstreamRequestIdHash"),
     ).toBe(false);
     expect(modelCallOptions?.startTime).toBeTypeOf("number");
-    const span = telemetryState.spans.find((candidate) => candidate.name === "openclaw.model.call");
-    expect(span?.addEvent).toHaveBeenCalledWith("openclaw.provider.request", {
-      "openclaw.upstreamRequestIdHash": "sha256:123456abcdef",
+    const span = telemetryState.spans.find((candidate) => candidate.name === "merclaw.model.call");
+    expect(span?.addEvent).toHaveBeenCalledWith("merclaw.provider.request", {
+      "merclaw.upstreamRequestIdHash": "sha256:123456abcdef",
     });
-    const modelCallDuration = lastHistogramRecord("openclaw.model_call.duration_ms");
+    const modelCallDuration = lastHistogramRecord("merclaw.model_call.duration_ms");
     expect(modelCallDuration?.[0]).toBe(40);
-    expect(modelCallDuration?.[1]?.["openclaw.failureKind"]).toBe("terminated");
-    expect(Object.hasOwn(modelCallDuration?.[1] ?? {}, "openclaw.upstreamRequestIdHash")).toBe(
+    expect(modelCallDuration?.[1]?.["merclaw.failureKind"]).toBe("terminated");
+    expect(Object.hasOwn(modelCallDuration?.[1] ?? {}, "merclaw.upstreamRequestIdHash")).toBe(
       false,
     );
     await service.stop?.(ctx);
@@ -2266,23 +2266,23 @@ describe("diagnostics-otel service", () => {
     });
     await flushDiagnosticEvents();
 
-    const contextCall = startedSpanCall("openclaw.context.assembled");
+    const contextCall = startedSpanCall("merclaw.context.assembled");
     const contextOptions = contextCall?.[1];
-    const runSpan = telemetryState.spans.find((span) => span.name === "openclaw.run");
+    const runSpan = telemetryState.spans.find((span) => span.name === "merclaw.run");
     const runSpanId = runSpan?.spanContext.mock.results[0]?.value?.spanId;
-    expect(contextOptions?.attributes?.["openclaw.provider"]).toBe("openai");
-    expect(contextOptions?.attributes?.["openclaw.model"]).toBe("gpt-5.4");
-    expect(contextOptions?.attributes?.["openclaw.channel"]).toBe("webchat");
-    expect(contextOptions?.attributes?.["openclaw.trigger"]).toBe("message");
-    expect(contextOptions?.attributes?.["openclaw.context.message_count"]).toBe(12);
-    expect(contextOptions?.attributes?.["openclaw.context.history_text_chars"]).toBe(1234);
-    expect(contextOptions?.attributes?.["openclaw.context.history_image_blocks"]).toBe(2);
-    expect(contextOptions?.attributes?.["openclaw.context.max_message_text_chars"]).toBe(456);
-    expect(contextOptions?.attributes?.["openclaw.context.system_prompt_chars"]).toBe(789);
-    expect(contextOptions?.attributes?.["openclaw.context.prompt_chars"]).toBe(42);
-    expect(contextOptions?.attributes?.["openclaw.context.prompt_images"]).toBe(1);
-    expect(contextOptions?.attributes?.["openclaw.context.token_budget"]).toBe(128_000);
-    expect(contextOptions?.attributes?.["openclaw.context.reserve_tokens"]).toBe(4096);
+    expect(contextOptions?.attributes?.["merclaw.provider"]).toBe("openai");
+    expect(contextOptions?.attributes?.["merclaw.model"]).toBe("gpt-5.4");
+    expect(contextOptions?.attributes?.["merclaw.channel"]).toBe("webchat");
+    expect(contextOptions?.attributes?.["merclaw.trigger"]).toBe("message");
+    expect(contextOptions?.attributes?.["merclaw.context.message_count"]).toBe(12);
+    expect(contextOptions?.attributes?.["merclaw.context.history_text_chars"]).toBe(1234);
+    expect(contextOptions?.attributes?.["merclaw.context.history_image_blocks"]).toBe(2);
+    expect(contextOptions?.attributes?.["merclaw.context.max_message_text_chars"]).toBe(456);
+    expect(contextOptions?.attributes?.["merclaw.context.system_prompt_chars"]).toBe(789);
+    expect(contextOptions?.attributes?.["merclaw.context.prompt_chars"]).toBe(42);
+    expect(contextOptions?.attributes?.["merclaw.context.prompt_images"]).toBe(1);
+    expect(contextOptions?.attributes?.["merclaw.context.token_budget"]).toBe(128_000);
+    expect(contextOptions?.attributes?.["merclaw.context.reserve_tokens"]).toBe(4096);
     expect(contextOptions?.attributes).toBeTypeOf("object");
     expect(contextOptions?.startTime).toBeTypeOf("number");
     expect(JSON.stringify(contextCall)).not.toContain("session-key");
@@ -2315,23 +2315,23 @@ describe("diagnostics-otel service", () => {
     });
     await flushDiagnosticEvents();
 
-    expect(telemetryState.counters.get("openclaw.tool.loop")?.add).toHaveBeenCalledWith(1, {
-      "openclaw.toolName": "process",
-      "openclaw.loop.level": "critical",
-      "openclaw.loop.action": "block",
-      "openclaw.loop.detector": "known_poll_no_progress",
-      "openclaw.loop.count": 20,
-      "openclaw.loop.paired_tool": "read",
+    expect(telemetryState.counters.get("merclaw.tool.loop")?.add).toHaveBeenCalledWith(1, {
+      "merclaw.toolName": "process",
+      "merclaw.loop.level": "critical",
+      "merclaw.loop.action": "block",
+      "merclaw.loop.detector": "known_poll_no_progress",
+      "merclaw.loop.count": 20,
+      "merclaw.loop.paired_tool": "read",
     });
-    const loopSpanCall = startedSpanCall("openclaw.tool.loop");
+    const loopSpanCall = startedSpanCall("merclaw.tool.loop");
     const loopOptions = loopSpanCall?.[1];
-    expect(loopOptions?.attributes?.["openclaw.toolName"]).toBe("process");
-    expect(loopOptions?.attributes?.["openclaw.loop.level"]).toBe("critical");
-    expect(loopOptions?.attributes?.["openclaw.loop.action"]).toBe("block");
-    expect(loopOptions?.attributes?.["openclaw.loop.detector"]).toBe("known_poll_no_progress");
-    expect(loopOptions?.attributes?.["openclaw.loop.count"]).toBe(20);
-    expect(loopOptions?.attributes?.["openclaw.loop.paired_tool"]).toBe("read");
-    const loopSpan = telemetryState.spans.find((span) => span.name === "openclaw.tool.loop");
+    expect(loopOptions?.attributes?.["merclaw.toolName"]).toBe("process");
+    expect(loopOptions?.attributes?.["merclaw.loop.level"]).toBe("critical");
+    expect(loopOptions?.attributes?.["merclaw.loop.action"]).toBe("block");
+    expect(loopOptions?.attributes?.["merclaw.loop.detector"]).toBe("known_poll_no_progress");
+    expect(loopOptions?.attributes?.["merclaw.loop.count"]).toBe(20);
+    expect(loopOptions?.attributes?.["merclaw.loop.paired_tool"]).toBe("read");
+    const loopSpan = telemetryState.spans.find((span) => span.name === "merclaw.tool.loop");
     expect(loopSpan?.setStatus).toHaveBeenCalledWith({
       code: 2,
       message: "known_poll_no_progress:block",
@@ -2374,35 +2374,35 @@ describe("diagnostics-otel service", () => {
     });
     await flushDiagnosticEvents();
 
-    expect(telemetryState.histograms.get("openclaw.memory.rss_bytes")?.record).toHaveBeenCalledWith(
+    expect(telemetryState.histograms.get("merclaw.memory.rss_bytes")?.record).toHaveBeenCalledWith(
       100,
       {},
     );
-    expect(telemetryState.histograms.get("openclaw.memory.rss_bytes")?.record).toHaveBeenCalledWith(
+    expect(telemetryState.histograms.get("merclaw.memory.rss_bytes")?.record).toHaveBeenCalledWith(
       200,
       {
-        "openclaw.memory.level": "critical",
-        "openclaw.memory.reason": "rss_growth",
+        "merclaw.memory.level": "critical",
+        "merclaw.memory.reason": "rss_growth",
       },
     );
-    expect(telemetryState.counters.get("openclaw.memory.pressure")?.add).toHaveBeenCalledWith(1, {
-      "openclaw.memory.level": "critical",
-      "openclaw.memory.reason": "rss_growth",
+    expect(telemetryState.counters.get("merclaw.memory.pressure")?.add).toHaveBeenCalledWith(1, {
+      "merclaw.memory.level": "critical",
+      "merclaw.memory.reason": "rss_growth",
     });
-    const pressureCall = startedSpanCall("openclaw.memory.pressure");
+    const pressureCall = startedSpanCall("merclaw.memory.pressure");
     const pressureOptions = pressureCall?.[1];
-    expect(pressureOptions?.attributes?.["openclaw.memory.level"]).toBe("critical");
-    expect(pressureOptions?.attributes?.["openclaw.memory.reason"]).toBe("rss_growth");
-    expect(pressureOptions?.attributes?.["openclaw.memory.rss_bytes"]).toBe(200);
-    expect(pressureOptions?.attributes?.["openclaw.memory.heap_used_bytes"]).toBe(50);
-    expect(pressureOptions?.attributes?.["openclaw.memory.heap_total_bytes"]).toBe(90);
-    expect(pressureOptions?.attributes?.["openclaw.memory.external_bytes"]).toBe(20);
-    expect(pressureOptions?.attributes?.["openclaw.memory.array_buffers_bytes"]).toBe(6);
-    expect(pressureOptions?.attributes?.["openclaw.memory.threshold_bytes"]).toBe(512);
-    expect(pressureOptions?.attributes?.["openclaw.memory.rss_growth_bytes"]).toBe(256);
-    expect(pressureOptions?.attributes?.["openclaw.memory.window_ms"]).toBe(60_000);
+    expect(pressureOptions?.attributes?.["merclaw.memory.level"]).toBe("critical");
+    expect(pressureOptions?.attributes?.["merclaw.memory.reason"]).toBe("rss_growth");
+    expect(pressureOptions?.attributes?.["merclaw.memory.rss_bytes"]).toBe(200);
+    expect(pressureOptions?.attributes?.["merclaw.memory.heap_used_bytes"]).toBe(50);
+    expect(pressureOptions?.attributes?.["merclaw.memory.heap_total_bytes"]).toBe(90);
+    expect(pressureOptions?.attributes?.["merclaw.memory.external_bytes"]).toBe(20);
+    expect(pressureOptions?.attributes?.["merclaw.memory.array_buffers_bytes"]).toBe(6);
+    expect(pressureOptions?.attributes?.["merclaw.memory.threshold_bytes"]).toBe(512);
+    expect(pressureOptions?.attributes?.["merclaw.memory.rss_growth_bytes"]).toBe(256);
+    expect(pressureOptions?.attributes?.["merclaw.memory.window_ms"]).toBe(60_000);
     const pressureSpan = telemetryState.spans.find(
-      (span) => span.name === "openclaw.memory.pressure",
+      (span) => span.name === "merclaw.memory.pressure",
     );
     expect(pressureSpan?.setStatus).toHaveBeenCalledWith({
       code: 2,
@@ -2429,18 +2429,18 @@ describe("diagnostics-otel service", () => {
     });
     await flushDiagnosticEvents();
 
-    const counter = telemetryState.counters.get("openclaw.diagnostic.async_queue.dropped");
+    const counter = telemetryState.counters.get("merclaw.diagnostic.async_queue.dropped");
     expect(counter?.add).toHaveBeenCalledWith(4, {
-      "openclaw.diagnostic.async_queue.drop_class": "total",
+      "merclaw.diagnostic.async_queue.drop_class": "total",
     });
     expect(counter?.add).toHaveBeenCalledWith(1, {
-      "openclaw.diagnostic.async_queue.drop_class": "trusted",
+      "merclaw.diagnostic.async_queue.drop_class": "trusted",
     });
     expect(counter?.add).toHaveBeenCalledWith(2, {
-      "openclaw.diagnostic.async_queue.drop_class": "untrusted",
+      "merclaw.diagnostic.async_queue.drop_class": "untrusted",
     });
     expect(counter?.add).toHaveBeenCalledWith(1, {
-      "openclaw.diagnostic.async_queue.drop_class": "priority",
+      "merclaw.diagnostic.async_queue.drop_class": "priority",
     });
 
     await service.stop?.(ctx);
@@ -2530,9 +2530,9 @@ describe("diagnostics-otel service", () => {
     });
     await flushDiagnosticEvents();
 
-    const runSpan = telemetryState.spans.find((span) => span.name === "openclaw.run");
-    const modelSpan = telemetryState.spans.find((span) => span.name === "openclaw.model.call");
-    const toolSpan = telemetryState.spans.find((span) => span.name === "openclaw.tool.execution");
+    const runSpan = telemetryState.spans.find((span) => span.name === "merclaw.run");
+    const modelSpan = telemetryState.spans.find((span) => span.name === "merclaw.model.call");
+    const toolSpan = telemetryState.spans.find((span) => span.name === "merclaw.tool.execution");
     const runSpanId = runSpan?.spanContext.mock.results[0]?.value?.spanId;
     const modelSpanId = modelSpan?.spanContext.mock.results[0]?.value?.spanId;
 
@@ -2551,9 +2551,9 @@ describe("diagnostics-otel service", () => {
         (call[2] as { spanContext?: { spanId?: string } } | undefined)?.spanContext?.spanId,
       ]),
     );
-    expect(parentBySpanName["openclaw.run"]).toBeUndefined();
-    expect(parentBySpanName["openclaw.model.call"]).toBe(runSpanId);
-    expect(parentBySpanName["openclaw.tool.execution"]).toBe(modelSpanId);
+    expect(parentBySpanName["merclaw.run"]).toBeUndefined();
+    expect(parentBySpanName["merclaw.model.call"]).toBe(runSpanId);
+    expect(parentBySpanName["merclaw.tool.execution"]).toBe(modelSpanId);
     expect(toolSpan?.setStatus).toHaveBeenCalledWith({
       code: 2,
       message: "TypeError",
@@ -2607,10 +2607,10 @@ describe("diagnostics-otel service", () => {
     });
     await flushDiagnosticEvents();
 
-    const runSpan = telemetryState.spans.find((span) => span.name === "openclaw.run");
+    const runSpan = telemetryState.spans.find((span) => span.name === "merclaw.run");
     const runSpanId = runSpan?.spanContext.mock.results[0]?.value?.spanId;
     const modelUsageCall = telemetryState.tracer.startSpan.mock.calls.find(
-      (call) => call[0] === "openclaw.model.usage",
+      (call) => call[0] === "merclaw.model.usage",
     );
 
     const linkedSpanContext = firstSetSpanContext();
@@ -2620,7 +2620,7 @@ describe("diagnostics-otel service", () => {
       (modelUsageCall?.[2] as { spanContext?: { spanId?: string } } | undefined)?.spanContext
         ?.spanId,
     ).toBe(runSpanId);
-    expect(firstSpanEndTime("openclaw.run")).toBeTypeOf("number");
+    expect(firstSpanEndTime("merclaw.run")).toBeTypeOf("number");
     await service.stop?.(ctx);
   });
 
@@ -2663,8 +2663,8 @@ describe("diagnostics-otel service", () => {
     const parentBySpanName = Object.fromEntries(
       telemetryState.tracer.startSpan.mock.calls.map((call) => [call[0], call[2]]),
     );
-    expect(parentBySpanName["openclaw.run"]).toBeUndefined();
-    expect(parentBySpanName["openclaw.model.call"]).toBeUndefined();
+    expect(parentBySpanName["merclaw.run"]).toBeUndefined();
+    expect(parentBySpanName["merclaw.model.call"]).toBeUndefined();
     await service.stop?.(ctx);
   });
 
@@ -2705,8 +2705,8 @@ describe("diagnostics-otel service", () => {
     const parentBySpanName = Object.fromEntries(
       telemetryState.tracer.startSpan.mock.calls.map((call) => [call[0], call[2]]),
     );
-    expect(parentBySpanName["openclaw.run"]).toBeUndefined();
-    expect(parentBySpanName["openclaw.model.call"]).toBeUndefined();
+    expect(parentBySpanName["merclaw.run"]).toBeUndefined();
+    expect(parentBySpanName["merclaw.model.call"]).toBeUndefined();
     await service.stop?.(ctx);
   });
 
@@ -2761,9 +2761,9 @@ describe("diagnostics-otel service", () => {
     const parentBySpanName = Object.fromEntries(
       telemetryState.tracer.startSpan.mock.calls.map((call) => [call[0], call[2]]),
     );
-    expect(parentBySpanName["openclaw.run"]).toBeUndefined();
-    expect(parentBySpanName["openclaw.model.call"]).toBeUndefined();
-    expect(parentBySpanName["openclaw.tool.execution"]).toBeUndefined();
+    expect(parentBySpanName["merclaw.run"]).toBeUndefined();
+    expect(parentBySpanName["merclaw.model.call"]).toBeUndefined();
+    expect(parentBySpanName["merclaw.tool.execution"]).toBeUndefined();
     await service.stop?.(ctx);
   });
 
@@ -2834,21 +2834,21 @@ describe("diagnostics-otel service", () => {
     await flushDiagnosticEvents();
 
     expect(
-      telemetryState.tracer.startSpan.mock.calls.filter((call) => call[0] === "openclaw.run"),
+      telemetryState.tracer.startSpan.mock.calls.filter((call) => call[0] === "merclaw.run"),
     ).toHaveLength(1);
     expect(
       telemetryState.tracer.startSpan.mock.calls.filter(
-        (call) => call[0] === "openclaw.model.call",
+        (call) => call[0] === "merclaw.model.call",
       ),
     ).toHaveLength(1);
     expect(
       telemetryState.tracer.startSpan.mock.calls.filter(
-        (call) => call[0] === "openclaw.tool.execution",
+        (call) => call[0] === "merclaw.tool.execution",
       ),
     ).toHaveLength(1);
     expect(
       telemetryState.tracer.startSpan.mock.calls.filter(
-        (call) => call[0] === "openclaw.harness.run",
+        (call) => call[0] === "merclaw.harness.run",
       ),
     ).toHaveLength(1);
     await service.stop?.(ctx);
@@ -2872,33 +2872,33 @@ describe("diagnostics-otel service", () => {
     });
     await flushDiagnosticEvents();
 
-    const execDuration = lastHistogramRecord("openclaw.exec.duration_ms");
+    const execDuration = lastHistogramRecord("merclaw.exec.duration_ms");
     expect(execDuration?.[0]).toBe(30);
-    expect(execDuration?.[1]?.["openclaw.exec.target"]).toBe("host");
-    expect(execDuration?.[1]?.["openclaw.exec.mode"]).toBe("child");
-    expect(execDuration?.[1]?.["openclaw.outcome"]).toBe("failed");
-    expect(execDuration?.[1]?.["openclaw.failureKind"]).toBe("runtime-error");
+    expect(execDuration?.[1]?.["merclaw.exec.target"]).toBe("host");
+    expect(execDuration?.[1]?.["merclaw.exec.mode"]).toBe("child");
+    expect(execDuration?.[1]?.["merclaw.outcome"]).toBe("failed");
+    expect(execDuration?.[1]?.["merclaw.failureKind"]).toBe("runtime-error");
 
-    const execCall = startedSpanCall("openclaw.exec");
+    const execCall = startedSpanCall("merclaw.exec");
     const execOptions = execCall?.[1];
-    expect(execOptions?.attributes?.["openclaw.exec.target"]).toBe("host");
-    expect(execOptions?.attributes?.["openclaw.exec.mode"]).toBe("child");
-    expect(execOptions?.attributes?.["openclaw.outcome"]).toBe("failed");
-    expect(execOptions?.attributes?.["openclaw.exec.command_length"]).toBe(42);
-    expect(execOptions?.attributes?.["openclaw.exec.exit_code"]).toBe(1);
-    expect(execOptions?.attributes?.["openclaw.exec.timed_out"]).toBe(false);
-    expect(execOptions?.attributes?.["openclaw.failureKind"]).toBe("runtime-error");
-    expect(Object.hasOwn(execOptions?.attributes ?? {}, "openclaw.exec.command")).toBe(false);
-    expect(Object.hasOwn(execOptions?.attributes ?? {}, "openclaw.exec.workdir")).toBe(false);
-    expect(Object.hasOwn(execOptions?.attributes ?? {}, "openclaw.sessionKey")).toBe(false);
+    expect(execOptions?.attributes?.["merclaw.exec.target"]).toBe("host");
+    expect(execOptions?.attributes?.["merclaw.exec.mode"]).toBe("child");
+    expect(execOptions?.attributes?.["merclaw.outcome"]).toBe("failed");
+    expect(execOptions?.attributes?.["merclaw.exec.command_length"]).toBe(42);
+    expect(execOptions?.attributes?.["merclaw.exec.exit_code"]).toBe(1);
+    expect(execOptions?.attributes?.["merclaw.exec.timed_out"]).toBe(false);
+    expect(execOptions?.attributes?.["merclaw.failureKind"]).toBe("runtime-error");
+    expect(Object.hasOwn(execOptions?.attributes ?? {}, "merclaw.exec.command")).toBe(false);
+    expect(Object.hasOwn(execOptions?.attributes ?? {}, "merclaw.exec.workdir")).toBe(false);
+    expect(Object.hasOwn(execOptions?.attributes ?? {}, "merclaw.sessionKey")).toBe(false);
     expect(execOptions?.startTime).toBeTypeOf("number");
 
-    const execSpan = spanByName("openclaw.exec");
+    const execSpan = spanByName("merclaw.exec");
     expect(execSpan?.setStatus).toHaveBeenCalledWith({
       code: 2,
       message: "runtime-error",
     });
-    expect(firstSpanEndTime("openclaw.exec")).toBeTypeOf("number");
+    expect(firstSpanEndTime("merclaw.exec")).toBeTypeOf("number");
     await service.stop?.(ctx);
   });
 
@@ -2932,56 +2932,56 @@ describe("diagnostics-otel service", () => {
     await flushDiagnosticEvents();
 
     expect(
-      telemetryState.counters.get("openclaw.message.delivery.started")?.add,
+      telemetryState.counters.get("merclaw.message.delivery.started")?.add,
     ).toHaveBeenCalledWith(1, {
-      "openclaw.channel": "matrix",
-      "openclaw.delivery.kind": "text",
+      "merclaw.channel": "matrix",
+      "merclaw.delivery.kind": "text",
     });
     const deliveryDurationRecords = telemetryState.histograms.get(
-      "openclaw.message.delivery.duration_ms",
+      "merclaw.message.delivery.duration_ms",
     )?.record.mock.calls as Array<[unknown, Record<string, unknown>]>;
     expect(deliveryDurationRecords[0]?.[0]).toBe(25);
-    expect(deliveryDurationRecords[0]?.[1]["openclaw.channel"]).toBe("matrix");
-    expect(deliveryDurationRecords[0]?.[1]["openclaw.delivery.kind"]).toBe("text");
-    expect(deliveryDurationRecords[0]?.[1]["openclaw.outcome"]).toBe("completed");
+    expect(deliveryDurationRecords[0]?.[1]["merclaw.channel"]).toBe("matrix");
+    expect(deliveryDurationRecords[0]?.[1]["merclaw.delivery.kind"]).toBe("text");
+    expect(deliveryDurationRecords[0]?.[1]["merclaw.outcome"]).toBe("completed");
     expect(deliveryDurationRecords[1]?.[0]).toBe(40);
-    expect(deliveryDurationRecords[1]?.[1]["openclaw.channel"]).toBe("discord");
-    expect(deliveryDurationRecords[1]?.[1]["openclaw.delivery.kind"]).toBe("media");
-    expect(deliveryDurationRecords[1]?.[1]["openclaw.outcome"]).toBe("error");
-    expect(deliveryDurationRecords[1]?.[1]["openclaw.errorCategory"]).toBe("TypeError");
+    expect(deliveryDurationRecords[1]?.[1]["merclaw.channel"]).toBe("discord");
+    expect(deliveryDurationRecords[1]?.[1]["merclaw.delivery.kind"]).toBe("media");
+    expect(deliveryDurationRecords[1]?.[1]["merclaw.outcome"]).toBe("error");
+    expect(deliveryDurationRecords[1]?.[1]["merclaw.errorCategory"]).toBe("TypeError");
 
     const deliverySpanCalls = telemetryState.tracer.startSpan.mock.calls.filter(
-      (call) => call[0] === "openclaw.message.delivery",
+      (call) => call[0] === "merclaw.message.delivery",
     );
     expect(deliverySpanCalls).toHaveLength(2);
     const firstDeliveryOptions = deliverySpanCalls[0]?.[1] as
       | { attributes?: Record<string, unknown>; startTime?: unknown }
       | undefined;
-    expect(firstDeliveryOptions?.attributes?.["openclaw.channel"]).toBe("matrix");
-    expect(firstDeliveryOptions?.attributes?.["openclaw.delivery.kind"]).toBe("text");
-    expect(firstDeliveryOptions?.attributes?.["openclaw.outcome"]).toBe("completed");
-    expect(firstDeliveryOptions?.attributes?.["openclaw.delivery.result_count"]).toBe(1);
+    expect(firstDeliveryOptions?.attributes?.["merclaw.channel"]).toBe("matrix");
+    expect(firstDeliveryOptions?.attributes?.["merclaw.delivery.kind"]).toBe("text");
+    expect(firstDeliveryOptions?.attributes?.["merclaw.outcome"]).toBe("completed");
+    expect(firstDeliveryOptions?.attributes?.["merclaw.delivery.result_count"]).toBe(1);
     expect(firstDeliveryOptions?.startTime).toBeTypeOf("number");
     const secondDeliveryOptions = deliverySpanCalls[1]?.[1] as
       | { attributes?: Record<string, unknown>; startTime?: unknown }
       | undefined;
-    expect(secondDeliveryOptions?.attributes?.["openclaw.channel"]).toBe("discord");
-    expect(secondDeliveryOptions?.attributes?.["openclaw.delivery.kind"]).toBe("media");
-    expect(secondDeliveryOptions?.attributes?.["openclaw.outcome"]).toBe("error");
-    expect(secondDeliveryOptions?.attributes?.["openclaw.errorCategory"]).toBe("TypeError");
+    expect(secondDeliveryOptions?.attributes?.["merclaw.channel"]).toBe("discord");
+    expect(secondDeliveryOptions?.attributes?.["merclaw.delivery.kind"]).toBe("media");
+    expect(secondDeliveryOptions?.attributes?.["merclaw.outcome"]).toBe("error");
+    expect(secondDeliveryOptions?.attributes?.["merclaw.errorCategory"]).toBe("TypeError");
     expect(secondDeliveryOptions?.startTime).toBeTypeOf("number");
     for (const call of deliverySpanCalls) {
       const options = call[1] as { attributes?: Record<string, unknown>; startTime?: unknown };
-      expect(Object.hasOwn(options.attributes ?? {}, "openclaw.chatId")).toBe(false);
-      expect(Object.hasOwn(options.attributes ?? {}, "openclaw.sessionKey")).toBe(false);
-      expect(Object.hasOwn(options.attributes ?? {}, "openclaw.messageId")).toBe(false);
-      expect(Object.hasOwn(options.attributes ?? {}, "openclaw.conversationId")).toBe(false);
-      expect(Object.hasOwn(options.attributes ?? {}, "openclaw.content")).toBe(false);
-      expect(Object.hasOwn(options.attributes ?? {}, "openclaw.to")).toBe(false);
+      expect(Object.hasOwn(options.attributes ?? {}, "merclaw.chatId")).toBe(false);
+      expect(Object.hasOwn(options.attributes ?? {}, "merclaw.sessionKey")).toBe(false);
+      expect(Object.hasOwn(options.attributes ?? {}, "merclaw.messageId")).toBe(false);
+      expect(Object.hasOwn(options.attributes ?? {}, "merclaw.conversationId")).toBe(false);
+      expect(Object.hasOwn(options.attributes ?? {}, "merclaw.content")).toBe(false);
+      expect(Object.hasOwn(options.attributes ?? {}, "merclaw.to")).toBe(false);
       expect(options.startTime).toBeTypeOf("number");
     }
     const errorSpan = telemetryState.spans.find(
-      (span) => span.name === "openclaw.message.delivery" && span.setStatus.mock.calls.length > 0,
+      (span) => span.name === "merclaw.message.delivery" && span.setStatus.mock.calls.length > 0,
     );
     expect(errorSpan?.setStatus).toHaveBeenCalledWith({
       code: 2,
@@ -3005,17 +3005,17 @@ describe("diagnostics-otel service", () => {
     });
     await flushDiagnosticEvents();
 
-    const deliveryDuration = lastHistogramRecord("openclaw.message.delivery.duration_ms");
+    const deliveryDuration = lastHistogramRecord("merclaw.message.delivery.duration_ms");
     expect(deliveryDuration?.[0]).toBe(20);
-    expect(deliveryDuration?.[1]?.["openclaw.channel"]).toBe("unknown");
-    expect(deliveryDuration?.[1]?.["openclaw.delivery.kind"]).toBe("other");
-    expect(deliveryDuration?.[1]?.["openclaw.outcome"]).toBe("completed");
-    const deliverySpanCall = startedSpanCall("openclaw.message.delivery");
+    expect(deliveryDuration?.[1]?.["merclaw.channel"]).toBe("unknown");
+    expect(deliveryDuration?.[1]?.["merclaw.delivery.kind"]).toBe("other");
+    expect(deliveryDuration?.[1]?.["merclaw.outcome"]).toBe("completed");
+    const deliverySpanCall = startedSpanCall("merclaw.message.delivery");
     const deliveryOptions = deliverySpanCall?.[1];
-    expect(deliveryOptions?.attributes?.["openclaw.channel"]).toBe("unknown");
-    expect(deliveryOptions?.attributes?.["openclaw.delivery.kind"]).toBe("other");
-    expect(deliveryOptions?.attributes?.["openclaw.outcome"]).toBe("completed");
-    expect(deliveryOptions?.attributes?.["openclaw.delivery.result_count"]).toBe(1);
+    expect(deliveryOptions?.attributes?.["merclaw.channel"]).toBe("unknown");
+    expect(deliveryOptions?.attributes?.["merclaw.delivery.kind"]).toBe("other");
+    expect(deliveryOptions?.attributes?.["merclaw.outcome"]).toBe("completed");
+    expect(deliveryOptions?.attributes?.["merclaw.delivery.result_count"]).toBe(1);
     expect(deliveryOptions?.startTime).toBeTypeOf("number");
     await service.stop?.(ctx);
   });
@@ -3069,48 +3069,48 @@ describe("diagnostics-otel service", () => {
     });
     await flushDiagnosticEvents();
 
-    const recoveryRequestedCall = firstCounterAddCall("openclaw.session.recovery.requested");
+    const recoveryRequestedCall = firstCounterAddCall("merclaw.session.recovery.requested");
     expect(recoveryRequestedCall[0]).toBe(1);
-    expect(recoveryRequestedCall[1]?.["openclaw.state"]).toBe("processing");
-    expect(recoveryRequestedCall[1]?.["openclaw.action"]).toBe("abort");
-    expect(recoveryRequestedCall[1]?.["openclaw.active_work_kind"]).toBe("tool_call");
-    const recoveryCompletedCall = firstCounterAddCall("openclaw.session.recovery.completed");
+    expect(recoveryRequestedCall[1]?.["merclaw.state"]).toBe("processing");
+    expect(recoveryRequestedCall[1]?.["merclaw.action"]).toBe("abort");
+    expect(recoveryRequestedCall[1]?.["merclaw.active_work_kind"]).toBe("tool_call");
+    const recoveryCompletedCall = firstCounterAddCall("merclaw.session.recovery.completed");
     expect(recoveryCompletedCall[0]).toBe(1);
-    expect(recoveryCompletedCall[1]?.["openclaw.state"]).toBe("processing");
-    expect(recoveryCompletedCall[1]?.["openclaw.status"]).toBe("released");
-    expect(recoveryCompletedCall[1]?.["openclaw.action"]).toBe("abort-active-run");
-    const recoveryAgeRecord = lastHistogramRecord("openclaw.session.recovery.age_ms");
+    expect(recoveryCompletedCall[1]?.["merclaw.state"]).toBe("processing");
+    expect(recoveryCompletedCall[1]?.["merclaw.status"]).toBe("released");
+    expect(recoveryCompletedCall[1]?.["merclaw.action"]).toBe("abort-active-run");
+    const recoveryAgeRecord = lastHistogramRecord("merclaw.session.recovery.age_ms");
     expect(recoveryAgeRecord?.[0]).toBe(13_000);
-    expect(recoveryAgeRecord?.[1]?.["openclaw.status"]).toBe("released");
-    expect(telemetryState.counters.get("openclaw.talk.event")?.add).toHaveBeenCalledWith(1, {
-      "openclaw.talk.brain": "agent-consult",
-      "openclaw.talk.event_type": "input.audio.delta",
-      "openclaw.talk.mode": "realtime",
-      "openclaw.talk.provider": "openai",
-      "openclaw.talk.transport": "gateway-relay",
+    expect(recoveryAgeRecord?.[1]?.["merclaw.status"]).toBe("released");
+    expect(telemetryState.counters.get("merclaw.talk.event")?.add).toHaveBeenCalledWith(1, {
+      "merclaw.talk.brain": "agent-consult",
+      "merclaw.talk.event_type": "input.audio.delta",
+      "merclaw.talk.mode": "realtime",
+      "merclaw.talk.provider": "openai",
+      "merclaw.talk.transport": "gateway-relay",
     });
-    expect(telemetryState.histograms.get("openclaw.talk.audio.bytes")?.record).toHaveBeenCalledWith(
+    expect(telemetryState.histograms.get("merclaw.talk.audio.bytes")?.record).toHaveBeenCalledWith(
       320,
       {
-        "openclaw.talk.brain": "agent-consult",
-        "openclaw.talk.event_type": "input.audio.delta",
-        "openclaw.talk.mode": "realtime",
-        "openclaw.talk.provider": "openai",
-        "openclaw.talk.transport": "gateway-relay",
+        "merclaw.talk.brain": "agent-consult",
+        "merclaw.talk.event_type": "input.audio.delta",
+        "merclaw.talk.mode": "realtime",
+        "merclaw.talk.provider": "openai",
+        "merclaw.talk.transport": "gateway-relay",
       },
     );
     expect(
-      telemetryState.histograms.get("openclaw.talk.event.duration_ms")?.record,
+      telemetryState.histograms.get("merclaw.talk.event.duration_ms")?.record,
     ).toHaveBeenCalledWith(45, {
-      "openclaw.talk.brain": "agent-consult",
-      "openclaw.talk.event_type": "latency.metrics",
-      "openclaw.talk.mode": "realtime",
-      "openclaw.talk.provider": "openai",
-      "openclaw.talk.transport": "gateway-relay",
+      "merclaw.talk.brain": "agent-consult",
+      "merclaw.talk.event_type": "latency.metrics",
+      "merclaw.talk.mode": "realtime",
+      "merclaw.talk.provider": "openai",
+      "merclaw.talk.transport": "gateway-relay",
     });
 
     const talkCounterCalls = JSON.stringify(
-      telemetryState.counters.get("openclaw.talk.event")?.add.mock.calls,
+      telemetryState.counters.get("merclaw.talk.event")?.add.mock.calls,
     );
     expect(talkCounterCalls).not.toContain("talk-session-should-not-export");
     expect(talkCounterCalls).not.toContain("turn-should-not-export");
@@ -3147,20 +3147,20 @@ describe("diagnostics-otel service", () => {
     } as Parameters<typeof emitDiagnosticEvent>[0]);
     await flushDiagnosticEvents();
 
-    const modelOptions = startedSpanOptions("openclaw.model.call");
-    expect(Object.hasOwn(modelOptions?.attributes ?? {}, "openclaw.content.input_messages")).toBe(
+    const modelOptions = startedSpanOptions("merclaw.model.call");
+    expect(Object.hasOwn(modelOptions?.attributes ?? {}, "merclaw.content.input_messages")).toBe(
       false,
     );
-    expect(Object.hasOwn(modelOptions?.attributes ?? {}, "openclaw.content.output_messages")).toBe(
+    expect(Object.hasOwn(modelOptions?.attributes ?? {}, "merclaw.content.output_messages")).toBe(
       false,
     );
-    expect(Object.hasOwn(modelOptions?.attributes ?? {}, "openclaw.content.system_prompt")).toBe(
+    expect(Object.hasOwn(modelOptions?.attributes ?? {}, "merclaw.content.system_prompt")).toBe(
       false,
     );
     expect(modelOptions?.startTime).toBeTypeOf("number");
-    const toolOptions = startedSpanOptions("openclaw.tool.execution");
-    expect(Object.hasOwn(toolOptions?.attributes ?? {}, "openclaw.content.tool_input")).toBe(false);
-    expect(Object.hasOwn(toolOptions?.attributes ?? {}, "openclaw.content.tool_output")).toBe(
+    const toolOptions = startedSpanOptions("merclaw.tool.execution");
+    expect(Object.hasOwn(toolOptions?.attributes ?? {}, "merclaw.content.tool_input")).toBe(false);
+    expect(Object.hasOwn(toolOptions?.attributes ?? {}, "merclaw.content.tool_output")).toBe(
       false,
     );
     expect(toolOptions?.startTime).toBeTypeOf("number");
@@ -3209,26 +3209,26 @@ describe("diagnostics-otel service", () => {
     await flushDiagnosticEvents();
 
     const modelCall = telemetryState.tracer.startSpan.mock.calls.find(
-      (call) => call[0] === "openclaw.model.call",
+      (call) => call[0] === "merclaw.model.call",
     );
     const toolCall = telemetryState.tracer.startSpan.mock.calls.find(
-      (call) => call[0] === "openclaw.tool.execution",
+      (call) => call[0] === "merclaw.tool.execution",
     );
     const modelAttrs = (modelCall?.[1] as { attributes?: Record<string, unknown> } | undefined)
       ?.attributes;
     const toolAttrs = (toolCall?.[1] as { attributes?: Record<string, unknown> } | undefined)
       ?.attributes;
 
-    expect(modelAttrs?.["openclaw.content.output_messages"]).toBe("model reply");
-    expect(modelAttrs?.["openclaw.content.system_prompt"]).toBe("system prompt");
-    expect(String(modelAttrs?.["openclaw.content.input_messages"])).not.toContain(
+    expect(modelAttrs?.["merclaw.content.output_messages"]).toBe("model reply");
+    expect(modelAttrs?.["merclaw.content.system_prompt"]).toBe("system prompt");
+    expect(String(modelAttrs?.["merclaw.content.input_messages"])).not.toContain(
       "sk-1234567890abcdef1234567890abcdef", // pragma: allowlist secret
     );
-    expect(toolAttrs?.["openclaw.content.tool_input"]).toBe("tool input");
-    expect(String(toolAttrs?.["openclaw.content.tool_output"]).length).toBeLessThanOrEqual(
+    expect(toolAttrs?.["merclaw.content.tool_input"]).toBe("tool input");
+    expect(String(toolAttrs?.["merclaw.content.tool_output"]).length).toBeLessThanOrEqual(
       MAX_TEST_OTEL_CONTENT_ATTRIBUTE_CHARS + OTEL_TRUNCATED_SUFFIX_MAX_CHARS,
     );
-    expect(String(toolAttrs?.["openclaw.content.tool_output"])).not.toContain("a".repeat(11));
+    expect(String(toolAttrs?.["merclaw.content.tool_output"])).not.toContain("a".repeat(11));
     await service.stop?.(ctx);
   });
 
@@ -3259,14 +3259,14 @@ describe("diagnostics-otel service", () => {
     await flushDiagnosticEvents();
 
     const modelCall = telemetryState.tracer.startSpan.mock.calls.find(
-      (call) => call[0] === "openclaw.model.call",
+      (call) => call[0] === "merclaw.model.call",
     );
     const attrs =
       (modelCall?.[1] as { attributes?: Record<string, unknown> } | undefined)?.attributes ?? {};
-    expect(attrs["openclaw.content.input_messages"]).toBe("user prompt");
-    expect(Object.hasOwn(attrs, "openclaw.content.output_messages")).toBe(false);
-    expect(Object.hasOwn(attrs, "openclaw.content.system_prompt")).toBe(false);
-    expect(Object.hasOwn(attrs, "openclaw.content.tool_definitions")).toBe(false);
+    expect(attrs["merclaw.content.input_messages"]).toBe("user prompt");
+    expect(Object.hasOwn(attrs, "merclaw.content.output_messages")).toBe(false);
+    expect(Object.hasOwn(attrs, "merclaw.content.system_prompt")).toBe(false);
+    expect(Object.hasOwn(attrs, "merclaw.content.tool_definitions")).toBe(false);
     expect(Object.hasOwn(attrs, "gen_ai.output.messages")).toBe(false);
     expect(Object.hasOwn(attrs, "gen_ai.system_instructions")).toBe(false);
     expect(Object.hasOwn(attrs, "gen_ai.tool.definitions")).toBe(false);
@@ -3320,7 +3320,7 @@ describe("diagnostics-otel service", () => {
     await flushDiagnosticEvents();
 
     const modelCall = telemetryState.tracer.startSpan.mock.calls.find(
-      (call) => call[0] === "openclaw.model.call",
+      (call) => call[0] === "merclaw.model.call",
     );
     const attrs = (modelCall?.[1] as { attributes?: Record<string, unknown> } | undefined)
       ?.attributes;
@@ -3405,7 +3405,7 @@ describe("diagnostics-otel service", () => {
     await flushDiagnosticEvents();
 
     const modelCall = telemetryState.tracer.startSpan.mock.calls.find(
-      (call) => call[0] === "openclaw.model.call",
+      (call) => call[0] === "merclaw.model.call",
     );
     const attrs = (modelCall?.[1] as { attributes?: Record<string, unknown> } | undefined)
       ?.attributes;
@@ -3451,7 +3451,7 @@ describe("diagnostics-otel service", () => {
     await flushDiagnosticEvents();
 
     const modelCall = telemetryState.tracer.startSpan.mock.calls.find(
-      (call) => call[0] === "openclaw.model.call",
+      (call) => call[0] === "merclaw.model.call",
     );
     const attrs = (modelCall?.[1] as { attributes?: Record<string, unknown> } | undefined)
       ?.attributes;
@@ -3517,7 +3517,7 @@ describe("diagnostics-otel service", () => {
     await flushDiagnosticEvents();
 
     const modelCall = telemetryState.tracer.startSpan.mock.calls.find(
-      (call) => call[0] === "openclaw.model.call",
+      (call) => call[0] === "merclaw.model.call",
     );
     const attrs = (modelCall?.[1] as { attributes?: Record<string, unknown> } | undefined)
       ?.attributes;
@@ -3576,13 +3576,13 @@ describe("diagnostics-otel service", () => {
     await flushDiagnosticEvents();
 
     const modelCall = telemetryState.tracer.startSpan.mock.calls.find(
-      (call) => call[0] === "openclaw.model.call",
+      (call) => call[0] === "merclaw.model.call",
     );
     const attrs = (modelCall?.[1] as { attributes?: Record<string, unknown> } | undefined)
       ?.attributes;
     expect(Object.hasOwn(attrs ?? {}, "gen_ai.input.messages")).toBe(false);
     expect(Object.hasOwn(attrs ?? {}, "input.value")).toBe(false);
-    expect(Object.hasOwn(attrs ?? {}, "openclaw.content.input_messages")).toBe(false);
+    expect(Object.hasOwn(attrs ?? {}, "merclaw.content.input_messages")).toBe(false);
     expect(JSON.parse(stringAttribute(attrs, "gen_ai.tool.definitions"))).toEqual([
       {
         type: "function",
@@ -3591,7 +3591,7 @@ describe("diagnostics-otel service", () => {
         parameters: { type: "object" },
       },
     ]);
-    expect(JSON.parse(String(attrs?.["openclaw.content.tool_definitions"]))).toEqual([
+    expect(JSON.parse(String(attrs?.["merclaw.content.tool_definitions"]))).toEqual([
       {
         name: "lookup",
         description: "Lookup data",
@@ -3620,7 +3620,7 @@ describe("diagnostics-otel service", () => {
     });
 
     const modelUsageCall = telemetryState.tracer.startSpan.mock.calls.find(
-      (call) => call[0] === "openclaw.model.usage",
+      (call) => call[0] === "merclaw.model.usage",
     );
     expect(telemetryState.tracer.setSpanContext).not.toHaveBeenCalled();
     expect(modelUsageCall?.[2]).toBeUndefined();
@@ -3638,12 +3638,12 @@ describe("diagnostics-otel service", () => {
       reason: "token=ghp_abcdefghijklmnopqrstuvwxyz123456", // pragma: allowlist secret
     });
 
-    const sessionStateCall = firstCounterAddCall("openclaw.session.state");
+    const sessionStateCall = firstCounterAddCall("merclaw.session.state");
     const attrs = sessionStateCall[1];
     expect(sessionStateCall[0]).toBe(1);
-    expect(String(attrs?.["openclaw.reason"])).toContain("…");
-    expect(typeof attrs?.["openclaw.reason"]).toBe("string");
-    expect(String(attrs?.["openclaw.reason"])).not.toContain(
+    expect(String(attrs?.["merclaw.reason"])).toContain("…");
+    expect(typeof attrs?.["merclaw.reason"]).toBe("string");
+    expect(String(attrs?.["merclaw.reason"])).not.toContain(
       "ghp_abcdefghijklmnopqrstuvwxyz123456", // pragma: allowlist secret
     );
     await service.stop?.(ctx);

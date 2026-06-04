@@ -12,7 +12,7 @@ function makeNodeConnectParams(overrides?: Partial<ConnectParams>): ConnectParam
     minProtocol: 1,
     maxProtocol: 1,
     client: {
-      id: "openclaw-ios",
+      id: "merclaw-ios",
       version: "test",
       platform: "ios",
       mode: "node",
@@ -24,7 +24,7 @@ function makeNodeConnectParams(overrides?: Partial<ConnectParams>): ConnectParam
 
 function makePairedNode(overrides?: Partial<NodePairingPairedNode>): NodePairingPairedNode {
   return {
-    nodeId: "openclaw-ios",
+    nodeId: "merclaw-ios",
     token: "token-1",
     createdAtMs: 1,
     approvedAtMs: 1,
@@ -50,7 +50,7 @@ describe("reconcileNodePairingOnConnect", () => {
     });
 
     expect(requestPairing).toHaveBeenCalledWith({
-      nodeId: "openclaw-ios",
+      nodeId: "merclaw-ios",
       clientId: undefined,
       clientMode: undefined,
       displayName: undefined,
@@ -119,7 +119,7 @@ describe("reconcileNodePairingOnConnect", () => {
       cfg: {} as never,
       connectParams: makeNodeConnectParams({
         client: {
-          id: "openclaw-ios",
+          id: "merclaw-ios",
           version: "test",
           platform: "macos",
           mode: "node",
@@ -160,7 +160,7 @@ describe("reconcileNodePairingOnConnect", () => {
     });
 
     expect(requestPairing).toHaveBeenCalledWith({
-      nodeId: "openclaw-ios",
+      nodeId: "merclaw-ios",
       clientId: undefined,
       clientMode: undefined,
       displayName: undefined,
@@ -200,7 +200,7 @@ describe("reconcileNodePairingOnConnect", () => {
     });
 
     expect(requestPairing).toHaveBeenCalledWith({
-      nodeId: "openclaw-ios",
+      nodeId: "merclaw-ios",
       clientId: undefined,
       clientMode: undefined,
       displayName: undefined,
@@ -241,7 +241,7 @@ describe("reconcileNodePairingOnConnect", () => {
     });
 
     expect(requestPairing).toHaveBeenCalledWith({
-      nodeId: "openclaw-ios",
+      nodeId: "merclaw-ios",
       clientId: undefined,
       clientMode: undefined,
       displayName: undefined,

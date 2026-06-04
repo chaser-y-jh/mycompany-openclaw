@@ -210,7 +210,7 @@ describe("skills-clawhub", () => {
 
   describe("legacy tracked slugs remain updatable", () => {
     async function createLegacyTrackedSkillFixture(slug: string) {
-      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skills-clawhub-"));
+      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-skills-clawhub-"));
       const skillDir = path.join(workspaceDir, "skills", slug);
       await fs.mkdir(path.join(skillDir, ".clawhub"), { recursive: true });
       await fs.mkdir(path.join(workspaceDir, ".clawhub"), { recursive: true });
@@ -308,7 +308,7 @@ describe("skills-clawhub", () => {
     });
 
     it("still rejects an untracked Unicode slug passed to update", async () => {
-      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skills-clawhub-"));
+      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-skills-clawhub-"));
 
       try {
         await expect(
@@ -408,7 +408,7 @@ describe("skills-clawhub", () => {
 
   describe("verification target resolution", () => {
     it("uses installed origin registry and installed version by default", async () => {
-      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-verify-"));
+      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-skill-verify-"));
       try {
         const skillDir = await writeClawHubOriginFixture({
           workspaceDir,
@@ -442,7 +442,7 @@ describe("skills-clawhub", () => {
     });
 
     it("keeps the installed registry when an explicit version overrides the installed version", async () => {
-      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-verify-"));
+      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-skill-verify-"));
       try {
         await writeClawHubOriginFixture({
           workspaceDir,
@@ -477,7 +477,7 @@ describe("skills-clawhub", () => {
     });
 
     it("keeps the installed registry when an explicit tag is provided", async () => {
-      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-verify-"));
+      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-skill-verify-"));
       try {
         await writeClawHubOriginFixture({
           workspaceDir,
@@ -512,7 +512,7 @@ describe("skills-clawhub", () => {
     });
 
     it("rejects installed origin metadata without workspace lock tracking", async () => {
-      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-verify-"));
+      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-skill-verify-"));
       try {
         await writeClawHubOriginFixture({
           workspaceDir,
@@ -536,7 +536,7 @@ describe("skills-clawhub", () => {
     });
 
     it("rejects installed origin metadata for a different skill slug", async () => {
-      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-verify-"));
+      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-skill-verify-"));
       try {
         await writeClawHubOriginFixture({
           workspaceDir,
@@ -560,7 +560,7 @@ describe("skills-clawhub", () => {
     });
 
     it("rejects installed origin metadata that does not match lock tracking", async () => {
-      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-verify-"));
+      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-skill-verify-"));
       try {
         await writeClawHubOriginFixture({
           workspaceDir,
@@ -594,7 +594,7 @@ describe("skills-clawhub", () => {
     });
 
     it("rejects installed origin metadata when lock registry disagrees", async () => {
-      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-verify-"));
+      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-skill-verify-"));
       try {
         await writeClawHubOriginFixture({
           workspaceDir,
@@ -629,7 +629,7 @@ describe("skills-clawhub", () => {
     });
 
     it("rejects lock-tracked installed skills without origin metadata", async () => {
-      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-verify-"));
+      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-skill-verify-"));
       try {
         await fs.mkdir(path.join(workspaceDir, ".clawhub"), { recursive: true });
         await fs.writeFile(
@@ -667,7 +667,7 @@ describe("skills-clawhub", () => {
     });
 
     it("rejects malformed workspace locks before registry fallback", async () => {
-      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-verify-"));
+      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-skill-verify-"));
       try {
         await fs.mkdir(path.join(workspaceDir, ".clawhub"), { recursive: true });
         await fs.writeFile(path.join(workspaceDir, ".clawhub", "lock.json"), "{not json", "utf8");
@@ -688,7 +688,7 @@ describe("skills-clawhub", () => {
     });
 
     it("uses the configured registry and latest selector for uninstalled skills", async () => {
-      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-verify-"));
+      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-skill-verify-"));
       resolveClawHubBaseUrlMock.mockReturnValueOnce("https://configured.example.com/clawhub");
       try {
         await expect(
@@ -717,7 +717,7 @@ describe("skills-clawhub", () => {
     });
 
     it("fails clearly when installed origin metadata is malformed", async () => {
-      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-verify-"));
+      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-skill-verify-"));
       try {
         const skillDir = path.join(workspaceDir, "skills", "agentreceipt");
         await fs.mkdir(path.join(skillDir, ".clawhub"), { recursive: true });

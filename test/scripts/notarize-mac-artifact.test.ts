@@ -21,8 +21,8 @@ afterEach(() => {
 
 describe("notarize-mac-artifact input validation", () => {
   it("fails before notarization when an explicit staple app path is missing", () => {
-    const tempRoot = makeTempDir("openclaw-notary-staple-");
-    const artifact = path.join(tempRoot, "OpenClaw.zip");
+    const tempRoot = makeTempDir("merclaw-notary-staple-");
+    const artifact = path.join(tempRoot, "MerClaw.zip");
     const missingApp = path.join(tempRoot, "Missing.app");
     writeFileSync(artifact, "placeholder", "utf8");
 

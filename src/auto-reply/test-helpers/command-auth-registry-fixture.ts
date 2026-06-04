@@ -1,5 +1,5 @@
-import { lowercasePreservingWhitespace } from "@openclaw/normalization-core/string-coerce";
-import { normalizeStringEntries } from "@openclaw/normalization-core/string-normalization";
+import { lowercasePreservingWhitespace } from "@merclaw/normalization-core/string-coerce";
+import { normalizeStringEntries } from "@merclaw/normalization-core/string-normalization";
 import { afterEach, beforeEach } from "vitest";
 import { normalizeE164 } from "../../plugin-sdk/account-resolution.js";
 import { setActivePluginRegistry } from "../../plugins/runtime.js";

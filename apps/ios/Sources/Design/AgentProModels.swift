@@ -1,6 +1,6 @@
 import Foundation
-import OpenClawKit
-import OpenClawProtocol
+import MerClawKit
+import MerClawProtocol
 
 enum AgentProValueReader {
     static func intValue(_ value: AnyCodable?) -> Int? {

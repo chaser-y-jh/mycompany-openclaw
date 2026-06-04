@@ -10,7 +10,7 @@ coverage:
     - tools.grep
 objective: Verify grep-style search behavior is tracked through command execution while Codex owns exec/process natively.
 successCriteria:
-  - OpenClaw may expose OpenClaw exec while Codex app-server mode may omit duplicate OpenClaw dynamic exec/process.
+  - MerClaw may expose MerClaw exec while Codex app-server mode may omit duplicate MerClaw dynamic exec/process.
   - Mock provider exec plans are reported as fixture intent, not as actual runtime tool calls.
   - The row stays report-only until the fixture validates native Codex search/command behavior directly.
 docsRefs:
@@ -32,11 +32,11 @@ execution:
       tracking: "#80319"
       codexDefaultImpact: P4
       qaImpact: P1
-      action: split native search/command behavior from OpenClaw dynamic tool parity
-      reason: Codex app-server intentionally owns command execution natively; current OpenClaw coding surface routes grep-style searches through exec.
+      action: split native search/command behavior from MerClaw dynamic tool parity
+      reason: Codex app-server intentionally owns command execution natively; current MerClaw coding surface routes grep-style searches through exec.
     knownHarnessGap:
       issue: "#80319"
-      reason: QA tool-defaults currently needs native search/command behavior coverage instead of OpenClaw dynamic exec exposure.
+      reason: QA tool-defaults currently needs native search/command behavior coverage instead of MerClaw dynamic exec exposure.
     promptSnippet: "target=exec"
     failurePromptSnippet: "failure target=exec"
 ```

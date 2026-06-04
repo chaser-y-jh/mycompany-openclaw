@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { ApplicationCommandType, ComponentType, Routes } from "discord-api-types/v10";
-import { MAX_TIMER_TIMEOUT_MS } from "openclaw/plugin-sdk/number-runtime";
+import { MAX_TIMER_TIMEOUT_MS } from "merclaw/plugin-sdk/number-runtime";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Client, ComponentRegistry, type AnyListener } from "./client.js";
 import { BaseCommand } from "./commands.js";
@@ -316,7 +316,7 @@ describe("Client.deployCommands", () => {
 
   it("skips unchanged command deploys across client restarts using the hash store", async () => {
     const hashStorePath = path.join(
-      await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-discord-command-deploy-")),
+      await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-discord-command-deploy-")),
       "hashes.json",
     );
     const first = createInternalTestClient([createTestCommand({ name: "one" })], {
@@ -416,7 +416,7 @@ describe("Client gateway event queue", () => {
     );
   }
 
-  it("uses OpenClaw Discord event queue defaults", () => {
+  it("uses MerClaw Discord event queue defaults", () => {
     const client = createQueuedClient({
       listeners: [],
       eventQueue: {},

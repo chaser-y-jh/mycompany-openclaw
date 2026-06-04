@@ -1,3 +1,3 @@
-export { resolvePinnedMainDmOwnerFromAllowlist } from "openclaw/plugin-sdk/security-runtime";
-export { readChannelIngressStoreAllowFromForDmPolicy } from "openclaw/plugin-sdk/channel-ingress-runtime";
-export { upsertChannelPairingRequest } from "openclaw/plugin-sdk/conversation-runtime";
+export { resolvePinnedMainDmOwnerFromAllowlist } from "merclaw/plugin-sdk/security-runtime";
+export { readChannelIngressStoreAllowFromForDmPolicy } from "merclaw/plugin-sdk/channel-ingress-runtime";
+export { upsertChannelPairingRequest } from "merclaw/plugin-sdk/conversation-runtime";

@@ -1,5 +1,5 @@
-import { verifyDurableFinalCapabilityProofs } from "openclaw/plugin-sdk/channel-outbound";
-import { adaptMessagePresentationForChannel } from "openclaw/plugin-sdk/interactive-runtime";
+import { verifyDurableFinalCapabilityProofs } from "merclaw/plugin-sdk/channel-outbound";
+import { adaptMessagePresentationForChannel } from "merclaw/plugin-sdk/interactive-runtime";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const sendMessageTelegramMock = vi.fn();

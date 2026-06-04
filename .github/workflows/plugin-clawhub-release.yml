@@ -21,7 +21,7 @@ on:
         default: ""
         type: string
       release_publish_run_id:
-        description: Approved OpenClaw Release Publish workflow run id
+        description: Approved MerClaw Release Publish workflow run id
         required: false
         type: string
 
@@ -33,7 +33,7 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
   NODE_VERSION: "24.15.0"
   CLAWHUB_REGISTRY: "https://clawhub.ai"
-  CLAWHUB_REPOSITORY: "openclaw/clawhub"
+  CLAWHUB_REPOSITORY: "merclaw/clawhub"
   # Pinned to a reviewed ClawHub commit so release behavior stays reproducible.
   CLAWHUB_REF: "facf20ceb6cc459e2872d941e71335a784bbc55c"
 
@@ -192,7 +192,7 @@ jobs:
             exit 1
           fi
 
-      - name: Verify OpenClaw ClawHub package ownership
+      - name: Verify MerClaw ClawHub package ownership
         if: steps.plan.outputs.has_candidates == 'true'
         env:
           CLAWHUB_REGISTRY: ${{ env.CLAWHUB_REGISTRY }}

@@ -1,5 +1,5 @@
-import { MAX_TIMER_TIMEOUT_MS } from "openclaw/plugin-sdk/number-runtime";
-import type { PluginRuntime } from "openclaw/plugin-sdk/plugin-runtime";
+import { MAX_TIMER_TIMEOUT_MS } from "merclaw/plugin-sdk/number-runtime";
+import type { PluginRuntime } from "merclaw/plugin-sdk/plugin-runtime";
 import { describe, expect, it, vi } from "vitest";
 import { callBrowserProxyOnNode } from "./chrome-browser-proxy.js";
 

@@ -7,7 +7,7 @@ describe("OutputAccumulator", () => {
     const accumulator = new OutputAccumulator({
       maxBytes: 8,
       maxLines: 10,
-      tempFilePrefix: "openclaw-output-test",
+      tempFilePrefix: "merclaw-output-test",
     });
 
     accumulator.append(Buffer.from("secret output"));

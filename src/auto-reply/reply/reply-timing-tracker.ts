@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { isDiagnosticFlagEnabled } from "../../infra/diagnostic-flags.js";
 
 type ReplyTimingSpan = {
@@ -32,7 +32,7 @@ const DEFAULT_TIMING_WARN_TOTAL_MS = 1_000;
 const DEFAULT_TIMING_WARN_STAGE_MS = 500;
 
 export function isReplyProfilerEnabled(params?: {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   env?: NodeJS.ProcessEnv;
 }): boolean {
   const cfg = params?.config;
@@ -45,7 +45,7 @@ export function isReplyProfilerEnabled(params?: {
 
 export function createReplyTimingTracker(params: {
   log: ReplyTimingLogger;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   env?: NodeJS.ProcessEnv;
   enabled?: boolean;
   totalWarnMs?: number;

@@ -23,7 +23,7 @@ import {
 
 installGatewayTestHooks({ scope: "suite" });
 
-const tempDirs = createSuiteTempRootTracker({ prefix: "openclaw-node-pair-authz-" });
+const tempDirs = createSuiteTempRootTracker({ prefix: "merclaw-node-pair-authz-" });
 
 async function makeNodePairingStateDir(): Promise<string> {
   return await tempDirs.make("case");

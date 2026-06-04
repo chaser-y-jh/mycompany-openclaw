@@ -11,8 +11,8 @@ Inworld streaming text-to-speech (MP3, OGG_OPUS, PCM telephony).
 
 ## Distribution
 
-- Package: `@openclaw/inworld-speech`
-- Install route: included in OpenClaw
+- Package: `@merclaw/inworld-speech`
+- Install route: included in MerClaw
 
 ## Surface
 

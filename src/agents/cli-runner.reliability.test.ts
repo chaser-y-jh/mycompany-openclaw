@@ -8,7 +8,7 @@ import {
   replyRunRegistry,
 } from "../auto-reply/reply/reply-run-registry.js";
 import { CURRENT_SESSION_VERSION } from "../config/sessions/version.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { getGlobalHookRunner } from "../plugins/hook-runner-global.js";
 import {
   createUserTurnTranscriptRecorder,
@@ -37,7 +37,7 @@ vi.mock("../tts/tts.js", () => ({
 }));
 
 const mockGetGlobalHookRunner = vi.mocked(getGlobalHookRunner);
-const hookRunnerGlobalStateKey = Symbol.for("openclaw.plugins.hook-runner-global-state");
+const hookRunnerGlobalStateKey = Symbol.for("merclaw.plugins.hook-runner-global-state");
 
 type HookRunnerGlobalStateForTest = {
   hookRunner: unknown;
@@ -59,8 +59,8 @@ function setHookRunnerForTest(hookRunner: unknown): void {
 }
 
 function createSessionFile(params?: { history?: Array<{ role: "user"; content: string }> }) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-hooks-"));
-  vi.stubEnv("OPENCLAW_STATE_DIR", dir);
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-cli-hooks-"));
+  vi.stubEnv("MERCLAW_STATE_DIR", dir);
   const sessionFile = path.join(dir, "agents", "main", "sessions", "s1.jsonl");
   const storePath = path.join(path.dirname(sessionFile), "sessions.json");
   fs.mkdirSync(path.dirname(sessionFile), { recursive: true });
@@ -128,7 +128,7 @@ function buildPreparedContext(params?: {
   cliSessionId?: string;
   runId?: string;
   lane?: string;
-  openClawHistoryPrompt?: string;
+  merClawHistoryPrompt?: string;
   provider?: string;
   model?: string;
 }): PreparedCliRunContext {
@@ -182,8 +182,8 @@ function buildPreparedContext(params?: {
     systemPrompt: "You are a helpful assistant.",
     systemPromptReport: {} as PreparedCliRunContext["systemPromptReport"],
     bootstrapPromptWarningLines: [],
-    ...(params?.openClawHistoryPrompt
-      ? { openClawHistoryPrompt: params.openClawHistoryPrompt }
+    ...(params?.merClawHistoryPrompt
+      ? { merClawHistoryPrompt: params.merClawHistoryPrompt }
       : {}),
     authEpochVersion: 2,
   };
@@ -258,7 +258,7 @@ function readTranscriptMessages(sessionFile: string): unknown[] {
 }
 
 const CLI_RESEED_PROMPT =
-  "Continue this conversation using the OpenClaw transcript below as prior session history.\n\n<conversation_history>\nUser: earlier context\n</conversation_history>\n\n<next_user_message>\nhi\n</next_user_message>";
+  "Continue this conversation using the MerClaw transcript below as prior session history.\n\n<conversation_history>\nUser: earlier context\n</conversation_history>\n\n<next_user_message>\nhi\n</next_user_message>";
 
 describe("runCliAgent reliability", () => {
   afterEach(() => {
@@ -512,7 +512,7 @@ describe("runCliAgent reliability", () => {
       cliSessionId: "stale-cli-session",
       provider: "claude-cli",
       model: "opus",
-      openClawHistoryPrompt: CLI_RESEED_PROMPT,
+      merClawHistoryPrompt: CLI_RESEED_PROMPT,
     });
 
     const result = await runPreparedCliAgent(context);
@@ -542,7 +542,7 @@ describe("runCliAgent reliability", () => {
       cliSessionId: "stale-cli-session",
       provider: "claude-cli",
       model: "opus",
-      openClawHistoryPrompt: CLI_RESEED_PROMPT,
+      merClawHistoryPrompt: CLI_RESEED_PROMPT,
     });
 
     await expect(
@@ -580,7 +580,7 @@ describe("runCliAgent reliability", () => {
       cliSessionId: "stale-cli-session",
       provider: "claude-cli",
       model: "opus",
-      openClawHistoryPrompt: CLI_RESEED_PROMPT,
+      merClawHistoryPrompt: CLI_RESEED_PROMPT,
     });
     const expiredBudgetContext = {
       ...context,
@@ -623,7 +623,7 @@ describe("runCliAgent reliability", () => {
       cliSessionId: "stale-cli-session",
       provider: "claude-cli",
       model: "opus",
-      openClawHistoryPrompt: CLI_RESEED_PROMPT,
+      merClawHistoryPrompt: CLI_RESEED_PROMPT,
     });
 
     await expect(
@@ -662,7 +662,7 @@ describe("runCliAgent reliability", () => {
       cliSessionId: "stale-cli-session",
       provider: "claude-cli",
       model: "opus",
-      openClawHistoryPrompt: CLI_RESEED_PROMPT,
+      merClawHistoryPrompt: CLI_RESEED_PROMPT,
     });
 
     await expect(
@@ -749,7 +749,7 @@ describe("runCliAgent reliability", () => {
           cliSessionId: "stale-cli-session",
           provider: "claude-cli",
           model: "opus",
-          openClawHistoryPrompt: CLI_RESEED_PROMPT,
+          merClawHistoryPrompt: CLI_RESEED_PROMPT,
         });
         const result = await runPreparedCliAgent({
           ...context,
@@ -831,7 +831,7 @@ describe("runCliAgent reliability", () => {
       sessionKey: "agent:main:subagent:retry",
       runId: "run-retry-failure",
       cliSessionId: "thread-123",
-      openClawHistoryPrompt: CLI_RESEED_PROMPT,
+      merClawHistoryPrompt: CLI_RESEED_PROMPT,
     });
     const clearBeforeRetry = vi.fn(async () => true);
 
@@ -908,7 +908,7 @@ describe("runCliAgent reliability", () => {
     expect(completion.refusal).toBe(false);
   });
 
-  it("seeds fresh CLI sessions from the OpenClaw transcript", async () => {
+  it("seeds fresh CLI sessions from the MerClaw transcript", async () => {
     supervisorSpawnMock.mockResolvedValueOnce(
       createManagedRun({
         reason: "exit",
@@ -924,8 +924,8 @@ describe("runCliAgent reliability", () => {
 
     const result = await runPreparedCliAgent(
       buildPreparedContext({
-        openClawHistoryPrompt:
-          "Continue this conversation using the OpenClaw transcript below.\n\nUser: earlier ask\n\nAssistant: earlier answer\n\n<next_user_message>\nhi\n</next_user_message>",
+        merClawHistoryPrompt:
+          "Continue this conversation using the MerClaw transcript below.\n\nUser: earlier ask\n\nAssistant: earlier answer\n\n<next_user_message>\nhi\n</next_user_message>",
       }),
     );
 
@@ -950,7 +950,7 @@ describe("runCliAgent reliability", () => {
     const result = await runPreparedCliAgent(
       buildPreparedContext({
         cliSessionId: "cli-session",
-        openClawHistoryPrompt: "User: earlier ask",
+        merClawHistoryPrompt: "User: earlier ask",
       }),
     );
 
@@ -1335,7 +1335,7 @@ describe("runCliAgent reliability", () => {
       }),
     );
     const { dir, sessionFile } = createSessionFile();
-    const taskDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-persist-cwd-"));
+    const taskDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-cli-persist-cwd-"));
     let capturedTarget: unknown;
     const recorder = {
       message: undefined,
@@ -1514,7 +1514,7 @@ describe("runCliAgent reliability", () => {
 
   it("does not execute the CLI when approved user turn persistence fails", async () => {
     supervisorSpawnMock.mockClear();
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-persist-fail-"));
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-cli-persist-fail-"));
     const blockedParent = path.join(dir, "not-a-directory");
     fs.writeFileSync(blockedParent, "occupied", "utf-8");
     const onUserMessagePersisted = vi.fn();
@@ -1674,11 +1674,11 @@ describe("runCliAgent reliability", () => {
       );
       expect(JSON.stringify(blockedLine)).not.toContain("secret prompt");
       expect(JSON.stringify(blockedLine)).not.toContain("matched secret prompt");
-      expect(blockedLine.message["__openclaw"].beforeAgentRunBlocked.blockedBy).toBe(
+      expect(blockedLine.message["__merclaw"].beforeAgentRunBlocked.blockedBy).toBe(
         "policy-plugin",
       );
-      expect(blockedLine.message["__openclaw"].beforeAgentRunBlocked).not.toHaveProperty("reason");
-      expect(Object.hasOwn(blockedLine.message["__openclaw"], "beforeAgentRunBlocked")).toBe(true);
+      expect(blockedLine.message["__merclaw"].beforeAgentRunBlocked).not.toHaveProperty("reason");
+      expect(Object.hasOwn(blockedLine.message["__merclaw"], "beforeAgentRunBlocked")).toBe(true);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -1813,8 +1813,8 @@ describe("runCliAgent reliability", () => {
       sessionKey: "agent:main:main",
       runId: "run-retry-success",
       cliSessionId: "thread-123",
-      openClawHistoryPrompt:
-        "Continue this conversation using the OpenClaw transcript below.\n\nUser: recovered history\n\n<next_user_message>\nhi\n</next_user_message>",
+      merClawHistoryPrompt:
+        "Continue this conversation using the MerClaw transcript below.\n\nUser: recovered history\n\n<next_user_message>\nhi\n</next_user_message>",
     });
     const clearBeforeRetry = vi.fn(async () => true);
 
@@ -1909,7 +1909,7 @@ describe("runCliAgent reliability", () => {
       })}\n`,
       "utf-8",
     );
-    const config: OpenClawConfig = {
+    const config: MerClawConfig = {
       agents: {
         defaults: {
           workspace: dir,
@@ -1946,9 +1946,9 @@ describe("runCliAgent reliability", () => {
       });
 
       expect(context.params.prompt).toBe("hook context\n\ncurrent ask");
-      expect(context.openClawHistoryPrompt).toContain("Compaction summary: compacted earlier ask");
-      expect(context.openClawHistoryPrompt).toContain("hook context");
-      expect(context.openClawHistoryPrompt).toContain("current ask");
+      expect(context.merClawHistoryPrompt).toContain("Compaction summary: compacted earlier ask");
+      expect(context.merClawHistoryPrompt).toContain("hook context");
+      expect(context.merClawHistoryPrompt).toContain("current ask");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }

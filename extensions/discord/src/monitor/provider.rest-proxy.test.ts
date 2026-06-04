@@ -63,7 +63,7 @@ const { undiciFetchMock, agentSpy, envHttpProxyAgentSpy, proxyAgentSpy, createMo
     };
   });
 
-const TEST_UNDICI_RUNTIME_DEPS_KEY = "__OPENCLAW_TEST_UNDICI_RUNTIME_DEPS__";
+const TEST_UNDICI_RUNTIME_DEPS_KEY = "__MERCLAW_TEST_UNDICI_RUNTIME_DEPS__";
 
 vi.mock("undici", async (importOriginal) => ({
   ...(await importOriginal<typeof import("undici")>()),
@@ -127,8 +127,8 @@ describe("resolveDiscordRestFetch", () => {
     "all_proxy",
     "no_proxy",
     "NO_PROXY",
-    "OPENCLAW_PROXY_ACTIVE",
-    "OPENCLAW_PROXY_CA_FILE",
+    "MERCLAW_PROXY_ACTIVE",
+    "MERCLAW_PROXY_CA_FILE",
   ] as const;
   const tempDirs: string[] = [];
 
@@ -156,7 +156,7 @@ describe("resolveDiscordRestFetch", () => {
   });
 
   function writeTempCa(contents: string): string {
-    const dir = mkdtempSync(path.join(os.tmpdir(), "openclaw-discord-rest-proxy-ca-"));
+    const dir = mkdtempSync(path.join(os.tmpdir(), "merclaw-discord-rest-proxy-ca-"));
     tempDirs.push(dir);
     const caFile = path.join(dir, "proxy-ca.pem");
     writeFileSync(caFile, contents, "utf8");
@@ -193,8 +193,8 @@ describe("resolveDiscordRestFetch", () => {
     const caFile = writeTempCa("discord-rest-configured-proxy-ca");
     vi.stubEnv("HTTPS_PROXY", "https://127.0.0.1:8443");
     vi.stubEnv("https_proxy", "https://127.0.0.1:8443");
-    vi.stubEnv("OPENCLAW_PROXY_ACTIVE", "1");
-    vi.stubEnv("OPENCLAW_PROXY_CA_FILE", caFile);
+    vi.stubEnv("MERCLAW_PROXY_ACTIVE", "1");
+    vi.stubEnv("MERCLAW_PROXY_CA_FILE", caFile);
     const runtime = {
       log: vi.fn(),
       error: vi.fn(),
@@ -293,8 +293,8 @@ describe("resolveDiscordRestFetch", () => {
     const caFile = writeTempCa("discord-rest-managed-proxy-ca");
     vi.stubEnv("HTTPS_PROXY", "https://proxy.example:8443");
     vi.stubEnv("https_proxy", "https://proxy.example:8443");
-    vi.stubEnv("OPENCLAW_PROXY_ACTIVE", "1");
-    vi.stubEnv("OPENCLAW_PROXY_CA_FILE", caFile);
+    vi.stubEnv("MERCLAW_PROXY_ACTIVE", "1");
+    vi.stubEnv("MERCLAW_PROXY_CA_FILE", caFile);
     const runtime = {
       log: vi.fn(),
       error: vi.fn(),
@@ -342,8 +342,8 @@ describe("resolveDiscordRestFetch", () => {
   });
 
   it("uses debug proxy env when no discord proxy URL is configured", async () => {
-    vi.stubEnv("OPENCLAW_DEBUG_PROXY_ENABLED", "1");
-    vi.stubEnv("OPENCLAW_DEBUG_PROXY_URL", "http://127.0.0.1:7777");
+    vi.stubEnv("MERCLAW_DEBUG_PROXY_ENABLED", "1");
+    vi.stubEnv("MERCLAW_DEBUG_PROXY_URL", "http://127.0.0.1:7777");
     const runtime = {
       log: vi.fn(),
       error: vi.fn(),

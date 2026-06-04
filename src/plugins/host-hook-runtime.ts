@@ -1,4 +1,4 @@
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import type { AgentEventPayload } from "../infra/agent-events.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { resolveGlobalSingleton } from "../shared/global-singleton.js";
@@ -34,7 +34,7 @@ type PluginHostRuntimeState = {
   terminalEventCleanupExpiredRunIds: Set<string>;
 };
 
-const PLUGIN_HOST_RUNTIME_STATE_KEY = Symbol.for("openclaw.pluginHostRuntimeState");
+const PLUGIN_HOST_RUNTIME_STATE_KEY = Symbol.for("merclaw.pluginHostRuntimeState");
 const CLOSED_RUN_IDS_MAX = 512;
 export const PLUGIN_TERMINAL_EVENT_CLEANUP_WAIT_MS = 5_000;
 const log = createSubsystemLogger("plugins/host-hooks");

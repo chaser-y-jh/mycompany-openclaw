@@ -1,16 +1,16 @@
-import { normalizeInboundPathRoots } from "@openclaw/media-core/inbound-path-policy";
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
+import { normalizeInboundPathRoots } from "@merclaw/media-core/inbound-path-policy";
+import { normalizeProviderId } from "@merclaw/model-catalog-core/provider-id";
 import {
   normalizeOptionalLowercaseString,
   normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
-import { uniqueStrings } from "@openclaw/normalization-core/string-normalization";
+} from "@merclaw/normalization-core/string-coerce";
+import { uniqueStrings } from "@merclaw/normalization-core/string-normalization";
 import {
   findCapabilityProviderById,
   resolveCapabilityModelRefForProviders,
 } from "../../../packages/media-generation-core/src/capability-model-ref.js";
 import type { AgentModelConfig } from "../../config/types.agents-shared.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import type { SsrFPolicy } from "../../infra/net/ssrf.js";
 import type { Model } from "../../llm/types.js";
 import { resolveChannelInboundAttachmentRootsForChannel } from "../../media/channel-inbound-roots.js";
@@ -71,30 +71,30 @@ type TaskRunDetailHandle = {
 };
 
 export function applyImageModelConfigDefaults(
-  cfg: OpenClawConfig | undefined,
+  cfg: MerClawConfig | undefined,
   imageModelConfig: ImageModelConfig,
-): OpenClawConfig | undefined {
+): MerClawConfig | undefined {
   return applyAgentDefaultModelConfig(cfg, "imageModel", imageModelConfig);
 }
 
 export function applyImageGenerationModelConfigDefaults(
-  cfg: OpenClawConfig | undefined,
+  cfg: MerClawConfig | undefined,
   imageGenerationModelConfig: ToolModelConfig,
-): OpenClawConfig | undefined {
+): MerClawConfig | undefined {
   return applyAgentDefaultModelConfig(cfg, "imageGenerationModel", imageGenerationModelConfig);
 }
 
 export function applyVideoGenerationModelConfigDefaults(
-  cfg: OpenClawConfig | undefined,
+  cfg: MerClawConfig | undefined,
   videoGenerationModelConfig: ToolModelConfig,
-): OpenClawConfig | undefined {
+): MerClawConfig | undefined {
   return applyAgentDefaultModelConfig(cfg, "videoGenerationModel", videoGenerationModelConfig);
 }
 
 export function applyMusicGenerationModelConfigDefaults(
-  cfg: OpenClawConfig | undefined,
+  cfg: MerClawConfig | undefined,
   musicGenerationModelConfig: ToolModelConfig,
-): OpenClawConfig | undefined {
+): MerClawConfig | undefined {
   return applyAgentDefaultModelConfig(cfg, "musicGenerationModel", musicGenerationModelConfig);
 }
 
@@ -105,16 +105,16 @@ export function readGenerationTimeoutMs(args: Record<string, unknown>): number |
 }
 
 export function resolveRemoteMediaSsrfPolicy(
-  cfg: OpenClawConfig | undefined,
+  cfg: MerClawConfig | undefined,
 ): SsrFPolicy | undefined {
   return cfg?.tools?.web?.fetch?.ssrfPolicy;
 }
 
 function applyAgentDefaultModelConfig(
-  cfg: OpenClawConfig | undefined,
+  cfg: MerClawConfig | undefined,
   key: "imageModel" | "imageGenerationModel" | "videoGenerationModel" | "musicGenerationModel",
   modelConfig: ToolModelConfig,
-): OpenClawConfig | undefined {
+): MerClawConfig | undefined {
   if (!cfg) {
     return undefined;
   }
@@ -135,7 +135,7 @@ type CapabilityProvider = {
   aliases?: string[];
   defaultModel?: string;
   models?: readonly string[];
-  isConfigured?: (ctx: { cfg?: OpenClawConfig; agentDir?: string }) => boolean;
+  isConfigured?: (ctx: { cfg?: MerClawConfig; agentDir?: string }) => boolean;
 };
 
 type CapabilityProviderSource = CapabilityProvider[] | (() => CapabilityProvider[]);
@@ -162,7 +162,7 @@ export function isCapabilityProviderConfigured<T extends CapabilityProvider>(par
   providers: T[];
   provider?: T;
   providerId?: string;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   workspaceDir?: string;
   agentDir?: string;
   authStore?: AuthProfileStore;
@@ -228,7 +228,7 @@ export function resolveSelectedCapabilityProvider<T extends CapabilityProvider>(
 }
 
 function resolveCapabilityModelCandidatesForTool(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   workspaceDir?: string;
   agentDir?: string;
   authStore?: AuthProfileStore;
@@ -288,7 +288,7 @@ function resolveCapabilityModelCandidatesForTool(params: {
 }
 
 export function resolveCapabilityModelConfigForTool(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   workspaceDir?: string;
   agentDir?: string;
   authStore?: AuthProfileStore;
@@ -331,7 +331,7 @@ export function resolveCapabilityModelConfigForTool(params: {
 }
 
 export function hasGenerationToolAvailability(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   authStore?: AuthProfileStore;
@@ -516,7 +516,7 @@ export function resolveMediaToolLocalRoots(
   workspaceDirRaw: string | undefined,
   options?: {
     workspaceOnly?: boolean;
-    cfg?: OpenClawConfig;
+    cfg?: MerClawConfig;
     channelId?: string | null;
     accountId?: string | null;
   },
@@ -532,7 +532,7 @@ export function resolveMediaToolLocalRoots(
 
 export function resolveMediaToolInboundRoots(options?: {
   workspaceOnly?: boolean;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   channelId?: string | null;
   accountId?: string | null;
 }): string[] {
@@ -600,7 +600,7 @@ export function resolveModelFromRegistry(params: {
 
 export async function resolveModelRuntimeApiKey(params: {
   model: Model;
-  cfg: OpenClawConfig | undefined;
+  cfg: MerClawConfig | undefined;
   agentDir: string;
   authStorage: {
     setRuntimeApiKey: (provider: string, apiKey: string) => void;

@@ -1,9 +1,9 @@
-import type { OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-runtime";
+import type { MerClawPluginApi } from "merclaw/plugin-sdk/plugin-runtime";
 import {
   jsonResult,
   readPositiveIntegerParam,
   readStringParam,
-} from "openclaw/plugin-sdk/provider-web-search";
+} from "merclaw/plugin-sdk/provider-web-search";
 import { Type } from "typebox";
 import { runTavilyExtract } from "./tavily-client.js";
 import { resolveTavilyToolConfig, type TavilyToolConfigContext } from "./tavily-tool-config.js";
@@ -40,7 +40,7 @@ const TavilyExtractToolSchema = Type.Object(
   { additionalProperties: false },
 );
 
-export function createTavilyExtractTool(api: OpenClawPluginApi, ctx?: TavilyToolConfigContext) {
+export function createTavilyExtractTool(api: MerClawPluginApi, ctx?: TavilyToolConfigContext) {
   return {
     name: "tavily_extract",
     label: "Tavily Extract",

@@ -10,27 +10,27 @@ import {
 describe("plugin npm publish verifier retry limits", () => {
   it("rejects loose numeric retry env values instead of parsing prefixes", () => {
     expect(() =>
-      readPositiveIntEnv("OPENCLAW_PLUGIN_NPM_VERIFY_ATTEMPTS", 90, {
-        OPENCLAW_PLUGIN_NPM_VERIFY_ATTEMPTS: "2tries",
+      readPositiveIntEnv("MERCLAW_PLUGIN_NPM_VERIFY_ATTEMPTS", 90, {
+        MERCLAW_PLUGIN_NPM_VERIFY_ATTEMPTS: "2tries",
       }),
-    ).toThrow("invalid OPENCLAW_PLUGIN_NPM_VERIFY_ATTEMPTS: 2tries");
+    ).toThrow("invalid MERCLAW_PLUGIN_NPM_VERIFY_ATTEMPTS: 2tries");
     expect(() =>
-      readPositiveIntEnv("OPENCLAW_PLUGIN_NPM_VERIFY_DELAY_MS", 10000, {
-        OPENCLAW_PLUGIN_NPM_VERIFY_DELAY_MS: "1e3",
+      readPositiveIntEnv("MERCLAW_PLUGIN_NPM_VERIFY_DELAY_MS", 10000, {
+        MERCLAW_PLUGIN_NPM_VERIFY_DELAY_MS: "1e3",
       }),
-    ).toThrow("invalid OPENCLAW_PLUGIN_NPM_VERIFY_DELAY_MS: 1e3");
+    ).toThrow("invalid MERCLAW_PLUGIN_NPM_VERIFY_DELAY_MS: 1e3");
     expect(() =>
-      readPositiveIntEnv("OPENCLAW_PLUGIN_NPM_README_VERIFY_ATTEMPTS", 6, {
-        OPENCLAW_PLUGIN_NPM_README_VERIFY_ATTEMPTS: "0",
+      readPositiveIntEnv("MERCLAW_PLUGIN_NPM_README_VERIFY_ATTEMPTS", 6, {
+        MERCLAW_PLUGIN_NPM_README_VERIFY_ATTEMPTS: "0",
       }),
-    ).toThrow("invalid OPENCLAW_PLUGIN_NPM_README_VERIFY_ATTEMPTS: 0");
+    ).toThrow("invalid MERCLAW_PLUGIN_NPM_README_VERIFY_ATTEMPTS: 0");
   });
 
   it("accepts strict positive retry env values and defaults", () => {
-    expect(readPositiveIntEnv("OPENCLAW_PLUGIN_NPM_VERIFY_ATTEMPTS", 90, {})).toBe(90);
+    expect(readPositiveIntEnv("MERCLAW_PLUGIN_NPM_VERIFY_ATTEMPTS", 90, {})).toBe(90);
     expect(
-      readPositiveIntEnv("OPENCLAW_PLUGIN_NPM_README_VERIFY_DELAY_MS", 10000, {
-        OPENCLAW_PLUGIN_NPM_README_VERIFY_DELAY_MS: "2500",
+      readPositiveIntEnv("MERCLAW_PLUGIN_NPM_README_VERIFY_DELAY_MS", 10000, {
+        MERCLAW_PLUGIN_NPM_README_VERIFY_DELAY_MS: "2500",
       }),
     ).toBe(2500);
   });
@@ -40,18 +40,18 @@ describe("collectPluginNpmPublishedRuntimeErrors", () => {
   it("flags published plugin packages with TypeScript entries and no compiled runtime output", () => {
     expect(
       collectPluginNpmPublishedRuntimeErrors({
-        spec: "@openclaw/discord@2026.5.2",
+        spec: "@merclaw/discord@2026.5.2",
         packageJson: {
-          name: "@openclaw/discord",
+          name: "@merclaw/discord",
           version: "2026.5.2",
-          openclaw: {
+          merclaw: {
             extensions: ["./index.ts"],
           },
         },
         files: ["package.json", "index.ts"],
       }),
     ).toEqual([
-      "@openclaw/discord@2026.5.2 requires compiled runtime output for TypeScript entry ./index.ts: expected ./dist/index.js, ./dist/index.mjs, ./dist/index.cjs, ./index.js, ./index.mjs, ./index.cjs",
+      "@merclaw/discord@2026.5.2 requires compiled runtime output for TypeScript entry ./index.ts: expected ./dist/index.js, ./dist/index.mjs, ./dist/index.cjs, ./index.js, ./index.mjs, ./index.cjs",
     ]);
   });
 
@@ -59,9 +59,9 @@ describe("collectPluginNpmPublishedRuntimeErrors", () => {
     expect(
       collectPluginNpmPublishedRuntimeErrors({
         packageJson: {
-          name: "@openclaw/zalo",
+          name: "@merclaw/zalo",
           version: "2026.5.3",
-          openclaw: {
+          merclaw: {
             extensions: ["./index.ts"],
             runtimeExtensions: ["./dist/index.js"],
           },
@@ -75,25 +75,25 @@ describe("collectPluginNpmPublishedRuntimeErrors", () => {
     expect(
       collectPluginNpmPublishedRuntimeErrors({
         packageJson: {
-          name: "@openclaw/line",
+          name: "@merclaw/line",
           version: "2026.5.3",
-          openclaw: {
+          merclaw: {
             extensions: ["./src/index.ts"],
             runtimeExtensions: ["./dist/index.js"],
           },
         },
         files: ["package.json", "src/index.ts"],
       }),
-    ).toEqual(["@openclaw/line@2026.5.3 runtime extension entry not found: ./dist/index.js"]);
+    ).toEqual(["@merclaw/line@2026.5.3 runtime extension entry not found: ./dist/index.js"]);
   });
 
   it("flags runtimeExtensions length mismatches", () => {
     expect(
       collectPluginNpmPublishedRuntimeErrors({
         packageJson: {
-          name: "@openclaw/acpx",
+          name: "@merclaw/acpx",
           version: "2026.5.3",
-          openclaw: {
+          merclaw: {
             extensions: ["./index.ts", "./tools.ts"],
             runtimeExtensions: ["./dist/index.js"],
           },
@@ -101,7 +101,7 @@ describe("collectPluginNpmPublishedRuntimeErrors", () => {
         files: ["package.json", "dist/index.js"],
       }),
     ).toEqual([
-      "@openclaw/acpx@2026.5.3 package.json openclaw.runtimeExtensions length (1) must match openclaw.extensions length (2)",
+      "@merclaw/acpx@2026.5.3 package.json merclaw.runtimeExtensions length (1) must match merclaw.extensions length (2)",
     ]);
   });
 
@@ -109,9 +109,9 @@ describe("collectPluginNpmPublishedRuntimeErrors", () => {
     expect(
       collectPluginNpmPublishedRuntimeErrors({
         packageJson: {
-          name: "@openclaw/whatsapp",
+          name: "@merclaw/whatsapp",
           version: "2026.5.3",
-          openclaw: {
+          merclaw: {
             extensions: ["./src/index.ts"],
             runtimeExtensions: [" "],
           },
@@ -119,7 +119,7 @@ describe("collectPluginNpmPublishedRuntimeErrors", () => {
         files: ["package.json", "src/index.ts", "dist/index.js"],
       }),
     ).toEqual([
-      "@openclaw/whatsapp@2026.5.3 package.json openclaw.runtimeExtensions[0] must be a non-empty string",
+      "@merclaw/whatsapp@2026.5.3 package.json merclaw.runtimeExtensions[0] must be a non-empty string",
     ]);
   });
 
@@ -127,9 +127,9 @@ describe("collectPluginNpmPublishedRuntimeErrors", () => {
     expect(
       collectPluginNpmPublishedRuntimeErrors({
         packageJson: {
-          name: "@openclaw/line",
+          name: "@merclaw/line",
           version: "2026.5.3",
-          openclaw: {
+          merclaw: {
             extensions: ["./index.ts"],
             runtimeExtensions: ["./dist/index.js"],
             setupEntry: "./setup-entry.ts",
@@ -138,7 +138,7 @@ describe("collectPluginNpmPublishedRuntimeErrors", () => {
         files: ["package.json", "index.ts", "dist/index.js", "setup-entry.ts"],
       }),
     ).toEqual([
-      "@openclaw/line@2026.5.3 requires compiled runtime output for TypeScript entry ./setup-entry.ts: expected ./dist/setup-entry.js, ./dist/setup-entry.mjs, ./dist/setup-entry.cjs, ./setup-entry.js, ./setup-entry.mjs, ./setup-entry.cjs",
+      "@merclaw/line@2026.5.3 requires compiled runtime output for TypeScript entry ./setup-entry.ts: expected ./dist/setup-entry.js, ./dist/setup-entry.mjs, ./dist/setup-entry.cjs, ./setup-entry.js, ./setup-entry.mjs, ./setup-entry.cjs",
     ]);
   });
 
@@ -146,9 +146,9 @@ describe("collectPluginNpmPublishedRuntimeErrors", () => {
     expect(
       collectPluginNpmPublishedRuntimeErrors({
         packageJson: {
-          name: "@openclaw/qqbot",
+          name: "@merclaw/qqbot",
           version: "2026.5.3",
-          openclaw: {
+          merclaw: {
             extensions: ["./index.ts"],
             runtimeExtensions: ["./dist/index.js"],
             setupEntry: "./setup-entry.ts",
@@ -164,9 +164,9 @@ describe("collectPluginNpmPublishedRuntimeErrors", () => {
     expect(
       collectPluginNpmPublishedRuntimeErrors({
         packageJson: {
-          name: "@openclaw/matrix",
+          name: "@merclaw/matrix",
           version: "2026.5.3",
-          openclaw: {
+          merclaw: {
             extensions: ["./index.ts"],
             runtimeExtensions: ["./dist/index.js"],
             setupEntry: "./setup-entry.ts",
@@ -175,16 +175,16 @@ describe("collectPluginNpmPublishedRuntimeErrors", () => {
         },
         files: ["package.json", "dist/index.js"],
       }),
-    ).toEqual(["@openclaw/matrix@2026.5.3 runtime setup entry not found: ./dist/setup-entry.js"]);
+    ).toEqual(["@merclaw/matrix@2026.5.3 runtime setup entry not found: ./dist/setup-entry.js"]);
   });
 
   it("flags runtimeSetupEntry without setupEntry", () => {
     expect(
       collectPluginNpmPublishedRuntimeErrors({
         packageJson: {
-          name: "@openclaw/twitch",
+          name: "@merclaw/twitch",
           version: "2026.5.3",
-          openclaw: {
+          merclaw: {
             extensions: ["./index.ts"],
             runtimeExtensions: ["./dist/index.js"],
             runtimeSetupEntry: "./dist/setup-entry.js",
@@ -193,7 +193,7 @@ describe("collectPluginNpmPublishedRuntimeErrors", () => {
         files: ["package.json", "dist/index.js", "dist/setup-entry.js"],
       }),
     ).toEqual([
-      "@openclaw/twitch@2026.5.3 package.json openclaw.runtimeSetupEntry requires openclaw.setupEntry",
+      "@merclaw/twitch@2026.5.3 package.json merclaw.runtimeSetupEntry requires merclaw.setupEntry",
     ]);
   });
 });
@@ -202,12 +202,12 @@ describe("resolveNpmPackFilename", () => {
   it("uses the final tarball filename from plain npm pack output", () => {
     const noisyOutput = [
       "npm notice",
-      "npm notice package: @openclaw/msteams@2026.5.24-beta.1",
-      "openclaw-msteams-2026.5.24-beta.1.tgz",
+      "npm notice package: @merclaw/msteams@2026.5.24-beta.1",
+      "merclaw-msteams-2026.5.24-beta.1.tgz",
       "",
     ].join("\n");
 
-    expect(resolveNpmPackFilename(noisyOutput)).toBe("openclaw-msteams-2026.5.24-beta.1.tgz");
+    expect(resolveNpmPackFilename(noisyOutput)).toBe("merclaw-msteams-2026.5.24-beta.1.tgz");
   });
 });
 

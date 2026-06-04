@@ -5,7 +5,7 @@ import { createCronStoreHarness, createNoopLogger } from "./service.test-harness
 import { loadCronStore, saveCronStore } from "./store.js";
 
 const noopLogger = createNoopLogger();
-const { makeStorePath } = createCronStoreHarness({ prefix: "openclaw-cron-issue-35195-" });
+const { makeStorePath } = createCronStoreHarness({ prefix: "merclaw-cron-issue-35195-" });
 
 async function pathExists(filePath: string): Promise<boolean> {
   try {

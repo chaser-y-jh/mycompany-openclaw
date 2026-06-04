@@ -1,4 +1,4 @@
-import { createDraftStreamLoop } from "openclaw/plugin-sdk/channel-outbound";
+import { createDraftStreamLoop } from "merclaw/plugin-sdk/channel-outbound";
 import type { CoreConfig } from "../types.js";
 import type { MatrixClient } from "./sdk.js";
 import { editMessageMatrix, prepareMatrixSingleText, sendSingleTextMessageMatrix } from "./send.js";

@@ -78,7 +78,7 @@ function readGitShortSha(): string | null {
 
 function resolveControlUiBuildId(): string {
   const explicit =
-    process.env.OPENCLAW_CONTROL_UI_BUILD_ID?.trim() || process.env.OPENCLAW_VERSION?.trim();
+    process.env.MERCLAW_CONTROL_UI_BUILD_ID?.trim() || process.env.MERCLAW_VERSION?.trim();
   if (explicit) {
     return normalizeBuildId(explicit);
   }
@@ -136,7 +136,7 @@ function resolveTsconfigPathAlias(key: string, target: string): ControlUiViteAli
 
 function sourcePackageAlias(packageId: string, subpath?: string): ControlUiViteAlias {
   return {
-    find: `@openclaw/${packageId}${subpath ? `/${subpath}` : ""}`,
+    find: `@merclaw/${packageId}${subpath ? `/${subpath}` : ""}`,
     replacement: path.join(
       repoRoot,
       "packages",
@@ -209,7 +209,7 @@ function controlUiServiceWorkerBuildIdPlugin(buildId: string): Plugin {
       const swPath = path.join(outDir, "sw.js");
       const publicSwPath = path.join(here, "public/sw.js");
       const source = fs.readFileSync(fs.existsSync(swPath) ? swPath : publicSwPath, "utf8");
-      const placeholder = '"__OPENCLAW_CONTROL_UI_BUILD_ID__"';
+      const placeholder = '"__MERCLAW_CONTROL_UI_BUILD_ID__"';
       const updated = source.replace(placeholder, JSON.stringify(buildId));
       if (updated === source) {
         throw new Error(`Control UI service worker build id placeholder missing in ${swPath}`);
@@ -221,13 +221,13 @@ function controlUiServiceWorkerBuildIdPlugin(buildId: string): Plugin {
 }
 
 export default defineConfig(() => {
-  const envBase = process.env.OPENCLAW_CONTROL_UI_BASE_PATH?.trim();
+  const envBase = process.env.MERCLAW_CONTROL_UI_BASE_PATH?.trim();
   const base = envBase ? normalizeBase(envBase) : "./";
   const controlUiBuildId = resolveControlUiBuildId();
   return {
     base,
     define: {
-      OPENCLAW_CONTROL_UI_BUILD_ID: JSON.stringify(controlUiBuildId),
+      MERCLAW_CONTROL_UI_BUILD_ID: JSON.stringify(controlUiBuildId),
     },
     publicDir: path.resolve(here, "public"),
     optimizeDeps: {
@@ -268,7 +268,7 @@ export default defineConfig(() => {
       {
         name: "control-ui-dev-stubs",
         configureServer(server) {
-          server.middlewares.use("/__openclaw/control-ui-config.json", (_req, res) => {
+          server.middlewares.use("/__merclaw/control-ui-config.json", (_req, res) => {
             res.setHeader("Content-Type", "application/json");
             res.end(
               JSON.stringify({

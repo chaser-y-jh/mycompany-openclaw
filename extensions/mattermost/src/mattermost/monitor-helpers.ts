@@ -1,6 +1,6 @@
-import { formatInboundFromLabel as formatInboundFromLabelShared } from "openclaw/plugin-sdk/channel-inbound";
-import { resolveThreadSessionKeys as resolveThreadSessionKeysShared } from "openclaw/plugin-sdk/routing";
-import { rawDataToString } from "openclaw/plugin-sdk/webhook-ingress";
+import { formatInboundFromLabel as formatInboundFromLabelShared } from "merclaw/plugin-sdk/channel-inbound";
+import { resolveThreadSessionKeys as resolveThreadSessionKeysShared } from "merclaw/plugin-sdk/routing";
+import { rawDataToString } from "merclaw/plugin-sdk/webhook-ingress";
 
 export { rawDataToString };
 

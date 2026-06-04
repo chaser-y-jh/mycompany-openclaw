@@ -1,8 +1,8 @@
-import type { AgentToolResult } from "openclaw/plugin-sdk/agent-core";
-import { readBooleanParam } from "openclaw/plugin-sdk/boolean-param";
-import { isSingleUseReplyToMode } from "openclaw/plugin-sdk/reply-reference";
-import { resolveOpenProviderRuntimeGroupPolicy } from "openclaw/plugin-sdk/runtime-group-policy";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { AgentToolResult } from "merclaw/plugin-sdk/agent-core";
+import { readBooleanParam } from "merclaw/plugin-sdk/boolean-param";
+import { isSingleUseReplyToMode } from "merclaw/plugin-sdk/reply-reference";
+import { resolveOpenProviderRuntimeGroupPolicy } from "merclaw/plugin-sdk/runtime-group-policy";
+import { normalizeLowercaseStringOrEmpty } from "merclaw/plugin-sdk/string-coerce-runtime";
 import type { ResolvedSlackAccount } from "./accounts.js";
 import { parseSlackBlocksInput } from "./blocks-input.js";
 import { resolveSlackChannelConfig } from "./monitor/channel-config.js";
@@ -14,7 +14,7 @@ import {
   readPositiveIntegerParam,
   readReactionParams,
   readStringParam,
-  type OpenClawConfig,
+  type MerClawConfig,
   withNormalizedTimestamp,
 } from "./runtime-api.js";
 import { parseSlackTarget, resolveSlackChannelId } from "./targets.js";
@@ -165,7 +165,7 @@ function isImageContentType(value: string | undefined): boolean {
 
 function assertSlackReadTargetAllowed(params: {
   account: ResolvedSlackAccount;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channelId: string;
 }) {
   const channels = params.account.config.channels;
@@ -201,7 +201,7 @@ function assertSlackReadTargetAllowed(params: {
 
 export async function handleSlackAction(
   params: Record<string, unknown>,
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   context?: SlackActionContext,
 ): Promise<AgentToolResult<unknown>> {
   const resolveChannelId = () =>

@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { withTempHome } from "openclaw/plugin-sdk/test-env";
+import { withTempHome } from "merclaw/plugin-sdk/test-env";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { normalizeTestText } from "../../../test/helpers/normalize-text.js";
 import { testing as cliBackendsTesting } from "../../agents/cli-backends.js";
@@ -45,10 +45,10 @@ vi.mock("../../infra/provider-usage.js", async (importOriginal) => {
   };
 });
 
-vi.mock("../../agents/harness/builtin-openclaw.js", () => ({
-  createOpenClawAgentHarness: () => ({
-    id: "openclaw",
-    label: "OpenClaw Default",
+vi.mock("../../agents/harness/builtin-merclaw.js", () => ({
+  createMerClawAgentHarness: () => ({
+    id: "merclaw",
+    label: "MerClaw Default",
     supports: () => ({ supported: true, priority: 0 }),
     runAttempt: async () => {
       throw new Error("not used in status tests");
@@ -135,7 +135,7 @@ function writeTranscriptUsageLog(params: {
 }) {
   const logPath = path.join(
     params.dir,
-    ".openclaw",
+    ".merclaw",
     "agents",
     params.agentId,
     "sessions",
@@ -404,7 +404,7 @@ describe("buildStatusReply subagent summary", () => {
       runId: "run-status-task-leak",
       endedAt: Date.now(),
       error: [
-        "OpenClaw runtime context (internal):",
+        "MerClaw runtime context (internal):",
         "This context is runtime-generated, not user-authored. Keep internal details private.",
         "",
         "[Internal task completion event]",
@@ -416,7 +416,7 @@ describe("buildStatusReply subagent summary", () => {
 
     expect(reply?.text).toContain("📌 Tasks: 1 recent failure");
     expect(reply?.text).toContain("leaked context task");
-    expect(reply?.text).not.toContain("OpenClaw runtime context (internal):");
+    expect(reply?.text).not.toContain("MerClaw runtime context (internal):");
     expect(reply?.text).not.toContain("Internal task completion event");
   });
 
@@ -582,7 +582,7 @@ describe("buildStatusReply subagent summary", () => {
     expect(normalizeTestText(text)).toContain("Uptime: gateway 2h 5m · system 4d 3h");
   });
 
-  it("shows the effective non-OpenClaw embedded harness in /status", async () => {
+  it("shows the effective non-MerClaw embedded harness in /status", async () => {
     registerStatusCodexHarness();
 
     const text = await buildStatusText({
@@ -629,7 +629,7 @@ describe("buildStatusReply subagent summary", () => {
       async (dir) => {
         const authPath = path.join(
           dir,
-          ".openclaw",
+          ".merclaw",
           "agents",
           "main",
           "agent",
@@ -746,7 +746,7 @@ describe("buildStatusReply subagent summary", () => {
       async (dir) => {
         const authPath = path.join(
           dir,
-          ".openclaw",
+          ".merclaw",
           "agents",
           "main",
           "agent",
@@ -830,12 +830,12 @@ describe("buildStatusReply subagent summary", () => {
     );
   });
 
-  it("uses Codex OAuth auth labels for explicit OpenAI OpenClaw auth order", async () => {
+  it("uses Codex OAuth auth labels for explicit OpenAI MerClaw auth order", async () => {
     await withTempHome(
       async (dir) => {
         const authPath = path.join(
           dir,
-          ".openclaw",
+          ".merclaw",
           "agents",
           "main",
           "agent",
@@ -871,7 +871,7 @@ describe("buildStatusReply subagent summary", () => {
               defaults: {
                 models: {
                   "openai/gpt-5.5": {
-                    agentRuntime: { id: "openclaw" },
+                    agentRuntime: { id: "merclaw" },
                   },
                 },
               },
@@ -893,7 +893,7 @@ describe("buildStatusReply subagent summary", () => {
           provider: "openai",
           model: "gpt-5.5",
           contextTokens: 32_000,
-          resolvedHarness: "openclaw",
+          resolvedHarness: "merclaw",
           resolvedFastMode: false,
           resolvedVerboseLevel: "off",
           resolvedReasoningLevel: "off",
@@ -1108,9 +1108,9 @@ describe("buildStatusReply subagent summary", () => {
   });
 
   it("uses workspace-scoped auth evidence in /status auth labels", async () => {
-    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-status-auth-label-"));
+    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-status-auth-label-"));
     const workspaceDir = path.join(tempRoot, "workspace");
-    const pluginDir = path.join(workspaceDir, ".openclaw", "extensions", "workspace-auth-label");
+    const pluginDir = path.join(workspaceDir, ".merclaw", "extensions", "workspace-auth-label");
     const bundledDir = path.join(tempRoot, "bundled");
     const stateDir = path.join(tempRoot, "state");
     const credentialPath = path.join(tempRoot, "credentials.json");
@@ -1120,7 +1120,7 @@ describe("buildStatusReply subagent summary", () => {
     fs.writeFileSync(path.join(pluginDir, "index.ts"), "export default {}\n", "utf8");
     fs.writeFileSync(credentialPath, "{}", "utf8");
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "merclaw.plugin.json"),
       JSON.stringify({
         id: "workspace-auth-label",
         configSchema: { type: "object" },
@@ -1146,8 +1146,8 @@ describe("buildStatusReply subagent summary", () => {
     try {
       await withEnvAsync(
         {
-          OPENCLAW_BUNDLED_PLUGINS_DIR: bundledDir,
-          OPENCLAW_STATE_DIR: stateDir,
+          MERCLAW_BUNDLED_PLUGINS_DIR: bundledDir,
+          MERCLAW_STATE_DIR: stateDir,
           ANTHROPIC_API_KEY: undefined,
           ANTHROPIC_OAUTH_TOKEN: undefined,
           WORKSPACE_STATUS_CREDENTIALS: credentialPath,
@@ -1186,7 +1186,7 @@ describe("buildStatusReply subagent summary", () => {
     }
   });
 
-  it("keeps /status on a session-pinned OpenClaw harness after config changes", async () => {
+  it("keeps /status on a session-pinned MerClaw harness after config changes", async () => {
     registerStatusCodexHarness();
 
     const text = await buildStatusText({
@@ -1202,7 +1202,7 @@ describe("buildStatusReply subagent summary", () => {
         sessionId: "sess-status-pinned-agent",
         updatedAt: 0,
         fastMode: true,
-        agentHarnessId: "openclaw",
+        agentHarnessId: "merclaw",
       },
       sessionKey: "agent:main:main",
       parentSessionKey: "agent:main:main",

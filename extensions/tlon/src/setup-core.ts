@@ -9,12 +9,12 @@ import {
   type ChannelSetupAdapter,
   type ChannelSetupInput,
   type ChannelSetupWizard,
-  type OpenClawConfig,
-} from "openclaw/plugin-sdk/setup";
+  type MerClawConfig,
+} from "merclaw/plugin-sdk/setup";
 import {
   normalizeOptionalString,
   normalizeStringifiedOptionalString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/string-coerce-runtime";
 import { buildTlonAccountFields, type TlonAccountFieldsInput } from "./account-fields.js";
 import { normalizeShip } from "./targets.js";
 import { listTlonAccountIds, resolveTlonAccount, type TlonResolvedAccount } from "./types.js";
@@ -34,11 +34,11 @@ function isConfigured(account: TlonResolvedAccount): boolean {
 
 type TlonSetupWizardBaseParams = {
   resolveConfigured: (params: {
-    cfg: OpenClawConfig;
+    cfg: MerClawConfig;
     accountId?: string;
   }) => boolean | Promise<boolean>;
   resolveStatusLines?: (params: {
-    cfg: OpenClawConfig;
+    cfg: MerClawConfig;
     accountId?: string;
     configured: boolean;
   }) => string[] | Promise<string[]>;
@@ -128,7 +128,7 @@ export function createTlonSetupWizardBase(params: TlonSetupWizardBaseParams): Ch
 }
 
 export async function resolveTlonSetupConfigured(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   accountId?: string,
 ): Promise<boolean> {
   if (accountId) {
@@ -143,7 +143,7 @@ export async function resolveTlonSetupConfigured(
 }
 
 export async function resolveTlonSetupStatusLines(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   accountId?: string,
 ): Promise<string[]> {
   const configured = await resolveTlonSetupConfigured(cfg, accountId);
@@ -152,10 +152,10 @@ export async function resolveTlonSetupStatusLines(
 }
 
 export function applyTlonSetupConfig(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   accountId: string;
   input: TlonSetupInput;
-}): OpenClawConfig {
+}): MerClawConfig {
   const { cfg, accountId, input } = params;
   const useDefault = accountId === DEFAULT_ACCOUNT_ID;
   const namedConfig = prepareScopedSetupConfig({

@@ -1,4 +1,4 @@
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
 
 export function hasExpectedToolNonce(text: string, nonceA: string, nonceB: string): boolean {
   return text.includes(nonceA) && text.includes(nonceB);
@@ -29,9 +29,9 @@ const NONCE_REFUSAL_MARKERS = [
   "no read tool available",
   "won't output",
   "won’t output",
-  "isn't a real openclaw probe",
-  "is not a real openclaw probe",
-  "not a real openclaw probe",
+  "isn't a real merclaw probe",
+  "is not a real merclaw probe",
+  "not a real merclaw probe",
   "no part of the system asks me",
 ];
 

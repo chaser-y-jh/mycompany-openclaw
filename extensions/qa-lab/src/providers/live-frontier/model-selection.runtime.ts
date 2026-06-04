@@ -1,8 +1,8 @@
 import {
   listProfilesForProvider,
   loadAuthProfileStoreForRuntime,
-} from "openclaw/plugin-sdk/agent-runtime";
-import { resolveEnvApiKey } from "openclaw/plugin-sdk/provider-auth";
+} from "merclaw/plugin-sdk/agent-runtime";
+import { resolveEnvApiKey } from "merclaw/plugin-sdk/provider-auth";
 
 const QA_CODEX_OAUTH_LIVE_MODEL = "openai/gpt-5.5";
 

@@ -1,6 +1,6 @@
-import type { StreamFn } from "openclaw/plugin-sdk/agent-core";
-import { streamSimple } from "openclaw/plugin-sdk/llm";
-import type { ProviderWrapStreamFnContext } from "openclaw/plugin-sdk/plugin-entry";
+import type { StreamFn } from "merclaw/plugin-sdk/agent-core";
+import { streamSimple } from "merclaw/plugin-sdk/llm";
+import type { ProviderWrapStreamFnContext } from "merclaw/plugin-sdk/plugin-entry";
 import {
   applyAnthropicPayloadPolicyToParams,
   composeProviderStreamWrappers,
@@ -8,13 +8,13 @@ import {
   resolveAnthropicPayloadPolicy,
   stripTrailingAnthropicAssistantPrefillWhenThinking,
   streamWithPayloadPatch,
-} from "openclaw/plugin-sdk/provider-stream-shared";
-import { createSubsystemLogger } from "openclaw/plugin-sdk/runtime-env";
+} from "merclaw/plugin-sdk/provider-stream-shared";
+import { createSubsystemLogger } from "merclaw/plugin-sdk/runtime-env";
 import {
   normalizeFastMode,
   normalizeLowercaseStringOrEmpty,
   readStringValue,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/string-coerce-runtime";
 
 const log = createSubsystemLogger("anthropic-stream");
 
@@ -29,14 +29,14 @@ const ANTHROPIC_GA_1M_MODEL_PREFIXES = [
   "claude-sonnet-4-6",
   "claude-sonnet-4.6",
 ] as const;
-const OPENCLAW_DEFAULT_ANTHROPIC_BETAS = [
+const MERCLAW_DEFAULT_ANTHROPIC_BETAS = [
   "fine-grained-tool-streaming-2025-05-14",
   "interleaved-thinking-2025-05-14",
 ] as const;
-const OPENCLAW_OAUTH_ANTHROPIC_BETAS = [
+const MERCLAW_OAUTH_ANTHROPIC_BETAS = [
   "claude-code-20250219",
   "oauth-2025-04-20",
-  ...OPENCLAW_DEFAULT_ANTHROPIC_BETAS,
+  ...MERCLAW_DEFAULT_ANTHROPIC_BETAS,
 ] as const;
 
 type AnthropicServiceTier = "auto" | "standard_only";
@@ -137,10 +137,10 @@ export function createAnthropicBetaHeadersWrapper(
     const isOauth = isAnthropicOAuthApiKey(options?.apiKey);
     const effectiveBetas = betas.filter((beta) => beta !== ANTHROPIC_CONTEXT_1M_BETA_LEGACY);
 
-    const openClawBetas = isOauth
-      ? (OPENCLAW_OAUTH_ANTHROPIC_BETAS as readonly string[])
-      : (OPENCLAW_DEFAULT_ANTHROPIC_BETAS as readonly string[]);
-    const allBetas = [...new Set([...openClawBetas, ...effectiveBetas])];
+    const merClawBetas = isOauth
+      ? (MERCLAW_OAUTH_ANTHROPIC_BETAS as readonly string[])
+      : (MERCLAW_DEFAULT_ANTHROPIC_BETAS as readonly string[]);
+    const allBetas = [...new Set([...merClawBetas, ...effectiveBetas])];
     return underlying(model, context, {
       ...options,
       headers: mergeAnthropicBetaHeader(options?.headers, allBetas),

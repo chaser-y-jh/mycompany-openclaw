@@ -1,6 +1,6 @@
-import { createPairingPrefixStripper } from "openclaw/plugin-sdk/channel-pairing";
-import { PAIRING_APPROVED_MESSAGE } from "openclaw/plugin-sdk/channel-status";
-import type { PinnedDispatcherPolicy, SsrFPolicy } from "openclaw/plugin-sdk/ssrf-dispatcher";
+import { createPairingPrefixStripper } from "merclaw/plugin-sdk/channel-pairing";
+import { PAIRING_APPROVED_MESSAGE } from "merclaw/plugin-sdk/channel-status";
+import type { PinnedDispatcherPolicy, SsrFPolicy } from "merclaw/plugin-sdk/ssrf-dispatcher";
 import { formatMatrixErrorMessage } from "./matrix/errors.js";
 import type { MatrixProbe } from "./matrix/probe.js";
 import type { CoreConfig } from "./types.js";

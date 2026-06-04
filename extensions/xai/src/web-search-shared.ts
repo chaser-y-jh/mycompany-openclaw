@@ -1,5 +1,5 @@
-import { readProviderJsonObjectResponse } from "openclaw/plugin-sdk/provider-http";
-import { postTrustedWebToolsJson, wrapWebContent } from "openclaw/plugin-sdk/provider-web-search";
+import { readProviderJsonObjectResponse } from "merclaw/plugin-sdk/provider-http";
+import { postTrustedWebToolsJson, wrapWebContent } from "merclaw/plugin-sdk/provider-web-search";
 import { normalizeXaiModelId } from "../model-id.js";
 import {
   buildXaiResponsesToolBody,

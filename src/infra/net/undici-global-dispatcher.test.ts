@@ -120,14 +120,14 @@ const {
 });
 
 const mockedModuleIds = [
-  "@openclaw/proxyline/dispatcher-brand",
+  "@merclaw/proxyline/dispatcher-brand",
   "node:net",
   "./proxy-env.js",
   "./undici-runtime.js",
   "../wsl.js",
 ] as const;
 
-vi.mock("@openclaw/proxyline/dispatcher-brand", () => ({
+vi.mock("@merclaw/proxyline/dispatcher-brand", () => ({
   isProxylineDispatcher,
 }));
 
@@ -806,7 +806,7 @@ describe("forceResetGlobalDispatcher", () => {
     expect(setGlobalDispatcher).not.toHaveBeenCalled();
   });
 
-  it("restores a direct Agent when clearing a proxy dispatcher installed by OpenClaw", () => {
+  it("restores a direct Agent when clearing a proxy dispatcher installed by MerClaw", () => {
     vi.mocked(hasEnvHttpProxyAgentConfigured).mockReturnValue(true);
     ensureGlobalUndiciEnvProxyDispatcher();
     expect(getCurrentDispatcher()).toBeInstanceOf(EnvHttpProxyAgent);

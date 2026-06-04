@@ -1,6 +1,6 @@
 import { stdin as input, stdout as output } from "node:process";
 import readline from "node:readline/promises";
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
 import { isVerbose, isYes } from "../globals.js";
 
 export class PromptInputClosedError extends Error {

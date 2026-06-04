@@ -13,10 +13,10 @@ import type { SessionConfig } from "@github/copilot-sdk";
 //      `backgroundCompactionThreshold`, blocking at
 //      `bufferExhaustionThreshold`).
 //
-//   2. Write an OpenClaw-shaped JSON marker file at
-//      `<workspaceDir>/files/openclaw-compaction-<sessionId>-<ts>.json`
+//   2. Write an MerClaw-shaped JSON marker file at
+//      `<workspaceDir>/files/merclaw-compaction-<sessionId>-<ts>.json`
 //      whenever the host calls `harness.compact(params)`. Existing
-//      OpenClaw transcript readers look in `workspacePath/files/` for
+//      MerClaw transcript readers look in `workspacePath/files/` for
 //      compaction artifacts; the marker keeps them informed even
 //      though the SDK now owns the actual context-window mechanics
 //      under infiniteSessions.
@@ -65,8 +65,8 @@ export function createInfiniteSessionConfig(
   return Object.keys(result).length > 0 ? result : undefined;
 }
 
-export interface OpenClawCompactionMarkerInput {
-  /** OpenClaw session id (CompactEmbeddedPiSessionParams.sessionId). */
+export interface MerClawCompactionMarkerInput {
+  /** MerClaw session id (CompactEmbeddedPiSessionParams.sessionId). */
   readonly sessionId: string;
   /** Workspace dir (CompactEmbeddedPiSessionParams.workspaceDir). */
   readonly workspaceDir: string;
@@ -86,7 +86,7 @@ export interface OpenClawCompactionMarkerInput {
   readonly force?: boolean;
 }
 
-export interface OpenClawCompactionMarkerOptions {
+export interface MerClawCompactionMarkerOptions {
   /** Override `Date.now`. Default: `Date.now`. */
   readonly now?: () => number;
   /** Override `node:fs/promises` writers. Useful in tests. */
@@ -98,7 +98,7 @@ export interface OpenClawCompactionMarkerOptions {
   readonly subdir?: string;
 }
 
-export interface OpenClawCompactionMarker {
+export interface MerClawCompactionMarker {
   readonly version: 1;
   readonly source: "copilot-harness";
   readonly sessionId: string;
@@ -116,9 +116,9 @@ export interface OpenClawCompactionMarker {
   readonly reason?: string;
 }
 
-export interface WrittenOpenClawCompactionMarker {
+export interface WrittenMerClawCompactionMarker {
   readonly path: string;
-  readonly marker: OpenClawCompactionMarker;
+  readonly marker: MerClawCompactionMarker;
 }
 
 function compactJsonValue<T extends Record<string, unknown>>(input: T): T {
@@ -132,18 +132,18 @@ function compactJsonValue<T extends Record<string, unknown>>(input: T): T {
 }
 
 /**
- * Write an OpenClaw-shaped compaction marker JSON file under
- * `<workspaceDir>/<subdir>/openclaw-compaction-<sessionId>-<ts>.json`.
+ * Write an MerClaw-shaped compaction marker JSON file under
+ * `<workspaceDir>/<subdir>/merclaw-compaction-<sessionId>-<ts>.json`.
  *
  * Returns the resolved file path and the marker payload that was
  * written. Throws if the workspaceDir or sessionId is missing/empty
  * (the caller should not invoke this without those — the harness
  * `compact()` must validate first).
  */
-export async function writeOpenClawCompactionMarker(
-  input: OpenClawCompactionMarkerInput,
-  options: OpenClawCompactionMarkerOptions = {},
-): Promise<WrittenOpenClawCompactionMarker> {
+export async function writeMerClawCompactionMarker(
+  input: MerClawCompactionMarkerInput,
+  options: MerClawCompactionMarkerOptions = {},
+): Promise<WrittenMerClawCompactionMarker> {
   if (!input.workspaceDir || typeof input.workspaceDir !== "string") {
     throw new Error("[copilot:compaction-bridge] workspaceDir is required to write a marker");
   }
@@ -158,12 +158,12 @@ export async function writeOpenClawCompactionMarker(
   const safeSessionId = input.sessionId.replace(/[^a-zA-Z0-9._-]/g, "_");
   // Filename pattern: ts-first so listings sort chronologically. Suffix
   // sessionId for collision safety when multiple sessions share a
-  // workspace. Matches the proposal's `openclaw-compaction-<ts>` prefix.
-  const filename = `openclaw-compaction-${ts}-${safeSessionId}.json`;
+  // workspace. Matches the proposal's `merclaw-compaction-<ts>` prefix.
+  const filename = `merclaw-compaction-${ts}-${safeSessionId}.json`;
   const dirPath = join(input.workspaceDir, subdir);
   const filePath = join(dirPath, filename);
 
-  const marker: OpenClawCompactionMarker = compactJsonValue({
+  const marker: MerClawCompactionMarker = compactJsonValue({
     version: 1 as const,
     source: "copilot-harness" as const,
     sessionId: input.sessionId,

@@ -7,7 +7,7 @@ import { appendWorkspaceMountArgs } from "./workspace-mounts.js";
 const tmpDirs: string[] = [];
 
 function makeTempWorkspace(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-sandbox-mounts-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-sandbox-mounts-"));
   tmpDirs.push(dir);
   return dir;
 }

@@ -2,7 +2,7 @@ import { EventEmitter } from "node:events";
 import {
   MAX_DATE_TIMESTAMP_MS,
   MAX_TIMER_TIMEOUT_MS,
-} from "@openclaw/normalization-core/number-coercion";
+} from "@merclaw/normalization-core/number-coercion";
 import { describe, expect, it, vi } from "vitest";
 import { onDiagnosticEvent, resetDiagnosticEventsForTest } from "../infra/diagnostic-events.js";
 import { NodeRegistry, serializeEventPayload } from "./node-registry.js";
@@ -42,7 +42,7 @@ function makeClient(
       minProtocol: 1,
       maxProtocol: 1,
       client: {
-        id: opts.clientId ?? "openclaw-macos",
+        id: opts.clientId ?? "merclaw-macos",
         version: opts.version ?? "1.0.0",
         platform: opts.platform ?? "darwin",
         mode: "node",
@@ -148,7 +148,7 @@ describe("gateway/node-registry", () => {
     const frames: string[] = [];
     registry.register(
       makeClient("conn-1", "node-1", frames, {
-        clientId: "openclaw-node-host",
+        clientId: "merclaw-node-host",
         platform: "linux",
       }),
       {},
@@ -379,7 +379,7 @@ describe("gateway/node-registry", () => {
     const frames: string[] = [];
     registry.register(
       makeClient("conn-1", "node-1", frames, {
-        clientId: "openclaw-node-host",
+        clientId: "merclaw-node-host",
         platform: "linux",
       }),
       {},
@@ -499,7 +499,7 @@ describe("gateway/node-registry", () => {
     const frames: string[] = [];
     registry.register(
       makeClient("conn-1", "node-1", frames, {
-        clientId: "openclaw-node-host",
+        clientId: "merclaw-node-host",
         platform: "linux",
       }),
       {},

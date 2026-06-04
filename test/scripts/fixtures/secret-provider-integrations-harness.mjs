@@ -16,7 +16,7 @@ try {
       {
         env: {
           ...process.env,
-          OPENCLAW_CONFIG_PATH: path.join(root, "openclaw.json"),
+          MERCLAW_CONFIG_PATH: path.join(root, "merclaw.json"),
         },
       },
       9,

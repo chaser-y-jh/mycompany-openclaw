@@ -53,7 +53,7 @@ function runPtyProbe(
 
 describe("run-with-pty", () => {
   it("rejects loose terminal dimension env values", async () => {
-    const tempRoot = await mkdtemp(path.join(os.tmpdir(), "openclaw-run-with-pty-"));
+    const tempRoot = await mkdtemp(path.join(os.tmpdir(), "merclaw-run-with-pty-"));
     const logPath = path.join(tempRoot, "pty.log");
     try {
       const result = await runPtyProbe(logPath, { COLUMNS: "120cols" });
@@ -66,7 +66,7 @@ describe("run-with-pty", () => {
   });
 
   it("forwards stdin through a PTY and writes the transcript log", async () => {
-    const tempRoot = await mkdtemp(path.join(os.tmpdir(), "openclaw-run-with-pty-"));
+    const tempRoot = await mkdtemp(path.join(os.tmpdir(), "merclaw-run-with-pty-"));
     const logPath = path.join(tempRoot, "pty.log");
     try {
       const result = await runPtyProbe(logPath);

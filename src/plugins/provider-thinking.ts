@@ -1,4 +1,4 @@
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
+import { normalizeProviderId } from "@merclaw/model-catalog-core/provider-id";
 import { resolveBundledProviderPolicySurface } from "./provider-public-artifacts.js";
 import type {
   ProviderDefaultThinkingPolicyContext,
@@ -20,7 +20,7 @@ type ThinkingProviderPlugin = {
   ) => "off" | "minimal" | "low" | "medium" | "high" | "xhigh" | "adaptive" | null | undefined;
 };
 
-const PLUGIN_REGISTRY_STATE = Symbol.for("openclaw.pluginRegistryState");
+const PLUGIN_REGISTRY_STATE = Symbol.for("merclaw.pluginRegistryState");
 
 type ThinkingRegistryState = {
   activeRegistry?: {

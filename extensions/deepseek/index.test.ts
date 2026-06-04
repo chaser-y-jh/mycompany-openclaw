@@ -1,10 +1,10 @@
-import type { Context, Model } from "openclaw/plugin-sdk/llm";
-import { createAssistantMessageEventStream } from "openclaw/plugin-sdk/llm";
+import type { Context, Model } from "merclaw/plugin-sdk/llm";
+import { createAssistantMessageEventStream } from "merclaw/plugin-sdk/llm";
 import {
   registerSingleProviderPlugin,
   resolveProviderPluginChoice,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
-import { buildOpenAICompletionsParams } from "openclaw/plugin-sdk/provider-transport-runtime";
+} from "merclaw/plugin-sdk/plugin-test-runtime";
+import { buildOpenAICompletionsParams } from "merclaw/plugin-sdk/provider-transport-runtime";
 import { describe, expect, it } from "vitest";
 import { runSingleProviderCatalog } from "../test-support/provider-model-test-helpers.js";
 import deepseekPlugin from "./index.js";

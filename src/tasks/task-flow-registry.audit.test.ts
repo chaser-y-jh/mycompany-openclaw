@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { withOpenClawTestState } from "../test-utils/openclaw-test-state.js";
+import { withMerClawTestState } from "../test-utils/merclaw-test-state.js";
 import { createRunningTaskRun } from "./task-executor.js";
 import {
   listTaskFlowAuditFindings,
@@ -17,7 +17,7 @@ import {
   resetTaskRegistryForTests,
 } from "./task-registry.js";
 
-const ORIGINAL_STATE_DIR = process.env.OPENCLAW_STATE_DIR;
+const ORIGINAL_STATE_DIR = process.env.MERCLAW_STATE_DIR;
 
 function requireFinding(
   findings: TaskFlowAuditFinding[],
@@ -35,10 +35,10 @@ function requireFinding(
 }
 
 async function withTaskFlowAuditStateDir(run: (root: string) => Promise<void>): Promise<void> {
-  await withOpenClawTestState(
+  await withMerClawTestState(
     {
       layout: "state-only",
-      prefix: "openclaw-task-flow-audit-",
+      prefix: "merclaw-task-flow-audit-",
     },
     async (state) => {
       resetTaskRegistryDeliveryRuntimeForTests();
@@ -58,9 +58,9 @@ async function withTaskFlowAuditStateDir(run: (root: string) => Promise<void>): 
 describe("task-flow-registry audit", () => {
   afterEach(() => {
     if (ORIGINAL_STATE_DIR === undefined) {
-      delete process.env.OPENCLAW_STATE_DIR;
+      delete process.env.MERCLAW_STATE_DIR;
     } else {
-      process.env.OPENCLAW_STATE_DIR = ORIGINAL_STATE_DIR;
+      process.env.MERCLAW_STATE_DIR = ORIGINAL_STATE_DIR;
     }
     resetTaskRegistryDeliveryRuntimeForTests();
     resetTaskRegistryForTests();

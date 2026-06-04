@@ -1,4 +1,4 @@
-import type { OpenClawPluginApi } from "openclaw/plugin-sdk/channel-entry-contract";
+import type { MerClawPluginApi } from "merclaw/plugin-sdk/channel-entry-contract";
 
 type FeishuSubagentHooksModule = typeof import("./src/subagent-hooks.js");
 
@@ -9,7 +9,7 @@ function loadFeishuSubagentHooksModule() {
   return feishuSubagentHooksPromise;
 }
 
-export function registerFeishuSubagentHooks(api: OpenClawPluginApi): void {
+export function registerFeishuSubagentHooks(api: MerClawPluginApi): void {
   api.on("subagent_delivery_target", async (event) => {
     const { handleFeishuSubagentDeliveryTarget } = await loadFeishuSubagentHooksModule();
     return handleFeishuSubagentDeliveryTarget(event);

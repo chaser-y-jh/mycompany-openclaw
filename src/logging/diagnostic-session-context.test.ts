@@ -21,16 +21,16 @@ function writeJsonl(filePath: string, rows: unknown[]) {
 
 describe("diagnostic session context", () => {
   beforeEach(() => {
-    previousStateDir = process.env.OPENCLAW_STATE_DIR;
-    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-diagnostic-session-"));
-    process.env.OPENCLAW_STATE_DIR = tempDir;
+    previousStateDir = process.env.MERCLAW_STATE_DIR;
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-diagnostic-session-"));
+    process.env.MERCLAW_STATE_DIR = tempDir;
   });
 
   afterEach(() => {
     if (previousStateDir === undefined) {
-      delete process.env.OPENCLAW_STATE_DIR;
+      delete process.env.MERCLAW_STATE_DIR;
     } else {
-      process.env.OPENCLAW_STATE_DIR = previousStateDir;
+      process.env.MERCLAW_STATE_DIR = previousStateDir;
     }
     if (tempDir) {
       fs.rmSync(tempDir, { recursive: true, force: true });

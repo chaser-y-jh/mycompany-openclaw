@@ -18,7 +18,7 @@ vi.mock("../../transcripts/provider-registry.js", async (importOriginal) => {
 });
 
 async function makeStateDir(): Promise<string> {
-  return await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-transcripts-"));
+  return await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-transcripts-"));
 }
 
 function currentDateDir(): string {

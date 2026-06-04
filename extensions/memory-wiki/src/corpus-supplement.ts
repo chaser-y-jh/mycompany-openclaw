@@ -1,10 +1,10 @@
-import type { OpenClawConfig } from "../api.js";
+import type { MerClawConfig } from "../api.js";
 import type { ResolvedMemoryWikiConfig } from "./config.js";
 import { getMemoryWikiPage, searchMemoryWiki } from "./query.js";
 
 export function createWikiCorpusSupplement(params: {
   config: ResolvedMemoryWikiConfig;
-  appConfig?: OpenClawConfig;
+  appConfig?: MerClawConfig;
 }) {
   return {
     search: async (input: { query: string; maxResults?: number; agentSessionKey?: string }) =>

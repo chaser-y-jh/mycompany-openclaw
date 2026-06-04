@@ -1,8 +1,8 @@
 import path from "node:path";
-import { loadJsonFile } from "openclaw/plugin-sdk/json-store";
-import type { PluginStateSyncKeyedStore } from "openclaw/plugin-sdk/plugin-state-runtime";
-import { logVerbose } from "openclaw/plugin-sdk/runtime-env";
-import { resolveStateDir } from "openclaw/plugin-sdk/state-paths";
+import { loadJsonFile } from "merclaw/plugin-sdk/json-store";
+import type { PluginStateSyncKeyedStore } from "merclaw/plugin-sdk/plugin-state-runtime";
+import { logVerbose } from "merclaw/plugin-sdk/runtime-env";
+import { resolveStateDir } from "merclaw/plugin-sdk/state-paths";
 import { getTelegramRuntime } from "./runtime.js";
 
 const CACHE_VERSION = 1;

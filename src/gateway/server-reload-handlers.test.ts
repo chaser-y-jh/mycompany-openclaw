@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { ConfigWriteNotification } from "../config/config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { consumeGatewaySigusr1RestartIntent } from "../infra/restart.js";
 import type { ChannelKind, GatewayReloadPlan } from "./config-reload-plan.js";
 import type { GatewayPluginReloadResult } from "./server-reload-handlers.js";
@@ -10,7 +10,7 @@ import {
 } from "./server-reload-handlers.js";
 
 type GmailWatcherRestartParams = {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   log: {
     info: (msg: string) => void;
     warn: (msg: string) => void;
@@ -40,11 +40,11 @@ const hoisted = vi.hoisted(() => ({
   activeEmbeddedRunSessionIds: [] as string[],
   activeEmbeddedRunSessionKeys: [] as string[],
   markRestartAbortedMainSessions: vi.fn(async (_params: unknown) => ({ marked: 1, skipped: 0 })),
-  runtimeConfig: { value: { session: { store: "/tmp/active-sessions.json" } } as OpenClawConfig },
+  runtimeConfig: { value: { session: { store: "/tmp/active-sessions.json" } } as MerClawConfig },
   reloadEvents: [] as string[],
   resetModelCatalogCache: vi.fn(() => {}),
   clearCurrentProviderAuthState: vi.fn(() => {}),
-  warmCurrentProviderAuthStateOffMainThread: vi.fn(async (_cfg: OpenClawConfig) => {}),
+  warmCurrentProviderAuthStateOffMainThread: vi.fn(async (_cfg: MerClawConfig) => {}),
   disposeAllSessionMcpRuntimes: vi.fn(async () => {}),
 }));
 
@@ -113,7 +113,7 @@ vi.mock("../agents/model-provider-auth.js", () => ({
     hoisted.reloadEvents.push("clear-provider-auth");
     hoisted.clearCurrentProviderAuthState();
   },
-  warmCurrentProviderAuthStateOffMainThread: async (cfg: OpenClawConfig) => {
+  warmCurrentProviderAuthStateOffMainThread: async (cfg: MerClawConfig) => {
     hoisted.reloadEvents.push("warm-provider-auth");
     await hoisted.warmCurrentProviderAuthStateOffMainThread(cfg);
   },
@@ -210,7 +210,7 @@ describe("gateway hot reload model state", () => {
       createHealthMonitor: () => null,
     });
 
-    const nextConfig = { plugins: { enabled: true } } as OpenClawConfig;
+    const nextConfig = { plugins: { enabled: true } } as MerClawConfig;
     await applyHotReload(
       {
         changedPaths: ["plugins.enabled"],
@@ -245,7 +245,7 @@ describe("gateway hot reload model state", () => {
 
   it("disposes cached MCP runtimes on MCP config hot reloads", async () => {
     const { applyHotReload } = createReloadHandlersForTest();
-    const nextConfig = { mcp: { servers: {} } } as OpenClawConfig;
+    const nextConfig = { mcp: { servers: {} } } as MerClawConfig;
 
     await applyHotReload(
       {
@@ -273,10 +273,10 @@ describe("gateway hot reload model state", () => {
 
 describe("gateway restart deferral preflight", () => {
   it("defers channel hot reload until active embedded work drains", async () => {
-    const previousSkipChannels = process.env.OPENCLAW_SKIP_CHANNELS;
-    const previousSkipProviders = process.env.OPENCLAW_SKIP_PROVIDERS;
-    delete process.env.OPENCLAW_SKIP_CHANNELS;
-    delete process.env.OPENCLAW_SKIP_PROVIDERS;
+    const previousSkipChannels = process.env.MERCLAW_SKIP_CHANNELS;
+    const previousSkipProviders = process.env.MERCLAW_SKIP_PROVIDERS;
+    delete process.env.MERCLAW_SKIP_CHANNELS;
+    delete process.env.MERCLAW_SKIP_PROVIDERS;
     const startChannel = vi.fn(async () => {});
     const stopChannel = vi.fn(async () => {});
     const { applyHotReload } = createGatewayReloadHandlers({
@@ -346,14 +346,14 @@ describe("gateway restart deferral preflight", () => {
       vi.useRealTimers();
       await reloadPromise.catch(() => {});
       if (previousSkipChannels === undefined) {
-        delete process.env.OPENCLAW_SKIP_CHANNELS;
+        delete process.env.MERCLAW_SKIP_CHANNELS;
       } else {
-        process.env.OPENCLAW_SKIP_CHANNELS = previousSkipChannels;
+        process.env.MERCLAW_SKIP_CHANNELS = previousSkipChannels;
       }
       if (previousSkipProviders === undefined) {
-        delete process.env.OPENCLAW_SKIP_PROVIDERS;
+        delete process.env.MERCLAW_SKIP_PROVIDERS;
       } else {
-        process.env.OPENCLAW_SKIP_PROVIDERS = previousSkipProviders;
+        process.env.MERCLAW_SKIP_PROVIDERS = previousSkipProviders;
       }
     }
 
@@ -362,10 +362,10 @@ describe("gateway restart deferral preflight", () => {
   });
 
   it("forces channel hot reload after the configured deferral timeout", async () => {
-    const previousSkipChannels = process.env.OPENCLAW_SKIP_CHANNELS;
-    const previousSkipProviders = process.env.OPENCLAW_SKIP_PROVIDERS;
-    delete process.env.OPENCLAW_SKIP_CHANNELS;
-    delete process.env.OPENCLAW_SKIP_PROVIDERS;
+    const previousSkipChannels = process.env.MERCLAW_SKIP_CHANNELS;
+    const previousSkipProviders = process.env.MERCLAW_SKIP_PROVIDERS;
+    delete process.env.MERCLAW_SKIP_CHANNELS;
+    delete process.env.MERCLAW_SKIP_PROVIDERS;
     const startChannel = vi.fn(async () => {});
     const stopChannel = vi.fn(async () => {});
     const logReload = { info: vi.fn(), warn: vi.fn() };
@@ -434,14 +434,14 @@ describe("gateway restart deferral preflight", () => {
       vi.useRealTimers();
       await reloadPromise.catch(() => {});
       if (previousSkipChannels === undefined) {
-        delete process.env.OPENCLAW_SKIP_CHANNELS;
+        delete process.env.MERCLAW_SKIP_CHANNELS;
       } else {
-        process.env.OPENCLAW_SKIP_CHANNELS = previousSkipChannels;
+        process.env.MERCLAW_SKIP_CHANNELS = previousSkipChannels;
       }
       if (previousSkipProviders === undefined) {
-        delete process.env.OPENCLAW_SKIP_PROVIDERS;
+        delete process.env.MERCLAW_SKIP_PROVIDERS;
       } else {
-        process.env.OPENCLAW_SKIP_PROVIDERS = previousSkipProviders;
+        process.env.MERCLAW_SKIP_PROVIDERS = previousSkipProviders;
       }
     }
 
@@ -453,10 +453,10 @@ describe("gateway restart deferral preflight", () => {
   });
 
   it("uses the default channel reload deferral timeout when config omits deferralTimeoutMs", async () => {
-    const previousSkipChannels = process.env.OPENCLAW_SKIP_CHANNELS;
-    const previousSkipProviders = process.env.OPENCLAW_SKIP_PROVIDERS;
-    delete process.env.OPENCLAW_SKIP_CHANNELS;
-    delete process.env.OPENCLAW_SKIP_PROVIDERS;
+    const previousSkipChannels = process.env.MERCLAW_SKIP_CHANNELS;
+    const previousSkipProviders = process.env.MERCLAW_SKIP_PROVIDERS;
+    delete process.env.MERCLAW_SKIP_CHANNELS;
+    delete process.env.MERCLAW_SKIP_PROVIDERS;
     const startChannel = vi.fn(async () => {});
     const stopChannel = vi.fn(async () => {});
     const logReload = { info: vi.fn(), warn: vi.fn() };
@@ -525,14 +525,14 @@ describe("gateway restart deferral preflight", () => {
       vi.useRealTimers();
       await reloadPromise.catch(() => {});
       if (previousSkipChannels === undefined) {
-        delete process.env.OPENCLAW_SKIP_CHANNELS;
+        delete process.env.MERCLAW_SKIP_CHANNELS;
       } else {
-        process.env.OPENCLAW_SKIP_CHANNELS = previousSkipChannels;
+        process.env.MERCLAW_SKIP_CHANNELS = previousSkipChannels;
       }
       if (previousSkipProviders === undefined) {
-        delete process.env.OPENCLAW_SKIP_PROVIDERS;
+        delete process.env.MERCLAW_SKIP_PROVIDERS;
       } else {
-        process.env.OPENCLAW_SKIP_PROVIDERS = previousSkipProviders;
+        process.env.MERCLAW_SKIP_PROVIDERS = previousSkipProviders;
       }
     }
 
@@ -544,10 +544,10 @@ describe("gateway restart deferral preflight", () => {
   });
 
   it("waits indefinitely for channel hot reload when deferral timeout is 0", async () => {
-    const previousSkipChannels = process.env.OPENCLAW_SKIP_CHANNELS;
-    const previousSkipProviders = process.env.OPENCLAW_SKIP_PROVIDERS;
-    delete process.env.OPENCLAW_SKIP_CHANNELS;
-    delete process.env.OPENCLAW_SKIP_PROVIDERS;
+    const previousSkipChannels = process.env.MERCLAW_SKIP_CHANNELS;
+    const previousSkipProviders = process.env.MERCLAW_SKIP_PROVIDERS;
+    delete process.env.MERCLAW_SKIP_CHANNELS;
+    delete process.env.MERCLAW_SKIP_PROVIDERS;
     const startChannel = vi.fn(async () => {});
     const stopChannel = vi.fn(async () => {});
     const { applyHotReload } = createGatewayReloadHandlers({
@@ -617,14 +617,14 @@ describe("gateway restart deferral preflight", () => {
       vi.useRealTimers();
       await reloadPromise.catch(() => {});
       if (previousSkipChannels === undefined) {
-        delete process.env.OPENCLAW_SKIP_CHANNELS;
+        delete process.env.MERCLAW_SKIP_CHANNELS;
       } else {
-        process.env.OPENCLAW_SKIP_CHANNELS = previousSkipChannels;
+        process.env.MERCLAW_SKIP_CHANNELS = previousSkipChannels;
       }
       if (previousSkipProviders === undefined) {
-        delete process.env.OPENCLAW_SKIP_PROVIDERS;
+        delete process.env.MERCLAW_SKIP_PROVIDERS;
       } else {
-        process.env.OPENCLAW_SKIP_PROVIDERS = previousSkipProviders;
+        process.env.MERCLAW_SKIP_PROVIDERS = previousSkipProviders;
       }
     }
 
@@ -788,22 +788,22 @@ describe("gateway channel hot reload handlers", () => {
   }
 
   async function withChannelReloadsEnabled(run: () => Promise<void>) {
-    const previousSkipChannels = process.env.OPENCLAW_SKIP_CHANNELS;
-    const previousSkipProviders = process.env.OPENCLAW_SKIP_PROVIDERS;
-    delete process.env.OPENCLAW_SKIP_CHANNELS;
-    delete process.env.OPENCLAW_SKIP_PROVIDERS;
+    const previousSkipChannels = process.env.MERCLAW_SKIP_CHANNELS;
+    const previousSkipProviders = process.env.MERCLAW_SKIP_PROVIDERS;
+    delete process.env.MERCLAW_SKIP_CHANNELS;
+    delete process.env.MERCLAW_SKIP_PROVIDERS;
     try {
       await run();
     } finally {
       if (previousSkipChannels === undefined) {
-        delete process.env.OPENCLAW_SKIP_CHANNELS;
+        delete process.env.MERCLAW_SKIP_CHANNELS;
       } else {
-        process.env.OPENCLAW_SKIP_CHANNELS = previousSkipChannels;
+        process.env.MERCLAW_SKIP_CHANNELS = previousSkipChannels;
       }
       if (previousSkipProviders === undefined) {
-        delete process.env.OPENCLAW_SKIP_PROVIDERS;
+        delete process.env.MERCLAW_SKIP_PROVIDERS;
       } else {
-        process.env.OPENCLAW_SKIP_PROVIDERS = previousSkipProviders;
+        process.env.MERCLAW_SKIP_PROVIDERS = previousSkipProviders;
       }
     }
   }
@@ -940,7 +940,7 @@ describe("gateway Gmail hot reload handlers", () => {
     };
   }
 
-  function createGmailConfig(account: string): OpenClawConfig {
+  function createGmailConfig(account: string): MerClawConfig {
     return {
       gateway: { reload: { debounceMs: 0 } },
       hooks: { enabled: true, gmail: { account } },
@@ -1076,7 +1076,7 @@ describe("gateway Gmail hot reload handlers", () => {
     const initialConfig = createGmailConfig("old@example.com");
     const nextConfig = createGmailConfig("next@example.com");
     const readSnapshot = vi.fn(async () => ({
-      path: "/tmp/openclaw.json",
+      path: "/tmp/merclaw.json",
       exists: true,
       raw: "{}",
       parsed: {},
@@ -1095,7 +1095,7 @@ describe("gateway Gmail hot reload handlers", () => {
       initialConfig,
       initialCompareConfig: initialConfig,
       initialInternalWriteHash: null,
-      watchPath: "/tmp/openclaw.json",
+      watchPath: "/tmp/merclaw.json",
       readSnapshot: readSnapshot as never,
       promoteSnapshot: vi.fn(async () => true) as never,
       subscribeToWrites: ((listener: (event: ConfigWriteNotification) => void) => {
@@ -1133,7 +1133,7 @@ describe("gateway Gmail hot reload handlers", () => {
       logCron: { error: vi.fn() },
       logReload: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
       channelManager: {} as never,
-      activateRuntimeSecrets: vi.fn(async (config: OpenClawConfig) => ({
+      activateRuntimeSecrets: vi.fn(async (config: MerClawConfig) => ({
         sourceConfig: config,
         config,
         authStores: [],
@@ -1150,7 +1150,7 @@ describe("gateway Gmail hot reload handlers", () => {
     }
 
     registeredWriteListener({
-      configPath: "/tmp/openclaw.json",
+      configPath: "/tmp/merclaw.json",
       sourceConfig: nextConfig,
       runtimeConfig: nextConfig,
       persistedHash: "hash-next",
@@ -1186,9 +1186,9 @@ describe("gateway Gmail hot reload handlers", () => {
       initialConfig,
       initialCompareConfig: initialConfig,
       initialInternalWriteHash: null,
-      watchPath: "/tmp/openclaw.json",
+      watchPath: "/tmp/merclaw.json",
       readSnapshot: vi.fn(async () => ({
-        path: "/tmp/openclaw.json",
+        path: "/tmp/merclaw.json",
         exists: true,
         raw: "{}",
         parsed: {},
@@ -1238,7 +1238,7 @@ describe("gateway Gmail hot reload handlers", () => {
       logCron: { error: vi.fn() },
       logReload: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
       channelManager: {} as never,
-      activateRuntimeSecrets: vi.fn(async (config: OpenClawConfig) => {
+      activateRuntimeSecrets: vi.fn(async (config: MerClawConfig) => {
         secretsEntered?.();
         await releaseSecretsPromise;
         return {
@@ -1259,7 +1259,7 @@ describe("gateway Gmail hot reload handlers", () => {
     }
 
     registeredWriteListener({
-      configPath: "/tmp/openclaw.json",
+      configPath: "/tmp/merclaw.json",
       sourceConfig: nextConfig,
       runtimeConfig: nextConfig,
       persistedHash: "hash-next",
@@ -1282,10 +1282,10 @@ describe("gateway Gmail hot reload handlers", () => {
 
 describe("gateway plugin hot reload handlers", () => {
   it("rolls back stopped channels when plugin pre-replace stop fails", async () => {
-    const previousSkipChannels = process.env.OPENCLAW_SKIP_CHANNELS;
-    const previousSkipProviders = process.env.OPENCLAW_SKIP_PROVIDERS;
-    delete process.env.OPENCLAW_SKIP_CHANNELS;
-    delete process.env.OPENCLAW_SKIP_PROVIDERS;
+    const previousSkipChannels = process.env.MERCLAW_SKIP_CHANNELS;
+    const previousSkipProviders = process.env.MERCLAW_SKIP_PROVIDERS;
+    delete process.env.MERCLAW_SKIP_CHANNELS;
+    delete process.env.MERCLAW_SKIP_PROVIDERS;
     const cron = { start: vi.fn(async () => {}), stop: vi.fn() };
     const heartbeatRunner = {
       stop: vi.fn(),
@@ -1364,14 +1364,14 @@ describe("gateway plugin hot reload handlers", () => {
       ).rejects.toThrow("failed to stop channels before plugin reload: discord");
     } finally {
       if (previousSkipChannels === undefined) {
-        delete process.env.OPENCLAW_SKIP_CHANNELS;
+        delete process.env.MERCLAW_SKIP_CHANNELS;
       } else {
-        process.env.OPENCLAW_SKIP_CHANNELS = previousSkipChannels;
+        process.env.MERCLAW_SKIP_CHANNELS = previousSkipChannels;
       }
       if (previousSkipProviders === undefined) {
-        delete process.env.OPENCLAW_SKIP_PROVIDERS;
+        delete process.env.MERCLAW_SKIP_PROVIDERS;
       } else {
-        process.env.OPENCLAW_SKIP_PROVIDERS = previousSkipProviders;
+        process.env.MERCLAW_SKIP_PROVIDERS = previousSkipProviders;
       }
     }
 
@@ -1391,10 +1391,10 @@ describe("gateway plugin hot reload handlers", () => {
   });
 
   it("stops removed channel plugins from broad activation before swapping plugin runtime", async () => {
-    const previousSkipChannels = process.env.OPENCLAW_SKIP_CHANNELS;
-    const previousSkipProviders = process.env.OPENCLAW_SKIP_PROVIDERS;
-    delete process.env.OPENCLAW_SKIP_CHANNELS;
-    delete process.env.OPENCLAW_SKIP_PROVIDERS;
+    const previousSkipChannels = process.env.MERCLAW_SKIP_CHANNELS;
+    const previousSkipProviders = process.env.MERCLAW_SKIP_PROVIDERS;
+    delete process.env.MERCLAW_SKIP_CHANNELS;
+    delete process.env.MERCLAW_SKIP_PROVIDERS;
     const cron = { start: vi.fn(async () => {}), stop: vi.fn() };
     const heartbeatRunner = {
       stop: vi.fn(),
@@ -1465,14 +1465,14 @@ describe("gateway plugin hot reload handlers", () => {
       );
     } finally {
       if (previousSkipChannels === undefined) {
-        delete process.env.OPENCLAW_SKIP_CHANNELS;
+        delete process.env.MERCLAW_SKIP_CHANNELS;
       } else {
-        process.env.OPENCLAW_SKIP_CHANNELS = previousSkipChannels;
+        process.env.MERCLAW_SKIP_CHANNELS = previousSkipChannels;
       }
       if (previousSkipProviders === undefined) {
-        delete process.env.OPENCLAW_SKIP_PROVIDERS;
+        delete process.env.MERCLAW_SKIP_PROVIDERS;
       } else {
-        process.env.OPENCLAW_SKIP_PROVIDERS = previousSkipProviders;
+        process.env.MERCLAW_SKIP_PROVIDERS = previousSkipProviders;
       }
     }
 

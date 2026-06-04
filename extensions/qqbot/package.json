@@ -1,11 +1,11 @@
 {
-  "name": "@openclaw/qqbot",
+  "name": "@merclaw/qqbot",
   "version": "2026.5.31",
   "private": false,
-  "description": "OpenClaw QQ Bot channel plugin for group and direct-message workflows.",
+  "description": "MerClaw QQ Bot channel plugin for group and direct-message workflows.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/openclaw/openclaw"
+    "url": "https://github.com/merclaw/merclaw"
   },
   "type": "module",
   "dependencies": {
@@ -16,19 +16,19 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*",
+    "@merclaw/plugin-sdk": "workspace:*",
     "@types/ws": "8.18.1",
-    "openclaw": "2026.5.28"
+    "merclaw": "2026.5.28"
   },
   "peerDependencies": {
-    "openclaw": ">=2026.5.31"
+    "merclaw": ">=2026.5.31"
   },
   "peerDependenciesMeta": {
-    "openclaw": {
+    "merclaw": {
       "optional": true
     }
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ],
@@ -44,7 +44,7 @@
       "systemImage": "bubble.left.and.bubble.right"
     },
     "install": {
-      "npmSpec": "@openclaw/qqbot",
+      "npmSpec": "@merclaw/qqbot",
       "localPath": "extensions/qqbot",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.4.10"
@@ -53,7 +53,7 @@
       "pluginApi": ">=2026.5.31"
     },
     "build": {
-      "openclawVersion": "2026.5.31"
+      "merclawVersion": "2026.5.31"
     },
     "release": {
       "publishToClawHub": true,

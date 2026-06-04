@@ -1,4 +1,4 @@
-import type { PreparedInboundReply } from "openclaw/plugin-sdk/channel-inbound";
+import type { PreparedInboundReply } from "merclaw/plugin-sdk/channel-inbound";
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ClawdbotConfig, PluginRuntime } from "../runtime-api.js";
 import { handleFeishuCommentEvent } from "./comment-handler.js";
@@ -400,7 +400,7 @@ describe("handleFeishuCommentEvent", () => {
       file_type: "docx",
       comment_id: "comment_1",
       content: [
-        "OpenClaw: access not configured.",
+        "MerClaw: access not configured.",
         "",
         "Your Feishu user id: ou_sender",
         "Pairing code:",
@@ -409,9 +409,9 @@ describe("handleFeishuCommentEvent", () => {
         "```",
         "",
         "Ask the bot owner to approve with:",
-        "openclaw pairing approve feishu TESTCODE",
+        "merclaw pairing approve feishu TESTCODE",
         "```",
-        "openclaw pairing approve feishu TESTCODE",
+        "merclaw pairing approve feishu TESTCODE",
         "```",
       ].join("\n"),
       is_whole_comment: false,

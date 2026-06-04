@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { normalizeOptionalAgentRuntimeId } from "../agent-runtime-id.js";
 import { resolveProviderIdForAuth } from "../provider-auth-aliases.js";
 import type { AgentRuntimeAuthPlan } from "./types.js";
@@ -20,7 +20,7 @@ export function buildAgentRuntimeAuthPlan(params: {
   authProfileMode?: string;
   sessionAuthProfileId?: string;
   sessionAuthProfileCandidateIds?: string[];
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   workspaceDir?: string;
   harnessId?: string;
   harnessRuntime?: string;

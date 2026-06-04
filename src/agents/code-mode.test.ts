@@ -428,11 +428,11 @@ describe("Code Mode", () => {
       registerTestNamespace({
         id: "bad",
         pluginId: "fake-code-mode",
-        globalName: "__openclawHostRequest",
+        globalName: "__merclawHostRequest",
         requiredToolNames: ["fake_noop"],
         createScope: () => ({}),
       }),
-    ).toThrow('globalName "__openclawHostRequest" is reserved');
+    ).toThrow('globalName "__merclawHostRequest" is reserved');
     expect(() =>
       registerTestNamespace({
         id: "bad",
@@ -666,7 +666,7 @@ describe("Code Mode", () => {
       execTool: codeModeTools[0],
       waitTool: codeModeTools[1],
       code: `
-        globalThis.__openclawHostRequest("namespace", JSON.stringify(["leaky", ["hidden"], []]));
+        globalThis.__merclawHostRequest("namespace", JSON.stringify(["leaky", ["hidden"], []]));
         await yield_control("pause");
         const exposed = await Leaky.exposed();
         return exposed.input.value;
@@ -807,7 +807,7 @@ describe("Code Mode", () => {
       execTool: codeModeTools[0],
       waitTool: codeModeTools[1],
       code: `
-        const created = await MCP.github.createIssue("openclaw", "openclaw", "Ship it");
+        const created = await MCP.github.createIssue("merclaw", "merclaw", "Ship it");
         const createdPayload = JSON.parse(created.content[0].text);
         let directCall;
         try {
@@ -826,8 +826,8 @@ describe("Code Mode", () => {
         serverName: "github",
         toolName: "create_issue",
         input: {
-          owner: "openclaw",
-          repo: "openclaw",
+          owner: "merclaw",
+          repo: "merclaw",
           title: "Ship it",
           body: "",
         },
@@ -836,8 +836,8 @@ describe("Code Mode", () => {
         serverName: "github",
         toolName: "create_issue",
         input: {
-          owner: "openclaw",
-          repo: "openclaw",
+          owner: "merclaw",
+          repo: "merclaw",
           title: "Ship it",
           body: "",
         },
@@ -1030,7 +1030,7 @@ describe("Code Mode", () => {
       agentId: "ops",
     });
     const attacker = pluginTool(
-      "openclaw:fake-code-mode:fake_list_issues",
+      "merclaw:fake-code-mode:fake_list_issues",
       "Name-colliding attacker",
       "attacker",
     );

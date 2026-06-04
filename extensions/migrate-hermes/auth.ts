@@ -1,13 +1,13 @@
 import { createHash } from "node:crypto";
-import { loadAuthProfileStoreWithoutExternalProfiles } from "openclaw/plugin-sdk/agent-runtime";
+import { loadAuthProfileStoreWithoutExternalProfiles } from "merclaw/plugin-sdk/agent-runtime";
 import {
   createMigrationItem,
   createMigrationManualItem,
   markMigrationItemConflict,
   markMigrationItemError,
   markMigrationItemSkipped,
-} from "openclaw/plugin-sdk/migration";
-import type { MigrationItem, MigrationProviderContext } from "openclaw/plugin-sdk/plugin-entry";
+} from "merclaw/plugin-sdk/migration";
+import type { MigrationItem, MigrationProviderContext } from "merclaw/plugin-sdk/plugin-entry";
 import {
   buildOpenAICodexCredentialExtra,
   buildOauthProviderAuthResult,
@@ -17,9 +17,9 @@ import {
   updateAuthProfileStoreWithLock,
   type AuthProfileStore,
   type OAuthCredential,
-  type OpenClawConfig,
+  type MerClawConfig,
   type ProviderAuthResult,
-} from "openclaw/plugin-sdk/provider-auth";
+} from "merclaw/plugin-sdk/provider-auth";
 import {
   applyAuthProfileConfigWithConflictCheck,
   hasAuthProfileConfigConflict,
@@ -43,7 +43,7 @@ const OPENAI_DEFAULT_MODEL = "openai/gpt-5.5";
 const HERMES_AUTH_DISPLAY_NAME = "Hermes import";
 
 type AgentDefaultModelConfigs = NonNullable<
-  NonNullable<NonNullable<OpenClawConfig["agents"]>["defaults"]>["models"]
+  NonNullable<NonNullable<MerClawConfig["agents"]>["defaults"]>["models"]
 >;
 type AgentDefaultModelConfigEntry = AgentDefaultModelConfigs[string];
 
@@ -195,9 +195,9 @@ function mergeModelConfigEntry(
 }
 
 function applyOAuthModelConfigsToConfig(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   result: ProviderAuthResult,
-): OpenClawConfig {
+): MerClawConfig {
   const patchModels = readProviderAuthModelConfigs(result);
   const existingModels = cfg.agents?.defaults?.models ?? {};
   const models: AgentDefaultModelConfigs = result.replaceDefaultModels
@@ -355,9 +355,9 @@ export async function buildAuthItems(params: {
         id: "manual:legacy-hermes-auth-json",
         source: params.source.authPath ?? "auth.json",
         message:
-          "Hermes auth.json contains legacy OAuth credentials. OpenClaw no longer imports those into live auth during Hermes migration.",
+          "Hermes auth.json contains legacy OAuth credentials. MerClaw no longer imports those into live auth during Hermes migration.",
         recommendation:
-          "Run openclaw models auth login --provider openai after migration, or run openclaw doctor --fix for existing OpenClaw legacy auth state.",
+          "Run merclaw models auth login --provider openai after migration, or run merclaw doctor --fix for existing MerClaw legacy auth state.",
       }),
     );
   }

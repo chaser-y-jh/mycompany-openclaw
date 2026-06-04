@@ -22,11 +22,11 @@ export default defineConfig({
   resolve: {
     alias: [
       {
-        find: /^@openclaw\/normalization-core\/(.+)$/u,
+        find: /^@merclaw\/normalization-core\/(.+)$/u,
         replacement: path.resolve(repoRoot, "packages/normalization-core/src/$1"),
       },
       {
-        find: /^@openclaw\/media-core\/(.+)$/u,
+        find: /^@merclaw\/media-core\/(.+)$/u,
         replacement: path.resolve(repoRoot, "packages/media-core/src/$1"),
       },
     ],

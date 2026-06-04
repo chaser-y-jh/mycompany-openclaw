@@ -21,7 +21,7 @@ afterEach(() => {
 });
 
 function makeTempDir() {
-  return makeTrackedTempDir("openclaw-installed-manifest-registry", tempDirs);
+  return makeTrackedTempDir("merclaw-installed-manifest-registry", tempDirs);
 }
 
 function writePlugin(rootDir: string, pluginId: string, modelPrefix: string) {
@@ -31,7 +31,7 @@ function writePlugin(rootDir: string, pluginId: string, modelPrefix: string) {
     "utf8",
   );
   fs.writeFileSync(
-    path.join(rootDir, "openclaw.plugin.json"),
+    path.join(rootDir, "merclaw.plugin.json"),
     JSON.stringify({
       id: pluginId,
       configSchema: { type: "object" },
@@ -56,7 +56,7 @@ function createIndex(rootDir: string): InstalledPluginIndex {
     plugins: [
       {
         pluginId: "installed",
-        manifestPath: path.join(rootDir, "openclaw.plugin.json"),
+        manifestPath: path.join(rootDir, "merclaw.plugin.json"),
         manifestHash: "manifest-hash",
         source: path.join(rootDir, "index.ts"),
         rootDir,
@@ -115,12 +115,12 @@ function writePackageManifest(rootDir: string, channelLabel: string) {
   fs.writeFileSync(
     packageJsonPath,
     JSON.stringify({
-      name: "@openclaw/installed",
+      name: "@merclaw/installed",
       version: "1.0.0",
       dependencies: {
         "runtime-dep": "1.0.0",
       },
-      openclaw: {
+      merclaw: {
         channel: {
           id: "installed",
           label: channelLabel,
@@ -156,7 +156,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
     writePlugin(rootDir, "installed", "installed-");
     const index = deepFreeze(createIndexWithFileSignatures(rootDir));
     const first = resolveInstalledManifestRegistryIndexFingerprint(index);
-    const manifestPath = path.join(rootDir, "openclaw.plugin.json");
+    const manifestPath = path.join(rootDir, "merclaw.plugin.json");
     const nextMtime = new Date(Date.now() + 5000);
     fs.utimesSync(manifestPath, nextMtime, nextMtime);
     const second = resolveInstalledManifestRegistryIndexFingerprint(index);
@@ -207,7 +207,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
     const index = deepFreeze(createIndex(rootDir));
     const first = resolveInstalledManifestRegistryIndexFingerprint(index);
 
-    const manifestPath = path.join(rootDir, "openclaw.plugin.json");
+    const manifestPath = path.join(rootDir, "merclaw.plugin.json");
     const nextMtime = new Date(Date.now() + 5000);
     fs.utimesSync(manifestPath, nextMtime, nextMtime);
     const second = resolveInstalledManifestRegistryIndexFingerprint(index);
@@ -217,11 +217,11 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
 
   it("reconstructs installed-index manifest registries when manifest files change", () => {
     const rootDir = makeTempDir();
-    const manifestPath = path.join(rootDir, "openclaw.plugin.json");
+    const manifestPath = path.join(rootDir, "merclaw.plugin.json");
     writePlugin(rootDir, "installed", "installed-");
     const index = createIndex(rootDir);
     const env = {
-      OPENCLAW_VERSION: "2026.4.25",
+      MERCLAW_VERSION: "2026.4.25",
       VITEST: "true",
     };
 
@@ -255,7 +255,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
     writePlugin(rootDir, "installed", "installed-");
     const index = createIndexWithPackageJson(rootDir);
     const env = {
-      OPENCLAW_VERSION: "2026.4.25",
+      MERCLAW_VERSION: "2026.4.25",
       VITEST: "true",
     };
 
@@ -290,7 +290,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
     writePlugin(rootDir, "installed", "installed-");
     const index = createIndexWithPackageJson(rootDir);
     const env = {
-      OPENCLAW_VERSION: "2026.4.25",
+      MERCLAW_VERSION: "2026.4.25",
       VITEST: "true",
     };
 
@@ -327,7 +327,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
     const registry = loadPluginManifestRegistryForInstalledIndex({
       index: createIndex(installedRoot),
       env: {
-        OPENCLAW_VERSION: "2026.4.25",
+        MERCLAW_VERSION: "2026.4.25",
         VITEST: "true",
       },
       includeDisabled: true,
@@ -368,7 +368,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
         ],
       },
       env: {
-        OPENCLAW_VERSION: "2026.4.25",
+        MERCLAW_VERSION: "2026.4.25",
         VITEST: "true",
       },
       includeDisabled: true,
@@ -388,7 +388,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
     fs.writeFileSync(
       path.join(rootDir, "package.json"),
       JSON.stringify({
-        openclaw: {
+        merclaw: {
           channel: {
             id: "installed",
             label: "Installed",
@@ -421,7 +421,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
         ],
       },
       env: {
-        OPENCLAW_VERSION: "2026.4.25",
+        MERCLAW_VERSION: "2026.4.25",
         VITEST: "true",
       },
       includeDisabled: true,
@@ -440,7 +440,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
     fs.writeFileSync(
       path.join(rootDir, "..meta", "package.json"),
       JSON.stringify({
-        openclaw: {
+        merclaw: {
           channel: {
             id: "installed",
             label: "Installed",
@@ -469,7 +469,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
         ],
       },
       env: {
-        OPENCLAW_VERSION: "2026.4.25",
+        MERCLAW_VERSION: "2026.4.25",
         VITEST: "true",
       },
       includeDisabled: true,
@@ -492,7 +492,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
       fs.writeFileSync(
         outsidePackageJsonPath,
         JSON.stringify({
-          openclaw: {
+          merclaw: {
             channel: {
               id: "installed",
               label: "Installed",
@@ -522,7 +522,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
           ],
         },
         env: {
-          OPENCLAW_VERSION: "2026.4.25",
+          MERCLAW_VERSION: "2026.4.25",
           VITEST: "true",
         },
         includeDisabled: true,
@@ -556,7 +556,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
         ],
       } as unknown as InstalledPluginIndex,
       env: {
-        OPENCLAW_VERSION: "2026.4.25",
+        MERCLAW_VERSION: "2026.4.25",
         VITEST: "true",
       },
       includeDisabled: true,
@@ -607,7 +607,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
     const registry = loadPluginManifestRegistryForInstalledIndex({
       index: persisted,
       env: {
-        OPENCLAW_VERSION: "2026.4.25",
+        MERCLAW_VERSION: "2026.4.25",
         VITEST: "true",
       },
       includeDisabled: true,

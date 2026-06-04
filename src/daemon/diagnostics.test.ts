@@ -14,7 +14,7 @@ afterEach(() => {
 });
 
 function makeTempStateDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-daemon-diagnostics-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-daemon-diagnostics-"));
   tempDirs.push(dir);
   return dir;
 }
@@ -23,7 +23,7 @@ describe("readLastGatewayErrorLine", () => {
   it("ignores stale launchd stderr when stderr is suppressed", async () => {
     const stateDir = makeTempStateDir();
     const homeDir = makeTempStateDir();
-    const env = { HOME: homeDir, OPENCLAW_STATE_DIR: stateDir };
+    const env = { HOME: homeDir, MERCLAW_STATE_DIR: stateDir };
     const stateLogs = resolveGatewayLogPaths(env);
     const launchdLogs = resolveGatewaySupervisorLogPaths(env, { platform: "darwin" });
     fs.mkdirSync(stateLogs.logDir, { recursive: true });

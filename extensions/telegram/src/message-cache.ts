@@ -1,12 +1,12 @@
 import { createHash } from "node:crypto";
 import fs from "node:fs";
 import type { Message } from "grammy/types";
-import { formatLocationText } from "openclaw/plugin-sdk/channel-inbound";
-import { parseStrictPositiveInteger } from "openclaw/plugin-sdk/number-runtime";
-import type { MsgContext } from "openclaw/plugin-sdk/reply-runtime";
-import { logVerbose } from "openclaw/plugin-sdk/runtime-env";
-import { appendRegularFileSync, replaceFileAtomicSync } from "openclaw/plugin-sdk/security-runtime";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { formatLocationText } from "merclaw/plugin-sdk/channel-inbound";
+import { parseStrictPositiveInteger } from "merclaw/plugin-sdk/number-runtime";
+import type { MsgContext } from "merclaw/plugin-sdk/reply-runtime";
+import { logVerbose } from "merclaw/plugin-sdk/runtime-env";
+import { appendRegularFileSync, replaceFileAtomicSync } from "merclaw/plugin-sdk/security-runtime";
+import { isRecord } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { resolveTelegramPrimaryMedia } from "./bot/body-helpers.js";
 import {
   buildSenderName,

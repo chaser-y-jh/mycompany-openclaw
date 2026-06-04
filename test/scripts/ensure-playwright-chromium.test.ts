@@ -24,7 +24,7 @@ describe("ensurePlaywrightChromium", () => {
 
     expect(
       ensurePlaywrightChromium({
-        env: { OPENCLAW_UI_E2E_ALLOW_MISSING_CHROMIUM: "1" },
+        env: { MERCLAW_UI_E2E_ALLOW_MISSING_CHROMIUM: "1" },
         executablePath: "/cache/chromium/chrome",
         existsSync: () => false,
         log: (line: string) => logs.push(line),

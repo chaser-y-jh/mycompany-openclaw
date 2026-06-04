@@ -1,4 +1,4 @@
-import { jsonResult } from "openclaw/plugin-sdk/channel-actions";
+import { jsonResult } from "merclaw/plugin-sdk/channel-actions";
 import {
   isWhatsAppGroupJid,
   resolveAuthorizedWhatsAppOutboundTarget,
@@ -10,7 +10,7 @@ import {
   readStringOrNumberParam,
   readStringParam,
   sendMessageWhatsApp,
-  type OpenClawConfig,
+  type MerClawConfig,
 } from "./channel-react-action.runtime.js";
 
 const WHATSAPP_CHANNEL = "whatsapp" as const;
@@ -18,7 +18,7 @@ const WHATSAPP_CHANNEL = "whatsapp" as const;
 type WhatsAppMessageActionParams = {
   action: string;
   params: Record<string, unknown>;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   accountId?: string | null;
   requesterSenderId?: string | null;
   mediaAccess?: {

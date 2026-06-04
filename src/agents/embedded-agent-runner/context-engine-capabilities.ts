@@ -1,10 +1,10 @@
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import type { ContextEngineRuntimeContext } from "../../context-engine/types.js";
 import { resolveBoundAgentIdForSession } from "../session-agent-binding.js";
 
 export type ResolveContextEngineCapabilitiesParams = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   sessionKey?: string;
   agentId?: string;
   authProfileId?: string;

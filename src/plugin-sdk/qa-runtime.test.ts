@@ -8,24 +8,24 @@ import {
 } from "./qa-runtime.test-helpers.js";
 
 const loadBundledPluginPublicSurfaceModuleSync = vi.hoisted(() => vi.fn());
-const resolveOpenClawPackageRootSync = vi.hoisted(() => vi.fn());
+const resolveMerClawPackageRootSync = vi.hoisted(() => vi.fn());
 
 vi.mock("./facade-runtime.js", () => ({
   loadBundledPluginPublicSurfaceModuleSync,
 }));
 
-vi.mock("../infra/openclaw-root.js", () => ({
-  resolveOpenClawPackageRootSync,
+vi.mock("../infra/merclaw-root.js", () => ({
+  resolveMerClawPackageRootSync,
 }));
 
 describe("plugin-sdk qa-runtime", () => {
   const tempDirs: string[] = [];
-  const originalPrivateQaCli = process.env.OPENCLAW_ENABLE_PRIVATE_QA_CLI;
+  const originalPrivateQaCli = process.env.MERCLAW_ENABLE_PRIVATE_QA_CLI;
 
   beforeEach(() => {
     loadBundledPluginPublicSurfaceModuleSync.mockReset();
-    resolveOpenClawPackageRootSync.mockReset().mockReturnValue(null);
-    delete process.env.OPENCLAW_ENABLE_PRIVATE_QA_CLI;
+    resolveMerClawPackageRootSync.mockReset().mockReturnValue(null);
+    delete process.env.MERCLAW_ENABLE_PRIVATE_QA_CLI;
   });
 
   afterEach(() => {
@@ -53,7 +53,7 @@ describe("plugin-sdk qa-runtime", () => {
       tempDirs,
       importRuntime: () => import("./qa-runtime.js"),
       loadBundledPluginPublicSurfaceModuleSync,
-      resolveOpenClawPackageRootSync,
+      resolveMerClawPackageRootSync,
     });
   });
 
@@ -176,7 +176,7 @@ describe("plugin-sdk qa-runtime", () => {
 
     await qa.parseAsync([
       "node",
-      "openclaw",
+      "merclaw",
       "telegram",
       "--repo-root",
       "/tmp/repo",

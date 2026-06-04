@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { MerClawConfig } from "../config/config.js";
 import type { PluginWebSearchProviderEntry } from "../plugins/web-provider-types.js";
 import {
   createWebSearchTestProvider,
@@ -16,13 +16,13 @@ type TestPluginWebSearchConfig = {
 };
 
 type WebSearchProviderResolverParams = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   onlyPluginIds?: readonly string[];
   origin?: string;
 };
 
 type ManifestContractOwnerParams = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   contract?: string;
   origin?: string;
   value?: string;
@@ -61,7 +61,7 @@ function createCustomSearchTool() {
   };
 }
 
-function getCustomSearchApiKey(config?: OpenClawConfig): unknown {
+function getCustomSearchApiKey(config?: MerClawConfig): unknown {
   const pluginConfig = config?.plugins?.entries?.["custom-search"]?.config as
     | TestPluginWebSearchConfig
     | undefined;
@@ -82,7 +82,7 @@ function createCustomSearchProvider(
   });
 }
 
-function createCustomSearchConfig(apiKey: unknown): OpenClawConfig {
+function createCustomSearchConfig(apiKey: unknown): MerClawConfig {
   return {
     plugins: {
       entries: {
@@ -283,7 +283,7 @@ describe("web search runtime", () => {
   });
 
   it("auto-detects a provider from a model-provider auth profile", async () => {
-    const agentDir = mkdtempSync(path.join(os.tmpdir(), "openclaw-web-search-auth-"));
+    const agentDir = mkdtempSync(path.join(os.tmpdir(), "merclaw-web-search-auth-"));
     tempDirs.push(agentDir);
     mkdirSync(agentDir, { recursive: true });
     writeFileSync(
@@ -330,8 +330,8 @@ describe("web search runtime", () => {
   });
 
   it("auto-detects a provider from the active agent auth profile", async () => {
-    const defaultAgentDir = mkdtempSync(path.join(os.tmpdir(), "openclaw-web-search-default-"));
-    const activeAgentDir = mkdtempSync(path.join(os.tmpdir(), "openclaw-web-search-active-"));
+    const defaultAgentDir = mkdtempSync(path.join(os.tmpdir(), "merclaw-web-search-default-"));
+    const activeAgentDir = mkdtempSync(path.join(os.tmpdir(), "merclaw-web-search-active-"));
     tempDirs.push(defaultAgentDir, activeAgentDir);
     mkdirSync(defaultAgentDir, { recursive: true });
     mkdirSync(activeAgentDir, { recursive: true });
@@ -383,7 +383,7 @@ describe("web search runtime", () => {
   });
 
   it("passes the active agentDir into selected provider tools", async () => {
-    const activeAgentDir = mkdtempSync(path.join(os.tmpdir(), "openclaw-web-search-tool-agent-"));
+    const activeAgentDir = mkdtempSync(path.join(os.tmpdir(), "merclaw-web-search-tool-agent-"));
     tempDirs.push(activeAgentDir);
     const provider = createCustomSearchProvider({
       credentialPath: "",

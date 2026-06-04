@@ -1,4 +1,4 @@
-import { MAX_TIMER_TIMEOUT_MS } from "@openclaw/normalization-core/number-coercion";
+import { MAX_TIMER_TIMEOUT_MS } from "@merclaw/normalization-core/number-coercion";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { refreshGitHubCopilotToken, testing } from "./github-copilot.js";
 
@@ -46,7 +46,7 @@ afterEach(() => {
 });
 
 describe("GitHub Copilot OAuth model policy", () => {
-  it("lists model ids from Copilot instead of the generated OpenClaw catalog", async () => {
+  it("lists model ids from Copilot instead of the generated MerClaw catalog", async () => {
     const fetchMock = vi.fn(
       async () =>
         new Response(

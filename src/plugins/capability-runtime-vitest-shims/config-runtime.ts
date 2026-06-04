@@ -1,8 +1,8 @@
 import { resolveActiveTalkProviderConfig } from "../../config/talk.js";
-import type { OpenClawConfig } from "../../config/types.js";
+import type { MerClawConfig } from "../../config/types.js";
 
 export { resolveActiveTalkProviderConfig };
 
-export function getRuntimeConfigSnapshot(): OpenClawConfig | null {
+export function getRuntimeConfigSnapshot(): MerClawConfig | null {
   return null;
 }

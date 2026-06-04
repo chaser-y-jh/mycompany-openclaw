@@ -36,7 +36,7 @@ type NativeAliasEntry = {
   target: string;
 };
 
-export type InstallOpenClawPluginSdkNativeResolverOptions = {
+export type InstallMerClawPluginSdkNativeResolverOptions = {
   modulePath?: string;
   pluginModulePath?: string;
   allowedParentRoots?: readonly string[];
@@ -48,10 +48,10 @@ export type InstallOpenClawPluginSdkNativeResolverOptions = {
 
 const moduleWithResolver = Module as ModuleWithResolver;
 const nodeResolveFilenameProperty = "_resolveFilename" as const;
-const PLUGIN_SDK_PACKAGE_PREFIXES = ["openclaw/plugin-sdk", "@openclaw/plugin-sdk"] as const;
+const PLUGIN_SDK_PACKAGE_PREFIXES = ["merclaw/plugin-sdk", "@merclaw/plugin-sdk"] as const;
 const INTERNAL_CORE_PACKAGE_ALIASES = [
   {
-    packageName: "@openclaw/normalization-core",
+    packageName: "@merclaw/normalization-core",
     packageDir: "normalization-core",
     subpaths: [
       ["", "index.ts"],
@@ -62,7 +62,7 @@ const INTERNAL_CORE_PACKAGE_ALIASES = [
     ],
   },
   {
-    packageName: "@openclaw/media-core",
+    packageName: "@merclaw/media-core",
     packageDir: "media-core",
     subpaths: [
       ["", "index.ts"],
@@ -79,7 +79,7 @@ const INTERNAL_CORE_PACKAGE_ALIASES = [
     ],
   },
   {
-    packageName: "@openclaw/llm-core",
+    packageName: "@merclaw/llm-core",
     packageDir: "llm-core",
     subpaths: [
       ["", "index.ts"],
@@ -95,7 +95,7 @@ let installed = false;
 let previousResolveFilename: ResolveFilename | undefined;
 let esmHooks: { deregister: () => void } | undefined;
 
-function resolveLoaderModulePath(options: InstallOpenClawPluginSdkNativeResolverOptions): string {
+function resolveLoaderModulePath(options: InstallMerClawPluginSdkNativeResolverOptions): string {
   return options.modulePath ?? fileURLToPath(options.moduleUrl ?? import.meta.url);
 }
 
@@ -167,10 +167,10 @@ function resolveLoaderPackageRootFromModulePath(modulePath: string): string {
           name?: unknown;
         };
         if (
-          packageJson.name === "openclaw" ||
+          packageJson.name === "merclaw" ||
           (typeof packageJson.bin === "object" &&
             packageJson.bin !== null &&
-            typeof (packageJson.bin as { openclaw?: unknown }).openclaw === "string")
+            typeof (packageJson.bin as { merclaw?: unknown }).merclaw === "string")
         ) {
           return cursor;
         }
@@ -192,7 +192,7 @@ function resolveAllowedParentRoot(modulePath: string): string {
 }
 
 function resolveAllowedParentRoots(
-  options: InstallOpenClawPluginSdkNativeResolverOptions,
+  options: InstallMerClawPluginSdkNativeResolverOptions,
 ): string[] {
   const roots = new Set<string>();
   if (options.pluginModulePath) {
@@ -242,7 +242,7 @@ function resolveAliasTargetForParentPath(
 }
 
 function listPluginSdkNativeAliases(
-  options: InstallOpenClawPluginSdkNativeResolverOptions,
+  options: InstallMerClawPluginSdkNativeResolverOptions,
 ): Array<readonly [string, string]> {
   const modulePath = options.pluginModulePath ?? resolveLoaderModulePath(options);
   return Object.entries(
@@ -270,7 +270,7 @@ function listPluginSdkNativeAliases(
 }
 
 function listInternalCorePackageNativeAliases(
-  options: InstallOpenClawPluginSdkNativeResolverOptions,
+  options: InstallMerClawPluginSdkNativeResolverOptions,
 ): Array<{
   request: string;
   target: string;
@@ -293,11 +293,11 @@ function listInternalCorePackageNativeAliases(
   const internalCorePackageAliases = [
     ...INTERNAL_CORE_PACKAGE_ALIASES,
     {
-      packageName: "@openclaw/acp-core",
+      packageName: "@merclaw/acp-core",
       packageDir: "acp-core",
       subpaths: listWorkspacePackageExportAliasEntries({
         packageRoot,
-        packageName: "@openclaw/acp-core",
+        packageName: "@merclaw/acp-core",
         packageDir: "acp-core",
       }).map((entry) => [entry.subpath, entry.srcFile] as const),
     },
@@ -375,8 +375,8 @@ function clearNativeAliasesForParentRoots(parentRoots: readonly string[]): void 
   }
 }
 
-export function installOpenClawPluginSdkNativeResolver(
-  options: InstallOpenClawPluginSdkNativeResolverOptions = {},
+export function installMerClawPluginSdkNativeResolver(
+  options: InstallMerClawPluginSdkNativeResolverOptions = {},
 ): string[] {
   const parentRoots = resolveAllowedParentRoots(options);
   clearNativeAliasesForParentRoots(parentRoots);
@@ -390,8 +390,8 @@ export function installOpenClawPluginSdkNativeResolver(
   return [...pluginSdkNativeAliases.keys()].toSorted();
 }
 
-export function installOpenClawInternalCorePackageNativeResolver(
-  options: Pick<InstallOpenClawPluginSdkNativeResolverOptions, "moduleUrl"> = {},
+export function installMerClawInternalCorePackageNativeResolver(
+  options: Pick<InstallMerClawPluginSdkNativeResolverOptions, "moduleUrl"> = {},
 ): string[] {
   for (const alias of listInternalCorePackageNativeAliases(options)) {
     registerNativeAlias(alias);
@@ -400,7 +400,7 @@ export function installOpenClawInternalCorePackageNativeResolver(
   return [...pluginSdkNativeAliases.keys()].toSorted();
 }
 
-export function resetOpenClawPluginSdkNativeResolverForTest(): void {
+export function resetMerClawPluginSdkNativeResolverForTest(): void {
   pluginSdkNativeAliases.clear();
   esmHooks?.deregister();
   esmHooks = undefined;

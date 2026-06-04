@@ -1,5 +1,5 @@
-import { timestampMsToIsoString } from "openclaw/plugin-sdk/number-runtime";
-import { warn } from "openclaw/plugin-sdk/runtime-env";
+import { timestampMsToIsoString } from "merclaw/plugin-sdk/number-runtime";
+import { warn } from "merclaw/plugin-sdk/runtime-env";
 import type { IMessageRpcClient } from "../client.js";
 import {
   type CatchupDispatchFn,

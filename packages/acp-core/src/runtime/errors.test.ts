@@ -101,7 +101,7 @@ describe("withAcpRuntimeErrorBoundary", () => {
     expect(error.cause).toBe(requestError);
   });
 
-  it("keeps foreign OpenClaw ACP string code behavior unchanged", () => {
+  it("keeps foreign MerClaw ACP string code behavior unchanged", () => {
     const foreignError = Object.assign(new Error("backend missing"), {
       code: "ACP_BACKEND_MISSING",
       data: {

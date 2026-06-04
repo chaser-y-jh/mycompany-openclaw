@@ -1,4 +1,4 @@
-import { isRecord as isPlainObject } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { isRecord as isPlainObject } from "merclaw/plugin-sdk/string-coerce-runtime";
 
 const BLOCKED_MERGE_KEYS = new Set(["__proto__", "prototype", "constructor"]);
 

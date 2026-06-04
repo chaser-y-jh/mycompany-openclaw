@@ -206,7 +206,7 @@ describe("attachGatewayWsMessageHandler post-connect health refresh", () => {
       invalidatedReason: "device-token-revoked",
       connect: {
         client: {
-          id: "openclaw-control-ui",
+          id: "merclaw-control-ui",
           version: "dev",
           platform: "test",
           mode: "ui",
@@ -289,7 +289,7 @@ describe("attachGatewayWsMessageHandler post-connect health refresh", () => {
       invalidated: false,
       connect: {
         client: {
-          id: "openclaw-control-ui",
+          id: "merclaw-control-ui",
           version: "dev",
           platform: "test",
           mode: "ui",
@@ -397,7 +397,7 @@ describe("attachGatewayWsMessageHandler post-connect health refresh", () => {
       invalidated: false,
       connect: {
         client: {
-          id: "openclaw-control-ui",
+          id: "merclaw-control-ui",
           version: "dev",
           platform: "test",
           mode: "ui",
@@ -525,7 +525,7 @@ describe("attachGatewayWsMessageHandler post-connect health refresh", () => {
       minProtocol: PROTOCOL_VERSION,
       maxProtocol: PROTOCOL_VERSION,
       client: {
-        id: "openclaw-control-ui",
+        id: "merclaw-control-ui",
         version: "dev",
         platform: "test",
         mode: "ui",
@@ -668,10 +668,10 @@ describe("resolvePinnedClientMetadata", () => {
   );
 
   it.each([
-    ["openclaw-ios", "iOS 26.5.0", "iOS 26.4.2", "iPhone"],
-    ["openclaw-ios", "iPadOS 26.5.0", "iPadOS 26.4.2", "iPad"],
-    ["openclaw-ios", "iPadOS 26.5.0", "iOS 26.4.2", "iPad"],
-    ["openclaw-android", "Android 16", "Android 15", "Android"],
+    ["merclaw-ios", "iOS 26.5.0", "iOS 26.4.2", "iPhone"],
+    ["merclaw-ios", "iPadOS 26.5.0", "iPadOS 26.4.2", "iPad"],
+    ["merclaw-ios", "iPadOS 26.5.0", "iOS 26.4.2", "iPad"],
+    ["merclaw-android", "Android 16", "Android 15", "Android"],
   ])(
     "allows %s platform version refresh without metadata-upgrade approval",
     (clientId, claimedPlatform, pairedPlatform, deviceFamily) => {
@@ -697,7 +697,7 @@ describe("resolvePinnedClientMetadata", () => {
   it("still requires approval when an iOS device family changes", () => {
     expect(
       testing.resolvePinnedClientMetadata({
-        clientId: "openclaw-ios",
+        clientId: "merclaw-ios",
         clientMode: "node",
         claimedPlatform: "iOS 26.5.0",
         claimedDeviceFamily: "iPad",

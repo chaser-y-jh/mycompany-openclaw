@@ -11,44 +11,44 @@ export type {
   ChannelOutboundAdapter,
   ChannelPlugin,
   HistoryEntry,
-  OpenClawConfig,
-  OpenClawPluginApi,
+  MerClawConfig,
+  MerClawPluginApi,
   OutboundIdentity,
   PluginRuntime,
   ReplyPayload,
-} from "openclaw/plugin-sdk/core";
-export type { OpenClawConfig as ClawdbotConfig } from "openclaw/plugin-sdk/core";
-export type { RuntimeEnv } from "openclaw/plugin-sdk/runtime";
-export type { GroupToolPolicyConfig } from "openclaw/plugin-sdk/config-contracts";
+} from "merclaw/plugin-sdk/core";
+export type { MerClawConfig as ClawdbotConfig } from "merclaw/plugin-sdk/core";
+export type { RuntimeEnv } from "merclaw/plugin-sdk/runtime";
+export type { GroupToolPolicyConfig } from "merclaw/plugin-sdk/config-contracts";
 export {
   DEFAULT_ACCOUNT_ID,
   buildChannelConfigSchema,
   createActionGate,
   createDedupeCache,
-} from "openclaw/plugin-sdk/core";
+} from "merclaw/plugin-sdk/core";
 export {
   PAIRING_APPROVED_MESSAGE,
   buildProbeChannelStatusSummary,
   createDefaultChannelRuntimeState,
-} from "openclaw/plugin-sdk/channel-status";
-export { buildAgentMediaPayload } from "openclaw/plugin-sdk/agent-media-payload";
-export { createChannelPairingController } from "openclaw/plugin-sdk/channel-pairing";
-export { createReplyPrefixContext } from "openclaw/plugin-sdk/channel-outbound";
+} from "merclaw/plugin-sdk/channel-status";
+export { buildAgentMediaPayload } from "merclaw/plugin-sdk/agent-media-payload";
+export { createChannelPairingController } from "merclaw/plugin-sdk/channel-pairing";
+export { createReplyPrefixContext } from "merclaw/plugin-sdk/channel-outbound";
 export {
   evaluateSupplementalContextVisibility,
   filterSupplementalContextItems,
   resolveChannelContextVisibilityMode,
-} from "openclaw/plugin-sdk/context-visibility-runtime";
+} from "merclaw/plugin-sdk/context-visibility-runtime";
 export {
   loadSessionStore,
   resolveSessionStoreEntry,
-} from "openclaw/plugin-sdk/session-store-runtime";
-export { readJsonFileWithFallback } from "openclaw/plugin-sdk/json-store";
-export { normalizeAgentId } from "openclaw/plugin-sdk/routing";
-export { chunkTextForOutbound } from "openclaw/plugin-sdk/text-chunking";
+} from "merclaw/plugin-sdk/session-store-runtime";
+export { readJsonFileWithFallback } from "merclaw/plugin-sdk/json-store";
+export { normalizeAgentId } from "merclaw/plugin-sdk/routing";
+export { chunkTextForOutbound } from "merclaw/plugin-sdk/text-chunking";
 export {
   isRequestBodyLimitError,
   readRequestBodyWithLimit,
   requestBodyErrorToText,
-} from "openclaw/plugin-sdk/webhook-ingress";
+} from "merclaw/plugin-sdk/webhook-ingress";
 export { setFeishuRuntime } from "./src/runtime.js";

@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import type { ProxyConfig } from "../../../config/zod-schema.proxy.js";
 
-/** TLS trust material passed to proxy clients for OpenClaw-managed HTTPS proxies. */
+/** TLS trust material passed to proxy clients for MerClaw-managed HTTPS proxies. */
 export type ManagedProxyTlsOptions = Readonly<{
   ca?: string;
 }>;

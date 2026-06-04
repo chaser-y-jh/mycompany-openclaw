@@ -1,11 +1,11 @@
 import fs from "node:fs/promises";
-import { embeddedAgentLog } from "openclaw/plugin-sdk/agent-harness-runtime";
+import { embeddedAgentLog } from "merclaw/plugin-sdk/agent-harness-runtime";
 import {
   ensureAuthProfileStore,
   resolveDefaultAgentDir,
   resolveProviderIdForAuth,
   type AuthProfileStore,
-} from "openclaw/plugin-sdk/agent-runtime";
+} from "merclaw/plugin-sdk/agent-runtime";
 import {
   isCodexPluginsMarketplaceName,
   normalizeCodexServiceTier,

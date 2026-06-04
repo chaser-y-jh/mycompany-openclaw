@@ -1,18 +1,18 @@
-export type { ReplyPayload } from "openclaw/plugin-sdk/reply-runtime";
-export type { OpenClawConfig, GroupPolicy } from "openclaw/plugin-sdk/config-contracts";
-export type { MarkdownTableMode } from "openclaw/plugin-sdk/config-contracts";
-export type { BaseTokenResolution } from "openclaw/plugin-sdk/channel-contract";
+export type { ReplyPayload } from "merclaw/plugin-sdk/reply-runtime";
+export type { MerClawConfig, GroupPolicy } from "merclaw/plugin-sdk/config-contracts";
+export type { MarkdownTableMode } from "merclaw/plugin-sdk/config-contracts";
+export type { BaseTokenResolution } from "merclaw/plugin-sdk/channel-contract";
 export type {
   BaseProbeResult,
   ChannelAccountSnapshot,
   ChannelMessageActionAdapter,
   ChannelMessageActionName,
   ChannelStatusIssue,
-} from "openclaw/plugin-sdk/channel-contract";
-export type { SecretInput } from "openclaw/plugin-sdk/secret-input";
-export type { ChannelPlugin, PluginRuntime, WizardPrompter } from "openclaw/plugin-sdk/core";
-export type { RuntimeEnv } from "openclaw/plugin-sdk/runtime";
-export type { OutboundReplyPayload } from "openclaw/plugin-sdk/reply-payload";
+} from "merclaw/plugin-sdk/channel-contract";
+export type { SecretInput } from "merclaw/plugin-sdk/secret-input";
+export type { ChannelPlugin, PluginRuntime, WizardPrompter } from "merclaw/plugin-sdk/core";
+export type { RuntimeEnv } from "merclaw/plugin-sdk/runtime";
+export type { OutboundReplyPayload } from "merclaw/plugin-sdk/reply-payload";
 export {
   DEFAULT_ACCOUNT_ID,
   buildChannelConfigSchema,
@@ -22,7 +22,7 @@ export {
   normalizeAccountId,
   readStringParam,
   resolveClientIp,
-} from "openclaw/plugin-sdk/core";
+} from "merclaw/plugin-sdk/core";
 export {
   applyAccountNameToChannelSection,
   applySetupAccountConfigPatch,
@@ -32,39 +32,39 @@ export {
   promptSingleChannelSecretInput,
   runSingleChannelSecretStep,
   setTopLevelChannelDmPolicyWithAllowFrom,
-} from "openclaw/plugin-sdk/setup";
+} from "merclaw/plugin-sdk/setup";
 export {
   buildSecretInputSchema,
   hasConfiguredSecretInput,
   normalizeResolvedSecretInputString,
   normalizeSecretInputString,
-} from "openclaw/plugin-sdk/secret-input";
+} from "merclaw/plugin-sdk/secret-input";
 export {
   buildTokenChannelStatusSummary,
   PAIRING_APPROVED_MESSAGE,
-} from "openclaw/plugin-sdk/channel-status";
-export { buildBaseAccountStatusSnapshot } from "openclaw/plugin-sdk/status-helpers";
-export { chunkTextForOutbound } from "openclaw/plugin-sdk/text-chunking";
+} from "merclaw/plugin-sdk/channel-status";
+export { buildBaseAccountStatusSnapshot } from "merclaw/plugin-sdk/status-helpers";
+export { chunkTextForOutbound } from "merclaw/plugin-sdk/text-chunking";
 export {
   formatAllowFromLowercase,
   isNormalizedSenderAllowed,
-} from "openclaw/plugin-sdk/allow-from";
-export { addWildcardAllowFrom } from "openclaw/plugin-sdk/setup";
-export { resolveOpenProviderRuntimeGroupPolicy } from "openclaw/plugin-sdk/runtime-group-policy";
+} from "merclaw/plugin-sdk/allow-from";
+export { addWildcardAllowFrom } from "merclaw/plugin-sdk/setup";
+export { resolveOpenProviderRuntimeGroupPolicy } from "merclaw/plugin-sdk/runtime-group-policy";
 export {
   warnMissingProviderGroupPolicyFallbackOnce,
   resolveDefaultGroupPolicy,
-} from "openclaw/plugin-sdk/runtime-group-policy";
-export { createChannelPairingController } from "openclaw/plugin-sdk/channel-pairing";
-export { createChannelMessageReplyPipeline } from "openclaw/plugin-sdk/channel-outbound";
-export { logTypingFailure } from "openclaw/plugin-sdk/channel-feedback";
+} from "merclaw/plugin-sdk/runtime-group-policy";
+export { createChannelPairingController } from "merclaw/plugin-sdk/channel-pairing";
+export { createChannelMessageReplyPipeline } from "merclaw/plugin-sdk/channel-outbound";
+export { logTypingFailure } from "merclaw/plugin-sdk/channel-feedback";
 export {
   deliverTextOrMediaReply,
   isNumericTargetId,
   sendPayloadWithChunkedTextAndMedia,
-} from "openclaw/plugin-sdk/reply-payload";
-export { resolveInboundRouteEnvelopeBuilderWithRuntime } from "openclaw/plugin-sdk/inbound-envelope";
-export { waitForAbortSignal } from "openclaw/plugin-sdk/runtime";
+} from "merclaw/plugin-sdk/reply-payload";
+export { resolveInboundRouteEnvelopeBuilderWithRuntime } from "merclaw/plugin-sdk/inbound-envelope";
+export { waitForAbortSignal } from "merclaw/plugin-sdk/runtime";
 export {
   applyBasicWebhookRequestGuards,
   createFixedWindowRateLimiter,
@@ -78,8 +78,8 @@ export {
   WEBHOOK_ANOMALY_COUNTER_DEFAULTS,
   WEBHOOK_RATE_LIMIT_DEFAULTS,
   withResolvedWebhookRequestPipeline,
-} from "openclaw/plugin-sdk/webhook-ingress";
+} from "merclaw/plugin-sdk/webhook-ingress";
 export type {
   RegisterWebhookPluginRouteOptions,
   RegisterWebhookTargetOptions,
-} from "openclaw/plugin-sdk/webhook-ingress";
+} from "merclaw/plugin-sdk/webhook-ingress";

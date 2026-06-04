@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { createTestPluginApi } from "openclaw/plugin-sdk/plugin-test-api";
+import { createTestPluginApi } from "merclaw/plugin-sdk/plugin-test-api";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   browserPluginNodeHostCommands,
@@ -8,10 +8,10 @@ import {
   browserSecurityAuditCollectors,
   registerBrowserPlugin,
 } from "./plugin-registration.js";
-import type { OpenClawPluginApi } from "./runtime-api.js";
+import type { MerClawPluginApi } from "./runtime-api.js";
 import setupPlugin from "./setup-api.js";
 
-type BrowserAutoEnableProbe = Parameters<OpenClawPluginApi["registerAutoEnableProbe"]>[0];
+type BrowserAutoEnableProbe = Parameters<MerClawPluginApi["registerAutoEnableProbe"]>[0];
 
 const runtimeApiMocks = vi.hoisted(() => ({
   createBrowserPluginService: vi.fn(() => ({ id: "browser-control", start: vi.fn() })),
@@ -71,7 +71,7 @@ function createApi() {
     name: "Browser",
     source: "test",
     config: {},
-    runtime: {} as OpenClawPluginApi["runtime"],
+    runtime: {} as MerClawPluginApi["runtime"],
     registerCli,
     registerGatewayMethod,
     registerService,
@@ -116,7 +116,7 @@ describe("browser plugin", () => {
 
   it("bundles the browser automation skill with the plugin", () => {
     const manifest = JSON.parse(
-      fs.readFileSync(path.join(__dirname, "openclaw.plugin.json"), "utf8"),
+      fs.readFileSync(path.join(__dirname, "merclaw.plugin.json"), "utf8"),
     ) as { skills?: string[] };
     const skillPath = path.join(__dirname, "skills", "browser-automation", "SKILL.md");
 
@@ -232,7 +232,7 @@ describe("browser plugin", () => {
       descriptors: [
         {
           name: "browser",
-          description: "Manage OpenClaw's dedicated browser (Chrome/Chromium)",
+          description: "Manage MerClaw's dedicated browser (Chrome/Chromium)",
           hasSubcommands: true,
         },
       ],
@@ -282,15 +282,15 @@ describe("browser plugin", () => {
     expect(typeof service?.stop).toBe("function");
     expect(runtimeApiMocks.createBrowserPluginService).not.toHaveBeenCalled();
 
-    await service.start({ config: {}, stateDir: "/tmp/openclaw", logger: { warn: vi.fn() } });
+    await service.start({ config: {}, stateDir: "/tmp/merclaw", logger: { warn: vi.fn() } });
     expect(runtimeApiMocks.createBrowserPluginService).not.toHaveBeenCalled();
 
-    await service.stop({ config: {}, stateDir: "/tmp/openclaw", logger: { warn: vi.fn() } });
+    await service.stop({ config: {}, stateDir: "/tmp/merclaw", logger: { warn: vi.fn() } });
     expect(runtimeApiMocks.stopBrowserControlService).toHaveBeenCalledOnce();
   });
 
   it("eager-loads the browser control service when explicitly requested", async () => {
-    vi.stubEnv("OPENCLAW_EAGER_BROWSER_CONTROL_SERVER", "1");
+    vi.stubEnv("MERCLAW_EAGER_BROWSER_CONTROL_SERVER", "1");
     const { api, registerService } = createApi();
     registerBrowserPlugin(api);
 
@@ -299,13 +299,13 @@ describe("browser plugin", () => {
       start: (...args: unknown[]) => unknown;
     };
 
-    await service.start({ config: {}, stateDir: "/tmp/openclaw", logger: { warn: vi.fn() } });
+    await service.start({ config: {}, stateDir: "/tmp/merclaw", logger: { warn: vi.fn() } });
     expect(runtimeApiMocks.createBrowserPluginService).toHaveBeenCalledOnce();
   });
 
   for (const value of ["false", "", "disabled"]) {
     it(`keeps browser control service env value ${JSON.stringify(value)} lazy`, async () => {
-      vi.stubEnv("OPENCLAW_EAGER_BROWSER_CONTROL_SERVER", value);
+      vi.stubEnv("MERCLAW_EAGER_BROWSER_CONTROL_SERVER", value);
       const { api, registerService } = createApi();
       registerBrowserPlugin(api);
 
@@ -314,7 +314,7 @@ describe("browser plugin", () => {
         start: (...args: unknown[]) => unknown;
       };
 
-      await service.start({ config: {}, stateDir: "/tmp/openclaw", logger: { warn: vi.fn() } });
+      await service.start({ config: {}, stateDir: "/tmp/merclaw", logger: { warn: vi.fn() } });
       expect(runtimeApiMocks.createBrowserPluginService).not.toHaveBeenCalled();
     });
   }
@@ -322,14 +322,14 @@ describe("browser plugin", () => {
   it("declares setup auto-enable reasons for browser config surfaces", () => {
     const probe = registerBrowserAutoEnableProbe();
 
-    expect(probe({ config: { browser: { defaultProfile: "openclaw" } }, env: {} })).toBe(
+    expect(probe({ config: { browser: { defaultProfile: "merclaw" } }, env: {} })).toBe(
       "browser configured",
     );
     expect(probe({ config: { tools: { alsoAllow: ["browser"] } }, env: {} })).toBe(
       "browser tool referenced",
     );
     expect(
-      probe({ config: { browser: { defaultProfile: "openclaw", enabled: false } }, env: {} }),
+      probe({ config: { browser: { defaultProfile: "merclaw", enabled: false } }, env: {} }),
     ).toBeNull();
   });
 });

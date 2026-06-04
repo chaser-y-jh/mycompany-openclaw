@@ -2,7 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { withEnvAsync } from "../../test-utils/env.js";
 
 vi.mock("../../config/config.js", () => {
@@ -110,7 +110,7 @@ const TEST_RUNTIME_CONFIG = {
 
 async function runSessionsUsage(
   params: Record<string, unknown>,
-  config: OpenClawConfig = TEST_RUNTIME_CONFIG,
+  config: MerClawConfig = TEST_RUNTIME_CONFIG,
 ) {
   const respond = vi.fn();
   await usageHandlers["sessions.usage"]({
@@ -371,10 +371,10 @@ describe("sessions.usage", () => {
   });
 
   it("uses the requested agent for legacy specific session keys", async () => {
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-usage-test-"));
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-usage-test-"));
 
     try {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: stateDir }, async () => {
+      await withEnvAsync({ MERCLAW_STATE_DIR: stateDir }, async () => {
         const agentSessionsDir = path.join(stateDir, "agents", "opus", "sessions");
         fs.mkdirSync(agentSessionsDir, { recursive: true });
         const sessionFile = path.join(agentSessionsDir, "main.jsonl");
@@ -415,8 +415,8 @@ describe("sessions.usage", () => {
   });
 
   it("keeps global session entries in requested-agent usage lookups", async () => {
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-usage-test-"));
-    const config: OpenClawConfig = {
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-usage-test-"));
+    const config: MerClawConfig = {
       agents: {
         list: [{ id: "main", default: true }, { id: "opus" }],
       },
@@ -424,7 +424,7 @@ describe("sessions.usage", () => {
     };
 
     try {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: stateDir }, async () => {
+      await withEnvAsync({ MERCLAW_STATE_DIR: stateDir }, async () => {
         const agentSessionsDir = path.join(stateDir, "agents", "opus", "sessions");
         fs.mkdirSync(agentSessionsDir, { recursive: true });
         const sessionFile = path.join(agentSessionsDir, "current.jsonl");
@@ -471,10 +471,10 @@ describe("sessions.usage", () => {
   });
 
   it("does not resolve specific usage keys through out-of-scope sessionId matches", async () => {
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-usage-test-"));
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-usage-test-"));
 
     try {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: stateDir }, async () => {
+      await withEnvAsync({ MERCLAW_STATE_DIR: stateDir }, async () => {
         const agentSessionsDir = path.join(stateDir, "agents", "opus", "sessions");
         fs.mkdirSync(agentSessionsDir, { recursive: true });
         const sessionFile = path.join(agentSessionsDir, "shared.jsonl");
@@ -518,10 +518,10 @@ describe("sessions.usage", () => {
 
   it("resolves store entries by sessionId when queried via discovered agent-prefixed key", async () => {
     const storeKey = "agent:opus:slack:dm:u123";
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-usage-test-"));
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-usage-test-"));
 
     try {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: stateDir }, async () => {
+      await withEnvAsync({ MERCLAW_STATE_DIR: stateDir }, async () => {
         const agentSessionsDir = path.join(stateDir, "agents", "opus", "sessions");
         fs.mkdirSync(agentSessionsDir, { recursive: true });
         const sessionFile = path.join(agentSessionsDir, "s-opus.jsonl");
@@ -565,10 +565,10 @@ describe("sessions.usage", () => {
 
   it("rolls up known session family ids when historical usage is requested", async () => {
     const storeKey = "agent:opus:main";
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-usage-test-"));
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-usage-test-"));
 
     try {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: stateDir }, async () => {
+      await withEnvAsync({ MERCLAW_STATE_DIR: stateDir }, async () => {
         const agentSessionsDir = path.join(stateDir, "agents", "opus", "sessions");
         fs.mkdirSync(agentSessionsDir, { recursive: true });
         fs.writeFileSync(path.join(agentSessionsDir, "current.jsonl"), "", "utf-8");
@@ -655,10 +655,10 @@ describe("sessions.usage", () => {
 
   it("prefers the deterministic store key when duplicate sessionIds exist", async () => {
     const preferredKey = "agent:opus:acp:run-dup";
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-usage-test-"));
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-usage-test-"));
 
     try {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: stateDir }, async () => {
+      await withEnvAsync({ MERCLAW_STATE_DIR: stateDir }, async () => {
         const agentSessionsDir = path.join(stateDir, "agents", "opus", "sessions");
         fs.mkdirSync(agentSessionsDir, { recursive: true });
         const sessionFile = path.join(agentSessionsDir, "run-dup.jsonl");

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { resetConfigRuntimeState, setRuntimeConfigSnapshot } from "../config/config.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { MerClawConfig } from "../config/config.js";
 import {
   resolveStorePath,
   saveSessionStore,
@@ -80,19 +80,19 @@ describe("single gateway session row child-session cache", () => {
   });
 
   test("shares the child-session index across repeated single-row loads for the same store", async () => {
-    await withStateDirEnv("openclaw-single-row-cache-", async () => {
-      const cfg: OpenClawConfig = {
+    await withStateDirEnv("merclaw-single-row-cache-", async () => {
+      const cfg: MerClawConfig = {
         agents: {
           list: [
             {
               id: "main",
               default: true,
-              workspace: "/tmp/openclaw-single-row-cache",
+              workspace: "/tmp/merclaw-single-row-cache",
             },
           ],
           defaults: { model: { primary: "openai/gpt-5.4" } },
         },
-      } as OpenClawConfig;
+      } as MerClawConfig;
       setRuntimeConfigSnapshot(cfg, cfg);
       const now = Math.floor(Date.now() / 1_000) * 1_000 + 100;
       const store: Record<string, SessionEntry> = {
@@ -133,19 +133,19 @@ describe("single gateway session row child-session cache", () => {
   });
 
   test("refreshes subagent registry state while reusing store child candidates", async () => {
-    await withStateDirEnv("openclaw-single-row-cache-fresh-registry-", async () => {
-      const cfg: OpenClawConfig = {
+    await withStateDirEnv("merclaw-single-row-cache-fresh-registry-", async () => {
+      const cfg: MerClawConfig = {
         agents: {
           list: [
             {
               id: "main",
               default: true,
-              workspace: "/tmp/openclaw-single-row-cache-fresh-registry",
+              workspace: "/tmp/merclaw-single-row-cache-fresh-registry",
             },
           ],
           defaults: { model: { primary: "openai/gpt-5.4" } },
         },
-      } as OpenClawConfig;
+      } as MerClawConfig;
       setRuntimeConfigSnapshot(cfg, cfg);
       const now = Math.floor(Date.now() / 1_000) * 1_000 + 100;
       const oldParent = "agent:main:subagent:parent-old";
@@ -194,19 +194,19 @@ describe("single gateway session row child-session cache", () => {
   });
 
   test("rebuilds store child candidates after same-object session store writes", async () => {
-    await withStateDirEnv("openclaw-single-row-cache-write-version-", async () => {
-      const cfg: OpenClawConfig = {
+    await withStateDirEnv("merclaw-single-row-cache-write-version-", async () => {
+      const cfg: MerClawConfig = {
         agents: {
           list: [
             {
               id: "main",
               default: true,
-              workspace: "/tmp/openclaw-single-row-cache-write-version",
+              workspace: "/tmp/merclaw-single-row-cache-write-version",
             },
           ],
           defaults: { model: { primary: "openai/gpt-5.4" } },
         },
-      } as OpenClawConfig;
+      } as MerClawConfig;
       setRuntimeConfigSnapshot(cfg, cfg);
       const now = Math.floor(Date.now() / 1_000) * 1_000 + 100;
       const oldParent = "agent:main:subagent:parent-old";

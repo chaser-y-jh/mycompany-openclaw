@@ -1,5 +1,5 @@
 import path from "node:path";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { resolveUserPath, truncateUtf16Safe } from "../utils.js";
 import { resolveAgentWorkspaceDir } from "./agent-scope.js";
 import { resolveBootstrapFilesForRun } from "./bootstrap-files.js";
@@ -23,7 +23,7 @@ const REALTIME_BOOTSTRAP_CONTEXT_FILE_NAME_SET: ReadonlySet<string> = new Set(
   REALTIME_BOOTSTRAP_CONTEXT_FILE_NAMES,
 );
 const DEFAULT_REALTIME_BOOTSTRAP_CONTEXT_MAX_CHARS = 12_000;
-const REALTIME_BOOTSTRAP_CONTEXT_TITLE = "OpenClaw realtime voice profile context:";
+const REALTIME_BOOTSTRAP_CONTEXT_TITLE = "MerClaw realtime voice profile context:";
 const REALTIME_BOOTSTRAP_CONTEXT_GUIDANCE =
   "Use these profile files for identity, persona, and user grounding; do not mention them unless asked.";
 
@@ -67,7 +67,7 @@ function normalizeRealtimeBootstrapContextFileNames(
 
 export async function resolveRealtimeBootstrapContextInstructions(params: {
   agentId: string;
-  config: OpenClawConfig;
+  config: MerClawConfig;
   files?: readonly RealtimeBootstrapContextFileName[];
   sessionKey?: string;
   warn?: (message: string) => void;

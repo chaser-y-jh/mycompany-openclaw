@@ -1,6 +1,6 @@
 import type { MediaNormalizationEntry } from "../../packages/media-generation-core/src/normalization.js";
 import type { AuthProfileStore } from "../agents/auth-profiles/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import type { SsrFPolicy } from "../infra/net/ssrf.js";
 
 export type GeneratedImageAsset = {
@@ -55,7 +55,7 @@ export type ImageGenerationSourceImage = {
 };
 
 export type ImageGenerationProviderConfiguredContext = {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   agentDir?: string;
 };
 
@@ -63,7 +63,7 @@ export type ImageGenerationRequest = {
   provider: string;
   model: string;
   prompt: string;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentDir?: string;
   authStore?: AuthProfileStore;
   timeoutMs?: number;

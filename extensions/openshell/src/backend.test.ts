@@ -29,7 +29,7 @@ describe("openshell backend env", () => {
 });
 
 describe("openshell sandbox names", () => {
-  it("generates Kubernetes-safe names from OpenClaw session scope keys", () => {
+  it("generates Kubernetes-safe names from MerClaw session scope keys", () => {
     const name = buildOpenShellSandboxName("agent:somalley_alice:dashboard-8");
 
     expect(name).toMatch(/^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/);

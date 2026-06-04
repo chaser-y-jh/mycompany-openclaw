@@ -1,4 +1,4 @@
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import type { Command } from "commander";
 import { formatDocsLink } from "../../packages/terminal-core/src/links.js";
 import { theme } from "../../packages/terminal-core/src/theme.js";
@@ -151,7 +151,7 @@ function buildSkillVerificationOutput(
 ): Record<string, unknown> {
   return {
     ...result,
-    openclaw: {
+    merclaw: {
       resolution: {
         source: target.resolution.source,
         selector: target.resolution.selector,
@@ -245,7 +245,7 @@ export function registerSkillsCli(program: Command) {
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/skills", "docs.openclaw.ai/cli/skills")}\n`,
+        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/skills", "docs.merclaw.ai/cli/skills")}\n`,
     );
 
   skills

@@ -57,7 +57,7 @@ async function runGitOk(repoDir: string, args: string[]) {
 
 describe("installSkillFromSource", () => {
   it("installs a local skill directory using the SKILL.md frontmatter name", async () => {
-    await withTempDir({ prefix: "openclaw-skill-source-local-" }, async (root) => {
+    await withTempDir({ prefix: "merclaw-skill-source-local-" }, async (root) => {
       const workspaceDir = path.join(root, "workspace");
       const sourceDir = path.join(root, "source");
       await writeSkill(sourceDir, { name: "frontmatter-skill" });
@@ -80,7 +80,7 @@ describe("installSkillFromSource", () => {
   });
 
   it("uses --as slug override for local skill directories", async () => {
-    await withTempDir({ prefix: "openclaw-skill-source-as-" }, async (root) => {
+    await withTempDir({ prefix: "merclaw-skill-source-as-" }, async (root) => {
       const workspaceDir = path.join(root, "workspace");
       const sourceDir = path.join(root, "source");
       await writeSkill(sourceDir, { name: "frontmatter-skill" });
@@ -109,7 +109,7 @@ describe("installSkillFromSource", () => {
   });
 
   it("ignores oversized source-origin metadata while loading skill keys", async () => {
-    await withTempDir({ prefix: "openclaw-skill-source-origin-cap-" }, async (root) => {
+    await withTempDir({ prefix: "merclaw-skill-source-origin-cap-" }, async (root) => {
       const workspaceDir = path.join(root, "workspace");
       const sourceDir = path.join(root, "source");
       await writeSkill(sourceDir, { name: "frontmatter-skill" });
@@ -122,7 +122,7 @@ describe("installSkillFromSource", () => {
 
       expect(result).toMatchObject({ ok: true });
       await fs.writeFile(
-        path.join(workspaceDir, "skills", "custom-name", ".openclaw", "source-origin.json"),
+        path.join(workspaceDir, "skills", "custom-name", ".merclaw", "source-origin.json"),
         "x".repeat(20 * 1024),
       );
 
@@ -135,7 +135,7 @@ describe("installSkillFromSource", () => {
   });
 
   it("installs git: file repositories and records the resolved commit", async () => {
-    await withTempDir({ prefix: "openclaw-skill-source-git-" }, async (root) => {
+    await withTempDir({ prefix: "merclaw-skill-source-git-" }, async (root) => {
       const workspaceDir = path.join(root, "workspace");
       const repoDir = path.join(root, "repo");
       await fs.mkdir(repoDir, { recursive: true });
@@ -166,7 +166,7 @@ describe("installSkillFromSource", () => {
   });
 
   it("isolates git commands from inherited Git hook environment", async () => {
-    await withTempDir({ prefix: "openclaw-skill-source-git-env-" }, async (root) => {
+    await withTempDir({ prefix: "merclaw-skill-source-git-env-" }, async (root) => {
       const workspaceDir = path.join(root, "workspace");
       const repoDir = path.join(root, "repo");
       const poisonRepoDir = path.join(root, "poison");
@@ -213,7 +213,7 @@ describe("installSkillFromSource", () => {
   });
 
   it("disables system git config while preserving sanitized git command env", async () => {
-    await withTempDir({ prefix: "openclaw-skill-source-git-system-config-" }, async (root) => {
+    await withTempDir({ prefix: "merclaw-skill-source-git-system-config-" }, async (root) => {
       const workspaceDir = path.join(root, "workspace");
       const repoDir = path.join(root, "repo");
       const poisonRepoDir = path.join(root, "poison");
@@ -250,7 +250,7 @@ describe("installSkillFromSource", () => {
   });
 
   it("installs slash-containing git branch refs from fresh clones", async () => {
-    await withTempDir({ prefix: "openclaw-skill-source-git-ref-" }, async (root) => {
+    await withTempDir({ prefix: "merclaw-skill-source-git-ref-" }, async (root) => {
       const workspaceDir = path.join(root, "workspace");
       const repoDir = path.join(root, "repo");
       await fs.mkdir(repoDir, { recursive: true });
@@ -288,7 +288,7 @@ describe("installSkillFromSource", () => {
   });
 
   it("removes stale ClawHub lock tracking after source installs", async () => {
-    await withTempDir({ prefix: "openclaw-skill-source-untrack-" }, async (root) => {
+    await withTempDir({ prefix: "merclaw-skill-source-untrack-" }, async (root) => {
       const workspaceDir = path.join(root, "workspace");
       const sourceDir = path.join(root, "source");
       await writeSkill(sourceDir, { name: "frontmatter-skill" });
@@ -341,7 +341,7 @@ describe("installSkillFromSource", () => {
   });
 
   it("rejects missing local skill roots before treating them as ClawHub slugs", async () => {
-    await withTempDir({ prefix: "openclaw-skill-source-missing-" }, async (root) => {
+    await withTempDir({ prefix: "merclaw-skill-source-missing-" }, async (root) => {
       const result = await installSkillFromSource({
         workspaceDir: path.join(root, "workspace"),
         spec: "./missing-skill",

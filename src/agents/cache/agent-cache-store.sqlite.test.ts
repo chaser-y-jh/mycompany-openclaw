@@ -1,14 +1,14 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { MAX_DATE_TIMESTAMP_MS } from "@openclaw/normalization-core/number-coercion";
+import { MAX_DATE_TIMESTAMP_MS } from "@merclaw/normalization-core/number-coercion";
 import { afterEach, describe, expect, it } from "vitest";
 import {
-  closeOpenClawAgentDatabasesForTest,
-  listOpenClawRegisteredAgentDatabases,
-  openOpenClawAgentDatabase,
-} from "../../state/openclaw-agent-db.js";
-import { closeOpenClawStateDatabaseForTest } from "../../state/openclaw-state-db.js";
+  closeMerClawAgentDatabasesForTest,
+  listMerClawRegisteredAgentDatabases,
+  openMerClawAgentDatabase,
+} from "../../state/merclaw-agent-db.js";
+import { closeMerClawStateDatabaseForTest } from "../../state/merclaw-state-db.js";
 import {
   clearExpiredSqliteAgentCacheEntries,
   clearSqliteAgentCacheEntries,
@@ -20,17 +20,17 @@ import {
 } from "./agent-cache-store.sqlite.js";
 
 function createTempStateDir(): string {
-  return fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-agent-cache-"));
+  return fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-agent-cache-"));
 }
 
 afterEach(() => {
-  closeOpenClawAgentDatabasesForTest();
-  closeOpenClawStateDatabaseForTest();
+  closeMerClawAgentDatabasesForTest();
+  closeMerClawStateDatabaseForTest();
 });
 
 describe("SQLite agent cache store", () => {
   it("stores scoped JSON values and blobs in the agent database", () => {
-    const env = { OPENCLAW_STATE_DIR: createTempStateDir() };
+    const env = { MERCLAW_STATE_DIR: createTempStateDir() };
 
     expect(
       writeSqliteAgentCacheEntry({
@@ -84,7 +84,7 @@ describe("SQLite agent cache store", () => {
   });
 
   it("hides expired entries and clears expired rows", () => {
-    const env = { OPENCLAW_STATE_DIR: createTempStateDir() };
+    const env = { MERCLAW_STATE_DIR: createTempStateDir() };
 
     writeSqliteAgentCacheEntry({
       env,
@@ -150,7 +150,7 @@ describe("SQLite agent cache store", () => {
   });
 
   it("rejects cache expiries outside the valid Date range", () => {
-    const env = { OPENCLAW_STATE_DIR: createTempStateDir() };
+    const env = { MERCLAW_STATE_DIR: createTempStateDir() };
 
     expect(() =>
       writeSqliteAgentCacheEntry({
@@ -176,7 +176,7 @@ describe("SQLite agent cache store", () => {
   });
 
   it("preserves explicit null cache expiry as non-expiring", () => {
-    const env = { OPENCLAW_STATE_DIR: createTempStateDir() };
+    const env = { MERCLAW_STATE_DIR: createTempStateDir() };
 
     expect(
       writeSqliteAgentCacheEntry({
@@ -208,7 +208,7 @@ describe("SQLite agent cache store", () => {
   });
 
   it("hides invalid persisted expiries and ignores invalid clear clocks", () => {
-    const env = { OPENCLAW_STATE_DIR: createTempStateDir() };
+    const env = { MERCLAW_STATE_DIR: createTempStateDir() };
 
     writeSqliteAgentCacheEntry({
       env,
@@ -227,7 +227,7 @@ describe("SQLite agent cache store", () => {
       value: "bad",
       now: () => 1000,
     });
-    const database = openOpenClawAgentDatabase({ agentId: "main", env });
+    const database = openMerClawAgentDatabase({ agentId: "main", env });
     database.db
       .prepare("update cache_entries set expires_at = ? where scope = ? and key = ?")
       .run(Number.MAX_SAFE_INTEGER, "runtime", "invalid");
@@ -268,7 +268,7 @@ describe("SQLite agent cache store", () => {
   });
 
   it("exposes a scoped runtime cache adapter", () => {
-    const env = { OPENCLAW_STATE_DIR: createTempStateDir() };
+    const env = { MERCLAW_STATE_DIR: createTempStateDir() };
     const cache = createSqliteAgentCacheStore({
       env,
       agentId: "main",
@@ -300,7 +300,7 @@ describe("SQLite agent cache store", () => {
   });
 
   it("does not let loose write options override the scoped adapter owner", () => {
-    const env = { OPENCLAW_STATE_DIR: createTempStateDir() };
+    const env = { MERCLAW_STATE_DIR: createTempStateDir() };
     const cache = createSqliteAgentCacheStore({
       env,
       agentId: "main",
@@ -327,7 +327,7 @@ describe("SQLite agent cache store", () => {
 
   it("honors explicit per-agent database paths", () => {
     const stateDir = createTempStateDir();
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { MERCLAW_STATE_DIR: stateDir };
     const dbPath = path.join(stateDir, "custom", "worker.sqlite");
 
     writeSqliteAgentCacheEntry({
@@ -341,7 +341,7 @@ describe("SQLite agent cache store", () => {
 
     expect(fs.existsSync(dbPath)).toBe(true);
     expect(
-      listOpenClawRegisteredAgentDatabases({ env }).find((entry) => entry.path === dbPath),
+      listMerClawRegisteredAgentDatabases({ env }).find((entry) => entry.path === dbPath),
     ).toMatchObject({
       agentId: "worker",
       path: dbPath,

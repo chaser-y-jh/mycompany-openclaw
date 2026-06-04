@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { BUNDLED_PLUGIN_ROOT_DIR } from "openclaw/plugin-sdk/test-fixtures";
+import { BUNDLED_PLUGIN_ROOT_DIR } from "merclaw/plugin-sdk/test-fixtures";
 import { describe, expect, it } from "vitest";
 import YAML from "yaml";
 
@@ -30,25 +30,25 @@ describe("Dockerfile", () => {
   it("uses full bookworm for build stages and slim bookworm for runtime", async () => {
     const dockerfile = await readFile(dockerfilePath, "utf8");
     expect(dockerfile).toContain(
-      'ARG OPENCLAW_NODE_BOOKWORM_IMAGE="node:24-bookworm@sha256:3a09aa6354567619221ef6c45a5051b671f953f0a1924d1f819ffb236e520e6b"',
+      'ARG MERCLAW_NODE_BOOKWORM_IMAGE="node:24-bookworm@sha256:3a09aa6354567619221ef6c45a5051b671f953f0a1924d1f819ffb236e520e6b"',
     );
     expect(dockerfile).toContain(
-      'ARG OPENCLAW_NODE_BOOKWORM_SLIM_IMAGE="node:24-bookworm-slim@sha256:e8e2e91b1378f83c5b2dd15f0247f34110e2fe895f6ca7719dbb780f929368eb"',
+      'ARG MERCLAW_NODE_BOOKWORM_SLIM_IMAGE="node:24-bookworm-slim@sha256:e8e2e91b1378f83c5b2dd15f0247f34110e2fe895f6ca7719dbb780f929368eb"',
     );
-    expect(dockerfile).toContain("FROM ${OPENCLAW_NODE_BOOKWORM_IMAGE} AS workspace-deps");
-    expect(dockerfile).toContain("FROM ${OPENCLAW_NODE_BOOKWORM_IMAGE} AS build");
-    expect(dockerfile).toContain("FROM ${OPENCLAW_NODE_BOOKWORM_SLIM_IMAGE} AS base-runtime");
+    expect(dockerfile).toContain("FROM ${MERCLAW_NODE_BOOKWORM_IMAGE} AS workspace-deps");
+    expect(dockerfile).toContain("FROM ${MERCLAW_NODE_BOOKWORM_IMAGE} AS build");
+    expect(dockerfile).toContain("FROM ${MERCLAW_NODE_BOOKWORM_SLIM_IMAGE} AS base-runtime");
     expect(dockerfile).toContain("FROM base-runtime");
     expect(dockerfile).toContain("current multi-arch manifest list entries");
     expect(dockerfile).not.toContain("current amd64 entry");
-    expect(dockerfile).not.toContain("OPENCLAW_VARIANT");
+    expect(dockerfile).not.toContain("MERCLAW_VARIANT");
   });
 
   it("installs CA certificates in the slim runtime stage", async () => {
     const dockerfile = await readFile(dockerfilePath, "utf8");
     const collapsed = collapseDockerContinuations(dockerfile);
     const runtimeIndex = collapsed.indexOf(
-      "FROM ${OPENCLAW_NODE_BOOKWORM_SLIM_IMAGE} AS base-runtime",
+      "FROM ${MERCLAW_NODE_BOOKWORM_SLIM_IMAGE} AS base-runtime",
     );
     const caInstallIndex = collapsed.indexOf(
       "ca-certificates curl git hostname lsof openssl procps python3",
@@ -64,7 +64,7 @@ describe("Dockerfile", () => {
   it("installs python3 and tini in the slim runtime stage", async () => {
     const dockerfile = collapseDockerContinuations(await readFile(dockerfilePath, "utf8"));
     const runtimeIndex = dockerfile.indexOf(
-      "FROM ${OPENCLAW_NODE_BOOKWORM_SLIM_IMAGE} AS base-runtime",
+      "FROM ${MERCLAW_NODE_BOOKWORM_SLIM_IMAGE} AS base-runtime",
     );
     const pythonInstallIndex = dockerfile.indexOf(
       "ca-certificates curl git hostname lsof openssl procps python3",
@@ -82,7 +82,7 @@ describe("Dockerfile", () => {
   it("installs optional browser dependencies after pnpm install", async () => {
     const dockerfile = await readFile(dockerfilePath, "utf8");
     const installIndex = dockerfile.indexOf("pnpm install --frozen-lockfile");
-    const browserArgIndex = dockerfile.indexOf("ARG OPENCLAW_INSTALL_BROWSER");
+    const browserArgIndex = dockerfile.indexOf("ARG MERCLAW_INSTALL_BROWSER");
 
     expect(installIndex).toBeGreaterThan(-1);
     expect(browserArgIndex).toBeGreaterThan(-1);
@@ -139,7 +139,7 @@ describe("Dockerfile", () => {
       "COPY --from=workspace-deps /out/packages/ ./packages/",
     );
     const extensionManifestIndex = dockerfile.indexOf(
-      "COPY --from=workspace-deps /out/${OPENCLAW_BUNDLED_PLUGIN_DIR}/ ./${OPENCLAW_BUNDLED_PLUGIN_DIR}/",
+      "COPY --from=workspace-deps /out/${MERCLAW_BUNDLED_PLUGIN_DIR}/ ./${MERCLAW_BUNDLED_PLUGIN_DIR}/",
     );
 
     expect(postinstallIndex).toBeGreaterThan(-1);
@@ -149,7 +149,7 @@ describe("Dockerfile", () => {
     expect(extensionManifestIndex).toBeGreaterThan(-1);
     expect(dockerfile).toContain("for manifest in /tmp/packages/*/package.json");
     expect(dockerfile).toContain(
-      `if [ -f "/tmp/\${OPENCLAW_BUNDLED_PLUGIN_DIR}/$ext/package.json" ]; then`,
+      `if [ -f "/tmp/\${MERCLAW_BUNDLED_PLUGIN_DIR}/$ext/package.json" ]; then`,
     );
     expect(postinstallIndex).toBeLessThan(installIndex);
     expect(prepareIndex).toBeLessThan(installIndex);
@@ -204,28 +204,28 @@ describe("Dockerfile", () => {
   it("prunes runtime dependencies and omitted plugin packages after the build stage", async () => {
     const dockerfile = await readFile(dockerfilePath, "utf8");
     expect(dockerfile).toContain("FROM build AS runtime-assets");
-    expect(dockerfile).toContain("ARG OPENCLAW_EXTENSIONS");
-    expect(dockerfile).toContain("ARG OPENCLAW_BUNDLED_PLUGIN_DIR");
+    expect(dockerfile).toContain("ARG MERCLAW_EXTENSIONS");
+    expect(dockerfile).toContain("ARG MERCLAW_BUNDLED_PLUGIN_DIR");
     expect(dockerfile).toContain(
       "Opt-in plugin dependencies at build time (space- or comma-separated directory names).",
     );
     expect(dockerfile).toContain(
-      'Example: docker build --build-arg OPENCLAW_EXTENSIONS="diagnostics-otel,matrix" .',
+      'Example: docker build --build-arg MERCLAW_EXTENSIONS="diagnostics-otel,matrix" .',
     );
     expect(dockerfile).toContain(
-      "RUN --mount=type=cache,id=openclaw-pnpm-store,target=/root/.local/share/pnpm/store,sharing=locked \\",
+      "RUN --mount=type=cache,id=merclaw-pnpm-store,target=/root/.local/share/pnpm/store,sharing=locked \\",
     );
     expect(dockerfile).toContain("COPY --from=workspace-deps /out/packages/ ./packages/");
     expect(dockerfile).toContain(
-      "COPY --from=workspace-deps /out/${OPENCLAW_BUNDLED_PLUGIN_DIR}/ ./${OPENCLAW_BUNDLED_PLUGIN_DIR}/",
+      "COPY --from=workspace-deps /out/${MERCLAW_BUNDLED_PLUGIN_DIR}/ ./${MERCLAW_BUNDLED_PLUGIN_DIR}/",
     );
     expect(dockerfile).toContain(
-      'OPENCLAW_EXTENSIONS="$OPENCLAW_EXTENSIONS" OPENCLAW_BUNDLED_PLUGIN_DIR="$OPENCLAW_BUNDLED_PLUGIN_DIR" node scripts/prune-docker-plugin-dist.mjs',
+      'MERCLAW_EXTENSIONS="$MERCLAW_EXTENSIONS" MERCLAW_BUNDLED_PLUGIN_DIR="$MERCLAW_BUNDLED_PLUGIN_DIR" node scripts/prune-docker-plugin-dist.mjs',
     );
     expect(dockerfile).toContain("CI=true pnpm prune --prod \\");
     expect(dockerfile.indexOf("CI=true pnpm prune --prod \\")).toBeLessThan(
       dockerfile.indexOf(
-        'OPENCLAW_EXTENSIONS="$OPENCLAW_EXTENSIONS" OPENCLAW_BUNDLED_PLUGIN_DIR="$OPENCLAW_BUNDLED_PLUGIN_DIR" node scripts/prune-docker-plugin-dist.mjs',
+        'MERCLAW_EXTENSIONS="$MERCLAW_EXTENSIONS" MERCLAW_BUNDLED_PLUGIN_DIR="$MERCLAW_BUNDLED_PLUGIN_DIR" node scripts/prune-docker-plugin-dist.mjs',
       ),
     );
     expect(dockerfile).toContain("--config.offline=true");
@@ -289,10 +289,10 @@ describe("Dockerfile", () => {
 
   it("keeps the Codex plugin in official Docker release images", async () => {
     const workflow = await readFile(dockerReleaseWorkflowPath, "utf8");
-    const releaseKeepList = "OPENCLAW_EXTENSIONS=diagnostics-otel,codex";
+    const releaseKeepList = "MERCLAW_EXTENSIONS=diagnostics-otel,codex";
 
     expect(workflow.match(new RegExp(releaseKeepList, "g"))).toHaveLength(4);
-    expect(workflow).not.toContain("OPENCLAW_EXTENSIONS=diagnostics-otel\n");
+    expect(workflow).not.toContain("MERCLAW_EXTENSIONS=diagnostics-otel\n");
   });
 
   it("publishes official Docker browser images with baked Chromium", async () => {
@@ -300,7 +300,7 @@ describe("Dockerfile", () => {
 
     expect(workflow).toContain("Build and push amd64 browser image");
     expect(workflow).toContain("Build and push arm64 browser image");
-    expect(workflow).toContain("OPENCLAW_INSTALL_BROWSER=1");
+    expect(workflow).toContain("MERCLAW_INSTALL_BROWSER=1");
     expect(workflow).toContain('${IMAGE}:${version}-browser"');
     expect(workflow).toContain('${IMAGE}:latest-browser"');
     expect(workflow).toContain('${IMAGE}:main-browser"');
@@ -309,7 +309,7 @@ describe("Dockerfile", () => {
     expect(workflow).toContain("Smoke test amd64 browser image");
     expect(workflow).toContain("Smoke test arm64 browser image");
     expect(workflow).toContain("chrome-headless-shell");
-    expect(workflow).toContain("grep -q '^ARG OPENCLAW_INSTALL_BROWSER' Dockerfile");
+    expect(workflow).toContain("grep -q '^ARG MERCLAW_INSTALL_BROWSER' Dockerfile");
     expect(workflow).toContain("if: steps.tags.outputs.browser != ''");
     expect(workflow).toContain('git show "${SOURCE_REF}:Dockerfile"');
     expect(workflow).toContain('if [[ -n "${BROWSER_TAGS}" ]]; then');
@@ -322,7 +322,7 @@ describe("Dockerfile", () => {
     expect(workflow).toContain("Smoke test arm64 runtime workspace templates");
     expect(workflow).toContain("test -f /app/src/agents/templates/HEARTBEAT.md");
     expect(workflow).toContain('grep -F "Missing workspace template:"');
-    expect(workflow).toContain('test -f "${temp_root}/home/.openclaw/workspace/HEARTBEAT.md"');
+    expect(workflow).toContain('test -f "${temp_root}/home/.merclaw/workspace/HEARTBEAT.md"');
   });
 
   it("keeps runtime workspace template smoke in full release validation", async () => {
@@ -332,26 +332,26 @@ describe("Dockerfile", () => {
     expect(workflow).toContain('-t "${image_ref}"');
     expect(workflow).toContain("test -f /app/src/agents/templates/HEARTBEAT.md");
     expect(workflow).toContain('grep -F "Missing workspace template:"');
-    expect(workflow).toContain('test -f "${temp_root}/home/.openclaw/workspace/HEARTBEAT.md"');
+    expect(workflow).toContain('test -f "${temp_root}/home/.merclaw/workspace/HEARTBEAT.md"');
     expect(workflow).not.toContain("scripts/docker/runtime-workspace-template-smoke.sh");
   });
 
   it("does not override bundled plugin discovery in runtime images", async () => {
     const dockerfile = collapseDockerContinuations(await readFile(dockerfilePath, "utf8"));
-    expect(dockerfile).toContain(`ARG OPENCLAW_BUNDLED_PLUGIN_DIR=${BUNDLED_PLUGIN_ROOT_DIR}`);
-    expect(dockerfile).not.toMatch(/^\s*ENV\b[^\n]*\bOPENCLAW_BUNDLED_PLUGINS_DIR\b/m);
+    expect(dockerfile).toContain(`ARG MERCLAW_BUNDLED_PLUGIN_DIR=${BUNDLED_PLUGIN_ROOT_DIR}`);
+    expect(dockerfile).not.toMatch(/^\s*ENV\b[^\n]*\bMERCLAW_BUNDLED_PLUGINS_DIR\b/m);
   });
 
   it("normalizes plugin and agent paths permissions in image layers", async () => {
     const dockerfile = await readFile(dockerfilePath, "utf8");
     expect(dockerfile).toContain(
-      "RUN for dir in /app/${OPENCLAW_BUNDLED_PLUGIN_DIR} /app/.agent /app/.agents; do \\",
+      "RUN for dir in /app/${MERCLAW_BUNDLED_PLUGIN_DIR} /app/.agent /app/.agents; do \\",
     );
     expect(dockerfile).toContain('find "$dir" -type d -exec chmod 755 {} +');
     expect(dockerfile).toContain('find "$dir" -type f -exec chmod 644 {} +');
   });
 
-  it("Docker GPG fingerprint awk uses correct quoting for OPENCLAW_SANDBOX=1 build", async () => {
+  it("Docker GPG fingerprint awk uses correct quoting for MERCLAW_SANDBOX=1 build", async () => {
     const dockerfile = await readFile(dockerfilePath, "utf8");
     expect(dockerfile).toContain('== "fpr" {');
     expect(dockerfile).not.toContain('\\"fpr\\"');
@@ -398,7 +398,7 @@ describe("Dockerfile", () => {
 
     expect(runtimeStageIndex).toBeGreaterThan(-1);
     // Regression: /home/node/.config parent must be created with node ownership
-    // before the leaf .config/openclaw dir (issue #85968).
+    // before the leaf .config/merclaw dir (issue #85968).
     expect(parentConfigDirIndex).toBeGreaterThan(-1);
     expect(stateDirIndex).toBeGreaterThan(-1);
     expect(userIndex).toBeGreaterThan(-1);
@@ -406,21 +406,21 @@ describe("Dockerfile", () => {
     expect(parentConfigDirIndex).toBeLessThan(stateDirIndex);
     expect(stateDirIndex).toBeGreaterThan(runtimeStageIndex);
     expect(stateDirIndex).toBeLessThan(userIndex);
-    expect(dockerfile).not.toContain("mkdir -p /home/node/.openclaw");
-    expect(dockerfile).toContain("/home/node/.openclaw/workspace");
-    expect(dockerfile).toContain("/home/node/.config/openclaw");
+    expect(dockerfile).not.toContain("mkdir -p /home/node/.merclaw");
+    expect(dockerfile).toContain("/home/node/.merclaw/workspace");
+    expect(dockerfile).toContain("/home/node/.config/merclaw");
     expect(dockerfile).toContain(
-      "stat -c '%U:%G %a' /home/node/.openclaw | grep -qx 'node:node 700'",
+      "stat -c '%U:%G %a' /home/node/.merclaw | grep -qx 'node:node 700'",
     );
     expect(dockerfile).toContain(
-      "stat -c '%U:%G %a' /home/node/.openclaw/workspace | grep -qx 'node:node 700'",
+      "stat -c '%U:%G %a' /home/node/.merclaw/workspace | grep -qx 'node:node 700'",
     );
     // Regression: assert parent /home/node/.config is also node-owned (issue #85968).
     expect(dockerfile).toContain(
       "stat -c '%U:%G %a' /home/node/.config | grep -qx 'node:node 755'",
     );
     expect(dockerfile).toContain(
-      "stat -c '%U:%G %a' /home/node/.config/openclaw | grep -qx 'node:node 700'",
+      "stat -c '%U:%G %a' /home/node/.config/merclaw | grep -qx 'node:node 700'",
     );
   });
 });

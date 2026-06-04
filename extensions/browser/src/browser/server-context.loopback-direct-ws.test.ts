@@ -51,16 +51,16 @@ describe("browser server-context loopback direct WebSocket profiles", () => {
     });
 
     global.fetch = withBrowserFetchPreconnect(fetchMock);
-    const state = makeState("openclaw");
+    const state = makeState("merclaw");
     state.resolved.ssrfPolicy = {};
-    state.resolved.profiles.openclaw = {
+    state.resolved.profiles.merclaw = {
       cdpUrl: "ws://127.0.0.1:18800/devtools/browser/SESSION?token=abc",
       color: "#FF4500",
     };
     const ctx = createTestBrowserRouteContext({ getState: () => state });
-    const openclaw = ctx.forProfile("openclaw");
+    const merclaw = ctx.forProfile("merclaw");
 
-    const opened = await openclaw.openTab("about:blank");
+    const opened = await merclaw.openTab("about:blank");
     expect(opened.targetId).toBe("CREATED");
     expect(createTargetViaCdp).toHaveBeenCalledWith({
       cdpUrl: "ws://127.0.0.1:18800/devtools/browser/SESSION?token=abc",
@@ -96,17 +96,17 @@ describe("browser server-context loopback direct WebSocket profiles", () => {
     });
 
     global.fetch = withBrowserFetchPreconnect(fetchMock);
-    const state = makeState("openclaw");
+    const state = makeState("merclaw");
     state.resolved.ssrfPolicy = {};
-    state.resolved.profiles.openclaw = {
+    state.resolved.profiles.merclaw = {
       cdpUrl: "ws://127.0.0.1:18800/devtools/browser/SESSION?token=abc",
       color: "#FF4500",
     };
     const ctx = createTestBrowserRouteContext({ getState: () => state });
-    const openclaw = ctx.forProfile("openclaw");
+    const merclaw = ctx.forProfile("merclaw");
 
-    await openclaw.focusTab("T1");
-    await openclaw.closeTab("T1");
+    await merclaw.focusTab("T1");
+    await merclaw.closeTab("T1");
 
     expectFetchCalledWithManualRedirect(
       fetchMock,
@@ -145,19 +145,19 @@ describe("browser server-context loopback direct WebSocket profiles", () => {
     });
 
     global.fetch = withBrowserFetchPreconnect(fetchMock);
-    const state = makeState("openclaw");
-    state.resolved.profiles.openclaw = {
+    const state = makeState("merclaw");
+    state.resolved.profiles.merclaw = {
       cdpUrl: "wss://127.0.0.1:18800/cdp?token=abc",
       color: "#FF4500",
     };
     const ctx = createTestBrowserRouteContext({ getState: () => state });
-    const openclaw = ctx.forProfile("openclaw");
+    const merclaw = ctx.forProfile("merclaw");
 
-    const tabs = await openclaw.listTabs();
+    const tabs = await merclaw.listTabs();
     expect(tabs.map((tab) => tab.targetId)).toEqual(["T2"]);
 
-    await openclaw.focusTab("T2");
-    await openclaw.closeTab("T2");
+    await merclaw.focusTab("T2");
+    await merclaw.closeTab("T2");
   });
 
   it("blocks direct WebSocket tab operations when strict SSRF hostname allowlist rejects the cdpUrl", async () => {
@@ -166,21 +166,21 @@ describe("browser server-context loopback direct WebSocket profiles", () => {
     });
 
     global.fetch = withBrowserFetchPreconnect(fetchMock);
-    const state = makeState("openclaw");
+    const state = makeState("merclaw");
     state.resolved.ssrfPolicy = {
       dangerouslyAllowPrivateNetwork: false,
       hostnameAllowlist: ["browserless.example.com"],
     };
-    state.resolved.profiles.openclaw = {
+    state.resolved.profiles.merclaw = {
       cdpUrl: "ws://10.0.0.42:18800/devtools/browser/SESSION?token=abc",
       color: "#FF4500",
     };
     const ctx = createTestBrowserRouteContext({ getState: () => state });
-    const openclaw = ctx.forProfile("openclaw");
+    const merclaw = ctx.forProfile("merclaw");
 
-    await expect(openclaw.listTabs()).rejects.toBeInstanceOf(BrowserCdpEndpointBlockedError);
-    await expect(openclaw.focusTab("T1")).rejects.toBeInstanceOf(BrowserCdpEndpointBlockedError);
-    await expect(openclaw.closeTab("T1")).rejects.toBeInstanceOf(BrowserCdpEndpointBlockedError);
+    await expect(merclaw.listTabs()).rejects.toBeInstanceOf(BrowserCdpEndpointBlockedError);
+    await expect(merclaw.focusTab("T1")).rejects.toBeInstanceOf(BrowserCdpEndpointBlockedError);
+    await expect(merclaw.closeTab("T1")).rejects.toBeInstanceOf(BrowserCdpEndpointBlockedError);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });

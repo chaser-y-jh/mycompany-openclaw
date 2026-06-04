@@ -1,4 +1,4 @@
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { normalizeLowercaseStringOrEmpty } from "merclaw/plugin-sdk/string-coerce-runtime";
 
 export function shouldBypassConfiguredAcpEnsure(commandName: string): boolean {
   const normalized = normalizeLowercaseStringOrEmpty(commandName);

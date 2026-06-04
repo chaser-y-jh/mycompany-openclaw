@@ -1,6 +1,6 @@
 import path from "node:path";
-import { isPassThroughRemoteMediaSource } from "@openclaw/media-core/media-source-url";
-import { resolveSendableOutboundReplyParts } from "openclaw/plugin-sdk/reply-payload";
+import { isPassThroughRemoteMediaSource } from "@merclaw/media-core/media-source-url";
+import { resolveSendableOutboundReplyParts } from "merclaw/plugin-sdk/reply-payload";
 import { resolveSessionAgentId } from "../../agents/agent-scope.js";
 import { resolvePathFromInput, toRelativeWorkspacePath } from "../../agents/path-policy.js";
 import {
@@ -9,7 +9,7 @@ import {
   resolveSandboxedMediaSource,
 } from "../../agents/sandbox-paths.js";
 import { ensureSandboxWorkspaceForSession } from "../../agents/sandbox.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { logVerbose } from "../../globals.js";
 import { resolveChannelAccountMediaMaxMb } from "../../media/configured-max-bytes.js";
 import { resolveOutboundAttachmentFromUrl } from "../../media/outbound-attachment.js";
@@ -42,7 +42,7 @@ function getPayloadMediaList(payload: ReplyPayload): string[] {
 }
 
 function resolveReplyMediaMaxBytes(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channel?: string;
   accountId?: string;
 }): number {
@@ -54,7 +54,7 @@ function resolveReplyMediaMaxBytes(params: {
 }
 
 export function createReplyMediaPathNormalizer(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   sessionKey?: string;
   agentId?: string;
   workspaceDir: string;
@@ -69,7 +69,7 @@ export function createReplyMediaPathNormalizer(params: {
   requesterSenderE164?: string;
 }): (payload: ReplyPayload) => Promise<ReplyPayload> {
   // Prefer an explicit agentId so callers without a resolved sessionKey (e.g.
-  // `openclaw agent --deliver` with `--reply-channel/--reply-to`) still get
+  // `merclaw agent --deliver` with `--reply-channel/--reply-to`) still get
   // the stricter agent-scoped file-read policy applied during staging.
   const agentId =
     params.agentId ??

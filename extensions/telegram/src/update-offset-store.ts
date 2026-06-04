@@ -1,5 +1,5 @@
-import { readJsonFileWithFallback } from "openclaw/plugin-sdk/json-store";
-import type { PluginStateKeyedStore } from "openclaw/plugin-sdk/plugin-state-runtime";
+import { readJsonFileWithFallback } from "merclaw/plugin-sdk/json-store";
+import type { PluginStateKeyedStore } from "merclaw/plugin-sdk/plugin-state-runtime";
 import { getTelegramRuntime } from "./runtime.js";
 import { fingerprintTelegramBotToken } from "./token-fingerprint.js";
 

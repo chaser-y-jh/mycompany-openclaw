@@ -40,7 +40,7 @@ function withBuildCacheFixture(
     };
   }) => void,
 ) {
-  const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-build-cache-"));
+  const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-build-cache-"));
   try {
     const inputPath = path.join(rootDir, "src/input.ts");
     const outputPath = path.join(rootDir, "dist/output.js");
@@ -68,7 +68,7 @@ function withBuildCacheFixture(
 describe("resolveBuildAllStep", () => {
   it("routes pnpm steps through the npm_execpath pnpm runner on Windows", () => {
     const step = getBuildAllStep("plugins:assets:build");
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-pnpm-runner-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-pnpm-runner-"));
     const npmExecPath = path.join(tempDir, "pnpm.cjs");
     fs.writeFileSync(npmExecPath, "console.log('pnpm');\n");
 
@@ -118,7 +118,7 @@ describe("resolveBuildAllStep", () => {
 
     const result = resolveBuildAllStep(step, {
       nodeExecPath: "/custom/node",
-      env: { OPENCLAW_BUILD_ALL_NO_PNPM: "1" },
+      env: { MERCLAW_BUILD_ALL_NO_PNPM: "1" },
     });
 
     expect(result).toEqual({
@@ -126,14 +126,14 @@ describe("resolveBuildAllStep", () => {
       args: ["scripts/bundled-plugin-assets.mjs", "--phase", "build"],
       options: {
         stdio: "inherit",
-        env: { OPENCLAW_BUILD_ALL_NO_PNPM: "1" },
+        env: { MERCLAW_BUILD_ALL_NO_PNPM: "1" },
       },
     });
   });
 
   it("adds heap headroom for plugin-sdk dts on Windows", () => {
     const step = getBuildAllStep("build:plugin-sdk:dts");
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-pnpm-runner-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-pnpm-runner-"));
     const npmExecPath = path.join(tempDir, "pnpm.cjs");
     fs.writeFileSync(npmExecPath, "console.log('pnpm');\n");
 
@@ -249,12 +249,12 @@ describe("resolveBuildAllSteps", () => {
       }
 
       expect(BUILD_ALL_PROFILE_STEP_ENV[profile].tsdown).toMatchObject({
-        OPENCLAW_RUN_NODE_SKIP_DTS_BUILD: "1",
+        MERCLAW_RUN_NODE_SKIP_DTS_BUILD: "1",
       });
       expect(
-        resolveBuildAllStep(tsdown, { env: { OPENCLAW_RUN_NODE_SKIP_DTS_BUILD: "0" } }).options.env,
+        resolveBuildAllStep(tsdown, { env: { MERCLAW_RUN_NODE_SKIP_DTS_BUILD: "0" } }).options.env,
       ).toMatchObject({
-        OPENCLAW_RUN_NODE_SKIP_DTS_BUILD: "1",
+        MERCLAW_RUN_NODE_SKIP_DTS_BUILD: "1",
       });
     }
   });
@@ -267,7 +267,7 @@ describe("resolveBuildAllSteps", () => {
       }
 
       expect(resolveBuildAllStep(tsdown, { env: {} }).options.env).toMatchObject({
-        OPENCLAW_PRESERVE_CLI_STARTUP_METADATA: "1",
+        MERCLAW_PRESERVE_CLI_STARTUP_METADATA: "1",
       });
     }
 
@@ -278,7 +278,7 @@ describe("resolveBuildAllSteps", () => {
       }
 
       expect(resolveBuildAllStep(tsdown, { env: {} }).options.env).not.toHaveProperty(
-        "OPENCLAW_PRESERVE_CLI_STARTUP_METADATA",
+        "MERCLAW_PRESERVE_CLI_STARTUP_METADATA",
       );
     }
   });
@@ -326,14 +326,14 @@ describe("resolveBuildAllSteps", () => {
       }
 
       expect(BUILD_ALL_PROFILE_STEP_ENV[profile]["runtime-postbuild"]).toEqual({
-        OPENCLAW_RUNTIME_POSTBUILD_STATIC_ASSETS: "0",
+        MERCLAW_RUNTIME_POSTBUILD_STATIC_ASSETS: "0",
       });
       expect(
         resolveBuildAllStep(runtimePostbuild, {
-          env: { OPENCLAW_RUNTIME_POSTBUILD_STATIC_ASSETS: "1" },
+          env: { MERCLAW_RUNTIME_POSTBUILD_STATIC_ASSETS: "1" },
         }).options.env,
       ).toMatchObject({
-        OPENCLAW_RUNTIME_POSTBUILD_STATIC_ASSETS: "0",
+        MERCLAW_RUNTIME_POSTBUILD_STATIC_ASSETS: "0",
       });
     }
   });
@@ -349,10 +349,10 @@ describe("resolveBuildAllSteps", () => {
     expect(BUILD_ALL_PROFILE_STEP_ENV.qaRuntime["runtime-postbuild"]).toBeUndefined();
     expect(
       resolveBuildAllStep(runtimePostbuild, {
-        env: { OPENCLAW_RUNTIME_POSTBUILD_STATIC_ASSETS: "1" },
+        env: { MERCLAW_RUNTIME_POSTBUILD_STATIC_ASSETS: "1" },
       }).options.env,
     ).toMatchObject({
-      OPENCLAW_RUNTIME_POSTBUILD_STATIC_ASSETS: "1",
+      MERCLAW_RUNTIME_POSTBUILD_STATIC_ASSETS: "1",
     });
   });
 
@@ -389,7 +389,7 @@ describe("resolveBuildAllSteps", () => {
 
   it("does not cache ui:build because Vite reads package.json, git HEAD, and env metadata", () => {
     // ui/vite.config.ts derives the Control UI build ID from package.json,
-    // git HEAD, and OPENCLAW_CONTROL_UI_BUILD_ID env, so a file-input
+    // git HEAD, and MERCLAW_CONTROL_UI_BUILD_ID env, so a file-input
     // signature cannot exactly invalidate generated assets. Leaving this
     // step uncached avoids restoring stale service-worker/app cache
     // metadata after `tsdown` clears `dist`.

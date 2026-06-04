@@ -1,7 +1,7 @@
-import { defineSingleProviderPluginEntry } from "openclaw/plugin-sdk/provider-entry";
-import { OPENAI_COMPATIBLE_REPLAY_HOOKS } from "openclaw/plugin-sdk/provider-model-shared";
-import { defaultToolStreamExtraParams } from "openclaw/plugin-sdk/provider-stream-shared";
-import { jsonResult } from "openclaw/plugin-sdk/provider-web-search";
+import { defineSingleProviderPluginEntry } from "merclaw/plugin-sdk/provider-entry";
+import { OPENAI_COMPATIBLE_REPLAY_HOOKS } from "merclaw/plugin-sdk/provider-model-shared";
+import { defaultToolStreamExtraParams } from "merclaw/plugin-sdk/provider-stream-shared";
+import { jsonResult } from "merclaw/plugin-sdk/provider-web-search";
 import {
   applyXaiRuntimeModelCompat,
   buildXaiImageGenerationProvider,

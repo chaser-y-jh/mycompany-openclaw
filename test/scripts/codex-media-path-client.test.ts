@@ -10,7 +10,7 @@ const tempRoots: string[] = [];
 const writeConfigPath = path.resolve("scripts/e2e/lib/codex-media-path/write-config.mjs");
 
 function makeTempRoot(): string {
-  const root = mkdtempSync(path.join(tmpdir(), "openclaw-codex-media-path-"));
+  const root = mkdtempSync(path.join(tmpdir(), "merclaw-codex-media-path-"));
   tempRoots.push(root);
   return root;
 }
@@ -24,10 +24,10 @@ function runWriteConfig(root: string, env: Record<string, string> = {}) {
     encoding: "utf8",
     env: {
       ...process.env,
-      OPENCLAW_CONFIG_PATH: path.join(root, "openclaw.json"),
-      OPENCLAW_GATEWAY_TOKEN: "test-token",
-      OPENCLAW_STATE_DIR: path.join(root, "state"),
-      OPENCLAW_TEST_WORKSPACE_DIR: path.join(root, "workspace"),
+      MERCLAW_CONFIG_PATH: path.join(root, "merclaw.json"),
+      MERCLAW_GATEWAY_TOKEN: "test-token",
+      MERCLAW_STATE_DIR: path.join(root, "state"),
+      MERCLAW_TEST_WORKSPACE_DIR: path.join(root, "workspace"),
       PORT: "18790",
       ...env,
     },
@@ -43,26 +43,26 @@ afterEach(() => {
 describe("codex media path limits", () => {
   it("rejects loose numeric env values instead of parsing prefixes", () => {
     expect(() =>
-      readPositiveIntEnv("OPENCLAW_CODEX_MEDIA_PATH_TIMEOUT_SECONDS", 180, {
-        OPENCLAW_CODEX_MEDIA_PATH_TIMEOUT_SECONDS: "1e3",
+      readPositiveIntEnv("MERCLAW_CODEX_MEDIA_PATH_TIMEOUT_SECONDS", 180, {
+        MERCLAW_CODEX_MEDIA_PATH_TIMEOUT_SECONDS: "1e3",
       }),
-    ).toThrow("invalid OPENCLAW_CODEX_MEDIA_PATH_TIMEOUT_SECONDS: 1e3");
+    ).toThrow("invalid MERCLAW_CODEX_MEDIA_PATH_TIMEOUT_SECONDS: 1e3");
     expect(() =>
-      readPositiveIntEnv("OPENCLAW_CODEX_MEDIA_PATH_LOG_TAIL_MAX_BYTES", 2 * 1024 * 1024, {
-        OPENCLAW_CODEX_MEDIA_PATH_LOG_TAIL_MAX_BYTES: "64bytes",
+      readPositiveIntEnv("MERCLAW_CODEX_MEDIA_PATH_LOG_TAIL_MAX_BYTES", 2 * 1024 * 1024, {
+        MERCLAW_CODEX_MEDIA_PATH_LOG_TAIL_MAX_BYTES: "64bytes",
       }),
-    ).toThrow("invalid OPENCLAW_CODEX_MEDIA_PATH_LOG_TAIL_MAX_BYTES: 64bytes");
+    ).toThrow("invalid MERCLAW_CODEX_MEDIA_PATH_LOG_TAIL_MAX_BYTES: 64bytes");
   });
 
   it("writes strict positive timeout and port values into generated config", () => {
     const root = makeTempRoot();
     const result = runWriteConfig(root, {
-      OPENCLAW_CODEX_MEDIA_PATH_TIMEOUT_SECONDS: "240",
+      MERCLAW_CODEX_MEDIA_PATH_TIMEOUT_SECONDS: "240",
       PORT: "19002",
     });
 
     expect(result.status).toBe(0);
-    const config = JSON.parse(readFileSync(path.join(root, "openclaw.json"), "utf8"));
+    const config = JSON.parse(readFileSync(path.join(root, "merclaw.json"), "utf8"));
     expect(config.gateway.port).toBe(19002);
     expect(config.agents.defaults.timeoutSeconds).toBe(240);
     expect(config.plugins.entries.codex.config.appServer.requestTimeoutMs).toBe(240_000);
@@ -71,11 +71,11 @@ describe("codex media path limits", () => {
   it("rejects loose write-config timeout env values", () => {
     const root = makeTempRoot();
     const result = runWriteConfig(root, {
-      OPENCLAW_CODEX_MEDIA_PATH_TIMEOUT_SECONDS: "1e3",
+      MERCLAW_CODEX_MEDIA_PATH_TIMEOUT_SECONDS: "1e3",
     });
 
     expect(result.status).not.toBe(0);
-    expect(result.stderr).toContain("invalid OPENCLAW_CODEX_MEDIA_PATH_TIMEOUT_SECONDS: 1e3");
+    expect(result.stderr).toContain("invalid MERCLAW_CODEX_MEDIA_PATH_TIMEOUT_SECONDS: 1e3");
   });
 });
 

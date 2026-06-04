@@ -1,10 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { OpenKeyedStoreOptions } from "openclaw/plugin-sdk/plugin-state-runtime";
+import type { OpenKeyedStoreOptions } from "merclaw/plugin-sdk/plugin-state-runtime";
 import {
   createPluginStateSyncKeyedStoreForTests,
   resetPluginStateStoreForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
+} from "merclaw/plugin-sdk/plugin-state-test-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createTestStorePath,
@@ -56,7 +56,7 @@ describe("voice-call call record store", () => {
     expect(restored.activeCalls.get("call-legacy")?.providerCallId).toBe(call.providerCallId);
     expect(restored.processedEventIds.has("evt-1")).toBe(true);
     expect(fs.existsSync(path.join(storePath, "calls.jsonl"))).toBe(false);
-    expect(fs.existsSync(path.join(storePath, "state", "openclaw.sqlite"))).toBe(true);
+    expect(fs.existsSync(path.join(storePath, "state", "merclaw.sqlite"))).toBe(true);
 
     const history = await getCallHistoryFromStore(storePath);
     expect(history).toHaveLength(1);

@@ -1,25 +1,25 @@
 {
-  "name": "@openclaw/migrate-hermes",
+  "name": "@merclaw/migrate-hermes",
   "version": "2026.5.31",
   "private": true,
-  "description": "Hermes to OpenClaw migration provider",
+  "description": "Hermes to MerClaw migration provider",
   "type": "module",
   "dependencies": {
     "yaml": "2.9.0"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*",
-    "openclaw": "2026.5.28"
+    "@merclaw/plugin-sdk": "workspace:*",
+    "merclaw": "2026.5.28"
   },
   "peerDependencies": {
-    "openclaw": ">=2026.5.31"
+    "merclaw": ">=2026.5.31"
   },
   "peerDependenciesMeta": {
-    "openclaw": {
+    "merclaw": {
       "optional": true
     }
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ]

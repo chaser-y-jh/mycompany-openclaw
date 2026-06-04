@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import type {
   ManualExecSecretProviderConfig,
   PluginIntegrationSecretProviderConfig,
@@ -251,7 +251,7 @@ function materializeExecProviderConfig(
 function canExposeSecretProviderIntegrations(params: {
   record: PluginManifestRecord;
   normalizedConfig: NormalizedPluginsConfig;
-  config: OpenClawConfig;
+  config: MerClawConfig;
 }): boolean {
   if (params.record.origin !== "bundled" && params.record.origin !== "global") {
     return false;
@@ -316,7 +316,7 @@ export function resolveSecretProviderIntegrationConfig(params: {
   manifestRegistry: Pick<PluginManifestRegistry, "plugins">;
   providerAlias: string;
   providerConfig: PluginIntegrationSecretProviderConfig;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   env?: NodeJS.ProcessEnv;
 }): SecretProviderIntegrationResolution {
   const config = params.config ?? {};
@@ -364,7 +364,7 @@ export function resolveSecretProviderIntegrationConfig(params: {
 
 export function listSecretProviderIntegrationPresets(params: {
   manifestRegistry: Pick<PluginManifestRegistry, "plugins">;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   env?: NodeJS.ProcessEnv;
 }): SecretProviderIntegrationPreset[] {
   const presets: SecretProviderIntegrationPreset[] = [];

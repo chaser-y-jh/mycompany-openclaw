@@ -1,11 +1,11 @@
 import fs from "node:fs";
 import type { Insertable, Selectable, Updateable } from "kysely";
 import { executeSqliteQuerySync, getNodeSqliteKysely } from "../infra/kysely-sync.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
+import type { DB as MerClawStateKyselyDatabase } from "../state/merclaw-state-db.generated.js";
 import {
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
+  openMerClawStateDatabase,
+  runMerClawStateWriteTransaction,
+} from "../state/merclaw-state-db.js";
 import { normalizeDeliveryContext } from "../utils/delivery-context.shared.js";
 import { normalizeSubagentRunState } from "./subagent-delivery-state.js";
 import {
@@ -20,8 +20,8 @@ import type {
   SubagentRunRecord,
 } from "./subagent-registry.types.js";
 
-type SubagentRunsTable = OpenClawStateKyselyDatabase["subagent_runs"];
-type SubagentRegistryDatabase = Pick<OpenClawStateKyselyDatabase, "subagent_runs">;
+type SubagentRunsTable = MerClawStateKyselyDatabase["subagent_runs"];
+type SubagentRegistryDatabase = Pick<MerClawStateKyselyDatabase, "subagent_runs">;
 type SubagentRunSqliteRow = Selectable<SubagentRunsTable>;
 type SubagentRunSqliteInsert = Insertable<SubagentRunsTable>;
 type SubagentRunSqliteUpdate = Updateable<SubagentRunsTable>;
@@ -242,7 +242,7 @@ function subagentRunRecordToSqliteUpdate(values: SubagentRunSqliteInsert): Subag
 }
 
 function readSubagentRegistryRows(): SubagentRunSqliteRow[] {
-  const { db } = openOpenClawStateDatabase();
+  const { db } = openMerClawStateDatabase();
   const stateDb = getNodeSqliteKysely<SubagentRegistryDatabase>(db);
   return executeSqliteQuerySync(
     db,
@@ -290,7 +290,7 @@ export function loadSubagentRegistryFromSqlite(): Map<string, SubagentRunRecord>
 }
 
 export function saveSubagentRegistryToSqlite(runs: Map<string, SubagentRunRecord>): void {
-  runOpenClawStateWriteTransaction(({ db }) => {
+  runMerClawStateWriteTransaction(({ db }) => {
     const stateDb = getNodeSqliteKysely<SubagentRegistryDatabase>(db);
     const runIds: string[] = [];
     for (const entry of runs.values()) {

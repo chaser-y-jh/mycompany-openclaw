@@ -9,7 +9,7 @@ read_when:
 ---
 
 Most skills configuration lives under `skills` in
-`~/.openclaw/openclaw.json`. Agent-specific visibility lives under
+`~/.merclaw/merclaw.json`. Agent-specific visibility lives under
 `agents.defaults.skills` and `agents.list[].skills`.
 
 ```json5
@@ -85,7 +85,7 @@ Most skills configuration lives under `skills` in
 <ParamField path="skills.install.nodeManager" type='"npm" | "pnpm" | "yarn" | "bun"' default='"npm"'>
   Node package manager preference for skill installs. This only affects skill
   installs — the Gateway runtime should still use Node (Bun is not recommended
-  for WhatsApp/Telegram). Use `openclaw setup --node-manager` for npm, pnpm,
+  for WhatsApp/Telegram). Use `merclaw setup --node-manager` for npm, pnpm,
   or bun; set `"yarn"` manually for Yarn-backed skill installs.
 </ParamField>
 
@@ -106,7 +106,7 @@ Most skills configuration lives under `skills` in
 ## Per-skill entries (`skills.entries`)
 
 Keys under `entries` match the skill `name` by default. If a skill defines
-`metadata.openclaw.skillKey`, use that key instead. Quote hyphenated names
+`metadata.merclaw.skillKey`, use that key instead. Quote hyphenated names
 (JSON5 allows quoted keys).
 
 <ParamField path="skills.entries.<key>.enabled" type="boolean">
@@ -116,7 +116,7 @@ Keys under `entries` match the skill `name` by default. If a skill defines
 </ParamField>
 
 <ParamField path="skills.entries.<key>.apiKey" type='string | { source, provider, id }'>
-  Convenience field for skills that declare `metadata.openclaw.primaryEnv`.
+  Convenience field for skills that declare `metadata.merclaw.primaryEnv`.
   Supports a plaintext string or a SecretRef: `{ source: "env", provider: "default", id: "VAR_NAME" }`.
 </ParamField>
 
@@ -204,7 +204,7 @@ With this config, `<workspace>/skills/manager -> ~/Projects/manager/skills` is
 accepted after realpath resolution. `extraDirs` scans the sibling repo directly;
 `allowSymlinkTargets` preserves the symlinked path for existing layouts.
 
-Managed `~/.openclaw/skills` and personal `~/.agents/skills` directories
+Managed `~/.merclaw/skills` and personal `~/.agents/skills` directories
 already accept skill-directory symlinks (per-skill `SKILL.md` containment still
 applies).
 
@@ -245,7 +245,7 @@ Pass secrets into a Docker sandbox with:
 workspace/skills      (highest)
 workspace/.agents/skills
 ~/.agents/skills
-~/.openclaw/skills
+~/.merclaw/skills
 bundled skills
 skills.load.extraDirs (lowest)
 ```

@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 
 type ColdPluginFixture = {
   authChoiceId: string;
@@ -36,10 +36,10 @@ export function createColdPluginFixture(options: ColdPluginFixtureOptions): Cold
     path.join(options.rootDir, "package.json"),
     JSON.stringify(
       {
-        name: options.packageName ?? "@example/openclaw-cold-control-plane",
+        name: options.packageName ?? "@example/merclaw-cold-control-plane",
         version: options.packageVersion ?? "1.0.0",
         ...options.packageJson,
-        openclaw: { extensions: ["./index.cjs"] },
+        merclaw: { extensions: ["./index.cjs"] },
       },
       null,
       2,
@@ -47,7 +47,7 @@ export function createColdPluginFixture(options: ColdPluginFixtureOptions): Cold
     "utf8",
   );
   fs.writeFileSync(
-    path.join(options.rootDir, "openclaw.plugin.json"),
+    path.join(options.rootDir, "merclaw.plugin.json"),
     JSON.stringify(
       {
         id: pluginId,
@@ -97,7 +97,7 @@ export function createColdPluginFixture(options: ColdPluginFixtureOptions): Cold
   };
 }
 
-export function createColdPluginConfig(pluginDir: string, pluginId: string): OpenClawConfig {
+export function createColdPluginConfig(pluginDir: string, pluginId: string): MerClawConfig {
   return {
     plugins: {
       load: { paths: [pluginDir] },
@@ -114,11 +114,11 @@ export function createColdPluginHermeticEnv(
 ): NodeJS.ProcessEnv {
   return {
     ...process.env,
-    OPENCLAW_HOME: path.join(homeDir, "home"),
-    OPENCLAW_BUNDLED_PLUGINS_DIR: options.bundledPluginsDir,
-    OPENCLAW_DISABLE_PERSISTED_PLUGIN_REGISTRY:
+    MERCLAW_HOME: path.join(homeDir, "home"),
+    MERCLAW_BUNDLED_PLUGINS_DIR: options.bundledPluginsDir,
+    MERCLAW_DISABLE_PERSISTED_PLUGIN_REGISTRY:
       options.disablePersistedRegistry === false ? undefined : "1",
-    OPENCLAW_VERSION: "2026.4.25",
+    MERCLAW_VERSION: "2026.4.25",
     VITEST: "true",
   };
 }

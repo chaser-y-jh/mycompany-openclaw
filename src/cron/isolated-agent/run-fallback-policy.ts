@@ -1,6 +1,6 @@
 import { resolveModelCandidateChain } from "../../agents/model-fallback.js";
 import type { ModelCandidate } from "../../agents/model-fallback.types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import type { CronJob } from "../types.js";
 import {
   resolveEffectiveModelFallbacks,
@@ -8,7 +8,7 @@ import {
 } from "./run-execution.runtime.js";
 
 export function resolveCronFallbacksOverride(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   job: CronJob;
   agentId: string;
   useSubagentFallbacks?: boolean;
@@ -38,7 +38,7 @@ export function resolveCronFallbacksOverride(params: {
 }
 
 export function resolveCronPreflightCandidates(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   job: CronJob;
   agentId: string;
   provider: string;

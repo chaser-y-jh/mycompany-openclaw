@@ -1,10 +1,10 @@
 import fs from "node:fs/promises";
-import { withTempHome } from "openclaw/plugin-sdk/test-env";
+import { withTempHome } from "merclaw/plugin-sdk/test-env";
 import { describe, expect, it } from "vitest";
 import { clearMcpOAuthCredentials, createMcpOAuthClientProvider } from "./mcp-oauth.js";
 
 describe("MCP OAuth provider", () => {
-  it("stores token state under the OpenClaw state directory with restricted permissions", async () => {
+  it("stores token state under the MerClaw state directory with restricted permissions", async () => {
     await withTempHome(
       async (home) => {
         const provider = createMcpOAuthClientProvider({
@@ -18,7 +18,7 @@ describe("MCP OAuth provider", () => {
           token_type: "Bearer",
         });
 
-        const tokenDir = `${home}/.openclaw/mcp-oauth`;
+        const tokenDir = `${home}/.merclaw/mcp-oauth`;
         const entries = await fs.readdir(tokenDir);
         expect(entries).toHaveLength(1);
         expect(entries[0]).toMatch(/^Remote-Docs-[a-f0-9]{16}\.json$/);
@@ -27,11 +27,11 @@ describe("MCP OAuth provider", () => {
         expect(stat.mode & 0o777).toBe(0o600);
       },
       {
-        prefix: "openclaw-mcp-oauth-",
+        prefix: "merclaw-mcp-oauth-",
         skipSessionCleanup: true,
         env: {
-          OPENCLAW_CONFIG_PATH: undefined,
-          OPENCLAW_STATE_DIR: undefined,
+          MERCLAW_CONFIG_PATH: undefined,
+          MERCLAW_STATE_DIR: undefined,
         },
       },
     );
@@ -53,11 +53,11 @@ describe("MCP OAuth provider", () => {
         await expect(second.tokens()).resolves.toBeUndefined();
       },
       {
-        prefix: "openclaw-mcp-oauth-url-",
+        prefix: "merclaw-mcp-oauth-url-",
         skipSessionCleanup: true,
         env: {
-          OPENCLAW_CONFIG_PATH: undefined,
-          OPENCLAW_STATE_DIR: undefined,
+          MERCLAW_CONFIG_PATH: undefined,
+          MERCLAW_STATE_DIR: undefined,
         },
       },
     );
@@ -71,20 +71,20 @@ describe("MCP OAuth provider", () => {
           serverUrl: "https://mcp.example.com/mcp",
         });
 
-        await expect(provider.state?.()).rejects.toThrow("Run openclaw mcp login Remote Docs.");
+        await expect(provider.state?.()).rejects.toThrow("Run merclaw mcp login Remote Docs.");
         await expect(provider.saveCodeVerifier?.("verifier")).rejects.toThrow(
-          "Run openclaw mcp login Remote Docs.",
+          "Run merclaw mcp login Remote Docs.",
         );
         await expect(
           provider.redirectToAuthorization?.(new URL("https://auth.example.com/authorize")),
-        ).rejects.toThrow("Run openclaw mcp login Remote Docs.");
+        ).rejects.toThrow("Run merclaw mcp login Remote Docs.");
       },
       {
-        prefix: "openclaw-mcp-oauth-noninteractive-",
+        prefix: "merclaw-mcp-oauth-noninteractive-",
         skipSessionCleanup: true,
         env: {
-          OPENCLAW_CONFIG_PATH: undefined,
-          OPENCLAW_STATE_DIR: undefined,
+          MERCLAW_CONFIG_PATH: undefined,
+          MERCLAW_STATE_DIR: undefined,
         },
       },
     );
@@ -107,11 +107,11 @@ describe("MCP OAuth provider", () => {
         await expect(provider.tokens()).resolves.toBeUndefined();
       },
       {
-        prefix: "openclaw-mcp-oauth-clear-",
+        prefix: "merclaw-mcp-oauth-clear-",
         skipSessionCleanup: true,
         env: {
-          OPENCLAW_CONFIG_PATH: undefined,
-          OPENCLAW_STATE_DIR: undefined,
+          MERCLAW_CONFIG_PATH: undefined,
+          MERCLAW_STATE_DIR: undefined,
         },
       },
     );

@@ -1,7 +1,7 @@
-import type { AgentMessage } from "openclaw/plugin-sdk/agent-core";
+import type { AgentMessage } from "merclaw/plugin-sdk/agent-core";
 import { describe, expect, it, vi } from "vitest";
 import type { ContextEngine } from "../../context-engine/types.js";
-import { OPENCLAW_RUNTIME_CONTEXT_CUSTOM_TYPE } from "../internal-runtime-context.js";
+import { MERCLAW_RUNTIME_CONTEXT_CUSTOM_TYPE } from "../internal-runtime-context.js";
 import {
   assembleHarnessContextEngine,
   finalizeHarnessContextEngineTurn,
@@ -18,10 +18,10 @@ function textMessage(role: "user" | "assistant", text: string, timestamp: number
 function runtimeContextMessage(content: string, timestamp: number): AgentMessage {
   return {
     role: "custom",
-    customType: OPENCLAW_RUNTIME_CONTEXT_CUSTOM_TYPE,
+    customType: MERCLAW_RUNTIME_CONTEXT_CUSTOM_TYPE,
     content,
     display: false,
-    details: { source: "openclaw-runtime-context" },
+    details: { source: "merclaw-runtime-context" },
     timestamp,
   } as AgentMessage;
 }

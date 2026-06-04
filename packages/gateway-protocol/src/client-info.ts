@@ -8,18 +8,18 @@ function normalizeOptionalLowercaseString(raw?: string | null): string | undefin
 
 export const GATEWAY_CLIENT_IDS = {
   WEBCHAT_UI: "webchat-ui",
-  CONTROL_UI: "openclaw-control-ui",
-  TUI: "openclaw-tui",
+  CONTROL_UI: "merclaw-control-ui",
+  TUI: "merclaw-tui",
   WEBCHAT: "webchat",
   CLI: "cli",
   GATEWAY_CLIENT: "gateway-client",
-  MACOS_APP: "openclaw-macos",
-  IOS_APP: "openclaw-ios",
-  ANDROID_APP: "openclaw-android",
+  MACOS_APP: "merclaw-macos",
+  IOS_APP: "merclaw-ios",
+  ANDROID_APP: "merclaw-android",
   NODE_HOST: "node-host",
   TEST: "test",
   FINGERPRINT: "fingerprint",
-  PROBE: "openclaw-probe",
+  PROBE: "merclaw-probe",
 } as const;
 
 /** Stable gateway client ids used on the wire during hello/connect handshakes. */

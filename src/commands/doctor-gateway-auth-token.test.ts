@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { MerClawConfig } from "../config/config.js";
 import { withTempHome, writeStateDirDotEnv } from "../config/test-helpers.js";
 import { withEnvAsync } from "../test-utils/env.js";
 import {
@@ -13,7 +13,7 @@ import { resolveGatewayInstallToken } from "./gateway-install-token.js";
 
 const envVar = (...parts: string[]) => parts.join("_");
 
-function createExecGatewayTokenConfig(markerPath: string): OpenClawConfig {
+function createExecGatewayTokenConfig(markerPath: string): MerClawConfig {
   return {
     gateway: {
       auth: {
@@ -41,7 +41,7 @@ function createExecGatewayTokenConfig(markerPath: string): OpenClawConfig {
         },
       },
     },
-  } as OpenClawConfig;
+  } as MerClawConfig;
 }
 
 describe("resolveGatewayAuthTokenForService", () => {
@@ -53,7 +53,7 @@ describe("resolveGatewayAuthTokenForService", () => {
             token: "config-token",
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       {} as NodeJS.ProcessEnv,
     );
 
@@ -77,7 +77,7 @@ describe("resolveGatewayAuthTokenForService", () => {
             default: { source: "env" },
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       {
         CUSTOM_GATEWAY_TOKEN: "resolved-token",
       } as NodeJS.ProcessEnv,
@@ -99,7 +99,7 @@ describe("resolveGatewayAuthTokenForService", () => {
             default: { source: "env" },
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       {
         CUSTOM_GATEWAY_TOKEN: "resolved-token",
       } as NodeJS.ProcessEnv,
@@ -109,7 +109,7 @@ describe("resolveGatewayAuthTokenForService", () => {
   });
 
   it("skips exec SecretRefs by default for service token checks", async () => {
-    const tmp = await fs.mkdtemp(join(tmpdir(), "openclaw-service-token-exec-ref-"));
+    const tmp = await fs.mkdtemp(join(tmpdir(), "merclaw-service-token-exec-ref-"));
     const markerPath = join(tmp, "exec-ran");
     try {
       const resolved = await resolveGatewayAuthTokenForService(
@@ -125,7 +125,7 @@ describe("resolveGatewayAuthTokenForService", () => {
   });
 
   it("executes exec SecretRefs for service token checks when explicitly allowed", async () => {
-    const tmp = await fs.mkdtemp(join(tmpdir(), "openclaw-service-token-exec-ref-"));
+    const tmp = await fs.mkdtemp(join(tmpdir(), "merclaw-service-token-exec-ref-"));
     const markerPath = join(tmp, "exec-ran");
     try {
       const resolved = await resolveGatewayAuthTokenForService(
@@ -141,7 +141,7 @@ describe("resolveGatewayAuthTokenForService", () => {
     }
   });
 
-  it("falls back to OPENCLAW_GATEWAY_TOKEN when SecretRef is unresolved", async () => {
+  it("falls back to MERCLAW_GATEWAY_TOKEN when SecretRef is unresolved", async () => {
     const resolved = await resolveGatewayAuthTokenForService(
       {
         gateway: {
@@ -158,16 +158,16 @@ describe("resolveGatewayAuthTokenForService", () => {
             default: { source: "env" },
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       {
-        OPENCLAW_GATEWAY_TOKEN: "env-fallback-token",
+        MERCLAW_GATEWAY_TOKEN: "env-fallback-token",
       } as NodeJS.ProcessEnv,
     );
 
     expect(resolved).toEqual({ token: "env-fallback-token" });
   });
 
-  it("falls back to OPENCLAW_GATEWAY_TOKEN when SecretRef resolves to empty", async () => {
+  it("falls back to MERCLAW_GATEWAY_TOKEN when SecretRef resolves to empty", async () => {
     const resolved = await resolveGatewayAuthTokenForService(
       {
         gateway: {
@@ -184,10 +184,10 @@ describe("resolveGatewayAuthTokenForService", () => {
             default: { source: "env" },
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       {
         CUSTOM_GATEWAY_TOKEN: "   ",
-        OPENCLAW_GATEWAY_TOKEN: "env-fallback-token",
+        MERCLAW_GATEWAY_TOKEN: "env-fallback-token",
       } as NodeJS.ProcessEnv,
     );
 
@@ -211,7 +211,7 @@ describe("resolveGatewayAuthTokenForService", () => {
             default: { source: "env" },
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       {} as NodeJS.ProcessEnv,
     );
 
@@ -231,7 +231,7 @@ describe("shouldRequireGatewayTokenForInstall", () => {
             mode: "token",
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       {} as NodeJS.ProcessEnv,
     );
     expect(required).toBe(true);
@@ -245,7 +245,7 @@ describe("shouldRequireGatewayTokenForInstall", () => {
             mode: "password",
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       {} as NodeJS.ProcessEnv,
     );
     expect(required).toBe(false);
@@ -253,7 +253,7 @@ describe("shouldRequireGatewayTokenForInstall", () => {
 
   it("requires token in inferred mode when password env exists only in shell", async () => {
     await withEnvAsync(
-      { [envVar("OPENCLAW", "GATEWAY", "PASSWORD")]: "password-from-env" },
+      { [envVar("MERCLAW", "GATEWAY", "PASSWORD")]: "password-from-env" },
       async () => {
         // pragma: allowlist secret
         const required = shouldRequireGatewayTokenForInstall(
@@ -261,7 +261,7 @@ describe("shouldRequireGatewayTokenForInstall", () => {
             gateway: {
               auth: {},
             },
-          } as OpenClawConfig,
+          } as MerClawConfig,
           process.env,
         );
         expect(required).toBe(true);
@@ -286,7 +286,7 @@ describe("shouldRequireGatewayTokenForInstall", () => {
             default: { source: "env" },
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       {} as NodeJS.ProcessEnv,
     );
     expect(required).toBe(false);
@@ -300,10 +300,10 @@ describe("shouldRequireGatewayTokenForInstall", () => {
         },
         env: {
           vars: {
-            OPENCLAW_GATEWAY_PASSWORD: "configured-password", // pragma: allowlist secret
+            MERCLAW_GATEWAY_PASSWORD: "configured-password", // pragma: allowlist secret
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       {} as NodeJS.ProcessEnv,
     );
     expect(required).toBe(false);
@@ -311,7 +311,7 @@ describe("shouldRequireGatewayTokenForInstall", () => {
 
   it("does not require token in inferred mode when password env exists in state-dir .env", async () => {
     await withTempHome(async (_home) => {
-      await writeStateDirDotEnv("OPENCLAW_GATEWAY_PASSWORD=dotenv-password\n", {
+      await writeStateDirDotEnv("MERCLAW_GATEWAY_PASSWORD=dotenv-password\n", {
         env: process.env,
       });
 
@@ -320,7 +320,7 @@ describe("shouldRequireGatewayTokenForInstall", () => {
           gateway: {
             auth: {},
           },
-        } as OpenClawConfig,
+        } as MerClawConfig,
         process.env,
       );
       expect(required).toBe(false);
@@ -333,7 +333,7 @@ describe("shouldRequireGatewayTokenForInstall", () => {
         gateway: {
           auth: {},
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       {} as NodeJS.ProcessEnv,
     );
     expect(required).toBe(true);
@@ -346,7 +346,7 @@ describe("shouldRequireGatewayTokenForInstall", () => {
           auth: { mode: "none" },
           tailscale: { mode: "serve" },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       env: {} as NodeJS.ProcessEnv,
     });
 

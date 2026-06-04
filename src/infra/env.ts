@@ -1,4 +1,4 @@
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
 import type { SubsystemLogger } from "../logging/subsystem.js";
 
 let log: SubsystemLogger | null = null;

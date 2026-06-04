@@ -1,4 +1,4 @@
-import { createPluginRuntimeMock } from "openclaw/plugin-sdk/channel-test-helpers";
+import { createPluginRuntimeMock } from "merclaw/plugin-sdk/channel-test-helpers";
 import { describe, expect, it, vi } from "vitest";
 
 describe("createPluginRuntimeMock", () => {
@@ -30,7 +30,7 @@ describe("createPluginRuntimeMock", () => {
     }));
     const resolveTurn = vi.fn(async () => ({
       channel,
-      storePath: "/tmp/openclaw-test",
+      storePath: "/tmp/merclaw-test",
       routeSessionKey: "agent:main:test:direct:u1",
       ctxPayload: {
         Body: "hello",
@@ -58,7 +58,7 @@ describe("createPluginRuntimeMock", () => {
     );
     expect(recordInboundSession).toHaveBeenCalledWith(
       expect.objectContaining({
-        storePath: "/tmp/openclaw-test",
+        storePath: "/tmp/merclaw-test",
         sessionKey: "agent:main:test:direct:u1",
       }),
     );

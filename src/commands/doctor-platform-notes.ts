@@ -3,12 +3,12 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import { note } from "../../packages/terminal-core/src/note.js";
 import { formatCliCommand } from "../cli/command-format.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { hasConfiguredSecretInput } from "../config/types.secrets.js";
-import { findStaleOpenClawUpdateLaunchdJobs } from "../daemon/launchd.js";
+import { findStaleMerClawUpdateLaunchdJobs } from "../daemon/launchd.js";
 import { shortenHomePath } from "../utils.js";
 
 const execFileAsync = promisify(execFile);
@@ -26,7 +26,7 @@ export function collectMacLaunchAgentOverrideWarning(deps?: {
     return null;
   }
   const home = deps?.homeDir ?? resolveHomeDir();
-  const markerCandidates = [path.join(home, ".openclaw", "disable-launchagent")];
+  const markerCandidates = [path.join(home, ".merclaw", "disable-launchagent")];
   const exists = deps?.exists ?? fs.existsSync;
   const markerPath = markerCandidates.find((candidate) => exists(candidate));
   if (!markerPath) {
@@ -48,21 +48,21 @@ export async function noteMacLaunchAgentOverrides() {
   }
 }
 
-export async function collectMacStaleOpenClawUpdateLaunchdJobsWarning(deps?: {
+export async function collectMacStaleMerClawUpdateLaunchdJobsWarning(deps?: {
   platform?: NodeJS.Platform;
-  findJobs?: typeof findStaleOpenClawUpdateLaunchdJobs;
+  findJobs?: typeof findStaleMerClawUpdateLaunchdJobs;
 }): Promise<string | null> {
   const platform = deps?.platform ?? process.platform;
   if (platform !== "darwin") {
     return null;
   }
-  const jobs = await (deps?.findJobs ?? findStaleOpenClawUpdateLaunchdJobs)().catch(() => []);
+  const jobs = await (deps?.findJobs ?? findStaleMerClawUpdateLaunchdJobs)().catch(() => []);
   if (jobs.length === 0) {
     return null;
   }
 
   return [
-    "- Stale OpenClaw updater launchd job(s) detected.",
+    "- Stale MerClaw updater launchd job(s) detected.",
     ...jobs.map((job) => {
       const exitStatus =
         job.lastExitStatus !== undefined ? `, last exit ${job.lastExitStatus}` : "";
@@ -71,16 +71,16 @@ export async function collectMacStaleOpenClawUpdateLaunchdJobsWarning(deps?: {
     }),
     "- Fix after confirming no update is running:",
     "  launchctl remove <label>",
-    `  ${formatCliCommand("openclaw gateway restart")}`,
+    `  ${formatCliCommand("merclaw gateway restart")}`,
   ].join("\n");
 }
 
-export async function noteMacStaleOpenClawUpdateLaunchdJobs(deps?: {
+export async function noteMacStaleMerClawUpdateLaunchdJobs(deps?: {
   platform?: NodeJS.Platform;
-  findJobs?: typeof findStaleOpenClawUpdateLaunchdJobs;
+  findJobs?: typeof findStaleMerClawUpdateLaunchdJobs;
   noteFn?: typeof note;
 }) {
-  const warning = await collectMacStaleOpenClawUpdateLaunchdJobsWarning(deps);
+  const warning = await collectMacStaleMerClawUpdateLaunchdJobsWarning(deps);
   if (warning) {
     (deps?.noteFn ?? note)(warning, "Gateway (macOS)");
   }
@@ -96,7 +96,7 @@ async function launchctlGetenv(name: string): Promise<string | undefined> {
   }
 }
 
-function hasConfigGatewayCreds(cfg: OpenClawConfig): boolean {
+function hasConfigGatewayCreds(cfg: MerClawConfig): boolean {
   const localPassword = cfg.gateway?.auth?.password;
   const remoteToken = cfg.gateway?.remote?.token;
   const remotePassword = cfg.gateway?.remote?.password;
@@ -109,7 +109,7 @@ function hasConfigGatewayCreds(cfg: OpenClawConfig): boolean {
 }
 
 export async function collectMacLaunchctlGatewayEnvOverrideWarning(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   deps?: {
     platform?: NodeJS.Platform;
     getenv?: (name: string) => Promise<string | undefined>;
@@ -125,10 +125,10 @@ export async function collectMacLaunchctlGatewayEnvOverrideWarning(
 
   const getenv = deps?.getenv ?? launchctlGetenv;
   const tokenEntries = [
-    ["OPENCLAW_GATEWAY_TOKEN", await getenv("OPENCLAW_GATEWAY_TOKEN")],
+    ["MERCLAW_GATEWAY_TOKEN", await getenv("MERCLAW_GATEWAY_TOKEN")],
   ] as const;
   const passwordEntries = [
-    ["OPENCLAW_GATEWAY_PASSWORD", await getenv("OPENCLAW_GATEWAY_PASSWORD")],
+    ["MERCLAW_GATEWAY_PASSWORD", await getenv("MERCLAW_GATEWAY_PASSWORD")],
   ] as const;
   const tokenEntry = tokenEntries.find(([, value]) => normalizeOptionalString(value));
   const passwordEntry = passwordEntries.find(([, value]) => normalizeOptionalString(value));
@@ -147,7 +147,7 @@ export async function collectMacLaunchctlGatewayEnvOverrideWarning(
       ? `- \`${envTokenKey}\` is set; it can make local clients use a different token than gateway.auth.token.`
       : undefined,
     envPassword
-      ? `- \`${envPasswordKey ?? "OPENCLAW_GATEWAY_PASSWORD"}\` is set; it can make local clients use a different password than gateway.auth.password.`
+      ? `- \`${envPasswordKey ?? "MERCLAW_GATEWAY_PASSWORD"}\` is set; it can make local clients use a different password than gateway.auth.password.`
       : undefined,
     "- Clear overrides and restart the app/gateway:",
     envTokenKey ? `  launchctl unsetenv ${envTokenKey}` : undefined,
@@ -158,7 +158,7 @@ export async function collectMacLaunchctlGatewayEnvOverrideWarning(
 }
 
 export async function noteMacLaunchctlGatewayEnvOverrides(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   deps?: {
     platform?: NodeJS.Platform;
     getenv?: (name: string) => Promise<string | undefined>;
@@ -172,14 +172,14 @@ export async function noteMacLaunchctlGatewayEnvOverrides(
 }
 
 export async function collectMacGatewayPlatformWarnings(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
 ): Promise<readonly string[]> {
   const warnings: string[] = [];
   const launchAgentWarning = collectMacLaunchAgentOverrideWarning();
   if (launchAgentWarning) {
     warnings.push(launchAgentWarning);
   }
-  const staleUpdateWarning = await collectMacStaleOpenClawUpdateLaunchdJobsWarning();
+  const staleUpdateWarning = await collectMacStaleMerClawUpdateLaunchdJobsWarning();
   if (staleUpdateWarning) {
     warnings.push(staleUpdateWarning);
   }
@@ -230,7 +230,7 @@ export function noteStartupOptimizationHints(
   const noteFn = deps?.noteFn ?? note;
   const compileCache = normalizeOptionalString(env.NODE_COMPILE_CACHE) ?? "";
   const disableCompileCache = normalizeOptionalString(env.NODE_DISABLE_COMPILE_CACHE) ?? "";
-  const noRespawn = normalizeOptionalString(env.OPENCLAW_NO_RESPAWN) ?? "";
+  const noRespawn = normalizeOptionalString(env.MERCLAW_NO_RESPAWN) ?? "";
   const lines: string[] = [];
 
   if (!compileCache) {
@@ -249,7 +249,7 @@ export function noteStartupOptimizationHints(
 
   if (noRespawn !== "1") {
     lines.push(
-      "- OPENCLAW_NO_RESPAWN is not set to 1; set it when you want routine gateway restarts to stay in-process instead of handing off to a managed supervisor.",
+      "- MERCLAW_NO_RESPAWN is not set to 1; set it when you want routine gateway restarts to stay in-process instead of handing off to a managed supervisor.",
     );
   }
 
@@ -259,9 +259,9 @@ export function noteStartupOptimizationHints(
 
   const suggestions = [
     "- Suggested env for low-power hosts:",
-    "  export NODE_COMPILE_CACHE=/var/tmp/openclaw-compile-cache",
-    "  mkdir -p /var/tmp/openclaw-compile-cache",
-    "  export OPENCLAW_NO_RESPAWN=1",
+    "  export NODE_COMPILE_CACHE=/var/tmp/merclaw-compile-cache",
+    "  mkdir -p /var/tmp/merclaw-compile-cache",
+    "  export MERCLAW_NO_RESPAWN=1",
     isTruthyEnvValue(disableCompileCache) ? "  unset NODE_DISABLE_COMPILE_CACHE" : undefined,
   ].filter((line): line is string => Boolean(line));
 

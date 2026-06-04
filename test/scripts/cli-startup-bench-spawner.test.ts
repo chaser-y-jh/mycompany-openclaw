@@ -34,7 +34,7 @@ describe("CLI startup benchmark script spawners", () => {
   });
 
   it("does not require unrelated fixture cases for a narrowed preset", () => {
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-bench-budget-test-"));
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-bench-budget-test-"));
     try {
       const baselinePath = path.join(tmpDir, "baseline.json");
       const reportPath = path.join(tmpDir, "current.json");
@@ -102,14 +102,14 @@ describe("CLI startup benchmark script spawners", () => {
       encoding: "utf8",
       env: {
         ...process.env,
-        OPENCLAW_STARTUP_BENCH_MAX_RSS_REGRESSION_PCT: "20pct",
+        MERCLAW_STARTUP_BENCH_MAX_RSS_REGRESSION_PCT: "20pct",
       },
     });
 
     expect(result.status).toBe(1);
     expect(result.stdout).toBe("");
     expect(result.stderr).toContain(
-      "OPENCLAW_STARTUP_BENCH_MAX_RSS_REGRESSION_PCT must be a non-negative number",
+      "MERCLAW_STARTUP_BENCH_MAX_RSS_REGRESSION_PCT must be a non-negative number",
     );
     expect(result.stderr).not.toContain("at ");
   });

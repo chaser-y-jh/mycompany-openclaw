@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
-import { resolvePreferredOpenClawTmpDir } from "../api.js";
+import { resolvePreferredMerClawTmpDir } from "../api.js";
 import { DiffArtifactStore } from "./store.js";
 
 const execFileAsync = promisify(execFile);
@@ -38,7 +38,7 @@ export async function createTempDiffRoot(prefix: string): Promise<{
   rootDir: string;
   cleanup: () => Promise<void>;
 }> {
-  const rootDir = await fs.mkdtemp(path.join(resolvePreferredOpenClawTmpDir(), prefix));
+  const rootDir = await fs.mkdtemp(path.join(resolvePreferredMerClawTmpDir(), prefix));
   return {
     rootDir,
     cleanup: async () => {

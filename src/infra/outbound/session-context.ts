@@ -1,7 +1,7 @@
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import { resolveSessionAgentId } from "../../agents/agent-scope.js";
 import { normalizeChatType } from "../../channels/chat-type.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import type { SilentReplyConversationType } from "../../shared/silent-reply-policy.js";
 
 export type OutboundSessionContext = {
@@ -48,7 +48,7 @@ export type OutboundSessionContext = {
 };
 
 export function buildOutboundSessionContext(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   sessionKey?: string | null;
   policySessionKey?: string | null;
   conversationType?: string | null;

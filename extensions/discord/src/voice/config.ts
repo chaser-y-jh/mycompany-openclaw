@@ -1,4 +1,4 @@
-import type { DiscordAccountConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { DiscordAccountConfig } from "merclaw/plugin-sdk/config-contracts";
 
 export function resolveDiscordVoiceEnabled(voice: DiscordAccountConfig["voice"]): boolean {
   if (voice?.enabled !== undefined) {

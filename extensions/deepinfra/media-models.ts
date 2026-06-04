@@ -1,4 +1,4 @@
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { normalizeOptionalString } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { DEEPINFRA_BASE_URL } from "./provider-models.js";
 
 export { DEEPINFRA_BASE_URL };

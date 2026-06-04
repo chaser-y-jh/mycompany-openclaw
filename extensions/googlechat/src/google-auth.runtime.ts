@@ -1,12 +1,12 @@
 import fs from "node:fs/promises";
 import type { ConnectionOptions } from "node:tls";
-import { parseMediaContentLength } from "openclaw/plugin-sdk/media-runtime";
-import type { PinnedDispatcherPolicy } from "openclaw/plugin-sdk/ssrf-dispatcher";
+import { parseMediaContentLength } from "merclaw/plugin-sdk/media-runtime";
+import type { PinnedDispatcherPolicy } from "merclaw/plugin-sdk/ssrf-dispatcher";
 import {
   buildHostnameAllowlistPolicyFromSuffixAllowlist,
   fetchWithSsrFGuard,
-} from "openclaw/plugin-sdk/ssrf-runtime";
-import { resolveUserPath } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "merclaw/plugin-sdk/ssrf-runtime";
+import { resolveUserPath } from "merclaw/plugin-sdk/text-utility-runtime";
 import type { ResolvedGoogleChatAccount } from "./accounts.js";
 
 type ProxyRule = RegExp | URL | string;

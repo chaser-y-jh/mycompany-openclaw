@@ -1,8 +1,8 @@
 {
-  "name": "@openclaw/oc-path",
+  "name": "@merclaw/oc-path",
   "version": "2026.5.31",
   "private": true,
-  "description": "OpenClaw oc:// workspace path plugin",
+  "description": "MerClaw oc:// workspace path plugin",
   "type": "module",
   "dependencies": {
     "commander": "14.0.3",
@@ -11,18 +11,18 @@
     "yaml": "2.9.0"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*",
-    "openclaw": "2026.5.28"
+    "@merclaw/plugin-sdk": "workspace:*",
+    "merclaw": "2026.5.28"
   },
   "peerDependencies": {
-    "openclaw": ">=2026.5.31"
+    "merclaw": ">=2026.5.31"
   },
   "peerDependenciesMeta": {
-    "openclaw": {
+    "merclaw": {
       "optional": true
     }
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ]

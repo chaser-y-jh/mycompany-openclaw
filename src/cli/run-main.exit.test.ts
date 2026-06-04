@@ -153,7 +153,7 @@ vi.mock("../infra/env.js", () => ({
 }));
 
 vi.mock("../infra/path-env.js", () => ({
-  ensureOpenClawCliOnPath: ensurePathMock,
+  ensureMerClawCliOnPath: ensurePathMock,
 }));
 
 vi.mock("../infra/runtime-guard.js", () => ({
@@ -327,8 +327,8 @@ describe("runCli exit behavior", () => {
     resolveManifestCommandAliasOwnerMock.mockReturnValue(undefined);
     resolveManifestToolOwnerMock.mockReturnValue(undefined);
     resolveManifestCliCommandSurfaceOwnerMock.mockReturnValue(undefined);
-    delete process.env.OPENCLAW_DISABLE_CLI_STARTUP_HELP_FAST_PATH;
-    delete process.env.OPENCLAW_HIDE_BANNER;
+    delete process.env.MERCLAW_DISABLE_CLI_STARTUP_HELP_FAST_PATH;
+    delete process.env.MERCLAW_HIDE_BANNER;
     loggingState.forceConsoleToStderr = false;
   });
 
@@ -338,10 +338,10 @@ describe("runCli exit behavior", () => {
       throw new Error(`unexpected process.exit(${String(code)})`);
     }) as typeof process.exit);
 
-    await runCli(["node", "openclaw", "status"]);
+    await runCli(["node", "merclaw", "status"]);
 
-    expect(maybeRunCliInContainerMock).toHaveBeenCalledWith(["node", "openclaw", "status"]);
-    expect(tryRouteCliMock).toHaveBeenCalledWith(["node", "openclaw", "status"]);
+    expect(maybeRunCliInContainerMock).toHaveBeenCalledWith(["node", "merclaw", "status"]);
+    expect(tryRouteCliMock).toHaveBeenCalledWith(["node", "merclaw", "status"]);
     expect(closeActiveMemorySearchManagersMock).not.toHaveBeenCalled();
     expect(disposeRegisteredAgentHarnessesMock).not.toHaveBeenCalled();
     expect(ensureTaskRegistryReadyMock).not.toHaveBeenCalled();
@@ -359,9 +359,9 @@ describe("runCli exit behavior", () => {
       parseAsync,
     });
 
-    await runCli(["node", "openclaw", "agent", "--local"]);
+    await runCli(["node", "merclaw", "agent", "--local"]);
 
-    expect(parseAsync).toHaveBeenCalledWith(["node", "openclaw", "agent", "--local"]);
+    expect(parseAsync).toHaveBeenCalledWith(["node", "merclaw", "agent", "--local"]);
     expect(disposeRegisteredAgentHarnessesMock).toHaveBeenCalledTimes(1);
   });
 
@@ -373,10 +373,10 @@ describe("runCli exit behavior", () => {
       parseAsync,
     });
 
-    await runCli(["node", "openclaw", "config"]);
+    await runCli(["node", "merclaw", "config"]);
 
     expect(createCliProgressMock).toHaveBeenCalledWith({
-      label: "Loading OpenClaw CLI…",
+      label: "Loading MerClaw CLI…",
       indeterminate: true,
       delayMs: 0,
     });
@@ -395,9 +395,9 @@ describe("runCli exit behavior", () => {
     const pauseSpy = vi.spyOn(process.stdin, "pause").mockImplementation(() => process.stdin);
 
     try {
-      await runCli(["node", "openclaw", "channels"]);
+      await runCli(["node", "merclaw", "channels"]);
 
-      expect(parseAsync).toHaveBeenCalledWith(["node", "openclaw", "channels"]);
+      expect(parseAsync).toHaveBeenCalledWith(["node", "merclaw", "channels"]);
       expect(pauseSpy).toHaveBeenCalledTimes(1);
     } finally {
       pauseSpy.mockRestore();
@@ -410,23 +410,23 @@ describe("runCli exit behavior", () => {
   });
 
   it("emits the startup banner before gateway foreground fast-path startup", async () => {
-    await runCli(["node", "openclaw", "gateway", "--force"]);
+    await runCli(["node", "merclaw", "gateway", "--force"]);
 
     expect(tryRouteCliMock).not.toHaveBeenCalled();
     expect(emitCliBannerMock).toHaveBeenCalledWith("9.9.9-test", {
-      argv: ["node", "openclaw", "gateway", "--force"],
+      argv: ["node", "merclaw", "gateway", "--force"],
     });
     expect(addGatewayRunCommandMock).toHaveBeenCalledTimes(2);
     expect(commanderParseAsyncMock).toHaveBeenCalledWith([
       "node",
-      "openclaw",
+      "merclaw",
       "gateway",
       "--force",
     ]);
   });
 
   it("installs console capture before parsing the gateway foreground fast path", async () => {
-    await runCli(["node", "openclaw", "gateway", "--force"]);
+    await runCli(["node", "merclaw", "gateway", "--force"]);
 
     expect(enableConsoleCaptureMock).toHaveBeenCalledTimes(1);
     expect(commanderParseAsyncMock).toHaveBeenCalledTimes(1);
@@ -437,13 +437,13 @@ describe("runCli exit behavior", () => {
   });
 
   it("honors banner suppression on the gateway foreground fast path", async () => {
-    process.env.OPENCLAW_HIDE_BANNER = "1";
+    process.env.MERCLAW_HIDE_BANNER = "1";
 
-    await runCli(["node", "openclaw", "gateway"]);
+    await runCli(["node", "merclaw", "gateway"]);
 
     expect(tryRouteCliMock).not.toHaveBeenCalled();
     expect(emitCliBannerMock).not.toHaveBeenCalled();
-    expect(commanderParseAsyncMock).toHaveBeenCalledWith(["node", "openclaw", "gateway"]);
+    expect(commanderParseAsyncMock).toHaveBeenCalledWith(["node", "merclaw", "gateway"]);
   });
 
   it("renders browser help from startup metadata without building the full program", async () => {
@@ -452,11 +452,11 @@ describe("runCli exit behavior", () => {
       throw new Error(`unexpected process.exit(${String(code)})`);
     }) as typeof process.exit);
 
-    await runCli(["node", "openclaw", "browser", "--help"]);
+    await runCli(["node", "merclaw", "browser", "--help"]);
 
     expect(maybeRunCliInContainerMock).toHaveBeenCalledWith([
       "node",
-      "openclaw",
+      "merclaw",
       "browser",
       "--help",
     ]);
@@ -472,7 +472,7 @@ describe("runCli exit behavior", () => {
   it("renders secrets help from startup metadata without building the full program", async () => {
     outputPrecomputedSecretsHelpTextMock.mockReturnValueOnce(true);
 
-    await runCli(["node", "openclaw", "secrets", "--help"]);
+    await runCli(["node", "merclaw", "secrets", "--help"]);
 
     expect(tryRouteCliMock).not.toHaveBeenCalled();
     expect(outputPrecomputedSecretsHelpTextMock).toHaveBeenCalledTimes(1);
@@ -483,7 +483,7 @@ describe("runCli exit behavior", () => {
   it("renders nodes help from startup metadata without building the full program", async () => {
     outputPrecomputedNodesHelpTextMock.mockReturnValueOnce(true);
 
-    await runCli(["node", "openclaw", "nodes", "--help"]);
+    await runCli(["node", "merclaw", "nodes", "--help"]);
 
     expect(tryRouteCliMock).not.toHaveBeenCalled();
     expect(outputPrecomputedNodesHelpTextMock).toHaveBeenCalledTimes(1);
@@ -492,7 +492,7 @@ describe("runCli exit behavior", () => {
   });
 
   it("defers nodes help startup metadata when plugin config can change command metadata", async () => {
-    const argv = ["node", "openclaw", "nodes", "--help"];
+    const argv = ["node", "merclaw", "nodes", "--help"];
     const parseAsync = vi.fn().mockResolvedValueOnce(undefined);
     const program = {
       commands: [{ name: () => "nodes", aliases: () => [] }],
@@ -513,7 +513,7 @@ describe("runCli exit behavior", () => {
   it("renders selected subcommand help from startup metadata without building the full program", async () => {
     outputPrecomputedSubcommandHelpTextMock.mockReturnValueOnce(true);
 
-    await runCli(["node", "openclaw", "doctor", "--help"]);
+    await runCli(["node", "merclaw", "doctor", "--help"]);
 
     expect(outputPrecomputedSubcommandHelpTextMock).toHaveBeenCalledWith("doctor");
     expect(tryRouteCliMock).not.toHaveBeenCalled();
@@ -524,7 +524,7 @@ describe("runCli exit behavior", () => {
   it("keeps root help on the precomputed path without proxy bootstrap", async () => {
     outputPrecomputedRootHelpTextMock.mockReturnValueOnce(true);
 
-    await runCli(["node", "openclaw", "--help"]);
+    await runCli(["node", "merclaw", "--help"]);
 
     expect(loadRootHelpRenderOptionsForConfigSensitivePluginsMock).toHaveBeenCalledTimes(1);
     expect(outputPrecomputedRootHelpTextMock).toHaveBeenCalledTimes(1);
@@ -534,11 +534,11 @@ describe("runCli exit behavior", () => {
   });
 
   it("renders setup/onboard/configure help without building the full program", async () => {
-    await runCli(["node", "openclaw", "setup", "--help"]);
+    await runCli(["node", "merclaw", "setup", "--help"]);
 
     expect(tryOutputSetupOnboardConfigureHelpMock).toHaveBeenCalledWith([
       "node",
-      "openclaw",
+      "merclaw",
       "setup",
       "--help",
     ]);
@@ -552,9 +552,9 @@ describe("runCli exit behavior", () => {
       throw new Error(`unexpected process.exit(${String(code)})`);
     }) as typeof process.exit);
 
-    await runCli(["node", "openclaw", "--help"]);
+    await runCli(["node", "merclaw", "--help"]);
 
-    expect(maybeRunCliInContainerMock).toHaveBeenCalledWith(["node", "openclaw", "--help"]);
+    expect(maybeRunCliInContainerMock).toHaveBeenCalledWith(["node", "merclaw", "--help"]);
     expect(tryRouteCliMock).not.toHaveBeenCalled();
     expect(loadRootHelpRenderOptionsForConfigSensitivePluginsMock).toHaveBeenCalledTimes(1);
     expect(outputPrecomputedRootHelpTextMock).toHaveBeenCalledTimes(1);
@@ -579,7 +579,7 @@ describe("runCli exit behavior", () => {
     loadRootHelpRenderOptionsForConfigSensitivePluginsMock.mockResolvedValueOnce(liveOptions);
     outputPrecomputedRootHelpTextMock.mockReturnValueOnce(true);
 
-    await runCli(["node", "openclaw", "--help"]);
+    await runCli(["node", "merclaw", "--help"]);
 
     expect(loadRootHelpRenderOptionsForConfigSensitivePluginsMock).toHaveBeenCalledTimes(1);
     expect(outputPrecomputedRootHelpTextMock).not.toHaveBeenCalled();
@@ -590,57 +590,57 @@ describe("runCli exit behavior", () => {
   it("does not start the managed proxy for local gateway client commands", async () => {
     tryRouteCliMock.mockResolvedValueOnce(true);
 
-    await runCli(["node", "openclaw", "status"]);
+    await runCli(["node", "merclaw", "status"]);
 
     expect(startProxyMock).not.toHaveBeenCalled();
     expect(stopProxyMock).not.toHaveBeenCalled();
   });
 
   it.each([
-    ["gateway runtime", ["node", "openclaw", "gateway", "run"]],
-    ["bare gateway runtime", ["node", "openclaw", "gateway"]],
-    ["node runtime", ["node", "openclaw", "node", "run"]],
-    ["local agent runtime", ["node", "openclaw", "agent", "--local"]],
-    ["provider inference", ["node", "openclaw", "infer", "web", "fetch", "https://example.com"]],
-    ["model command", ["node", "openclaw", "models", "auth", "login", "openai"]],
-    ["plugin command", ["node", "openclaw", "plugins", "marketplace", "list"]],
-    ["skill command", ["node", "openclaw", "skills", "search", "browser"]],
-    ["update command", ["node", "openclaw", "update", "check"]],
-    ["channel probe", ["node", "openclaw", "channels", "status", "--probe"]],
-    ["channel capabilities probe", ["node", "openclaw", "channels", "capabilities"]],
-    ["directory plugin command", ["node", "openclaw", "directory", "peers", "list"]],
-    ["message plugin command", ["node", "openclaw", "message", "send", "--to", "demo"]],
-    ["metadata-owned plugin command", ["node", "openclaw", "googlemeet", "login"]],
+    ["gateway runtime", ["node", "merclaw", "gateway", "run"]],
+    ["bare gateway runtime", ["node", "merclaw", "gateway"]],
+    ["node runtime", ["node", "merclaw", "node", "run"]],
+    ["local agent runtime", ["node", "merclaw", "agent", "--local"]],
+    ["provider inference", ["node", "merclaw", "infer", "web", "fetch", "https://example.com"]],
+    ["model command", ["node", "merclaw", "models", "auth", "login", "openai"]],
+    ["plugin command", ["node", "merclaw", "plugins", "marketplace", "list"]],
+    ["skill command", ["node", "merclaw", "skills", "search", "browser"]],
+    ["update command", ["node", "merclaw", "update", "check"]],
+    ["channel probe", ["node", "merclaw", "channels", "status", "--probe"]],
+    ["channel capabilities probe", ["node", "merclaw", "channels", "capabilities"]],
+    ["directory plugin command", ["node", "merclaw", "directory", "peers", "list"]],
+    ["message plugin command", ["node", "merclaw", "message", "send", "--to", "demo"]],
+    ["metadata-owned plugin command", ["node", "merclaw", "googlemeet", "login"]],
   ])("starts managed proxy routing for %s", (_name, argv) => {
     expect(shouldStartProxyForCli(argv)).toBe(true);
   });
 
   it.each([
-    ["root help", ["node", "openclaw", "--help"]],
-    ["root version", ["node", "openclaw", "--version"]],
-    ["gateway help", ["node", "openclaw", "gateway", "--help"]],
-    ["gateway run help", ["node", "openclaw", "gateway", "run", "--help"]],
-    ["status", ["node", "openclaw", "status"]],
-    ["health", ["node", "openclaw", "health"]],
-    ["gateway status", ["node", "openclaw", "gateway", "status"]],
-    ["gateway health", ["node", "openclaw", "gateway", "health"]],
-    ["remote agent control-plane", ["node", "openclaw", "agent", "run"]],
-    ["chat control-plane", ["node", "openclaw", "chat"]],
-    ["terminal control-plane", ["node", "openclaw", "terminal"]],
-    ["config", ["node", "openclaw", "config", "get", "proxy.enabled"]],
-    ["channels parent help", ["node", "openclaw", "channels"]],
-    ["completion", ["node", "openclaw", "completion", "zsh"]],
-    ["debug proxy cli", ["node", "openclaw", "proxy", "start"]],
-    ["agents list", ["node", "openclaw", "agents", "list"]],
-    ["models list", ["node", "openclaw", "models", "list"]],
-    ["models status without live probe", ["node", "openclaw", "models", "status"]],
-    ["skills check", ["node", "openclaw", "skills", "check"]],
-    ["skills info", ["node", "openclaw", "skills", "info", "weather"]],
-    ["skills list", ["node", "openclaw", "skills", "list"]],
-    ["tasks list", ["node", "openclaw", "tasks", "list"]],
-    ["legacy singular tool namespace", ["node", "openclaw", "tool", "image_generate"]],
-    ["gateway tools namespace typo", ["node", "openclaw", "tools", "effective"]],
-    ["migrate", ["node", "openclaw", "migrate"]],
+    ["root help", ["node", "merclaw", "--help"]],
+    ["root version", ["node", "merclaw", "--version"]],
+    ["gateway help", ["node", "merclaw", "gateway", "--help"]],
+    ["gateway run help", ["node", "merclaw", "gateway", "run", "--help"]],
+    ["status", ["node", "merclaw", "status"]],
+    ["health", ["node", "merclaw", "health"]],
+    ["gateway status", ["node", "merclaw", "gateway", "status"]],
+    ["gateway health", ["node", "merclaw", "gateway", "health"]],
+    ["remote agent control-plane", ["node", "merclaw", "agent", "run"]],
+    ["chat control-plane", ["node", "merclaw", "chat"]],
+    ["terminal control-plane", ["node", "merclaw", "terminal"]],
+    ["config", ["node", "merclaw", "config", "get", "proxy.enabled"]],
+    ["channels parent help", ["node", "merclaw", "channels"]],
+    ["completion", ["node", "merclaw", "completion", "zsh"]],
+    ["debug proxy cli", ["node", "merclaw", "proxy", "start"]],
+    ["agents list", ["node", "merclaw", "agents", "list"]],
+    ["models list", ["node", "merclaw", "models", "list"]],
+    ["models status without live probe", ["node", "merclaw", "models", "status"]],
+    ["skills check", ["node", "merclaw", "skills", "check"]],
+    ["skills info", ["node", "merclaw", "skills", "info", "weather"]],
+    ["skills list", ["node", "merclaw", "skills", "list"]],
+    ["tasks list", ["node", "merclaw", "tasks", "list"]],
+    ["legacy singular tool namespace", ["node", "merclaw", "tool", "image_generate"]],
+    ["gateway tools namespace typo", ["node", "merclaw", "tools", "effective"]],
+    ["migrate", ["node", "merclaw", "migrate"]],
   ])("skips managed proxy routing for %s", (_name, argv) => {
     expect(shouldStartProxyForCli(argv)).toBe(false);
   });
@@ -648,7 +648,7 @@ describe("runCli exit behavior", () => {
   it("starts the managed proxy for network-capable commands by default", async () => {
     tryRouteCliMock.mockResolvedValueOnce(true);
 
-    await runCli(["node", "openclaw", "plugins", "marketplace", "list"]);
+    await runCli(["node", "merclaw", "plugins", "marketplace", "list"]);
 
     expect(startProxyMock).toHaveBeenCalledWith(undefined);
   });
@@ -656,13 +656,13 @@ describe("runCli exit behavior", () => {
   it("starts the managed proxy for metadata-owned plugin commands by default", async () => {
     tryRouteCliMock.mockResolvedValueOnce(true);
 
-    await runCli(["node", "openclaw", "googlemeet", "login"]);
+    await runCli(["node", "merclaw", "googlemeet", "login"]);
 
     expect(startProxyMock).toHaveBeenCalledWith(undefined);
   });
 
   it("rejects unowned command roots before proxy and plugin runtime registration", async () => {
-    await expect(runCli(["node", "openclaw", "foo"])).rejects.toThrow(
+    await expect(runCli(["node", "merclaw", "foo"])).rejects.toThrow(
       'No built-in command or plugin CLI metadata owns "foo"',
     );
 
@@ -673,7 +673,7 @@ describe("runCli exit behavior", () => {
   });
 
   it("rejects unowned command roots even when --help is appended (regression for #81077)", async () => {
-    await expect(runCli(["node", "openclaw", "foo", "--help"])).rejects.toThrow(
+    await expect(runCli(["node", "merclaw", "foo", "--help"])).rejects.toThrow(
       'No built-in command or plugin CLI metadata owns "foo"',
     );
 
@@ -684,7 +684,7 @@ describe("runCli exit behavior", () => {
   });
 
   it("rejects unowned command roots even when --version is appended", async () => {
-    await expect(runCli(["node", "openclaw", "foo", "--version"])).rejects.toThrow(
+    await expect(runCli(["node", "merclaw", "foo", "--version"])).rejects.toThrow(
       'No built-in command or plugin CLI metadata owns "foo"',
     );
 
@@ -701,7 +701,7 @@ describe("runCli exit behavior", () => {
 
     let error: unknown;
     try {
-      await runCli(["node", "openclaw", "totally-unknown"]);
+      await runCli(["node", "merclaw", "totally-unknown"]);
     } catch (caught) {
       error = caught;
     }
@@ -731,7 +731,7 @@ describe("runCli exit behavior", () => {
       }) => (primaryCommand === "qa" && cfg?.plugins?.allow?.length === 0 ? ["qa-lab"] : []),
     );
 
-    await expect(runCli(["node", "openclaw", "qa"])).rejects.toThrow(
+    await expect(runCli(["node", "merclaw", "qa"])).rejects.toThrow(
       'Add "qa-lab" to `plugins.allow` instead of "qa"',
     );
     expect(startProxyMock).not.toHaveBeenCalled();
@@ -746,7 +746,7 @@ describe("runCli exit behavior", () => {
       availability: "loaded",
     });
 
-    await expect(runCli(["node", "openclaw", "lcm_recent"])).rejects.toThrow(
+    await expect(runCli(["node", "merclaw", "lcm_recent"])).rejects.toThrow(
       '"lcm_recent" is an agent tool available from the "lossless-claw" plugin',
     );
 
@@ -759,16 +759,16 @@ describe("runCli exit behavior", () => {
     hasEnvHttpProxyAgentConfiguredMock.mockReturnValue(true);
     tryRouteCliMock.mockResolvedValueOnce(true);
 
-    await runCli(["node", "openclaw", "skills", "check"]);
+    await runCli(["node", "merclaw", "skills", "check"]);
 
     expect(hasEnvHttpProxyAgentConfiguredMock).not.toHaveBeenCalled();
     expect(ensureGlobalUndiciEnvProxyDispatcherMock).not.toHaveBeenCalled();
   });
 
   it.each([
-    ["auth", ["node", "openclaw", "auth", "--help"]],
-    ["tool", ["node", "openclaw", "tool", "image_generate"]],
-    ["tools", ["node", "openclaw", "tools", "effective"]],
+    ["auth", ["node", "merclaw", "auth", "--help"]],
+    ["tool", ["node", "merclaw", "tool", "image_generate"]],
+    ["tools", ["node", "merclaw", "tools", "effective"]],
   ])("keeps reserved %s command roots out of plugin command discovery", async (_name, argv) => {
     const parseAsync = vi.fn().mockResolvedValueOnce(undefined);
     const program = {
@@ -805,7 +805,7 @@ describe("runCli exit behavior", () => {
       parseAsync,
     });
 
-    await runCli(["node", "openclaw", "memory", "search", "query", "--json"]);
+    await runCli(["node", "merclaw", "memory", "search", "query", "--json"]);
 
     expect(registerPluginCliCommandsFromValidatedConfigMock).toHaveBeenCalledWith(
       expect.anything(),
@@ -835,7 +835,7 @@ describe("runCli exit behavior", () => {
       parseAsync,
     });
 
-    await runCli(["node", "openclaw", "memory", "--", "--json"]);
+    await runCli(["node", "merclaw", "memory", "--", "--json"]);
 
     expect(registerPluginCliCommandsFromValidatedConfigMock).toHaveBeenCalledWith(
       expect.anything(),
@@ -850,7 +850,7 @@ describe("runCli exit behavior", () => {
   it("fails protected commands when managed proxy activation fails", async () => {
     startProxyMock.mockRejectedValueOnce(new Error("proxy: enabled but no HTTP proxy URL"));
 
-    await expect(runCli(["node", "openclaw", "gateway", "run"])).rejects.toThrow(
+    await expect(runCli(["node", "merclaw", "gateway", "run"])).rejects.toThrow(
       "proxy: enabled but no HTTP proxy URL",
     );
 
@@ -863,7 +863,7 @@ describe("runCli exit behavior", () => {
       throw new Error("config parse failed");
     });
 
-    await expect(runCli(["node", "openclaw", "gateway", "run"])).rejects.toThrow(
+    await expect(runCli(["node", "merclaw", "gateway", "run"])).rejects.toThrow(
       "config parse failed",
     );
 
@@ -875,7 +875,7 @@ describe("runCli exit behavior", () => {
     const handle = makeProxyHandle();
     startProxyMock.mockResolvedValueOnce(handle);
 
-    await runCli(["node", "openclaw", "gateway", "run"]);
+    await runCli(["node", "merclaw", "gateway", "run"]);
 
     expect(startProxyMock).toHaveBeenCalledWith(undefined);
     expect(stopProxyMock).toHaveBeenCalledOnce();
@@ -899,7 +899,7 @@ describe("runCli exit behavior", () => {
     }) as typeof process.exit);
 
     try {
-      const runPromise = runCli(["node", "openclaw", "plugins", "marketplace", "list"]);
+      const runPromise = runCli(["node", "merclaw", "plugins", "marketplace", "list"]);
       await vi.waitFor(() => {
         expect(
           processOnceSpy.mock.calls.some(
@@ -942,7 +942,7 @@ describe("runCli exit behavior", () => {
 
     const processOnceSpy = vi.spyOn(process, "once");
     try {
-      const runPromise = runCli(["node", "openclaw", "plugins", "marketplace", "list"]);
+      const runPromise = runCli(["node", "merclaw", "plugins", "marketplace", "list"]);
       await vi.waitFor(() => {
         expect(
           processOnceSpy.mock.calls.reduce(
@@ -975,7 +975,7 @@ describe("runCli exit behavior", () => {
     });
 
     await withInteractiveTty(async () => {
-      await runCli(["node", "openclaw"]);
+      await runCli(["node", "merclaw"]);
     });
 
     expect(readConfigFileSnapshotMock).toHaveBeenCalledTimes(1);
@@ -993,7 +993,7 @@ describe("runCli exit behavior", () => {
     });
 
     await withInteractiveTty(async () => {
-      await runCli(["node", "openclaw"]);
+      await runCli(["node", "merclaw"]);
     });
 
     expect(readConfigFileSnapshotMock).toHaveBeenCalledTimes(1);
@@ -1008,13 +1008,13 @@ describe("runCli exit behavior", () => {
       exists: true,
       valid: true,
       sourceConfig: {
-        $schema: "https://openclaw.ai/config.json",
+        $schema: "https://merclaw.ai/config.json",
         meta: { updatedBy: "fixture" },
       },
     });
 
     await withInteractiveTty(async () => {
-      await runCli(["node", "openclaw"]);
+      await runCli(["node", "merclaw"]);
     });
 
     expect(readConfigFileSnapshotMock).toHaveBeenCalledTimes(1);
@@ -1039,11 +1039,11 @@ describe("runCli exit behavior", () => {
     Object.defineProperty(process.stdout, "isTTY", { configurable: true, value: false });
 
     try {
-      await runCli(["node", "openclaw"]);
+      await runCli(["node", "merclaw"]);
 
       expect(process.exitCode).toBe(1);
       expect(errorSpy).toHaveBeenCalledWith(
-        "Onboarding needs an interactive TTY. Use `openclaw onboard --non-interactive --accept-risk ...` for automation.",
+        "Onboarding needs an interactive TTY. Use `merclaw onboard --non-interactive --accept-risk ...` for automation.",
       );
       expect(setupWizardCommandMock).not.toHaveBeenCalled();
       expect(runCrestodianMock).not.toHaveBeenCalled();
@@ -1067,7 +1067,7 @@ describe("runCli exit behavior", () => {
 
   it("keeps bare root invocations on Crestodian when config already exists", async () => {
     await withInteractiveTty(async () => {
-      await runCli(["node", "openclaw"]);
+      await runCli(["node", "merclaw"]);
     });
 
     expect(readConfigFileSnapshotMock).toHaveBeenCalledTimes(1);
@@ -1086,7 +1086,7 @@ describe("runCli exit behavior", () => {
     Object.defineProperty(process.stdout, "isTTY", { configurable: true, value: true });
 
     try {
-      await runCli(["node", "openclaw"]);
+      await runCli(["node", "merclaw"]);
     } finally {
       if (stdinTty) {
         Object.defineProperty(process.stdin, "isTTY", stdinTty);
@@ -1113,7 +1113,7 @@ describe("runCli exit behavior", () => {
   it("bootstraps env proxy before modern onboard Crestodian startup", async () => {
     hasEnvHttpProxyAgentConfiguredMock.mockReturnValue(true);
 
-    await runCli(["node", "openclaw", "onboard", "--modern", "--json"]);
+    await runCli(["node", "merclaw", "onboard", "--modern", "--json"]);
 
     expect(ensureGlobalUndiciEnvProxyDispatcherMock).toHaveBeenCalledTimes(1);
     expect(runCrestodianMock).toHaveBeenCalledWith({
@@ -1131,7 +1131,7 @@ describe("runCli exit behavior", () => {
     tryRouteCliMock.mockResolvedValueOnce(true);
     hasMemoryRuntimeMock.mockReturnValue(true);
 
-    await runCli(["node", "openclaw", "status"]);
+    await runCli(["node", "merclaw", "status"]);
 
     expect(closeActiveMemorySearchManagersMock).toHaveBeenCalledTimes(1);
   });
@@ -1142,7 +1142,7 @@ describe("runCli exit behavior", () => {
       throw new Error("stale memory-state chunk");
     });
 
-    await expect(runCli(["node", "openclaw", "status"])).resolves.toBeUndefined();
+    await expect(runCli(["node", "merclaw", "status"])).resolves.toBeUndefined();
 
     expect(closeActiveMemorySearchManagersMock).not.toHaveBeenCalled();
   });
@@ -1150,11 +1150,11 @@ describe("runCli exit behavior", () => {
   it("returns after a handled container-target invocation", async () => {
     maybeRunCliInContainerMock.mockReturnValueOnce({ handled: true, exitCode: 0 });
 
-    await runCli(["node", "openclaw", "--container", "demo", "status"]);
+    await runCli(["node", "merclaw", "--container", "demo", "status"]);
 
     expect(maybeRunCliInContainerMock).toHaveBeenCalledWith([
       "node",
-      "openclaw",
+      "merclaw",
       "--container",
       "demo",
       "status",
@@ -1168,7 +1168,7 @@ describe("runCli exit behavior", () => {
     const exitCode = process.exitCode;
     maybeRunCliInContainerMock.mockReturnValueOnce({ handled: true, exitCode: 7 });
 
-    await runCli(["node", "openclaw", "--container", "demo", "status"]);
+    await runCli(["node", "merclaw", "--container", "demo", "status"]);
 
     expect(process.exitCode).toBe(7);
     process.exitCode = exitCode;
@@ -1186,10 +1186,10 @@ describe("runCli exit behavior", () => {
     };
     buildProgramMock.mockReturnValueOnce(program);
 
-    await expect(runCli(["node", "openclaw", "status"])).resolves.toBeUndefined();
+    await expect(runCli(["node", "merclaw", "status"])).resolves.toBeUndefined();
 
     expect(registerSubCliByNameMock.mock.calls).toEqual([
-      [program, "status", ["node", "openclaw", "status"]],
+      [program, "status", ["node", "merclaw", "status"]],
     ]);
     expect(process.exitCode).toBe(1);
     process.exitCode = exitCode;
@@ -1204,13 +1204,13 @@ describe("runCli exit behavior", () => {
     const ctx = { programVersion: "0.0.0-test" };
     getProgramContextMock.mockReturnValueOnce(ctx as never);
 
-    await runCli(["node", "openclaw", "doctor", "--help"]);
+    await runCli(["node", "merclaw", "doctor", "--help"]);
 
     expect(registerCoreCliByNameMock.mock.calls).toEqual([
-      [program, ctx, "doctor", ["node", "openclaw", "doctor", "--help"]],
+      [program, ctx, "doctor", ["node", "merclaw", "doctor", "--help"]],
     ]);
     expect(registerSubCliByNameMock.mock.calls).toEqual([
-      [program, "doctor", ["node", "openclaw", "doctor", "--help"]],
+      [program, "doctor", ["node", "merclaw", "doctor", "--help"]],
     ]);
   });
 
@@ -1226,7 +1226,7 @@ describe("runCli exit behavior", () => {
       throw new Error(`process.exit(${String(code)})`);
     }) as typeof process.exit);
 
-    await runCli(["node", "openclaw", "status"]);
+    await runCli(["node", "merclaw", "status"]);
 
     const handler = processOnSpy.mock.calls.find(([event]) => event === "uncaughtException")?.[1];
     if (typeof handler !== "function") {
@@ -1236,9 +1236,9 @@ describe("runCli exit behavior", () => {
     try {
       expect(() => handler(new Error("boom"))).toThrow("process.exit(1)");
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        "[openclaw] OpenClaw hit an unexpected runtime error.",
+        "[merclaw] MerClaw hit an unexpected runtime error.",
       );
-      expect(consoleErrorSpy).toHaveBeenCalledWith("[openclaw] Reason: boom");
+      expect(consoleErrorSpy).toHaveBeenCalledWith("[merclaw] Reason: boom");
       expect(restoreTerminalStateMock).toHaveBeenCalledWith("uncaught exception", {
         resumeStdinIfPaused: false,
       });
@@ -1264,7 +1264,7 @@ describe("runCli exit behavior", () => {
       throw new Error(`process.exit(${String(code)})`);
     }) as typeof process.exit);
 
-    await runCli(["node", "openclaw", "status"]);
+    await runCli(["node", "merclaw", "status"]);
 
     const handler = processOnSpy.mock.calls.find(([event]) => event === "uncaughtException")?.[1];
     if (typeof handler !== "function") {
@@ -1277,7 +1277,7 @@ describe("runCli exit behavior", () => {
       });
       expect(handler(hostUnreachable)).toBeUndefined();
       expect(consoleWarnSpy.mock.calls).toEqual([
-        ["[openclaw] Non-fatal uncaught exception (continuing):", hostUnreachable.stack],
+        ["[merclaw] Non-fatal uncaught exception (continuing):", hostUnreachable.stack],
       ]);
       expect(restoreTerminalStateMock).not.toHaveBeenCalled();
       expect(exitSpy).not.toHaveBeenCalled();

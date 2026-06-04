@@ -1,11 +1,11 @@
-import type { BaseTokenResolution } from "openclaw/plugin-sdk/channel-contract";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "openclaw/plugin-sdk/routing";
-import { resolveAccountEntry } from "openclaw/plugin-sdk/routing";
+import type { BaseTokenResolution } from "merclaw/plugin-sdk/channel-contract";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "merclaw/plugin-sdk/routing";
+import { resolveAccountEntry } from "merclaw/plugin-sdk/routing";
 import {
   normalizeResolvedSecretInputString,
   resolveSecretInputString,
-} from "openclaw/plugin-sdk/secret-input";
+} from "merclaw/plugin-sdk/secret-input";
 import { selectDiscordRuntimeConfig } from "./runtime-config.js";
 
 type DiscordTokenSource = "env" | "config" | "none";
@@ -34,7 +34,7 @@ export function normalizeDiscordToken(raw: unknown, path: string): string | unde
 }
 
 function resolveDiscordTokenValue(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   value: unknown;
   path: string;
 }): DiscordTokenValueResolution {
@@ -57,7 +57,7 @@ function resolveDiscordTokenValue(params: {
 }
 
 export function resolveDiscordToken(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   opts: { accountId?: string | null; envToken?: string | null } = {},
 ): DiscordTokenResolution {
   const selectedCfg = selectDiscordRuntimeConfig(cfg);

@@ -663,7 +663,7 @@ function normalizeNpmVersionDrift(lockfile) {
 }
 
 function generateShrinkwrap(packageDir, options = {}) {
-  const tempDir = mkdtempSync(path.join(tmpdir(), "openclaw-shrinkwrap-"));
+  const tempDir = mkdtempSync(path.join(tmpdir(), "merclaw-shrinkwrap-"));
   try {
     const packageJson = JSON.parse(readFileSync(path.join(packageDir, "package.json"), "utf8"));
     const currentShrinkwrap = readCurrentShrinkwrap(packageDir);
@@ -1041,7 +1041,7 @@ function listPublishablePluginPackageDirs() {
         return false;
       }
       const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf8"));
-      return packageJson.openclaw?.release?.publishToNpm === true;
+      return packageJson.merclaw?.release?.publishToNpm === true;
     })
     .toSorted((left, right) => left.localeCompare(right));
 }

@@ -1,11 +1,11 @@
 {
-  "name": "@openclaw/acpx",
+  "name": "@merclaw/acpx",
   "version": "2026.5.31",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
-      "name": "@openclaw/acpx",
+      "name": "@merclaw/acpx",
       "version": "2026.5.31",
       "dependencies": {
         "@agentclientprotocol/claude-agent-acp": "0.39.0",

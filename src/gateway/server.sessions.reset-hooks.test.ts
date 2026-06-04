@@ -177,7 +177,7 @@ test("sessions.reset infers selected global agent from agent-prefixed aliases", 
     JSON.stringify({ global: sessionStoreEntry("sess-work-global") }, null, 2),
     "utf-8",
   );
-  const configPath = expectStringValue(process.env.OPENCLAW_CONFIG_PATH, "OPENCLAW_CONFIG_PATH");
+  const configPath = expectStringValue(process.env.MERCLAW_CONFIG_PATH, "MERCLAW_CONFIG_PATH");
   await fs.writeFile(
     configPath,
     `${JSON.stringify(
@@ -235,7 +235,7 @@ test("sessions.reset rejects selected global agentId conflicts", async () => {
   const storeTemplate = path.join(dir, "{agentId}", "sessions.json");
   testState.sessionStorePath = storeTemplate;
   testState.sessionConfig = { scope: "global" };
-  const configPath = expectStringValue(process.env.OPENCLAW_CONFIG_PATH, "OPENCLAW_CONFIG_PATH");
+  const configPath = expectStringValue(process.env.MERCLAW_CONFIG_PATH, "MERCLAW_CONFIG_PATH");
   await fs.writeFile(
     configPath,
     `${JSON.stringify(
@@ -275,7 +275,7 @@ test("sessions.reset rejects selected global agentId conflicts", async () => {
 test("sessions.reset rejects unknown selected global agents", async () => {
   const { dir } = await createSessionStoreDir();
   const storeTemplate = path.join(dir, "{agentId}", "sessions.json");
-  const configPath = expectStringValue(process.env.OPENCLAW_CONFIG_PATH, "OPENCLAW_CONFIG_PATH");
+  const configPath = expectStringValue(process.env.MERCLAW_CONFIG_PATH, "MERCLAW_CONFIG_PATH");
   const { clearConfigCache, clearRuntimeConfigSnapshot } = await import("../config/config.js");
   testState.sessionStorePath = storeTemplate;
   testState.sessionConfig = { scope: "global" };
@@ -320,7 +320,7 @@ test("sessions.reset emits inferred selected global agent scope", async () => {
   const { dir } = await createSessionStoreDir();
   const storeTemplate = path.join(dir, "{agentId}", "sessions.json");
   const workStorePath = storeTemplate.replace("{agentId}", "work");
-  const configPath = expectStringValue(process.env.OPENCLAW_CONFIG_PATH, "OPENCLAW_CONFIG_PATH");
+  const configPath = expectStringValue(process.env.MERCLAW_CONFIG_PATH, "MERCLAW_CONFIG_PATH");
   const { clearConfigCache, clearRuntimeConfigSnapshot } = await import("../config/config.js");
   testState.sessionStorePath = storeTemplate;
   testState.sessionConfig = { scope: "global" };

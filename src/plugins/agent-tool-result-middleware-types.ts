@@ -1,8 +1,8 @@
 import type { AgentToolResult } from "../agents/runtime/index.js";
 
-export type OpenClawAgentToolResult<TResult = unknown> = AgentToolResult<TResult>;
+export type MerClawAgentToolResult<TResult = unknown> = AgentToolResult<TResult>;
 
-export type AgentToolResultMiddlewareRuntime = "openclaw" | "codex";
+export type AgentToolResultMiddlewareRuntime = "merclaw" | "codex";
 /** @deprecated Use AgentToolResultMiddlewareRuntime. */
 export type AgentToolResultMiddlewareHarness = AgentToolResultMiddlewareRuntime | "codex-app-server";
 
@@ -14,7 +14,7 @@ export type AgentToolResultMiddlewareEvent = {
   args: Record<string, unknown>;
   cwd?: string;
   isError?: boolean;
-  result: OpenClawAgentToolResult;
+  result: MerClawAgentToolResult;
 };
 
 export type AgentToolResultMiddlewareContext = {
@@ -28,7 +28,7 @@ export type AgentToolResultMiddlewareContext = {
 };
 
 export type AgentToolResultMiddlewareResult = {
-  result: OpenClawAgentToolResult;
+  result: MerClawAgentToolResult;
 };
 
 export type AgentToolResultMiddleware = (

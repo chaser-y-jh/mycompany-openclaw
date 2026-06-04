@@ -1,5 +1,5 @@
 export { mergeModelCatalogRowsByAuthority } from "./authority.js";
-export { loadOpenClawProviderIndex } from "./provider-index/index.js";
+export { loadMerClawProviderIndex } from "./provider-index/index.js";
 export {
   planManifestModelCatalogRows,
   planManifestModelCatalogSuppressions,
@@ -22,5 +22,5 @@ export type {
   UnifiedModelCatalogEntry,
   UnifiedModelCatalogKind,
   UnifiedModelCatalogSource,
-} from "@openclaw/model-catalog-core/model-catalog-types";
-export type { OpenClawProviderIndexProvider } from "./provider-index/index.js";
+} from "@merclaw/model-catalog-core/model-catalog-types";
+export type { MerClawProviderIndexProvider } from "./provider-index/index.js";

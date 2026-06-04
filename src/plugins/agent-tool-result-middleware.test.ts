@@ -3,7 +3,7 @@ import { normalizeAgentToolResultMiddlewareRuntimes } from "./agent-tool-result-
 
 describe("normalizeAgentToolResultMiddlewareRuntimes", () => {
   it("defaults omitted runtimes to every supported runtime", () => {
-    expect(normalizeAgentToolResultMiddlewareRuntimes()).toEqual(["openclaw", "codex"]);
+    expect(normalizeAgentToolResultMiddlewareRuntimes()).toEqual(["merclaw", "codex"]);
   });
 
   it("preserves an explicit empty runtime list", () => {
@@ -12,8 +12,8 @@ describe("normalizeAgentToolResultMiddlewareRuntimes", () => {
 
   it("normalizes legacy harness names", () => {
     expect(
-      normalizeAgentToolResultMiddlewareRuntimes({ harnesses: ["codex-app-server", "openclaw"] }),
-    ).toEqual(["codex", "openclaw"]);
+      normalizeAgentToolResultMiddlewareRuntimes({ harnesses: ["codex-app-server", "merclaw"] }),
+    ).toEqual(["codex", "merclaw"]);
   });
 
   it("falls back to legacy harnesses when runtimes is undefined", () => {

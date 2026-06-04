@@ -1,5 +1,5 @@
-import { normalizeUniqueTrimmedStringList } from "@openclaw/normalization-core/string-normalization";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { normalizeUniqueTrimmedStringList } from "@merclaw/normalization-core/string-normalization";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { isRecord } from "../utils.js";
 
 export type CodexNativeSearchMode = "cached" | "live";
@@ -52,7 +52,7 @@ function normalizeUserLocation(value: unknown): CodexNativeSearchUserLocation | 
 }
 
 export function resolveCodexNativeWebSearchConfig(
-  config: OpenClawConfig | undefined,
+  config: MerClawConfig | undefined,
 ): ResolvedCodexNativeWebSearchConfig {
   const nativeConfig = config?.tools?.web?.search?.openaiCodex;
   return {
@@ -65,7 +65,7 @@ export function resolveCodexNativeWebSearchConfig(
 }
 
 export function describeCodexNativeWebSearch(
-  config: OpenClawConfig | undefined,
+  config: MerClawConfig | undefined,
 ): string | undefined {
   if (config?.tools?.web?.search?.enabled === false) {
     return undefined;

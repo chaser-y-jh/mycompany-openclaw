@@ -26,11 +26,11 @@ describe("WhatsApp QA transport boundary", () => {
     );
     for (const [file, source] of sources) {
       expect(source, file).not.toMatch(/extensions\/whatsapp\/src/u);
-      expect(source, file).not.toMatch(/@openclaw\/whatsapp\/src/u);
+      expect(source, file).not.toMatch(/@merclaw\/whatsapp\/src/u);
     }
     expect(
       sources
-        .filter(([, source]) => source.includes("@openclaw/whatsapp/api.js"))
+        .filter(([, source]) => source.includes("@merclaw/whatsapp/api.js"))
         .map(([file]) => path.relative(process.cwd(), file)),
     ).toContain("extensions/qa-lab/src/live-transports/whatsapp/whatsapp-live.runtime.ts");
   });

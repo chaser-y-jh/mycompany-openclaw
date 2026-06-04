@@ -15,9 +15,9 @@ export function registerCompanyCommand(program: Command): void {
       console.log(theme.info("Version:"), "1.0.0");
       console.log(theme.info("Company:"), "MyCompany Inc.");
       console.log(theme.info("Support:"), "support@mycompany.com");
-      console.log(theme.info("Documentation:"), "docs.mycompany.com/openclaw");
+      console.log(theme.info("Documentation:"), "docs.mycompany.com/merclaw");
       console.log("");
-      console.log(theme.accent("Powered by OpenClaw"));
+      console.log(theme.accent("Powered by MerClaw"));
       console.log("");
     });
 
@@ -44,7 +44,7 @@ export function registerCompanyCommand(program: Command): void {
       console.log("  company status   - Check service status");
       console.log("  company help     - Show this help message");
       console.log("");
-      console.log(theme.accent("For more details, visit: docs.mycompany.com/openclaw"));
+      console.log(theme.accent("For more details, visit: docs.mycompany.com/merclaw"));
       console.log("");
     });
 }

@@ -15,9 +15,9 @@ type CommandResult = {
 const COMMAND_TIMEOUT_MS = 120_000;
 const tempDirs: string[] = [];
 const WORKSPACE_PACKAGE_NAMES = [
-  "@openclaw/gateway-protocol",
-  "@openclaw/gateway-client",
-  "@openclaw/sdk",
+  "@merclaw/gateway-protocol",
+  "@merclaw/gateway-client",
+  "@merclaw/sdk",
 ] as const;
 
 type PackageManifest = {
@@ -90,7 +90,7 @@ function normalizeWorkspaceDependencies(
   const normalized: Record<string, string> = {};
   for (const [name, spec] of Object.entries(dependencies)) {
     normalized[name] =
-      name.startsWith("@openclaw/") && spec === "workspace:*" ? "0.0.0-private" : spec;
+      name.startsWith("@merclaw/") && spec === "workspace:*" ? "0.0.0-private" : spec;
   }
   return normalized;
 }
@@ -132,7 +132,7 @@ function closeServer(server: Server): Promise<void> {
   });
 }
 
-async function startOpenClawRegistry(packages: PackedPackage[]): Promise<{
+async function startMerClawRegistry(packages: PackedPackage[]): Promise<{
   registryUrl: string;
   close: () => Promise<void>;
 }> {
@@ -198,7 +198,7 @@ async function startOpenClawRegistry(packages: PackedPackage[]): Promise<{
   };
 }
 
-describe("OpenClaw SDK package e2e", () => {
+describe("MerClaw SDK package e2e", () => {
   afterEach(async () => {
     await Promise.all(
       tempDirs.splice(0).map((dir) => fs.rm(dir, { recursive: true, force: true })),
@@ -212,7 +212,7 @@ describe("OpenClaw SDK package e2e", () => {
       path.join(repoRoot, "packages", "gateway-client"),
       path.join(repoRoot, "packages", "sdk"),
     ];
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-sdk-consumer-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-sdk-consumer-"));
     tempDirs.push(tempDir);
 
     for (const packageName of WORKSPACE_PACKAGE_NAMES) {
@@ -236,15 +236,15 @@ describe("OpenClaw SDK package e2e", () => {
       packedPackages.push({ manifest, tarball });
     }
     const sdkTarball =
-      packedPackages.find((pkg) => pkg.manifest.name === "@openclaw/sdk")?.tarball ?? "";
+      packedPackages.find((pkg) => pkg.manifest.name === "@merclaw/sdk")?.tarball ?? "";
     expect(sdkTarball).not.toBe("");
-    const registry = await startOpenClawRegistry(packedPackages);
+    const registry = await startMerClawRegistry(packedPackages);
 
     await fs.writeFile(
       path.join(tempDir, "package.json"),
       JSON.stringify({ private: true, type: "module" }),
     );
-    await fs.writeFile(path.join(tempDir, ".npmrc"), `@openclaw:registry=${registry.registryUrl}`);
+    await fs.writeFile(path.join(tempDir, ".npmrc"), `@merclaw:registry=${registry.registryUrl}`);
     try {
       await runCommand(
         "npm",
@@ -258,9 +258,9 @@ describe("OpenClaw SDK package e2e", () => {
     }
 
     const importScript = `
-      import { GatewayClientTransport, OpenClaw, normalizeGatewayEvent } from "@openclaw/sdk";
+      import { GatewayClientTransport, MerClaw, normalizeGatewayEvent } from "@merclaw/sdk";
       if (typeof GatewayClientTransport !== "function") throw new Error("missing transport export");
-      if (typeof OpenClaw !== "function") throw new Error("missing client export");
+      if (typeof MerClaw !== "function") throw new Error("missing client export");
       const event = normalizeGatewayEvent({
         event: "agent",
         payload: { runId: "pack-smoke", stream: "lifecycle", data: { phase: "start" } }

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../runtime-api.js";
+import type { MerClawConfig } from "../runtime-api.js";
 
 const mocks = vi.hoisted(() => ({
   sendAdaptiveCardMSTeams: vi.fn(),
@@ -28,7 +28,7 @@ const cfg = {
       appId: "resolved-app-id",
     },
   },
-} as OpenClawConfig;
+} as MerClawConfig;
 
 type MSTeamsSendText = NonNullable<typeof msteamsOutbound.sendText>;
 type MSTeamsSendMedia = NonNullable<typeof msteamsOutbound.sendMedia>;
@@ -131,7 +131,7 @@ describe("msteamsOutbound cfg threading", () => {
           appId: "resolved-app-id",
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
 
     await requireSendText()({
       cfg,
@@ -153,7 +153,7 @@ describe("msteamsOutbound cfg threading", () => {
           appId: "resolved-app-id",
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
 
     await requireSendMedia()({
       cfg,
@@ -357,7 +357,7 @@ describe("msteamsOutbound cfg threading", () => {
           appId: "resolved-app-id",
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
 
     await requireSendPoll()({
       cfg,

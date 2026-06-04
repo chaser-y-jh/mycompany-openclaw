@@ -13,8 +13,8 @@ import {
   resetTaskRegistryForTests,
 } from "../tasks/task-registry.js";
 import * as taskRegistryMaintenance from "../tasks/task-registry.maintenance.js";
-import { withOpenClawTestState } from "../test-utils/openclaw-test-state.js";
-import type { OpenClawTestState } from "../test-utils/openclaw-test-state.js";
+import { withMerClawTestState } from "../test-utils/merclaw-test-state.js";
+import type { MerClawTestState } from "../test-utils/merclaw-test-state.js";
 import { tasksAuditCommand, tasksMaintenanceCommand, tasksShowCommand } from "./tasks.js";
 
 function createRuntime(): RuntimeEnv {
@@ -46,10 +46,10 @@ const zeroTaskAuditCounts = {
 };
 
 async function withTaskCommandStateDir(
-  run: (state: OpenClawTestState) => Promise<void>,
+  run: (state: MerClawTestState) => Promise<void>,
 ): Promise<void> {
-  await withOpenClawTestState(
-    { layout: "state-only", prefix: "openclaw-tasks-command-" },
+  await withMerClawTestState(
+    { layout: "state-only", prefix: "merclaw-tasks-command-" },
     async (state) => {
       resetTaskRegistryDeliveryRuntimeForTests();
       resetTaskRegistryForTests({ persist: false });

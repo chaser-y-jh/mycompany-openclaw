@@ -87,7 +87,7 @@ execution:
       - internal error
       - tool failed
       - /var/folders
-      - openclaw-qa-suite
+      - merclaw-qa-suite
 ```
 
 ```yaml qa-flow

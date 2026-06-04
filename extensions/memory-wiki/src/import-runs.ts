@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { uniqueStrings } from "merclaw/plugin-sdk/string-coerce-runtime";
 import type { ResolvedMemoryWikiConfig } from "./config.js";
 
 type MemoryWikiImportRunSummary = {
@@ -103,7 +103,7 @@ function normalizeImportRunSummary(raw: unknown): MemoryWikiImportRunSummary | n
 }
 
 function resolveImportRunsDir(vaultRoot: string): string {
-  return path.join(vaultRoot, ".openclaw-wiki", "import-runs");
+  return path.join(vaultRoot, ".merclaw-wiki", "import-runs");
 }
 
 export async function listMemoryWikiImportRuns(

@@ -5,7 +5,7 @@ import path from "node:path";
 import {
   drainFileLockStateForTest,
   resetFileLockStateForTest,
-} from "openclaw/plugin-sdk/file-lock";
+} from "merclaw/plugin-sdk/file-lock";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { persistIdbToDisk, restoreIdbFromDisk } from "./idb-persistence.js";
 import {
@@ -15,8 +15,8 @@ import {
 } from "./idb-persistence.test-helpers.js";
 import { LogService } from "./logger.js";
 
-const DATABASE_PREFIX = "openclaw-matrix-persistence-test";
-const OTHER_DATABASE_PREFIX = "openclaw-matrix-persistence-other-test";
+const DATABASE_PREFIX = "merclaw-matrix-persistence-test";
+const OTHER_DATABASE_PREFIX = "merclaw-matrix-persistence-other-test";
 const cryptoDatabaseName = `${DATABASE_PREFIX}::matrix-sdk-crypto`;
 const otherCryptoDatabaseName = `${OTHER_DATABASE_PREFIX}::matrix-sdk-crypto`;
 const EXPECTS_POSIX_PRIVATE_FILE_MODE = process.platform !== "win32";

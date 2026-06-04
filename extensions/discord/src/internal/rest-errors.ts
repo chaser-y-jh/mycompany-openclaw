@@ -1,4 +1,4 @@
-import { parseStrictNonNegativeInteger } from "openclaw/plugin-sdk/number-runtime";
+import { parseStrictNonNegativeInteger } from "merclaw/plugin-sdk/number-runtime";
 import { parseDiscordRetryAfterBodySeconds, parseRetryAfterHeaderSeconds } from "../retry-after.js";
 
 export function readDiscordCode(body: unknown): number | undefined {

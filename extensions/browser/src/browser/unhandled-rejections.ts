@@ -1,5 +1,5 @@
-import { collectErrorGraphCandidates } from "openclaw/plugin-sdk/error-runtime";
-import { registerUnhandledRejectionHandler } from "openclaw/plugin-sdk/runtime-env";
+import { collectErrorGraphCandidates } from "merclaw/plugin-sdk/error-runtime";
+import { registerUnhandledRejectionHandler } from "merclaw/plugin-sdk/runtime-env";
 
 const PLAYWRIGHT_DIALOG_METHODS = new Set([
   "Page.handleJavaScriptDialog",

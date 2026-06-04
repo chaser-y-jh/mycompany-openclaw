@@ -210,7 +210,7 @@ export let warnQueryToken = false;
 
 declare global {
   interface Window {
-    __OPENCLAW_NATIVE_CONTROL_AUTH__?: {
+    __MERCLAW_NATIVE_CONTROL_AUTH__?: {
       gatewayUrl?: string | null;
       token?: string | null;
       password?: string | null;
@@ -219,14 +219,14 @@ declare global {
 }
 
 function applyNativeControlAuth(host: SettingsHost) {
-  const nativeAuth = window["__OPENCLAW_NATIVE_CONTROL_AUTH__"];
+  const nativeAuth = window["__MERCLAW_NATIVE_CONTROL_AUTH__"];
   if (!nativeAuth) {
     return;
   }
   try {
-    delete window["__OPENCLAW_NATIVE_CONTROL_AUTH__"];
+    delete window["__MERCLAW_NATIVE_CONTROL_AUTH__"];
   } catch {
-    window["__OPENCLAW_NATIVE_CONTROL_AUTH__"] = undefined;
+    window["__MERCLAW_NATIVE_CONTROL_AUTH__"] = undefined;
   }
 
   const gatewayUrl = normalizeOptionalString(nativeAuth.gatewayUrl);
@@ -277,7 +277,7 @@ export function applySettingsFromUrl(host: SettingsHost) {
     if (queryToken != null) {
       warnQueryToken = true;
       console.warn(
-        "[openclaw] Auth token passed as query parameter (?token=). Use URL fragment instead: #token=<token>. Query parameters may appear in server logs.",
+        "[merclaw] Auth token passed as query parameter (?token=). Use URL fragment instead: #token=<token>. Query parameters may appear in server logs.",
       );
     }
     if (token && gatewayUrlChanged) {
@@ -513,7 +513,7 @@ export function inferBasePath() {
   if (typeof window === "undefined") {
     return "";
   }
-  const configured = window["__OPENCLAW_CONTROL_UI_BASE_PATH__"];
+  const configured = window["__MERCLAW_CONTROL_UI_BASE_PATH__"];
   const normalizedConfigured = normalizeOptionalString(configured);
   if (normalizedConfigured) {
     return normalizeBasePath(normalizedConfigured);
@@ -872,7 +872,7 @@ function buildAttentionItems(host: SettingsAppHost) {
       title: "Missing operator.read scope",
       description:
         "This connection does not have the operator.read scope. Some features may be unavailable.",
-      href: "https://docs.openclaw.ai/web/dashboard",
+      href: "https://docs.merclaw.ai/web/dashboard",
       external: true,
     });
   }

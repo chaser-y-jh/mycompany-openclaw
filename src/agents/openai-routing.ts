@@ -1,5 +1,5 @@
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { normalizeProviderId } from "@merclaw/model-catalog-core/provider-id";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 
 export const OPENAI_PROVIDER_ID = "openai";
 export const OPENAI_CODEX_PROVIDER_ID = OPENAI_PROVIDER_ID;
@@ -23,7 +23,7 @@ function isOfficialOpenAIBaseUrl(baseUrl: unknown): boolean {
   }
 }
 
-function openAIProviderUsesCustomBaseUrl(config: OpenClawConfig | undefined): boolean {
+function openAIProviderUsesCustomBaseUrl(config: MerClawConfig | undefined): boolean {
   return !isOfficialOpenAIBaseUrl(config?.models?.providers?.openai?.baseUrl);
 }
 
@@ -34,7 +34,7 @@ export function isOpenAIProvider(provider: string | undefined): boolean {
 
 export function openAIProviderUsesCodexRuntimeByDefault(params: {
   provider?: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
 }): boolean {
   return isOpenAIProvider(params.provider) && !openAIProviderUsesCustomBaseUrl(params.config);
 }
@@ -56,7 +56,7 @@ export function modelRefUsesOpenAIProvider(value: unknown): boolean {
 
 export function modelSelectionShouldEnsureCodexPlugin(params: {
   model?: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
 }): boolean {
   const provider = parseModelRefProvider(params.model);
   return provider === OPENAI_PROVIDER_ID && !openAIProviderUsesCustomBaseUrl(params.config);
@@ -66,7 +66,7 @@ export function listOpenAIAuthProfileProvidersForAgentRuntime(params: {
   provider: string;
   harnessRuntime?: string;
   agentHarnessId?: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
 }): string[] {
   if (!isOpenAIProvider(params.provider)) {
     return [params.provider];
@@ -80,7 +80,7 @@ export function resolveOpenAIRuntimeProvider(params: {
   agentHarnessId?: string;
   authProfileProvider?: string;
   authProfileId?: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   workspaceDir?: string;
 }): string {
   return isOpenAIProvider(params.provider) ? OPENAI_PROVIDER_ID : params.provider;
@@ -92,7 +92,7 @@ export function resolveSelectedOpenAIRuntimeProvider(params: {
   agentHarnessId?: string;
   authProfileProvider?: string;
   authProfileId?: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   workspaceDir?: string;
 }): string {
   return isOpenAIProvider(params.provider) ? OPENAI_PROVIDER_ID : params.provider;
@@ -101,7 +101,7 @@ export function resolveSelectedOpenAIRuntimeProvider(params: {
 export function resolveContextConfigProviderForRuntime(params: {
   provider: string;
   runtimeId?: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
 }): string {
   return isOpenAIProvider(params.provider) ? OPENAI_PROVIDER_ID : params.provider;
 }

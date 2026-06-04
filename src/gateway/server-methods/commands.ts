@@ -1,4 +1,4 @@
-import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalLowercaseString } from "@merclaw/normalization-core/string-coerce";
 import type {
   CommandEntry,
   CommandsListResult,
@@ -29,7 +29,7 @@ import type {
   CommandArgDefinition,
 } from "../../auto-reply/commands-registry.types.js";
 import { getChannelPlugin } from "../../channels/plugins/index.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { getPluginCommandSpecs } from "../../plugins/command-specs.js";
 import { listPluginCommands } from "../../plugins/commands.js";
 import { listSkillCommandsForAgents } from "../../skills/discovery/chat-commands.js";
@@ -57,7 +57,7 @@ function clampDescription(value: string | undefined): string {
 function resolveAgentIdOrRespondError(
   rawAgentId: unknown,
   respond: RespondFn,
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
 ) {
   const knownAgents = listAgentIds(cfg);
   const requestedAgentId = typeof rawAgentId === "string" ? rawAgentId.trim() : "";
@@ -180,7 +180,7 @@ function mapCommand(
 function buildPluginCommandEntries(params: {
   provider?: string;
   nameSurface: CommandNameSurface;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
 }): CommandEntry[] {
   const pluginTextSpecs = listPluginCommands();
   const pluginNativeSpecs = getPluginCommandSpecs(params.provider, { config: params.cfg });
@@ -211,7 +211,7 @@ function buildPluginCommandEntries(params: {
 
 /** Builds the public commands.list payload for an agent/provider/scope view. */
 export function buildCommandsListResult(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentId: string;
   provider?: string;
   scope?: "native" | "text" | "both";

@@ -1,10 +1,10 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { withOperatorApprovalsGatewayClient } from "../gateway/operator-approvals-client.js";
 import { isApprovalNotFoundError } from "./approval-errors.js";
 import type { ExecApprovalDecision } from "./exec-approvals.js";
 
 type ResolveApprovalOverGatewayParams = {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   approvalId: string;
   decision: ExecApprovalDecision;
   senderId?: string | null;

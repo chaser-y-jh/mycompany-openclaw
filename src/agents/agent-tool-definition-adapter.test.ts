@@ -1,4 +1,4 @@
-import type { AgentTool } from "openclaw/plugin-sdk/agent-core";
+import type { AgentTool } from "merclaw/plugin-sdk/agent-core";
 import { Type } from "typebox";
 import { describe, expect, it } from "vitest";
 import {
@@ -232,7 +232,7 @@ describe("client tool name conflict checks", () => {
     ).toEqual(["Weather", "weather"]);
   });
 
-  it("detects collisions with reserved OpenClaw built-in tool names", () => {
+  it("detects collisions with reserved MerClaw built-in tool names", () => {
     expect(
       findClientToolNameConflicts({
         tools: [makeClientTool("Bash"), makeClientTool("grep")],

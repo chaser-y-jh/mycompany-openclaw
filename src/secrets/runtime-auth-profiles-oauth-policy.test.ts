@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { MerClawConfig } from "../config/config.js";
 import {
   loadAuthStoreWithProfiles,
   setupSecretsRuntimeSnapshotTestHooks,
@@ -7,7 +7,7 @@ import {
 
 const { prepareSecretsRuntimeSnapshot } = setupSecretsRuntimeSnapshotTestHooks();
 
-function withAuthProfileMode(mode: "api_key" | "aws-sdk" | "oauth" | "token"): OpenClawConfig {
+function withAuthProfileMode(mode: "api_key" | "aws-sdk" | "oauth" | "token"): MerClawConfig {
   return {
     auth: {
       profiles: {
@@ -22,7 +22,7 @@ function withAuthProfileMode(mode: "api_key" | "aws-sdk" | "oauth" | "token"): O
         default: { source: "env" },
       },
     },
-  } as OpenClawConfig;
+  } as MerClawConfig;
 }
 
 describe("secrets runtime oauth auth-profile SecretRef policy", () => {
@@ -41,7 +41,7 @@ describe("secrets runtime oauth auth-profile SecretRef policy", () => {
         env: { ANTHROPIC_TOKEN: "token-value" } as NodeJS.ProcessEnv,
         loadAuthStore: () => store,
         loadablePluginOrigins: new Map(),
-        agentDirs: ["/tmp/openclaw-secrets-runtime-main"],
+        agentDirs: ["/tmp/merclaw-secrets-runtime-main"],
       }),
     ).rejects.toThrow(/OAuth \+ SecretRef is not supported/i);
   });
@@ -60,7 +60,7 @@ describe("secrets runtime oauth auth-profile SecretRef policy", () => {
       env: { ANTHROPIC_TOKEN: "token-value" } as NodeJS.ProcessEnv,
       loadAuthStore: () => store,
       loadablePluginOrigins: new Map(),
-      agentDirs: ["/tmp/openclaw-secrets-runtime-main"],
+      agentDirs: ["/tmp/merclaw-secrets-runtime-main"],
     });
 
     const resolved = snapshot.authStores[0]?.store.profiles["anthropic:default"];

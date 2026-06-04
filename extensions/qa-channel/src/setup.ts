@@ -1,12 +1,12 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
 import { DEFAULT_ACCOUNT_ID } from "./accounts.js";
 import type { CoreConfig } from "./types.js";
 
 export function applyQaSetup(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   accountId: string;
   input: Record<string, unknown>;
-}): OpenClawConfig {
+}): MerClawConfig {
   const nextCfg = structuredClone(params.cfg) as CoreConfig;
   const section = nextCfg.channels?.["qa-channel"] ?? {};
   const accounts = { ...section.accounts };
@@ -34,5 +34,5 @@ export function applyQaSetup(params: {
       accounts,
     };
   }
-  return nextCfg as OpenClawConfig;
+  return nextCfg as MerClawConfig;
 }

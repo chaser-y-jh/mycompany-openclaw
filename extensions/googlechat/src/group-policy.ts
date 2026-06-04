@@ -1,8 +1,8 @@
-import { resolveChannelGroupRequireMention } from "openclaw/plugin-sdk/channel-policy";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/core";
+import { resolveChannelGroupRequireMention } from "merclaw/plugin-sdk/channel-policy";
+import type { MerClawConfig } from "merclaw/plugin-sdk/core";
 
 type GoogleChatGroupContext = {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   accountId?: string | null;
   groupId?: string | null;
 };

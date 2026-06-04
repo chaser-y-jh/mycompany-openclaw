@@ -53,13 +53,13 @@ export function resolveDaemonNodeBinDir(nodePath?: string): string[] | undefined
   return [path.dirname(trimmed)];
 }
 
-function isOpenClawCommandBasename(basename: string, platform: NodeJS.Platform): boolean {
-  if (basename === "openclaw") {
+function isMerClawCommandBasename(basename: string, platform: NodeJS.Platform): boolean {
+  if (basename === "merclaw") {
     return true;
   }
   if (platform === "win32") {
     return (
-      basename === "openclaw.cmd" || basename === "openclaw.ps1" || basename === "openclaw.exe"
+      basename === "merclaw.cmd" || basename === "merclaw.ps1" || basename === "merclaw.exe"
     );
   }
   return false;
@@ -86,7 +86,7 @@ function addUniquePathDir(dirs: string[], dir: string | undefined): void {
   dirs.push(dir);
 }
 
-export function resolveDaemonOpenClawBinDir(
+export function resolveDaemonMerClawBinDir(
   params: {
     argv?: string[];
     env?: Record<string, string | undefined>;
@@ -106,7 +106,7 @@ export function resolveDaemonOpenClawBinDir(
   if (
     argv1 &&
     path.isAbsolute(argv1) &&
-    isOpenClawCommandBasename(path.basename(argv1), platform)
+    isMerClawCommandBasename(path.basename(argv1), platform)
   ) {
     addUniquePathDir(dirs, path.dirname(argv1));
   }
@@ -119,7 +119,7 @@ export function resolveDaemonOpenClawBinDir(
     if (!path.isAbsolute(segment)) {
       continue;
     }
-    const candidate = path.join(segment, platform === "win32" ? "openclaw.cmd" : "openclaw");
+    const candidate = path.join(segment, platform === "win32" ? "merclaw.cmd" : "merclaw");
     if (!existsSync(candidate)) {
       continue;
     }
@@ -143,7 +143,7 @@ export function resolveDaemonServicePathDirs(params: {
   for (const dir of resolveDaemonNodeBinDir(params.nodePath) ?? []) {
     addUniquePathDir(dirs, dir);
   }
-  for (const dir of resolveDaemonOpenClawBinDir(params) ?? []) {
+  for (const dir of resolveDaemonMerClawBinDir(params) ?? []) {
     addUniquePathDir(dirs, dir);
   }
   return dirs.length > 0 ? dirs : undefined;

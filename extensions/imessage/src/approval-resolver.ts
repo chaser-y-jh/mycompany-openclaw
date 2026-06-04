@@ -1,12 +1,12 @@
-import { resolveApprovalOverGateway } from "openclaw/plugin-sdk/approval-gateway-runtime";
-import type { ExecApprovalReplyDecision } from "openclaw/plugin-sdk/approval-reply-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { isApprovalNotFoundError } from "openclaw/plugin-sdk/error-runtime";
+import { resolveApprovalOverGateway } from "merclaw/plugin-sdk/approval-gateway-runtime";
+import type { ExecApprovalReplyDecision } from "merclaw/plugin-sdk/approval-reply-runtime";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { isApprovalNotFoundError } from "merclaw/plugin-sdk/error-runtime";
 
 export { isApprovalNotFoundError };
 
 export async function resolveIMessageApproval(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   approvalId: string;
   decision: ExecApprovalReplyDecision;
   senderId?: string | null;

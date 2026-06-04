@@ -1,5 +1,5 @@
-import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
-import { uniqueStrings } from "@openclaw/normalization-core/string-normalization";
+import { normalizeOptionalLowercaseString } from "@merclaw/normalization-core/string-coerce";
+import { uniqueStrings } from "@merclaw/normalization-core/string-normalization";
 import { IMPLICIT_ALLOW_ALL_FROM_ALSO_ALLOW } from "./sandbox-tool-policy.js";
 import { expandToolGroups, normalizeToolList, normalizeToolName } from "./tool-policy-shared.js";
 export {
@@ -29,7 +29,7 @@ export type AllowlistResolution = {
   pluginOnlyAllowlist: boolean;
 };
 
-export const DEFAULT_PLUGIN_TOOLS_ALLOWLIST_ENTRY = "__openclaw_default_plugin_tools__";
+export const DEFAULT_PLUGIN_TOOLS_ALLOWLIST_ENTRY = "__merclaw_default_plugin_tools__";
 
 export function hasRestrictiveAllowPolicy(policy?: { allow?: string[] }): boolean {
   return (

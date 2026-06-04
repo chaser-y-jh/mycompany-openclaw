@@ -6,13 +6,13 @@ import {
   isPrivateIpAddress,
   normalizeHostnameSuffixAllowlist,
   type SsrFPolicy,
-} from "openclaw/plugin-sdk/ssrf-policy";
-import { fetchWithSsrFGuard, type LookupFn } from "openclaw/plugin-sdk/ssrf-runtime";
+} from "merclaw/plugin-sdk/ssrf-policy";
+import { fetchWithSsrFGuard, type LookupFn } from "merclaw/plugin-sdk/ssrf-runtime";
 import {
   isRecord,
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/string-coerce-runtime";
 import type { MSTeamsAttachmentLike } from "./types.js";
 
 type InlineImageCandidate =

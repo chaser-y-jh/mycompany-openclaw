@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import {
   matchRootFileOpenFailure,
   openRootFile,
@@ -28,8 +28,8 @@ function runtimeExtensionsLengthMismatchMessage(params: {
   extensionsLength: number;
 }): string {
   return (
-    `package.json openclaw.runtimeExtensions length (${params.runtimeExtensionsLength}) ` +
-    `must match openclaw.extensions length (${params.extensionsLength})`
+    `package.json merclaw.runtimeExtensions length (${params.runtimeExtensionsLength}) ` +
+    `must match merclaw.extensions length (${params.extensionsLength})`
   );
 }
 
@@ -60,7 +60,7 @@ function resolvePackageRuntimeExtensionEntries(params: {
 }): RuntimeExtensionsResolution {
   const packageManifest = getPackageManifestMetadata(params.manifest ?? undefined);
   const runtimeExtensionsResult = readPackageManifestStringList({
-    fieldName: "openclaw.runtimeExtensions",
+    fieldName: "merclaw.runtimeExtensions",
     value: packageManifest?.runtimeExtensions,
   });
   if (!runtimeExtensionsResult.ok) {
@@ -242,7 +242,7 @@ export async function validatePackageExtensionEntriesForInstall(params: {
   if (runtimeSetupEntry && !setupEntry) {
     return {
       ok: false,
-      error: "package.json openclaw.runtimeSetupEntry requires openclaw.setupEntry",
+      error: "package.json merclaw.runtimeSetupEntry requires merclaw.setupEntry",
     };
   }
   if (setupEntry) {

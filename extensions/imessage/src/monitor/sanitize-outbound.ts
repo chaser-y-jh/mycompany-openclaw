@@ -1,4 +1,4 @@
-import { stripAssistantInternalScaffolding } from "openclaw/plugin-sdk/text-chunking";
+import { stripAssistantInternalScaffolding } from "merclaw/plugin-sdk/text-chunking";
 
 /**
  * Patterns that indicate assistant-internal metadata leaked into text.

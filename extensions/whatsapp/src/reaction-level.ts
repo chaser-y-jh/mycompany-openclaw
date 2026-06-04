@@ -1,15 +1,15 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
 import {
   resolveReactionLevel,
   type ResolvedReactionLevel,
-} from "openclaw/plugin-sdk/status-helpers";
+} from "merclaw/plugin-sdk/status-helpers";
 import { resolveMergedWhatsAppAccountConfig } from "./account-config.js";
 
 type ResolvedWhatsAppReactionLevel = ResolvedReactionLevel;
 
 /** Resolve the effective reaction level and its implications for WhatsApp. */
 export function resolveWhatsAppReactionLevel(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   accountId?: string;
 }): ResolvedWhatsAppReactionLevel {
   const account = resolveMergedWhatsAppAccountConfig({

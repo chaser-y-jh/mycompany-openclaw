@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import type { ModelDefinitionConfig } from "../../../config/types.models.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../../config/types.merclaw.js";
 import type { ProviderRuntimeModel } from "../../../plugins/provider-runtime-model.types.js";
 import {
   buildBeforeModelResolveAttachments,
@@ -124,7 +124,7 @@ describe("resolveEffectiveRuntimeModel", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies MerClawConfig;
 
     const result = resolveEffectiveRuntimeModel({
       cfg,
@@ -151,7 +151,7 @@ describe("resolveEffectiveRuntimeModel", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies MerClawConfig;
 
     const result = resolveEffectiveRuntimeModel({
       cfg,

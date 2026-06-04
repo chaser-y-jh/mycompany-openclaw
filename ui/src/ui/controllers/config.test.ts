@@ -281,7 +281,7 @@ describe("openConfigFile", () => {
   it("surfaces failed open responses and copies the returned config path", async () => {
     const request = vi.fn().mockResolvedValue({
       ok: false,
-      path: "/tmp/openclaw.json",
+      path: "/tmp/merclaw.json",
       error: "Cannot open file in headless environment.",
     });
     const writeText = vi.fn().mockResolvedValue(undefined);
@@ -295,9 +295,9 @@ describe("openConfigFile", () => {
     await openConfigFile(state);
 
     expect(request).toHaveBeenCalledWith("config.openFile", {});
-    expect(writeText).toHaveBeenCalledWith("/tmp/openclaw.json");
+    expect(writeText).toHaveBeenCalledWith("/tmp/merclaw.json");
     expect(state.lastError).toBe(
-      "Cannot open file in headless environment.\n\nFile path copied to clipboard: /tmp/openclaw.json",
+      "Cannot open file in headless environment.\n\nFile path copied to clipboard: /tmp/merclaw.json",
     );
   });
 
@@ -787,7 +787,7 @@ describe("applyConfig", () => {
     state.client = { request } as unknown as ConfigState["client"];
     state.applySessionKey = "agent:main:whatsapp:dm:+15555550123";
     state.configFormMode = "raw";
-    state.configRaw = '{\n  agent: { workspace: "~/openclaw" }\n}\n';
+    state.configRaw = '{\n  agent: { workspace: "~/merclaw" }\n}\n';
     state.configSnapshot = {
       hash: "hash-123",
       raw: "{\n}\n",
@@ -796,7 +796,7 @@ describe("applyConfig", () => {
     await applyConfig(state);
 
     expect(request).toHaveBeenCalledWith("config.apply", {
-      raw: '{\n  agent: { workspace: "~/openclaw" }\n}\n',
+      raw: '{\n  agent: { workspace: "~/merclaw" }\n}\n',
       baseHash: "hash-123",
       sessionKey: "agent:main:whatsapp:dm:+15555550123",
     });
@@ -971,7 +971,7 @@ describe("saveConfig", () => {
       gateway: {
         mode: "remote",
         remote: {
-          token: "__OPENCLAW_REDACTED__",
+          token: "__MERCLAW_REDACTED__",
         },
       },
     };
@@ -979,7 +979,7 @@ describe("saveConfig", () => {
       gateway: {
         mode: "remote",
         remote: {
-          token: "__OPENCLAW_REDACTED__",
+          token: "__MERCLAW_REDACTED__",
         },
       },
     };
@@ -1062,7 +1062,7 @@ describe("saveConfig", () => {
     state.configForm = {
       gateway: {
         remote: {
-          token: "__OPENCLAW_REDACTED__",
+          token: "__MERCLAW_REDACTED__",
         },
       },
       ui: { theme: "dark" },
@@ -1070,7 +1070,7 @@ describe("saveConfig", () => {
     state.configFormOriginal = {
       gateway: {
         remote: {
-          token: "__OPENCLAW_REDACTED__",
+          token: "__MERCLAW_REDACTED__",
         },
       },
       ui: { theme: "dark" },

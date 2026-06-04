@@ -1,4 +1,4 @@
-import { timestampMsToIsoString } from "@openclaw/normalization-core/number-coercion";
+import { timestampMsToIsoString } from "@merclaw/normalization-core/number-coercion";
 import type { ConnectPairingRequiredReason } from "../../packages/gateway-protocol/src/connect-error-details.js";
 import type { RenderTableOptions, TableColumn } from "../../packages/terminal-core/src/table.js";
 import type { HeartbeatEventPayload } from "../infra/heartbeat-events.js";
@@ -135,9 +135,9 @@ export async function buildStatusCommandReportData(
       })
     : [
         params.theme.muted(
-          `Skipped in fast status. Full report: ${params.formatCliCommand("openclaw security audit")}`,
+          `Skipped in fast status. Full report: ${params.formatCliCommand("merclaw security audit")}`,
         ),
-        params.theme.muted(`Deep probe: ${params.formatCliCommand("openclaw status --deep")}`),
+        params.theme.muted(`Deep probe: ${params.formatCliCommand("merclaw status --deep")}`),
       ];
   const retainedLost = params.summary.taskAuditRetainedLost;
   const retainedLostLine =
@@ -154,7 +154,7 @@ export async function buildStatusCommandReportData(
     width: params.tableWidth,
     overviewRows,
     showTaskMaintenanceHint: params.summary.taskAudit.errors > 0,
-    taskMaintenanceHint: `Task maintenance: ${params.formatCliCommand("openclaw tasks maintenance --apply")}`,
+    taskMaintenanceHint: `Task maintenance: ${params.formatCliCommand("merclaw tasks maintenance --apply")}`,
     retainedLostTaskLine: retainedLostLine,
     pluginCompatibilityLines: buildStatusPluginCompatibilityLines({
       notices: params.pluginCompatibility,

@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalLowercaseString } from "@merclaw/normalization-core/string-coerce";
 import { buildLegacyBundledRootPath } from "./bundled-load-path-aliases.js";
 
 function decodeMountInfoPath(value: string): string {
@@ -45,7 +45,7 @@ function isFilesystemMountPoint(targetPath: string): boolean {
 }
 
 function sourceOverlaysDisabled(env: NodeJS.ProcessEnv): boolean {
-  const raw = normalizeOptionalLowercaseString(env.OPENCLAW_DISABLE_BUNDLED_SOURCE_OVERLAYS);
+  const raw = normalizeOptionalLowercaseString(env.MERCLAW_DISABLE_BUNDLED_SOURCE_OVERLAYS);
   return raw === "1" || raw === "true";
 }
 

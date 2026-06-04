@@ -1,5 +1,5 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { PluginRuntime } from "openclaw/plugin-sdk/core";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import type { PluginRuntime } from "merclaw/plugin-sdk/core";
 import type { GatewayAccount } from "../engine/types.js";
 import type { ResolvedQQBotAccount } from "../types.js";
 
@@ -18,11 +18,11 @@ export function toGatewayAccount(account: ResolvedQQBotAccount): GatewayAccount 
 }
 
 /**
- * Persist OpenClaw config through the injected plugin runtime (typed entry point).
+ * Persist MerClaw config through the injected plugin runtime (typed entry point).
  */
-export async function writeOpenClawConfigThroughRuntime(
+export async function writeMerClawConfigThroughRuntime(
   runtime: PluginRuntime,
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
 ): Promise<void> {
   await runtime.config.replaceConfigFile({
     nextConfig: cfg,

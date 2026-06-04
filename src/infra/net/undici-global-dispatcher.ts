@@ -1,4 +1,4 @@
-import { isProxylineDispatcher } from "@openclaw/proxyline/dispatcher-brand";
+import { isProxylineDispatcher } from "@merclaw/proxyline/dispatcher-brand";
 import { hasEnvHttpProxyAgentConfigured, resolveEnvHttpProxyAgentOptions } from "./proxy-env.js";
 import { addActiveManagedProxyTlsOptions } from "./proxy/managed-proxy-undici.js";
 import {

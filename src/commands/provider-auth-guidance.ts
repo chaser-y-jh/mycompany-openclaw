@@ -1,7 +1,7 @@
 import { normalizeProviderId } from "../agents/model-selection.js";
 import { resolveProviderAuthAliasMap } from "../agents/provider-auth-aliases.js";
 import { formatCliCommand } from "../cli/command-format.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { resolveManifestProviderAuthChoices } from "../plugins/provider-auth-choices.js";
 
 function normalizeProviderIdForAuth(
@@ -26,7 +26,7 @@ function matchesProviderAuthChoice(
 
 function resolveProviderAuthLoginCommand(params: {
   provider: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
 }): string | undefined {
@@ -38,12 +38,12 @@ function resolveProviderAuthLoginCommand(params: {
     return undefined;
   }
   const providerId = normalizeProviderIdForAuth(choice.providerId, aliases);
-  return formatCliCommand(`openclaw models auth login --provider ${providerId}`);
+  return formatCliCommand(`merclaw models auth login --provider ${providerId}`);
 }
 
 export function buildProviderAuthRecoveryHint(params: {
   provider: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   includeConfigure?: boolean;
@@ -55,13 +55,13 @@ export function buildProviderAuthRecoveryHint(params: {
     parts.push(`Run \`${loginCommand}\``);
   }
   if (params.includeConfigure !== false) {
-    parts.push(`\`${formatCliCommand("openclaw configure")}\``);
+    parts.push(`\`${formatCliCommand("merclaw configure")}\``);
   }
   if (params.includeEnvVar) {
     parts.push("set an API key env var");
   }
   if (parts.length === 0) {
-    return `Run \`${formatCliCommand("openclaw configure")}\`.`;
+    return `Run \`${formatCliCommand("merclaw configure")}\`.`;
   }
   if (parts.length === 1) {
     return `${parts[0]}.`;

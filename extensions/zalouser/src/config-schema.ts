@@ -5,7 +5,7 @@ import {
   GroupPolicySchema,
   MarkdownConfigSchema,
   ToolPolicySchema,
-} from "openclaw/plugin-sdk/channel-config-schema";
+} from "merclaw/plugin-sdk/channel-config-schema";
 import { z } from "zod";
 
 const groupConfigSchema = z.object({

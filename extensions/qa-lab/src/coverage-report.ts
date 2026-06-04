@@ -1,4 +1,4 @@
-import { normalizeStringEntriesLower } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { normalizeStringEntriesLower } from "merclaw/plugin-sdk/string-coerce-runtime";
 import {
   buildLiveTransportCoverageLaneSummaries,
   type LiveTransportCoverageLaneSummary,
@@ -390,7 +390,7 @@ export function renderQaScenarioMatchesMarkdownReport(params: {
   ];
 
   if (scenarioArgs) {
-    lines.push(`- Suite command: \`pnpm openclaw qa suite ${scenarioArgs}\``);
+    lines.push(`- Suite command: \`pnpm merclaw qa suite ${scenarioArgs}\``);
   }
   lines.push("");
 

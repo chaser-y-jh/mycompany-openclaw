@@ -1,10 +1,10 @@
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
-import { isRecord as hasRecord } from "@openclaw/normalization-core/record-coerce";
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { normalizeProviderId } from "@merclaw/model-catalog-core/provider-id";
+import { isRecord as hasRecord } from "@merclaw/normalization-core/record-coerce";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
 import {
   sortUniqueStrings,
   uniqueStrings,
-} from "@openclaw/normalization-core/string-normalization";
+} from "@merclaw/normalization-core/string-normalization";
 import { sanitizeServerName, TOOL_NAME_SEPARATOR } from "../../../agents/agent-bundle-mcp-names.js";
 import { DEFAULT_MODEL, DEFAULT_PROVIDER } from "../../../agents/defaults.js";
 import { compileGlobPatterns, matchesAnyGlobPattern } from "../../../agents/glob-pattern.js";
@@ -16,7 +16,7 @@ import {
 } from "../../../agents/tool-policy.js";
 import { resolveAgentModelPrimaryValue } from "../../../config/model-input.js";
 import type { AgentModelConfig } from "../../../config/types.agents-shared.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../../config/types.merclaw.js";
 import { normalizePluginId } from "../../../plugins/config-state.js";
 import { loadManifestMetadataSnapshot } from "../../../plugins/manifest-contract-eligibility.js";
 import type { PluginManifestRegistry } from "../../../plugins/manifest-registry.js";
@@ -84,7 +84,7 @@ function collectToolPolicySources(policy: unknown, label: string, out: ToolAllow
   collectToolPolicySources(subagentTools, `${label}.subagents.tools`, out);
 }
 
-function collectToolAllowlistSources(cfg: OpenClawConfig): ToolAllowlistSource[] {
+function collectToolAllowlistSources(cfg: MerClawConfig): ToolAllowlistSource[] {
   const sources: ToolAllowlistSource[] = [];
   collectToolPolicySources(cfg.tools, "tools", sources);
   const agentList = cfg.agents?.list;
@@ -141,7 +141,7 @@ function collectKnownPluginIds(registry: PluginManifestRegistry): Set<string> {
   return new Set(registry.plugins.map((plugin) => normalizePluginId(plugin.id)));
 }
 
-function collectConfiguredMcpServerNames(cfg: OpenClawConfig): string[] {
+function collectConfiguredMcpServerNames(cfg: MerClawConfig): string[] {
   const servers = cfg.mcp?.servers;
   if (!hasRecord(servers)) {
     return [];
@@ -201,7 +201,7 @@ function resolveProviderToolPolicy(params: {
 }
 
 function resolvePrimaryModelRef(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   agentModel?: AgentModelConfig,
 ): { provider: string; model: string } {
   const raw =
@@ -315,7 +315,7 @@ function buildEffectiveSandboxToolPolicy(params: {
 }
 
 function collectActiveSandboxToolPolicies(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   serverNames: readonly string[],
 ): ActiveSandboxToolPolicy[] {
   const out = new Map<string, ActiveSandboxToolPolicy>();
@@ -485,7 +485,7 @@ function profileToolPolicyBlocksMcp(policy: unknown, serverNames: readonly strin
 }
 
 function nonSandboxToolPoliciesBlockMcp(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   serverNames: readonly string[];
   agent?: Record<string, unknown>;
 }): boolean {
@@ -531,7 +531,7 @@ function formatMcpServerSummary(serverNames: readonly string[]): string {
   return `${serverNames.length} MCP ${noun}${listed ? ` (${listed}${suffix})` : ""}`;
 }
 
-function collectSandboxMcpAllowlistWarnings(cfg: OpenClawConfig): string[] {
+function collectSandboxMcpAllowlistWarnings(cfg: MerClawConfig): string[] {
   const serverNames = collectConfiguredMcpServerNames(cfg);
   if (serverNames.length === 0) {
     return [];
@@ -571,7 +571,7 @@ function addIssue(issues: Map<string, Set<string>>, key: string, sourceLabel: st
 }
 
 export function collectPluginToolAllowlistWarnings(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env?: NodeJS.ProcessEnv;
   manifestRegistry?: PluginManifestRegistry;
 }): string[] {

@@ -1,8 +1,8 @@
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
-import { normalizeStringEntries } from "@openclaw/normalization-core/string-normalization";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
+import { normalizeStringEntries } from "@merclaw/normalization-core/string-normalization";
 import { resolveAgentConfig } from "../../agents/agent-scope.js";
 import { getChannelPlugin, normalizeChannelId } from "../../channels/plugins/index.js";
-import type { AgentElevatedAllowFromConfig, OpenClawConfig } from "../../config/config.js";
+import type { AgentElevatedAllowFromConfig, MerClawConfig } from "../../config/config.js";
 import type { MsgContext } from "../templating.js";
 import {
   type AllowFromFormatter,
@@ -29,7 +29,7 @@ function resolveElevatedAllowList(
 }
 
 function resolveAllowFromFormatter(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   provider: string;
   accountId?: string;
 }): AllowFromFormatter {
@@ -167,7 +167,7 @@ function isApprovedElevatedSender(params: {
 }
 
 export function resolveElevatedPermissions(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentId: string;
   ctx: MsgContext;
   provider: string;

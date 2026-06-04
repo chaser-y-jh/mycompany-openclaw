@@ -1,4 +1,4 @@
-import { normalizeUniqueStringEntries } from "@openclaw/normalization-core/string-normalization";
+import { normalizeUniqueStringEntries } from "@merclaw/normalization-core/string-normalization";
 import type {
   MessageReceipt,
   MessageReceiptPartKind,

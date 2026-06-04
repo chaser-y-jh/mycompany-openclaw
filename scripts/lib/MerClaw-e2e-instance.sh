@@ -1,0 +1,416 @@
+#!/usr/bin/env bash
+# Shared in-container lifecycle helpers for Docker/Bash E2E lanes.
+merclaw_e2e_eval_test_state_from_b64() {
+  local encoded="${1:?missing MerClaw test-state script}"
+  local decoded
+  if ! decoded="$(printf '%s' "$encoded" | base64 -d)"; then
+    echo "Invalid MerClaw test-state base64 payload" >&2
+    return 1
+  fi
+  if [ -z "${decoded//[[:space:]]/}" ]; then
+    echo "MerClaw test-state base64 payload decoded to an empty script" >&2
+    return 1
+  fi
+  eval "$decoded"
+}
+merclaw_e2e_resolve_entrypoint() {
+  local entry
+  for entry in dist/index.mjs dist/index.js; do
+    [ -f "$entry" ] && { printf '%s\n' "$entry"; return 0; }
+  done
+  echo "MerClaw entrypoint not found under dist/" >&2
+  return 1
+}
+merclaw_e2e_package_root() {
+  local prefix="${1:-}"
+  if [ -n "$prefix" ]; then
+    printf '%s/lib/node_modules/merclaw\n' "$prefix"
+    return 0
+  fi
+  printf '%s/merclaw\n' "$(npm root -g)"
+}
+merclaw_e2e_package_entrypoint() {
+  local root="${1:?missing package root}"
+  local entry
+  for entry in "$root/dist/index.mjs" "$root/dist/index.js"; do
+    [ -f "$entry" ] && { printf '%s\n' "$entry"; return 0; }
+  done
+  echo "MerClaw package entrypoint not found under $root/dist/" >&2
+  return 1
+}
+merclaw_e2e_maybe_timeout() {
+  local timeout_value="$1"
+  shift
+  if [ -z "$timeout_value" ] || [ "$timeout_value" = "0" ]; then
+    "$@"
+    return
+  fi
+  local timeout_bin=""
+  if command -v timeout >/dev/null 2>&1; then
+    timeout_bin="timeout"
+  elif command -v gtimeout >/dev/null 2>&1; then
+    timeout_bin="gtimeout"
+  fi
+  if [ -z "$timeout_bin" ]; then
+    if command -v node >/dev/null 2>&1; then
+      echo "timeout command not found; using Node watchdog for MerClaw E2E command timeout $timeout_value" >&2
+      if [[ "$1" != */* ]]; then
+        local resolved_command
+        resolved_command="$(command -v "$1" 2>/dev/null || true)"
+        if [ -n "$resolved_command" ]; then
+          set -- "$resolved_command" "${@:2}"
+        fi
+      fi
+      node - "$timeout_value" "$@" <<'NODE'
+const [, , timeoutValue, command, ...args] = process.argv;
+const parseTimeoutMs = (value) => {
+  const match = /^([0-9]+(?:\.[0-9]+)?)(ms|s|m|h)?$/u.exec(String(value ?? "").trim());
+  if (!match) {
+    throw new Error(`unsupported timeout value: ${value}`);
+  }
+  const amount = Number(match[1]);
+  const unit = match[2] ?? "s";
+  const multiplier = unit === "ms" ? 1 : unit === "s" ? 1_000 : unit === "m" ? 60_000 : 3_600_000;
+  return Math.max(1, Math.ceil(amount * multiplier));
+};
+if (!command) {
+  console.error("missing command for Node watchdog");
+  process.exit(1);
+}
+const { spawn } = await import("node:child_process");
+let timeoutMs;
+try {
+  timeoutMs = parseTimeoutMs(timeoutValue);
+} catch (error) {
+  console.error(error instanceof Error ? error.message : String(error));
+  process.exit(1);
+}
+const child = spawn(command, args, {
+  detached: process.platform !== "win32",
+  env: process.env,
+  stdio: "inherit",
+});
+let timedOut = false;
+let parentSignal = null;
+let parentSignalTimer = null;
+const signalExitCodes = new Map([
+  ["SIGHUP", 129],
+  ["SIGINT", 130],
+  ["SIGTERM", 143],
+]);
+const killGraceMs = Number.parseInt(
+  process.env.MERCLAW_E2E_TIMEOUT_KILL_GRACE_MS || "30000",
+  10,
+);
+const killTarget = process.platform === "win32" ? child.pid : -child.pid;
+const killChild = (signal) => {
+  if (!child.pid) {
+    return;
+  }
+  try {
+    process.kill(killTarget, signal);
+  } catch {
+    try {
+      child.kill(signal);
+    } catch {}
+  }
+};
+const timer = setTimeout(() => {
+  timedOut = true;
+  console.error(`MerClaw E2E command timed out after ${timeoutValue}`);
+  killChild("SIGTERM");
+  setTimeout(() => killChild("SIGKILL"), killGraceMs).unref();
+}, timeoutMs);
+const forwardSignal = (signal) => {
+  if (parentSignal) {
+    killChild("SIGKILL");
+    process.exit(signalExitCodes.get(signal) ?? 1);
+  }
+  parentSignal = signal;
+  clearTimeout(timer);
+  killChild(signal);
+  parentSignalTimer = setTimeout(() => {
+    killChild("SIGKILL");
+    process.exit(signalExitCodes.get(signal) ?? 1);
+  }, killGraceMs);
+  parentSignalTimer.unref();
+};
+process.once("SIGINT", forwardSignal);
+process.once("SIGTERM", forwardSignal);
+child.on("close", (code, signal) => {
+  clearTimeout(timer);
+  if (parentSignalTimer) {
+    clearTimeout(parentSignalTimer);
+  }
+  if (timedOut) {
+    process.exit(124);
+  }
+  if (parentSignal) {
+    process.exit(signalExitCodes.get(parentSignal) ?? 1);
+  }
+  if (code !== null) {
+    process.exit(code);
+  }
+  if (signal) {
+    process.kill(process.pid, signal);
+  }
+  process.exit(1);
+});
+child.on("error", (error) => {
+  clearTimeout(timer);
+  console.error(error.message);
+  process.exit(127);
+});
+NODE
+      return
+    fi
+    echo "timeout command not found and Node is unavailable; cannot bound MerClaw E2E command after $timeout_value" >&2
+    return 127
+  fi
+  if "$timeout_bin" --kill-after=1s 1s true >/dev/null 2>&1; then
+    "$timeout_bin" --kill-after=30s "$timeout_value" "$@"
+  else
+    "$timeout_bin" "$timeout_value" "$@"
+  fi
+}
+merclaw_e2e_install_package() {
+  local log_file="$1"
+  local label="${2:-mounted MerClaw package}"
+  local prefix="${3:-}"
+  local package_tgz="${MERCLAW_CURRENT_PACKAGE_TGZ:?missing MERCLAW_CURRENT_PACKAGE_TGZ}"
+  local timeout_value="${MERCLAW_E2E_NPM_INSTALL_TIMEOUT:-600s}"
+  local args=(-g)
+  if [ -n "$prefix" ]; then
+    args+=("--prefix" "$prefix")
+  fi
+  echo "Installing $label..."
+  local had_errexit=0
+  case "$-" in
+    *e*) had_errexit=1 ;;
+  esac
+  set +e
+  merclaw_e2e_maybe_timeout "$timeout_value" npm install "${args[@]}" "$package_tgz" --no-fund --no-audit >"$log_file" 2>&1
+  local install_status=$?
+  if [ "$had_errexit" -eq 1 ]; then
+    set -e
+  else
+    set +e
+  fi
+  if [ "$install_status" -ne 0 ]; then
+    if [ "$install_status" -eq 124 ] || [ "$install_status" -eq 137 ]; then
+      echo "npm install timed out after $timeout_value for $label" >&2
+    fi
+    echo "npm install failed for $label" >&2
+    if [ -f "$log_file" ]; then
+      while IFS= read -r line || [ -n "$line" ]; do
+        printf '%s\n' "$line" >&2
+      done <"$log_file"
+    fi
+    exit 1
+  fi
+}
+merclaw_e2e_assert_package_extensions() {
+  local root="$1"
+  shift
+  local extension
+  for extension in "$@"; do
+    [ -d "$root/dist/extensions/$extension" ] || {
+      echo "Missing packaged extension: $extension" >&2
+      exit 1
+    }
+  done
+}
+merclaw_e2e_find_dep_package() {
+  local dep_path="$1"
+  shift
+  find "$@" -path "*/node_modules/$dep_path/package.json" -print -quit 2>/dev/null || true
+}
+merclaw_e2e_assert_dep_absent() {
+  local dep_path="$1"
+  shift
+  if [ -n "$(merclaw_e2e_find_dep_package "$dep_path" "$@")" ]; then
+    echo "$dep_path should not be installed" >&2
+    find "$@" -path "*/node_modules/$dep_path/package.json" -print 2>/dev/null >&2 || true
+    exit 1
+  fi
+}
+merclaw_e2e_assert_dep_present() {
+  local dep_path="$1"
+  shift
+  if [ -n "$(merclaw_e2e_find_dep_package "$dep_path" "$@")" ]; then
+    return 0
+  fi
+  echo "$dep_path was not installed on demand" >&2
+  find "$@" -maxdepth 6 -type d -name node_modules -print 2>/dev/null >&2 || true
+  exit 1
+}
+merclaw_e2e_write_state_env() {
+  local target="${1:-/tmp/merclaw-test-state-env}"
+  {
+    printf 'export HOME=%q\n' "$HOME"
+    printf 'export MERCLAW_HOME=%q\n' "$MERCLAW_HOME"
+    printf 'export MERCLAW_STATE_DIR=%q\n' "$MERCLAW_STATE_DIR"
+    printf 'export MERCLAW_CONFIG_PATH=%q\n' "$MERCLAW_CONFIG_PATH"
+    printf 'export MERCLAW_AGENT_DIR=%q\n' "${MERCLAW_AGENT_DIR-}"
+  } >"$target"
+}
+merclaw_e2e_install_trash_shim() {
+  export PATH="/tmp/merclaw-bin:$PATH"
+  mkdir -p /tmp/merclaw-bin
+  cat >/tmp/merclaw-bin/trash <<'TRASH'
+#!/usr/bin/env bash
+set -euo pipefail
+trash_dir="$HOME/.Trash"
+mkdir -p "$trash_dir"
+for target in "$@"; do
+  [ -e "$target" ] || continue
+  base="$(basename "$target")"
+  dest="$trash_dir/$base"
+  [ -e "$dest" ] && dest="$trash_dir/${base}-$(date +%s)-$$"
+  mv "$target" "$dest"
+done
+TRASH
+  chmod +x /tmp/merclaw-bin/trash
+}
+merclaw_e2e_run_script_with_pty() {
+  local command="$1"
+  local log_path="$2"
+  local timeout_value="${MERCLAW_E2E_COMMAND_TIMEOUT:-300s}"
+  if script --version >/dev/null 2>&1; then
+    merclaw_e2e_maybe_timeout "$timeout_value" script -q -f -c "$command" "$log_path"
+  elif node -e 'import("@lydell/node-pty")' >/dev/null 2>&1; then
+    merclaw_e2e_maybe_timeout "$timeout_value" node scripts/e2e/lib/run-with-pty.mjs "$log_path" /bin/bash -lc "$command"
+  else
+    merclaw_e2e_maybe_timeout "$timeout_value" script -q -F "$log_path" /bin/bash -lc "$command"
+  fi
+}
+merclaw_e2e_stop_process() {
+  local pid="${1:-}" _
+  [ -n "$pid" ] || return 0
+  kill "$pid" >/dev/null 2>&1 || true
+  for _ in $(seq 1 40); do
+    ! kill -0 "$pid" >/dev/null 2>&1 && { wait "$pid" >/dev/null 2>&1 || true; return 0; }
+    sleep 0.25
+  done
+  kill -9 "$pid" >/dev/null 2>&1 || true
+  wait "$pid" >/dev/null 2>&1 || true
+}
+merclaw_e2e_terminate_gateways() {
+  local pid="${1:-}" _
+  if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
+    kill "$pid" 2>/dev/null || true
+  fi
+  if command -v pkill >/dev/null 2>&1; then
+    pkill -TERM -f "[o]penclaw-gateway" 2>/dev/null || true
+  fi
+  for _ in $(seq 1 100); do
+    local alive=0
+    if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
+      alive=1
+    fi
+    if command -v pgrep >/dev/null 2>&1 && pgrep -f "[o]penclaw-gateway" >/dev/null 2>&1; then
+      alive=1
+    fi
+    [ "$alive" = "0" ] && break
+    sleep 0.1
+  done
+  if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
+    kill -KILL "$pid" 2>/dev/null || true
+  fi
+  if command -v pkill >/dev/null 2>&1; then
+    pkill -KILL -f "[o]penclaw-gateway" 2>/dev/null || true
+  fi
+  if [ -n "$pid" ]; then
+    wait "$pid" 2>/dev/null || true
+  fi
+}
+merclaw_e2e_start_mock_openai() { MOCK_PORT="$1" node scripts/e2e/mock-openai-server.mjs >"$2" 2>&1 & printf '%s\n' "$!"; }
+merclaw_e2e_wait_mock_openai() {
+  local port="$1" attempts="${2:-80}" timeout_ms="${3:-400}" _
+  for _ in $(seq 1 "$attempts"); do
+    merclaw_e2e_probe_http "http://127.0.0.1:${port}/health" ok "$timeout_ms" && return 0
+    sleep 0.1
+  done
+  merclaw_e2e_probe_http "http://127.0.0.1:${port}/health" ok "$timeout_ms"
+}
+merclaw_e2e_start_gateway() { node "$1" gateway --port "$2" --bind loopback --allow-unconfigured >"$3" 2>&1 & printf '%s\n' "$!"; }
+merclaw_e2e_exec_gateway() { exec node "$1" gateway --port "$2" --bind "${3:-loopback}" --allow-unconfigured >"$4" 2>&1; }
+merclaw_e2e_wait_gateway_ready() {
+  local pid="$1" log="$2" attempts="${3:-300}" _
+  for _ in $(seq 1 "$attempts"); do
+    ! kill -0 "$pid" >/dev/null 2>&1 && {
+      echo "Gateway exited before becoming ready"
+      wait "$pid" || true
+      tail -n 120 "$log" 2>/dev/null || true
+      return 1
+    }
+    grep -q '\[gateway\] ready' "$log" 2>/dev/null && return 0
+    sleep 0.25
+  done
+  echo "Gateway did not become ready"
+  tail -n 120 "$log" 2>/dev/null || true
+  return 1
+}
+merclaw_e2e_probe_tcp() {
+  node --input-type=module -e '
+    import net from "node:net";
+    const socket = net.createConnection({ host: process.argv[1], port: Number(process.argv[2]) });
+    const timeout = setTimeout(() => { socket.destroy(); process.exit(1); }, Number(process.argv[3] ?? 400));
+    socket.on("connect", () => { clearTimeout(timeout); socket.end(); process.exit(0); });
+    socket.on("error", () => { clearTimeout(timeout); process.exit(1); });
+  ' "$1" "$2" "${3:-400}"
+}
+merclaw_e2e_probe_http() {
+  node --input-type=module -e '
+    const expected = process.argv[2] ?? "ok";
+    const timeoutMs = Number(process.argv[3] ?? 400);
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    let exitCode = 1;
+    try {
+      const response = await fetch(process.argv[1], { signal: controller.signal });
+      const passed = expected === "ok" ? response.ok : response.status === Number(expected);
+      exitCode = passed ? 0 : 1;
+    } catch {
+      exitCode = 1;
+    } finally {
+      clearTimeout(timer);
+    }
+    process.exit(exitCode);
+  ' "$1" "${2:-ok}" "${3:-400}"
+}
+merclaw_e2e_probe_http_status() {
+  merclaw_e2e_probe_http "$1" "${2:-200}" "${3:-400}"
+}
+merclaw_e2e_assert_file() { [ -f "$1" ] || { echo "Missing file: $1"; exit 1; }; }
+merclaw_e2e_assert_dir() { [ -d "$1" ] || { echo "Missing dir: $1"; exit 1; }; }
+merclaw_e2e_assert_log_not_contains() {
+  ! grep -q "$2" "$1" || { echo "Unexpected log output: $2"; exit 1; }
+}
+merclaw_e2e_run_logged() {
+  local label="$1" log_path="/tmp/merclaw-onboard-${1}.log"
+  shift
+  merclaw_e2e_run_command "$@" >"$log_path" 2>&1 || { cat "$log_path"; exit 1; }
+}
+merclaw_e2e_run_command() {
+  local timeout_value="${MERCLAW_E2E_COMMAND_TIMEOUT:-300s}"
+  merclaw_e2e_maybe_timeout "$timeout_value" "$@"
+}
+merclaw_e2e_enable_merclaw_cli_timeout() {
+  MERCLAW_E2E_CLI_BIN="$(type -P merclaw)"
+  if [ -z "$MERCLAW_E2E_CLI_BIN" ]; then
+    echo "MerClaw CLI binary not found on PATH" >&2
+    return 1
+  fi
+  export MERCLAW_E2E_CLI_BIN
+  merclaw() {
+    merclaw_e2e_run_command "$MERCLAW_E2E_CLI_BIN" "$@"
+  }
+}
+merclaw_e2e_dump_logs() {
+  local path
+  for path in "$@"; do
+    [ -f "$path" ] || continue
+    echo "--- $path ---"; tail -n "${MERCLAW_E2E_LOG_TAIL_LINES:-120}" "$path" || true
+  done
+}

@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import fs from "node:fs/promises";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import {
   hasSessionAutoModelFallbackProvenance,
   hasConfiguredModelFallbacks,
@@ -17,7 +17,7 @@ import { resolveModelAuthMode } from "../../agents/model-auth.js";
 import { isCliProvider } from "../../agents/model-selection.js";
 import { deriveContextPromptTokens, hasNonzeroUsage, normalizeUsage } from "../../agents/usage.js";
 import { enqueueCommitmentExtraction } from "../../commitments/runtime.js";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { MerClawConfig } from "../../config/config.js";
 import {
   applySessionStoreEntryPatch,
   loadSessionStore,
@@ -151,7 +151,7 @@ function buildSilentFallbackFailurePayload(params: {
 }
 
 function resolveSourceReplyPolicy(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   sessionCtx: TemplateContext;
   sessionEntry?: SessionEntry;
   sessionKey: string;
@@ -178,7 +178,7 @@ function resolveSourceReplyPolicy(params: {
 }
 
 function resolveReplyRunDeliveryContext(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   sessionCtx: TemplateContext;
   sessionEntry?: SessionEntry;
   sessionKey: string;
@@ -1016,7 +1016,7 @@ function buildPendingFinalDeliveryText(payloads: ReplyPayload[]): string {
 }
 
 function enqueueCommitmentExtractionForTurn(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   commandBody: string;
   isHeartbeat: boolean;
   followupRun: FollowupRun;

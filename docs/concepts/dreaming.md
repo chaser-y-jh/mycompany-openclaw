@@ -8,7 +8,7 @@ read_when:
   - You want to tune consolidation without polluting MEMORY.md
 ---
 
-Dreaming is the background memory consolidation system in `memory-core`. It helps OpenClaw move strong short-term signals into durable memory while keeping the process explainable and reviewable.
+Dreaming is the background memory consolidation system in `memory-core`. It helps MerClaw move strong short-term signals into durable memory while keeping the process explainable and reviewable.
 
 <Note>
 Dreaming is **opt-in** and disabled by default.
@@ -195,10 +195,10 @@ Default cadence behavior:
 <Tabs>
   <Tab title="Promotion preview / apply">
     ```bash
-    openclaw memory promote
-    openclaw memory promote --apply
-    openclaw memory promote --limit 5
-    openclaw memory status --deep
+    merclaw memory promote
+    merclaw memory promote --apply
+    merclaw memory promote --limit 5
+    merclaw memory status --deep
     ```
 
     Manual `memory promote` uses deep-phase thresholds by default unless overridden with CLI flags.
@@ -208,8 +208,8 @@ Default cadence behavior:
     Explain why a specific candidate would or would not promote:
 
     ```bash
-    openclaw memory promote-explain "router vlan"
-    openclaw memory promote-explain "router vlan" --json
+    merclaw memory promote-explain "router vlan"
+    merclaw memory promote-explain "router vlan" --json
     ```
 
   </Tab>
@@ -217,8 +217,8 @@ Default cadence behavior:
     Preview REM reflections, candidate truths, and deep promotion output without writing anything:
 
     ```bash
-    openclaw memory rem-harness
-    openclaw memory rem-harness --json
+    merclaw memory rem-harness
+    merclaw memory rem-harness --json
     ```
 
   </Tab>
@@ -262,7 +262,7 @@ When enabled, the Gateway **Dreams** tab shows:
 
 ## Dreaming never runs: status shows blocked
 
-If `openclaw memory status` reports `Dreaming status: blocked`, the managed cron exists but the default agent heartbeat is not firing. Check that heartbeat is enabled for the default agent and that its target is not `none`, then run `openclaw memory status --deep` again after the next heartbeat interval.
+If `merclaw memory status` reports `Dreaming status: blocked`, the managed cron exists but the default agent heartbeat is not firing. Check that heartbeat is enabled for the default agent and that its target is not `none`, then run `merclaw memory status --deep` again after the next heartbeat interval.
 
 ## Related
 

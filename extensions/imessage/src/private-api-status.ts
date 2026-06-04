@@ -1,4 +1,4 @@
-import { asDateTimestampMs } from "openclaw/plugin-sdk/number-runtime";
+import { asDateTimestampMs } from "merclaw/plugin-sdk/number-runtime";
 
 export type IMessagePrivateApiStatus = {
   available: boolean;

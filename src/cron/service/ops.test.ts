@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
-import { runOpenClawStateWriteTransaction } from "../../state/openclaw-state-db.js";
+import { runMerClawStateWriteTransaction } from "../../state/merclaw-state-db.js";
 import * as detachedTaskRuntime from "../../tasks/detached-task-runtime.js";
 import { findTaskByRunId, resetTaskRegistryForTests } from "../../tasks/task-registry.js";
 import { formatTaskStatusDetail } from "../../tasks/task-status.js";
@@ -18,14 +18,14 @@ const { logger, makeStorePath } = setupCronServiceSuite({
 
 function withStateDirForStorePath(storePath: string) {
   const stateRoot = path.dirname(path.dirname(storePath));
-  const originalStateDir = process.env.OPENCLAW_STATE_DIR;
-  process.env.OPENCLAW_STATE_DIR = stateRoot;
+  const originalStateDir = process.env.MERCLAW_STATE_DIR;
+  process.env.MERCLAW_STATE_DIR = stateRoot;
   resetTaskRegistryForTests();
   return () => {
     if (originalStateDir === undefined) {
-      delete process.env.OPENCLAW_STATE_DIR;
+      delete process.env.MERCLAW_STATE_DIR;
     } else {
-      process.env.OPENCLAW_STATE_DIR = originalStateDir;
+      process.env.MERCLAW_STATE_DIR = originalStateDir;
     }
     resetTaskRegistryForTests();
   };
@@ -109,7 +109,7 @@ async function writeLegacyCronArraySnapshot(storePath: string, jobs: CronJob[]) 
 }
 
 function insertCronJobRow(storePath: string, job: CronJob) {
-  runOpenClawStateWriteTransaction(({ db }) => {
+  runMerClawStateWriteTransaction(({ db }) => {
     db.prepare(
       `INSERT INTO cron_jobs (
         store_key, job_id, name, enabled, created_at_ms, schedule_kind,
@@ -496,8 +496,8 @@ describe("cron service ops seam coverage", () => {
     const { storePath } = await makeStorePath();
     const stateRoot = path.dirname(path.dirname(storePath));
     const now = Date.parse("2026-03-23T12:00:00.000Z");
-    const originalStateDir = process.env.OPENCLAW_STATE_DIR;
-    process.env.OPENCLAW_STATE_DIR = stateRoot;
+    const originalStateDir = process.env.MERCLAW_STATE_DIR;
+    process.env.MERCLAW_STATE_DIR = stateRoot;
     resetTaskRegistryForTests();
 
     await writeDueIsolatedJobSnapshot(storePath, now);
@@ -517,9 +517,9 @@ describe("cron service ops seam coverage", () => {
 
     updateTaskRecordSpy.mockRestore();
     if (originalStateDir === undefined) {
-      delete process.env.OPENCLAW_STATE_DIR;
+      delete process.env.MERCLAW_STATE_DIR;
     } else {
-      process.env.OPENCLAW_STATE_DIR = originalStateDir;
+      process.env.MERCLAW_STATE_DIR = originalStateDir;
     }
     resetTaskRegistryForTests();
   });

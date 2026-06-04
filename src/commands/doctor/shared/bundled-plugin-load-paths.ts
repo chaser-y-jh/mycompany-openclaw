@@ -1,7 +1,7 @@
 import path from "node:path";
 import { sanitizeForLog } from "../../../../packages/terminal-core/src/ansi.js";
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../../../agents/agent-scope.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../../config/types.merclaw.js";
 import {
   buildBundledPluginLoadPathAliases,
   normalizeBundledLookupPath,
@@ -19,19 +19,19 @@ type BundledPluginLoadPathHit = {
   pathLabel: string;
 };
 
-function resolveBundledWorkspaceDir(cfg: OpenClawConfig): string | undefined {
+function resolveBundledWorkspaceDir(cfg: MerClawConfig): string | undefined {
   return resolveAgentWorkspaceDir(cfg, resolveDefaultAgentId(cfg)) ?? undefined;
 }
 
-function isOpenClawNodeModulesPackageRoot(packageRoot: string): boolean {
+function isMerClawNodeModulesPackageRoot(packageRoot: string): boolean {
   const normalized = normalizeBundledLookupPath(packageRoot);
   const packageDir = path.basename(normalized);
   const parentDir = path.basename(path.dirname(normalized));
-  return packageDir === "openclaw" && parentDir === "node_modules";
+  return packageDir === "merclaw" && parentDir === "node_modules";
 }
 
 export function scanBundledPluginLoadPathMigrations(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   env: NodeJS.ProcessEnv = process.env,
 ): BundledPluginLoadPathHit[] {
   const plugins = asObjectRecord(cfg.plugins);
@@ -80,7 +80,7 @@ export function scanBundledPluginLoadPathMigrations(
       const oldPackageRoot = oldPackaged?.packageRoot ?? oldLegacy?.packageRoot;
       const oldBundledLeaf = oldPackaged?.bundledLeaf ?? oldLegacy?.bundledLeaf;
       const oldPackageMatch =
-        oldPackageRoot && oldBundledLeaf && isOpenClawNodeModulesPackageRoot(oldPackageRoot)
+        oldPackageRoot && oldBundledLeaf && isMerClawNodeModulesPackageRoot(oldPackageRoot)
           ? packagedBundledLeafMap.get(normalizeBundledLookupPath(oldBundledLeaf))
           : undefined;
       if (!oldPackageMatch) {
@@ -114,17 +114,17 @@ export function collectBundledPluginLoadPathWarnings(params: {
   }
   const lines = params.hits.map(
     (hit) =>
-      `- ${hit.pathLabel}: bundled plugin path "${hit.fromPath}" still aliases ${hit.pluginId}; OpenClaw loads the packaged bundled plugin from "${hit.toPath}".`,
+      `- ${hit.pathLabel}: bundled plugin path "${hit.fromPath}" still aliases ${hit.pluginId}; MerClaw loads the packaged bundled plugin from "${hit.toPath}".`,
   );
   lines.push(`- Run "${params.doctorFixCommand}" to remove these redundant bundled plugin paths.`);
   return lines.map((line) => sanitizeForLog(line));
 }
 
 export function maybeRepairBundledPluginLoadPaths(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   env: NodeJS.ProcessEnv = process.env,
 ): {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   changes: string[];
 } {
   const hits = scanBundledPluginLoadPathMigrations(cfg, env);

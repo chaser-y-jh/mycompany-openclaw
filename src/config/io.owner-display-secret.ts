@@ -1,15 +1,15 @@
-import type { OpenClawConfig } from "./types.openclaw.js";
+import type { MerClawConfig } from "./types.merclaw.js";
 
 export type OwnerDisplaySecretRuntimeState = {
   pendingByPath: Map<string, string>;
 };
 
 export function retainGeneratedOwnerDisplaySecret(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   configPath: string;
   generatedSecret?: string;
   state: OwnerDisplaySecretRuntimeState;
-}): OpenClawConfig {
+}): MerClawConfig {
   const { config, configPath, generatedSecret, state } = params;
   if (!generatedSecret) {
     state.pendingByPath.delete(configPath);

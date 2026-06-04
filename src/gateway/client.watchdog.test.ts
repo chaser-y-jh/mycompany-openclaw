@@ -8,7 +8,7 @@ function isIpv6UnavailableError(err: unknown): boolean {
   return code === "EAFNOSUPPORT" || code === "EADDRNOTAVAIL";
 }
 
-describe("GatewayClient OpenClaw wrapper watchdog integration", () => {
+describe("GatewayClient MerClaw wrapper watchdog integration", () => {
   test("connects to IPv6 loopback while managed proxy Gateway-only mode is active", async () => {
     let wss: WebSocketServer | null = new WebSocketServer({ host: "::1", port: 0 });
     const bind = await new Promise<{ port: number } | null>((resolve, reject) => {

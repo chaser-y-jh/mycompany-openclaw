@@ -19,7 +19,7 @@ describe("shared/node-match", () => {
     expect(resolveNodeMatches(nodes, "mac studio")).toEqual([nodes[0]]);
     expect(resolveNodeMatches(nodes, "  Mac---Studio!! ")).toEqual([nodes[0]]);
     expect(resolveNodeMatches(nodes, "pi-456")).toEqual([nodes[1]]);
-    expect(resolveNodeMatches(nodes, "openclaw")).toStrictEqual([]);
+    expect(resolveNodeMatches(nodes, "merclaw")).toStrictEqual([]);
     expect(resolveNodeMatches(nodes, "   ")).toStrictEqual([]);
   });
 
@@ -47,7 +47,7 @@ describe("shared/node-match", () => {
     ).toBe("mac-studio");
   });
 
-  it("prefers a unique current OpenClaw client over a legacy clawdbot client", () => {
+  it("prefers a unique current MerClaw client over a legacy clawdbot client", () => {
     expect(
       resolveNodeIdFromCandidates(
         [
@@ -60,7 +60,7 @@ describe("shared/node-match", () => {
           {
             nodeId: "current-mac",
             displayName: "Peter’s Mac Studio",
-            clientId: "openclaw-macos",
+            clientId: "merclaw-macos",
             connected: false,
           },
         ],
@@ -118,20 +118,20 @@ describe("shared/node-match", () => {
           {
             nodeId: "other-mac",
             displayName: "Peter’s Mac Studio",
-            clientId: "openclaw-macos",
+            clientId: "merclaw-macos",
             connected: true,
           },
           {
             nodeId: "third-mac",
             displayName: "Peter’s Mac Studio",
-            clientId: "openclaw-macos",
+            clientId: "merclaw-macos",
             connected: true,
           },
         ],
         "Peter's Mac Studio",
       ),
     ).toThrow(
-      /ambiguous node: Peter's Mac Studio.*node=other-mac.*client=openclaw-macos.*node=third-mac.*client=openclaw-macos/,
+      /ambiguous node: Peter's Mac Studio.*node=other-mac.*client=merclaw-macos.*node=third-mac.*client=merclaw-macos/,
     );
   });
 

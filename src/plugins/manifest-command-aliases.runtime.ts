@@ -1,5 +1,5 @@
-import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { normalizeOptionalLowercaseString } from "@merclaw/normalization-core/string-coerce";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { resolveManifestActivationPluginIds } from "./activation-planner.js";
 import {
   resolveManifestCommandAliasOwnerInRegistry,
@@ -17,7 +17,7 @@ import { hasManifestToolAvailability } from "./manifest-tool-availability.js";
 
 export function resolveManifestCommandAliasOwner(params: {
   command: string | undefined;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   registry?: PluginManifestCommandAliasRegistry;
@@ -37,7 +37,7 @@ export function resolveManifestCommandAliasOwner(params: {
 
 export function resolveManifestCliCommandSurfaceOwner(params: {
   command: string | undefined;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   registry?: PluginManifestCommandAliasRegistry;
@@ -84,7 +84,7 @@ export function resolveManifestCliCommandSurfaceOwner(params: {
  */
 export function resolveManifestToolOwner(params: {
   toolName: string | undefined;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   registry?: PluginManifestCommandAliasRegistry;

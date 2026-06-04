@@ -1,5 +1,5 @@
-import type { ProviderDefaultThinkingPolicyContext } from "openclaw/plugin-sdk/core";
-import type { ModelProviderConfig } from "openclaw/plugin-sdk/provider-model-types";
+import type { ProviderDefaultThinkingPolicyContext } from "merclaw/plugin-sdk/core";
+import type { ModelProviderConfig } from "merclaw/plugin-sdk/provider-model-types";
 import { normalizeGoogleProviderConfig, resolveGoogleThinkingProfile } from "./provider-policy.js";
 
 export function normalizeConfig(params: { provider: string; providerConfig: ModelProviderConfig }) {

@@ -3,7 +3,7 @@ import { createServer, type IncomingMessage, type ServerResponse } from "node:ht
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { startPty, waitFor, type PtyRun } from "./tui-pty-test-support.js";
 
 type MockModelServer = {
@@ -184,19 +184,19 @@ function buildLocalModeConfig(params: { workspaceDir: string; providerBaseUrl: s
       auth: { mode: "token", token: "tui-pty-local" },
     },
     discovery: { mdns: { mode: "off" } },
-  } satisfies OpenClawConfig;
+  } satisfies MerClawConfig;
 }
 
 async function startLocalModeTui() {
   const replyText = "LOCAL_PTY_RESPONSE";
-  const tempDir = await mkdtemp(path.join(tmpdir(), "openclaw-tui-pty-local-"));
+  const tempDir = await mkdtemp(path.join(tmpdir(), "merclaw-tui-pty-local-"));
   const workspaceDir = path.join(tempDir, "workspace");
   const homeDir = path.join(tempDir, "home");
   const stateDir = path.join(tempDir, "state");
   const xdgConfigHome = path.join(tempDir, "xdg-config");
   const xdgDataHome = path.join(tempDir, "xdg-data");
   const xdgCacheHome = path.join(tempDir, "xdg-cache");
-  const configPath = path.join(tempDir, "openclaw.json");
+  const configPath = path.join(tempDir, "merclaw.json");
   const mockModel = await startMockModelServer(replyText);
   const config = buildLocalModeConfig({ workspaceDir, providerBaseUrl: mockModel.baseUrl });
   await Promise.all([
@@ -214,14 +214,14 @@ async function startLocalModeTui() {
     cwd: process.cwd(),
     env: {
       HOME: homeDir,
-      OPENCLAW_HOME: homeDir,
-      OPENCLAW_CONFIG_PATH: configPath,
-      OPENCLAW_STATE_DIR: stateDir,
+      MERCLAW_HOME: homeDir,
+      MERCLAW_CONFIG_PATH: configPath,
+      MERCLAW_STATE_DIR: stateDir,
       XDG_CONFIG_HOME: xdgConfigHome,
       XDG_DATA_HOME: xdgDataHome,
       XDG_CACHE_HOME: xdgCacheHome,
-      OPENCLAW_THEME: "dark",
-      OPENCLAW_CODEX_DISCOVERY_LIVE: "0",
+      MERCLAW_THEME: "dark",
+      MERCLAW_CODEX_DISCOVERY_LIVE: "0",
       NO_COLOR: undefined,
     },
     exitTimeoutMs: LOCAL_EXIT_TIMEOUT_MS,

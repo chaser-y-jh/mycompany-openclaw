@@ -1,6 +1,6 @@
 import type { SourceReplyDeliveryMode } from "../auto-reply/get-reply-options.types.js";
 import type { InboundEventKind } from "../channels/inbound-event/kind.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import {
   buildMcpToolSchema,
   type McpLoopbackTool,
@@ -15,12 +15,12 @@ type CachedScopedTools = {
   agentId: string | undefined;
   tools: McpLoopbackTool[];
   toolSchema: McpToolSchemaEntry[];
-  configRef: OpenClawConfig;
+  configRef: MerClawConfig;
   time: number;
 };
 
 export function resolveMcpLoopbackScopedTools(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   sessionKey: string;
   messageProvider: string | undefined;
   currentChannelId: string | undefined;
@@ -55,7 +55,7 @@ export class McpLoopbackToolCache {
   #entries = new Map<string, CachedScopedTools>();
 
   resolve(params: {
-    cfg: OpenClawConfig;
+    cfg: MerClawConfig;
     sessionKey: string;
     messageProvider: string | undefined;
     currentChannelId: string | undefined;

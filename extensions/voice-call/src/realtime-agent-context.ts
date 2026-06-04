@@ -1,7 +1,7 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { buildRealtimeVoiceAgentConsultPolicyInstructions } from "openclaw/plugin-sdk/realtime-voice";
-import { root } from "openclaw/plugin-sdk/security-runtime";
-import { normalizeOptionalString as normalizeString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { buildRealtimeVoiceAgentConsultPolicyInstructions } from "merclaw/plugin-sdk/realtime-voice";
+import { root } from "merclaw/plugin-sdk/security-runtime";
+import { normalizeOptionalString as normalizeString } from "merclaw/plugin-sdk/string-coerce-runtime";
 import type { VoiceCallConfig } from "./config.js";
 import type { CoreAgentDeps, CoreConfig } from "./core-bridge.js";
 
@@ -68,15 +68,15 @@ export async function buildRealtimeVoiceInstructions(params: {
 
   const agentId = config.agentId ?? "main";
   const capsule: string[] = [
-    "OpenClaw agent voice context:",
+    "MerClaw agent voice context:",
     `- Agent id: ${agentId}`,
-    "- Use this context to match the OpenClaw agent's personality and standing preferences on fast voice turns.",
-    "- Treat this as compact context only; call openclaw_agent_consult when the caller needs the full agent brain, tools, memory, or workspace state.",
+    "- Use this context to match the MerClaw agent's personality and standing preferences on fast voice turns.",
+    "- Treat this as compact context only; call merclaw_agent_consult when the caller needs the full agent brain, tools, memory, or workspace state.",
   ];
 
   if (contextConfig.includeIdentity) {
     const identity = params.agentRuntime.resolveAgentIdentity(
-      params.coreConfig as OpenClawConfig,
+      params.coreConfig as MerClawConfig,
       agentId,
     ) as VoiceIdentityLike | undefined;
     const identityLines = [
@@ -95,7 +95,7 @@ export async function buildRealtimeVoiceInstructions(params: {
 
   if (contextConfig.includeWorkspaceFiles) {
     const workspaceDir = params.agentRuntime.resolveAgentWorkspaceDir(
-      params.coreConfig as OpenClawConfig,
+      params.coreConfig as MerClawConfig,
       agentId,
     );
     const fileSections = await readWorkspaceVoiceContextFiles({

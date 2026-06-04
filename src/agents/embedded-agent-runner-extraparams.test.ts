@@ -1,6 +1,6 @@
-import type { StreamFn } from "openclaw/plugin-sdk/agent-core";
-import type { Context, Model, SimpleStreamOptions } from "openclaw/plugin-sdk/llm";
-import { createAssistantMessageEventStream } from "openclaw/plugin-sdk/llm";
+import type { StreamFn } from "merclaw/plugin-sdk/agent-core";
+import type { Context, Model, SimpleStreamOptions } from "merclaw/plugin-sdk/llm";
+import { createAssistantMessageEventStream } from "merclaw/plugin-sdk/llm";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { testing as extraParamsTesting } from "./embedded-agent-runner/extra-params.js";
 
@@ -528,13 +528,13 @@ describe("applyExtraParamsToAgent", () => {
       undefined,
       "high",
       "cass",
-      "/tmp/openclaw-workspace",
+      "/tmp/merclaw-workspace",
       model,
-      "/tmp/openclaw-agent",
+      "/tmp/merclaw-agent",
     );
 
-    expect(capturedContext?.agentDir).toBe("/tmp/openclaw-agent");
-    expect(capturedContext?.workspaceDir).toBe("/tmp/openclaw-workspace");
+    expect(capturedContext?.agentDir).toBe("/tmp/merclaw-agent");
+    expect(capturedContext?.workspaceDir).toBe("/tmp/merclaw-workspace");
   });
 
   function runResponsesPayloadMutationCase(params: {

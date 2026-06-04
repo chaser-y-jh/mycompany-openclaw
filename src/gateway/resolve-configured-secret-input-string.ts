@@ -1,5 +1,5 @@
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { resolveSecretInputRef } from "../config/types.secrets.js";
 import type { PluginManifestRegistry } from "../plugins/manifest-registry.js";
 import { secretRefKey } from "../secrets/ref-contract.js";
@@ -30,7 +30,7 @@ function buildUnresolvedReason(params: {
 }
 
 export async function resolveConfiguredSecretInputString(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   env: NodeJS.ProcessEnv;
   value: unknown;
   path: string;
@@ -89,7 +89,7 @@ export async function resolveConfiguredSecretInputString(params: {
 }
 
 export async function resolveConfiguredSecretInputWithFallback(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   env: NodeJS.ProcessEnv;
   value: unknown;
   path: string;
@@ -158,7 +158,7 @@ export async function resolveConfiguredSecretInputWithFallback(params: {
 }
 
 export async function resolveRequiredConfiguredSecretRefInputString(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   env: NodeJS.ProcessEnv;
   value: unknown;
   path: string;

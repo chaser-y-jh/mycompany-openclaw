@@ -8,7 +8,7 @@ const SCRIPT_PATH = "scripts/e2e/lib/docker-stats/assert-resource-ceiling.mjs";
 const tempRoots: string[] = [];
 
 function writeStats(contents: string): string {
-  const root = mkdtempSync(join(tmpdir(), "openclaw-docker-stats-"));
+  const root = mkdtempSync(join(tmpdir(), "merclaw-docker-stats-"));
   tempRoots.push(root);
   const file = join(root, "stats.jsonl");
   writeFileSync(file, contents);

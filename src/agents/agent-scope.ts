@@ -8,12 +8,12 @@ import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
   resolvePrimaryStringValue,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/normalization-core/string-coerce";
 import type { SessionEntry } from "../config/sessions/types.js";
 import type { AgentDefaultsConfig } from "../config/types.agent-defaults.js";
 import type { AgentModelConfig } from "../config/types.agents-shared.js";
 import type { AgentConfig } from "../config/types.agents.js";
-import type { OpenClawConfig } from "../config/types.js";
+import type { MerClawConfig } from "../config/types.js";
 import { isPathInside } from "../infra/path-guards.js";
 import {
   isSubagentSessionKey,
@@ -278,7 +278,7 @@ export { resolveAgentIdFromSessionKey };
 
 export function resolveSessionAgentIds(params: {
   sessionKey?: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentId?: string;
 }): {
   defaultAgentId: string;
@@ -297,14 +297,14 @@ export function resolveSessionAgentIds(params: {
 
 export function resolveSessionAgentId(params: {
   sessionKey?: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentId?: string;
 }): string {
   return resolveSessionAgentIds(params).sessionAgentId;
 }
 
 export function resolveAgentExecutionContract(
-  cfg: OpenClawConfig | undefined,
+  cfg: MerClawConfig | undefined,
   agentId?: string | null,
 ): NonNullable<NonNullable<AgentDefaultsConfig["embeddedAgent"]>["executionContract"]> | undefined {
   const defaultContract = cfg?.agents?.defaults?.embeddedAgent?.executionContract;
@@ -317,14 +317,14 @@ export function resolveAgentExecutionContract(
 }
 
 export function resolveAgentSkillsFilter(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   agentId: string,
 ): string[] | undefined {
   return resolveEffectiveAgentSkillFilter(cfg, agentId);
 }
 
 export function resolveAgentExplicitModelPrimary(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   agentId: string,
 ): string | undefined {
   const raw = resolveAgentConfig(cfg, agentId)?.model;
@@ -332,7 +332,7 @@ export function resolveAgentExplicitModelPrimary(
 }
 
 export function resolveAgentEffectiveModelPrimary(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   agentId: string,
 ): string | undefined {
   return (
@@ -341,7 +341,7 @@ export function resolveAgentEffectiveModelPrimary(
   );
 }
 
-function findMutableAgentEntry(cfg: OpenClawConfig, agentId: string): AgentConfig | undefined {
+function findMutableAgentEntry(cfg: MerClawConfig, agentId: string): AgentConfig | undefined {
   const id = normalizeAgentId(agentId);
   return cfg.agents?.list?.find((entry) => normalizeAgentId(entry?.id) === id);
 }
@@ -359,7 +359,7 @@ function updateAgentModelPrimary(
 export type AgentModelPrimaryWriteTarget = "agent" | "defaults";
 
 export function setAgentEffectiveModelPrimary(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   agentId: string,
   primary: string,
 ): AgentModelPrimaryWriteTarget {
@@ -378,12 +378,12 @@ export function setAgentEffectiveModelPrimary(
 }
 
 /** @deprecated Prefer explicit/effective helpers at new call sites. */
-export function resolveAgentModelPrimary(cfg: OpenClawConfig, agentId: string): string | undefined {
+export function resolveAgentModelPrimary(cfg: MerClawConfig, agentId: string): string | undefined {
   return resolveAgentExplicitModelPrimary(cfg, agentId);
 }
 
 export function resolveAgentModelFallbacksOverride(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   agentId: string,
 ): string[] | undefined {
   return resolveSelectedModelFallbacksOverride(resolveAgentConfig(cfg, agentId)?.model);
@@ -425,7 +425,7 @@ export type SubagentModelConfigSelectionResult = {
 };
 
 export function resolveSubagentModelConfigSelectionResult(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentId?: string;
   agentConfigOverride?: Pick<AgentConfig, "model" | "subagents">;
 }): SubagentModelConfigSelectionResult | undefined {
@@ -450,7 +450,7 @@ export function resolveSubagentModelConfigSelectionResult(params: {
 }
 
 export function resolveSubagentModelConfigSelection(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentId?: string;
   agentConfigOverride?: Pick<AgentConfig, "model" | "subagents">;
 }): AgentModelConfig | undefined {
@@ -458,7 +458,7 @@ export function resolveSubagentModelConfigSelection(params: {
 }
 
 export function resolveSubagentModelFallbacksOverride(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   agentId: string,
 ): string[] | undefined {
   const agentConfig = resolveAgentConfig(cfg, agentId);
@@ -477,7 +477,7 @@ export function resolveSubagentModelFallbacksOverride(
 }
 
 function resolveSubagentSpawnModelFallbacksOverride(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   agentId: string,
 ): string[] | undefined {
   const agentConfig = resolveAgentConfig(cfg, agentId);
@@ -500,7 +500,7 @@ export function resolveFallbackAgentId(params: {
 }
 
 export function resolveRunModelFallbacksOverride(params: {
-  cfg: OpenClawConfig | undefined;
+  cfg: MerClawConfig | undefined;
   agentId?: string | null;
   sessionKey?: string | null;
 }): string[] | undefined {
@@ -514,7 +514,7 @@ export function resolveRunModelFallbacksOverride(params: {
 }
 
 export function hasConfiguredModelFallbacks(params: {
-  cfg: OpenClawConfig | undefined;
+  cfg: MerClawConfig | undefined;
   agentId?: string | null;
   sessionKey?: string | null;
 }): boolean {
@@ -524,7 +524,7 @@ export function hasConfiguredModelFallbacks(params: {
 }
 
 export function resolveEffectiveModelFallbacks(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentId: string;
   sessionKey?: string | null;
   hasSessionModelOverride: boolean;
@@ -568,7 +568,7 @@ function normalizePathForComparison(input: string): string {
 }
 
 export function resolveAgentIdsByWorkspacePath(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   workspacePath: string,
 ): string[] {
   const normalizedWorkspacePath = normalizePathForComparison(workspacePath);
@@ -596,7 +596,7 @@ export function resolveAgentIdsByWorkspacePath(
 }
 
 export function resolveAgentIdByWorkspacePath(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   workspacePath: string,
 ): string | undefined {
   return resolveAgentIdsByWorkspacePath(cfg, workspacePath)[0];

@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { isRecord } from "@openclaw/normalization-core/record-coerce";
+import { isRecord } from "@merclaw/normalization-core/record-coerce";
 import {
   resolveAgentDir,
   resolveDefaultAgentDir,
@@ -17,7 +17,7 @@ import { loadPersistedAuthProfileStore } from "../../../agents/auth-profiles/per
 import { saveAuthProfileStore } from "../../../agents/auth-profiles/store.js";
 import type { AuthProfileStore, OAuthCredential } from "../../../agents/auth-profiles/types.js";
 import { resolveStateDir } from "../../../config/paths.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../../config/types.merclaw.js";
 import { withFileLock } from "../../../infra/file-lock.js";
 import { shortenHomePath } from "../../../utils.js";
 
@@ -27,7 +27,7 @@ type StaleOAuthProfileShadow = {
   profileId: string;
 };
 
-const LEGACY_OAUTH_REF_SOURCE = "openclaw-credentials";
+const LEGACY_OAUTH_REF_SOURCE = "merclaw-credentials";
 const LEGACY_OAUTH_REF_PROVIDER = "openai-codex";
 
 function isLegacyOAuthRef(value: unknown): boolean {
@@ -84,7 +84,7 @@ async function collectStateAgentDirs(env: NodeJS.ProcessEnv): Promise<string[]> 
 }
 
 async function collectCandidateAgentDirs(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   env: NodeJS.ProcessEnv,
 ): Promise<string[]> {
   const dirs = new Set<string>();
@@ -127,7 +127,7 @@ function shouldRemoveLocalOAuthShadow(params: {
 }
 
 export async function scanStaleOAuthProfileShadows(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env?: NodeJS.ProcessEnv;
   now?: number;
 }): Promise<StaleOAuthProfileShadow[]> {
@@ -272,7 +272,7 @@ export function collectStaleOAuthProfileShadowWarnings(params: {
 }
 
 export async function repairStaleOAuthProfileShadows(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env?: NodeJS.ProcessEnv;
   now?: number;
 }): Promise<{ changes: string[]; warnings: string[] }> {

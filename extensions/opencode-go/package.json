@@ -1,13 +1,13 @@
 {
-  "name": "@openclaw/opencode-go-provider",
+  "name": "@merclaw/opencode-go-provider",
   "version": "2026.5.31",
   "private": true,
-  "description": "OpenClaw OpenCode Go provider plugin",
+  "description": "MerClaw OpenCode Go provider plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@merclaw/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ]

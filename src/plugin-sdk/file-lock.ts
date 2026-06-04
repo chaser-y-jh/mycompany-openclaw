@@ -3,7 +3,7 @@ import {
   acquireFileLock as acquireFsSafeFileLock,
   drainFileLockManagerForTest,
   resetFileLockManagerForTest,
-} from "@openclaw/fs-safe/file-lock";
+} from "@merclaw/fs-safe/file-lock";
 import { shouldRemoveDeadOwnerOrExpiredLock } from "../infra/stale-lock-file.js";
 import { getProcessStartTime } from "../shared/pid-alive.js";
 
@@ -36,7 +36,7 @@ export type FileLockStaleError = Error & {
   lockPath: string;
 };
 
-const FILE_LOCK_MANAGER_KEY = "openclaw.plugin-sdk.file-lock";
+const FILE_LOCK_MANAGER_KEY = "merclaw.plugin-sdk.file-lock";
 
 async function shouldReclaimPluginLock(params: {
   lockPath: string;

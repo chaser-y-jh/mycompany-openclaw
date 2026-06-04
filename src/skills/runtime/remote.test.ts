@@ -3,7 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import type { NodeRegistry } from "../../gateway/node-registry.js";
 import { getSkillsSnapshotVersion, resetSkillsRefreshForTest } from "./refresh.js";
 import {
@@ -15,8 +15,8 @@ import {
   setSkillsRemoteRegistry,
 } from "./remote.js";
 
-function createRemoteSkillWorkspace(bin: string): { cfg: OpenClawConfig; workspaceDir: string } {
-  const workspaceDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-remote-skills-"));
+function createRemoteSkillWorkspace(bin: string): { cfg: MerClawConfig; workspaceDir: string } {
+  const workspaceDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-remote-skills-"));
   fs.mkdirSync(path.join(workspaceDir, "remote-skill"), { recursive: true });
   fs.writeFileSync(
     path.join(workspaceDir, "remote-skill", "SKILL.md"),
@@ -24,7 +24,7 @@ function createRemoteSkillWorkspace(bin: string): { cfg: OpenClawConfig; workspa
       "---",
       "name: remote-skill",
       "description: Needs a remote bin",
-      `metadata: { "openclaw": { "os": ["darwin"], "requires": { "bins": ["${bin}"] } } }`,
+      `metadata: { "merclaw": { "os": ["darwin"], "requires": { "bins": ["${bin}"] } } }`,
       "---",
       "# Remote Skill",
       "",
@@ -38,7 +38,7 @@ function createRemoteSkillWorkspace(bin: string): { cfg: OpenClawConfig; workspa
           workspace: workspaceDir,
         },
       },
-    } satisfies OpenClawConfig,
+    } satisfies MerClawConfig,
   };
 }
 
@@ -233,7 +233,7 @@ describe("skills-remote", () => {
 
   it("skips remote bin probes when the node connectivity preflight fails", async () => {
     await resetSkillsRefreshForTest();
-    const workspaceDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-remote-skills-"));
+    const workspaceDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-remote-skills-"));
     const nodeId = `node-${randomUUID()}`;
     const bin = `bin-${randomUUID()}`;
     try {
@@ -244,7 +244,7 @@ describe("skills-remote", () => {
           "---",
           "name: remote-skill",
           "description: Needs a remote bin",
-          `metadata: { "openclaw": { "os": ["darwin"], "requires": { "bins": ["${bin}"] } } }`,
+          `metadata: { "merclaw": { "os": ["darwin"], "requires": { "bins": ["${bin}"] } } }`,
           "---",
           "# Remote Skill",
           "",
@@ -256,7 +256,7 @@ describe("skills-remote", () => {
             workspace: workspaceDir,
           },
         },
-      } satisfies OpenClawConfig;
+      } satisfies MerClawConfig;
       const invokeCalls: string[] = [];
       setSkillsRemoteRegistry({
         listConnected: () => [],
@@ -301,7 +301,7 @@ describe("skills-remote", () => {
 
   it("retries the bin probe when the node reconnects during preflight", async () => {
     await resetSkillsRefreshForTest();
-    const workspaceDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-remote-skills-"));
+    const workspaceDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-remote-skills-"));
     const nodeId = `node-${randomUUID()}`;
     const bin = `bin-${randomUUID()}`;
     try {
@@ -312,7 +312,7 @@ describe("skills-remote", () => {
           "---",
           "name: remote-skill",
           "description: Needs a remote bin",
-          `metadata: { "openclaw": { "os": ["darwin"], "requires": { "bins": ["${bin}"] } } }`,
+          `metadata: { "merclaw": { "os": ["darwin"], "requires": { "bins": ["${bin}"] } } }`,
           "---",
           "# Remote Skill",
           "",
@@ -324,7 +324,7 @@ describe("skills-remote", () => {
             workspace: workspaceDir,
           },
         },
-      } satisfies OpenClawConfig;
+      } satisfies MerClawConfig;
       let connId = "conn-old";
       const connectivityCalls: string[] = [];
       const invokeCalls: string[] = [];
@@ -381,7 +381,7 @@ describe("skills-remote", () => {
   });
 
   it("coalesces overlapping bin probes for the same node", async () => {
-    const workspaceDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-remote-skills-"));
+    const workspaceDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-remote-skills-"));
     const nodeId = `node-${randomUUID()}`;
     const bin = `bin-${randomUUID()}`;
     let invokeCount = 0;
@@ -411,7 +411,7 @@ describe("skills-remote", () => {
           "---",
           "name: remote-skill",
           "description: Needs a remote bin",
-          `metadata: { "openclaw": { "os": ["darwin"], "requires": { "bins": ["${bin}"] } } }`,
+          `metadata: { "merclaw": { "os": ["darwin"], "requires": { "bins": ["${bin}"] } } }`,
           "---",
           "# Remote Skill",
           "",
@@ -423,7 +423,7 @@ describe("skills-remote", () => {
             workspace: workspaceDir,
           },
         },
-      } satisfies OpenClawConfig;
+      } satisfies MerClawConfig;
       recordRemoteNodeInfo({
         nodeId,
         displayName: "Remote Mac",

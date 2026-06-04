@@ -4,16 +4,16 @@ import {
   resolveEnvelopeFormatOptions,
   toHistoryMediaEntries,
   toInboundMediaFacts,
-} from "openclaw/plugin-sdk/channel-inbound";
-import { resolveChannelContextVisibilityMode } from "openclaw/plugin-sdk/context-visibility-runtime";
-import { resolvePinnedMainDmOwnerFromAllowlist } from "openclaw/plugin-sdk/conversation-runtime";
-import { isDangerousNameMatchingEnabled } from "openclaw/plugin-sdk/dangerous-name-runtime";
-import { createChannelHistoryWindow } from "openclaw/plugin-sdk/reply-history";
-import { buildAgentSessionKey, resolveThreadSessionKeys } from "openclaw/plugin-sdk/routing";
-import { danger, logVerbose, shouldLogVerbose } from "openclaw/plugin-sdk/runtime-env";
-import { evaluateSupplementalContextVisibility } from "openclaw/plugin-sdk/security-runtime";
-import { readSessionUpdatedAt, resolveStorePath } from "openclaw/plugin-sdk/session-store-runtime";
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "merclaw/plugin-sdk/channel-inbound";
+import { resolveChannelContextVisibilityMode } from "merclaw/plugin-sdk/context-visibility-runtime";
+import { resolvePinnedMainDmOwnerFromAllowlist } from "merclaw/plugin-sdk/conversation-runtime";
+import { isDangerousNameMatchingEnabled } from "merclaw/plugin-sdk/dangerous-name-runtime";
+import { createChannelHistoryWindow } from "merclaw/plugin-sdk/reply-history";
+import { buildAgentSessionKey, resolveThreadSessionKeys } from "merclaw/plugin-sdk/routing";
+import { danger, logVerbose, shouldLogVerbose } from "merclaw/plugin-sdk/runtime-env";
+import { evaluateSupplementalContextVisibility } from "merclaw/plugin-sdk/security-runtime";
+import { readSessionUpdatedAt, resolveStorePath } from "merclaw/plugin-sdk/session-store-runtime";
+import { truncateUtf16Safe } from "merclaw/plugin-sdk/text-utility-runtime";
 import { resolveDiscordConversationIdentity } from "../conversation-identity.js";
 import { ChannelType } from "../internal/discord.js";
 import { normalizeDiscordAllowList, normalizeDiscordSlug } from "./allow-list.js";

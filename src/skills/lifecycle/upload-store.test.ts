@@ -2,7 +2,7 @@ import { createHash, randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { MAX_DATE_TIMESTAMP_MS } from "@openclaw/normalization-core/number-coercion";
+import { MAX_DATE_TIMESTAMP_MS } from "@merclaw/normalization-core/number-coercion";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import {
   createSkillUploadStore,
@@ -13,7 +13,7 @@ import {
 let tempDirs: string[] = [];
 
 async function makeTempDir(): Promise<string> {
-  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-upload-store-"));
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-skill-upload-store-"));
   tempDirs.push(dir);
   return dir;
 }
@@ -63,7 +63,7 @@ describe("skill upload store", () => {
   let activeUploadLimitError: unknown;
 
   beforeAll(async () => {
-    const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-upload-store-"));
+    const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-skill-upload-store-"));
     try {
       const store = createSkillUploadStore({ rootDir });
       for (let i = 0; i < MAX_ACTIVE_SKILL_UPLOADS; i += 1) {

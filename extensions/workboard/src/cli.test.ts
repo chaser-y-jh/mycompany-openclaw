@@ -8,9 +8,9 @@ const gatewayRuntime = vi.hoisted(() => ({
   getRuntimeConfig: vi.fn(() => ({})),
 }));
 
-vi.mock("openclaw/plugin-sdk/gateway-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/gateway-runtime")>(
-    "openclaw/plugin-sdk/gateway-runtime",
+vi.mock("merclaw/plugin-sdk/gateway-runtime", async () => {
+  const actual = await vi.importActual<typeof import("merclaw/plugin-sdk/gateway-runtime")>(
+    "merclaw/plugin-sdk/gateway-runtime",
   );
   return {
     ...actual,
@@ -18,7 +18,7 @@ vi.mock("openclaw/plugin-sdk/gateway-runtime", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/runtime-config-snapshot", () => ({
+vi.mock("merclaw/plugin-sdk/runtime-config-snapshot", () => ({
   getRuntimeConfig: gatewayRuntime.getRuntimeConfig,
 }));
 
@@ -83,7 +83,7 @@ describe("registerWorkboardCli", () => {
     gatewayRuntime.callGatewayFromCli.mockReset();
     gatewayRuntime.getRuntimeConfig.mockReset();
     gatewayRuntime.getRuntimeConfig.mockReturnValue({});
-    delete process.env.OPENCLAW_GATEWAY_URL;
+    delete process.env.MERCLAW_GATEWAY_URL;
   });
 
   it("redacts claim tokens from card JSON output", async () => {

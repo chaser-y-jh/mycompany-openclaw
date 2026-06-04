@@ -1,9 +1,9 @@
-OPENCLAW_PLUGINS_FIXTURE_PID_FILES=()
+MERCLAW_PLUGINS_FIXTURE_PID_FILES=()
 
-openclaw_plugins_cleanup_fixture_servers() {
+merclaw_plugins_cleanup_fixture_servers() {
   local pid_file
   local pid
-  for pid_file in "${OPENCLAW_PLUGINS_FIXTURE_PID_FILES[@]:-}"; do
+  for pid_file in "${MERCLAW_PLUGINS_FIXTURE_PID_FILES[@]:-}"; do
     [[ -f "$pid_file" ]] || continue
     pid="$(cat "$pid_file" 2>/dev/null || true)"
     if [[ "$pid" =~ ^[0-9]+$ ]]; then
@@ -13,10 +13,10 @@ openclaw_plugins_cleanup_fixture_servers() {
   done
 }
 
-openclaw_plugins_register_fixture_pid_file() {
+merclaw_plugins_register_fixture_pid_file() {
   local pid_file="$1"
-  OPENCLAW_PLUGINS_FIXTURE_PID_FILES+=("$pid_file")
-  trap openclaw_plugins_cleanup_fixture_servers EXIT
+  MERCLAW_PLUGINS_FIXTURE_PID_FILES+=("$pid_file")
+  trap merclaw_plugins_cleanup_fixture_servers EXIT
 }
 
 record_fixture_plugin_trust() {
@@ -122,7 +122,7 @@ import fs from "node:fs";
 
 const packageJsonPath = process.argv[2];
 const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
-packageJson.openclaw.extensions = ["./index.js", " "];
+packageJson.merclaw.extensions = ["./index.js", " "];
 fs.writeFileSync(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`, "utf8");
 NODE
   tar -czf "$output_tgz" -C "$pack_dir" package
@@ -146,7 +146,7 @@ start_npm_fixture_registry() {
   for _ in $(seq 1 100); do
     if [[ -s "$server_port_file" ]]; then
       export NPM_CONFIG_REGISTRY="http://127.0.0.1:$(cat "$server_port_file")"
-      openclaw_plugins_register_fixture_pid_file "$server_pid_file"
+      merclaw_plugins_register_fixture_pid_file "$server_pid_file"
       return 0
     fi
     if ! kill -0 "$server_pid" 2>/dev/null; then

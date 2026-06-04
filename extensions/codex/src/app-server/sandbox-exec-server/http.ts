@@ -1,16 +1,16 @@
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
-import { embeddedAgentLog } from "openclaw/plugin-sdk/agent-harness-runtime";
-import type { SandboxContext } from "openclaw/plugin-sdk/sandbox";
+import { embeddedAgentLog } from "merclaw/plugin-sdk/agent-harness-runtime";
+import type { SandboxContext } from "merclaw/plugin-sdk/sandbox";
 import type { WebSocket } from "ws";
 import type { JsonObject, JsonValue } from "../protocol.js";
 import { readHttpHeaders, requireNumber, requireObject, requireString } from "./json-rpc.js";
 import { requireBackend } from "./runtime.js";
-import type { HttpHeader, OpenClawExecServer } from "./types.js";
+import type { HttpHeader, MerClawExecServer } from "./types.js";
 
 export const SANDBOX_HTTP_STREAM_LINE_MAX_CHARS = 256 * 1024;
 
 export async function httpRequest(
-  execServer: OpenClawExecServer,
+  execServer: MerClawExecServer,
   socket: WebSocket,
   params: JsonValue | undefined,
 ): Promise<JsonObject> {
@@ -47,7 +47,7 @@ type SandboxHttpRequest = {
 };
 
 async function runSandboxHttpRequest(
-  execServer: OpenClawExecServer,
+  execServer: MerClawExecServer,
   params: SandboxHttpRequest,
 ): Promise<JsonObject & { status: number; headers: HttpHeader[]; bodyBase64: string }> {
   const backend = requireBackend(execServer);
@@ -76,7 +76,7 @@ async function runSandboxHttpRequest(
 }
 
 async function runStreamingSandboxHttpRequest(
-  execServer: OpenClawExecServer,
+  execServer: MerClawExecServer,
   socket: WebSocket,
   requestId: string,
   params: SandboxHttpRequest,
@@ -90,7 +90,7 @@ async function runStreamingSandboxHttpRequest(
   });
   const [command, ...args] = execSpec.argv;
   if (!command) {
-    throw new Error("OpenClaw sandbox HTTP exec spec did not provide a command.");
+    throw new Error("MerClaw sandbox HTTP exec spec did not provide a command.");
   }
 
   const child = spawn(command, args, {
@@ -225,7 +225,7 @@ function readStreamingSandboxHttpResponse(params: {
 }
 
 const SANDBOX_HTTP_REQUEST_SCRIPT = String.raw`
-tmp=$(mktemp "$TMPDIR/openclaw-http.XXXXXX.py" 2>/dev/null || mktemp "/tmp/openclaw-http.XXXXXX.py") || exit 1
+tmp=$(mktemp "$TMPDIR/merclaw-http.XXXXXX.py" 2>/dev/null || mktemp "/tmp/merclaw-http.XXXXXX.py") || exit 1
 trap 'rm -f "$tmp"' EXIT
 cat > "$tmp" <<'PY'
 import base64

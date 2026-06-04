@@ -69,7 +69,7 @@ type WebhookForCleanup = {
 
 const execFileAsync = promisify(execFile);
 
-type DriverMode = "token" | "webhook" | "openclaw";
+type DriverMode = "token" | "webhook" | "merclaw";
 
 type Args = {
   channelId: string;
@@ -84,7 +84,7 @@ type Args = {
   mentionUserId?: string;
   instruction?: string;
   threadBindingsPath: string;
-  openclawBin: string;
+  merclawBin: string;
   json: boolean;
 };
 
@@ -135,7 +135,7 @@ type FailureResult = {
 
 const DISCORD_API_BASE = "https://discord.com/api/v10";
 const DEFAULT_REQUEST_TIMEOUT_MS = 30_000;
-const DEFAULT_OPENCLAW_CLI_TIMEOUT_MS = 60_000;
+const DEFAULT_MERCLAW_CLI_TIMEOUT_MS = 60_000;
 const DISCORD_RESPONSE_BODY_MAX_BYTES = 1024 * 1024;
 const WEBHOOK_CLEANUP_TIMEOUT_MS = 10_000;
 
@@ -223,7 +223,7 @@ async function readDiscordResponseJson(params: {
 }
 
 function resolveStateDir(): string {
-  const override = process.env.OPENCLAW_STATE_DIR?.trim();
+  const override = process.env.MERCLAW_STATE_DIR?.trim();
   if (override) {
     if (override === "~") {
       return path.resolve(process.env.HOME || "");
@@ -233,8 +233,8 @@ function resolveStateDir(): string {
     }
     return path.resolve(override);
   }
-  const home = process.env.OPENCLAW_HOME?.trim() || process.env.HOME || "";
-  return path.join(home, ".openclaw");
+  const home = process.env.MERCLAW_HOME?.trim() || process.env.HOME || "";
+  return path.join(home, ".merclaw");
 }
 
 function resolveArg(flag: string): string | undefined {
@@ -256,11 +256,11 @@ function hasFlag(flag: string): boolean {
 
 function parseDriverMode(raw: string): DriverMode {
   const normalized = raw.trim().toLowerCase();
-  if (normalized === "token" || normalized === "webhook" || normalized === "openclaw") {
+  if (normalized === "token" || normalized === "webhook" || normalized === "merclaw") {
     return normalized;
   }
   throw new Error(
-    `Invalid --driver value ${JSON.stringify(raw)}; expected token, webhook, or openclaw.`,
+    `Invalid --driver value ${JSON.stringify(raw)}; expected token, webhook, or merclaw.`,
   );
 }
 
@@ -278,13 +278,13 @@ function safeErrorMessage(error: unknown): string {
 function usage(): string {
   return (
     "Usage: bun scripts/dev/discord-acp-plain-language-smoke.ts " +
-    "--channel <discord-channel-id> [--token <driver-token> | --driver webhook --bot-token <bot-token> | --driver openclaw] [options]\n\n" +
+    "--channel <discord-channel-id> [--token <driver-token> | --driver webhook --bot-token <bot-token> | --driver merclaw] [options]\n\n" +
     "Manual live smoke only (not CI). Sends a plain-language instruction in Discord and verifies:\n" +
-    "1) OpenClaw spawned an ACP thread binding\n" +
+    "1) MerClaw spawned an ACP thread binding\n" +
     "2) agent replied in that bound thread with the expected ACK token\n\n" +
     "Options:\n" +
     "  --channel <id>               Parent Discord channel id (required)\n" +
-    "  --driver <token|webhook|openclaw> Driver transport mode (default: token)\n" +
+    "  --driver <token|webhook|merclaw> Driver transport mode (default: token)\n" +
     "  --token <token>              Driver Discord token (required for driver=token)\n" +
     "  --token-prefix <prefix>      Auth prefix for --token (default: Bot)\n" +
     "  --bot-token <token>          Bot token for webhook driver mode\n" +
@@ -295,65 +295,65 @@ function usage(): string {
     "  --timeout-ms <n>             Total timeout in ms (default: 240000)\n" +
     "  --poll-ms <n>                Poll interval in ms (default: 1500)\n" +
     "  --thread-bindings-path <p>   Override thread-bindings json path\n" +
-    "  --openclaw-bin <path>        OpenClaw CLI binary for driver=openclaw (default: openclaw)\n" +
+    "  --merclaw-bin <path>        MerClaw CLI binary for driver=merclaw (default: merclaw)\n" +
     "  --json                       Emit JSON output\n" +
     "\n" +
     "Environment fallbacks:\n" +
-    "  OPENCLAW_DISCORD_SMOKE_CHANNEL_ID\n" +
-    "  OPENCLAW_DISCORD_SMOKE_DRIVER\n" +
-    "  OPENCLAW_DISCORD_SMOKE_DRIVER_TOKEN\n" +
-    "  OPENCLAW_DISCORD_SMOKE_DRIVER_TOKEN_PREFIX\n" +
-    "  OPENCLAW_DISCORD_SMOKE_BOT_TOKEN\n" +
-    "  OPENCLAW_DISCORD_SMOKE_BOT_TOKEN_PREFIX\n" +
-    "  OPENCLAW_DISCORD_SMOKE_AGENT\n" +
-    "  OPENCLAW_DISCORD_SMOKE_MENTION_USER_ID\n" +
-    "  OPENCLAW_DISCORD_SMOKE_TIMEOUT_MS\n" +
-    "  OPENCLAW_DISCORD_SMOKE_POLL_MS\n" +
-    "  OPENCLAW_DISCORD_SMOKE_THREAD_BINDINGS_PATH\n" +
-    "  OPENCLAW_DISCORD_SMOKE_OPENCLAW_BIN"
+    "  MERCLAW_DISCORD_SMOKE_CHANNEL_ID\n" +
+    "  MERCLAW_DISCORD_SMOKE_DRIVER\n" +
+    "  MERCLAW_DISCORD_SMOKE_DRIVER_TOKEN\n" +
+    "  MERCLAW_DISCORD_SMOKE_DRIVER_TOKEN_PREFIX\n" +
+    "  MERCLAW_DISCORD_SMOKE_BOT_TOKEN\n" +
+    "  MERCLAW_DISCORD_SMOKE_BOT_TOKEN_PREFIX\n" +
+    "  MERCLAW_DISCORD_SMOKE_AGENT\n" +
+    "  MERCLAW_DISCORD_SMOKE_MENTION_USER_ID\n" +
+    "  MERCLAW_DISCORD_SMOKE_TIMEOUT_MS\n" +
+    "  MERCLAW_DISCORD_SMOKE_POLL_MS\n" +
+    "  MERCLAW_DISCORD_SMOKE_THREAD_BINDINGS_PATH\n" +
+    "  MERCLAW_DISCORD_SMOKE_MERCLAW_BIN"
   );
 }
 
 function parseArgs(): Args {
-  const channelId = resolveArg("--channel") || process.env.OPENCLAW_DISCORD_SMOKE_CHANNEL_ID || "";
+  const channelId = resolveArg("--channel") || process.env.MERCLAW_DISCORD_SMOKE_CHANNEL_ID || "";
   const driverModeRaw =
-    resolveArg("--driver") || process.env.OPENCLAW_DISCORD_SMOKE_DRIVER || "token";
+    resolveArg("--driver") || process.env.MERCLAW_DISCORD_SMOKE_DRIVER || "token";
   const driverMode = parseDriverMode(driverModeRaw);
   const driverToken =
-    resolveArg("--token") || process.env.OPENCLAW_DISCORD_SMOKE_DRIVER_TOKEN || "";
+    resolveArg("--token") || process.env.MERCLAW_DISCORD_SMOKE_DRIVER_TOKEN || "";
   const driverTokenPrefix =
-    resolveArg("--token-prefix") || process.env.OPENCLAW_DISCORD_SMOKE_DRIVER_TOKEN_PREFIX || "Bot";
+    resolveArg("--token-prefix") || process.env.MERCLAW_DISCORD_SMOKE_DRIVER_TOKEN_PREFIX || "Bot";
   const botToken =
     resolveArg("--bot-token") ||
-    process.env.OPENCLAW_DISCORD_SMOKE_BOT_TOKEN ||
+    process.env.MERCLAW_DISCORD_SMOKE_BOT_TOKEN ||
     process.env.DISCORD_BOT_TOKEN ||
     "";
   const botTokenPrefix =
     resolveArg("--bot-token-prefix") ||
-    process.env.OPENCLAW_DISCORD_SMOKE_BOT_TOKEN_PREFIX ||
+    process.env.MERCLAW_DISCORD_SMOKE_BOT_TOKEN_PREFIX ||
     "Bot";
-  const targetAgent = resolveArg("--agent") || process.env.OPENCLAW_DISCORD_SMOKE_AGENT || "codex";
+  const targetAgent = resolveArg("--agent") || process.env.MERCLAW_DISCORD_SMOKE_AGENT || "codex";
   const mentionUserId =
-    resolveArg("--mention") || process.env.OPENCLAW_DISCORD_SMOKE_MENTION_USER_ID || undefined;
+    resolveArg("--mention") || process.env.MERCLAW_DISCORD_SMOKE_MENTION_USER_ID || undefined;
   const instruction =
-    resolveArg("--instruction") || process.env.OPENCLAW_DISCORD_SMOKE_INSTRUCTION || undefined;
+    resolveArg("--instruction") || process.env.MERCLAW_DISCORD_SMOKE_INSTRUCTION || undefined;
   const timeoutMs = parseNumber(
-    resolveArg("--timeout-ms") || process.env.OPENCLAW_DISCORD_SMOKE_TIMEOUT_MS,
+    resolveArg("--timeout-ms") || process.env.MERCLAW_DISCORD_SMOKE_TIMEOUT_MS,
     240_000,
     "--timeout-ms",
   );
   const pollMs = parseNumber(
-    resolveArg("--poll-ms") || process.env.OPENCLAW_DISCORD_SMOKE_POLL_MS,
+    resolveArg("--poll-ms") || process.env.MERCLAW_DISCORD_SMOKE_POLL_MS,
     1_500,
     "--poll-ms",
   );
   const defaultBindingsPath = path.join(resolveStateDir(), "discord", "thread-bindings.json");
   const threadBindingsPath =
     resolveArg("--thread-bindings-path") ||
-    process.env.OPENCLAW_DISCORD_SMOKE_THREAD_BINDINGS_PATH ||
+    process.env.MERCLAW_DISCORD_SMOKE_THREAD_BINDINGS_PATH ||
     defaultBindingsPath;
-  const openclawBin =
-    resolveArg("--openclaw-bin") || process.env.OPENCLAW_DISCORD_SMOKE_OPENCLAW_BIN || "openclaw";
+  const merclawBin =
+    resolveArg("--merclaw-bin") || process.env.MERCLAW_DISCORD_SMOKE_MERCLAW_BIN || "merclaw";
   const json = hasFlag("--json");
 
   if (!channelId) {
@@ -379,41 +379,41 @@ function parseArgs(): Args {
     mentionUserId,
     instruction,
     threadBindingsPath,
-    openclawBin,
+    merclawBin,
     json,
   };
 }
 
-async function openclawCliJson<T>(params: {
-  openclawBin: string;
+async function merclawCliJson<T>(params: {
+  merclawBin: string;
   args: string[];
   timeoutMs?: number;
 }): Promise<T> {
-  const result = await execFileAsync(params.openclawBin, params.args, {
+  const result = await execFileAsync(params.merclawBin, params.args, {
     maxBuffer: 8 * 1024 * 1024,
     env: process.env,
-    timeout: params.timeoutMs ?? DEFAULT_OPENCLAW_CLI_TIMEOUT_MS,
+    timeout: params.timeoutMs ?? DEFAULT_MERCLAW_CLI_TIMEOUT_MS,
     killSignal: "SIGKILL",
   });
   const stdout = (result.stdout || "").trim();
   if (!stdout) {
-    throw new Error(`openclaw ${params.args.join(" ")} returned empty stdout`);
+    throw new Error(`merclaw ${params.args.join(" ")} returned empty stdout`);
   }
   return JSON.parse(stdout) as T;
 }
 
-async function readMessagesWithOpenclaw(params: {
-  openclawBin: string;
+async function readMessagesWithMerclaw(params: {
+  merclawBin: string;
   target: string;
   limit: number;
   timeoutMs?: number;
 }): Promise<DiscordMessage[]> {
-  const response = await openclawCliJson<{
+  const response = await merclawCliJson<{
     payload?: {
       messages?: DiscordMessage[];
     };
   }>({
-    openclawBin: params.openclawBin,
+    merclawBin: params.merclawBin,
     args: [
       "message",
       "read",
@@ -666,9 +666,9 @@ async function loadParentRecentMessages(params: {
   readAuthHeader: string;
   timeoutMs?: number;
 }): Promise<DiscordMessage[]> {
-  if (params.args.driverMode === "openclaw") {
-    return await readMessagesWithOpenclaw({
-      openclawBin: params.args.openclawBin,
+  if (params.args.driverMode === "merclaw") {
+    return await readMessagesWithMerclaw({
+      merclawBin: params.args.merclawBin,
       target: params.args.channelId,
       limit: 20,
       timeoutMs: params.timeoutMs,
@@ -819,7 +819,7 @@ async function run(): Promise<SuccessResult | FailureResult> {
         authHeader: botAuthHeader,
         timeoutMs: remainingTimeoutMs(deadline),
         body: {
-          name: `openclaw-acp-smoke-${smokeId.slice(-8)}`,
+          name: `merclaw-acp-smoke-${smokeId.slice(-8)}`,
         },
       });
       if (!webhook.id || !webhook.token) {
@@ -852,14 +852,14 @@ async function run(): Promise<SuccessResult | FailureResult> {
     } else {
       setupStage = "send-message";
       minBindingBoundAt = Date.now() - 3_000;
-      const sent = await openclawCliJson<{
+      const sent = await merclawCliJson<{
         payload?: {
           result?: {
             messageId?: string;
           };
         };
       }>({
-        openclawBin: args.openclawBin,
+        merclawBin: args.merclawBin,
         args: [
           "message",
           "send",
@@ -875,7 +875,7 @@ async function run(): Promise<SuccessResult | FailureResult> {
       });
       sentMessageId = sent.payload?.result?.messageId || "";
       if (!sentMessageId) {
-        throw new Error("openclaw message send did not return payload.result.messageId");
+        throw new Error("merclaw message send did not return payload.result.messageId");
       }
     }
   } catch (err) {
@@ -943,9 +943,9 @@ async function run(): Promise<SuccessResult | FailureResult> {
     while (Date.now() < deadline && !ackMessage) {
       try {
         const threadMessages =
-          args.driverMode === "openclaw"
-            ? await readMessagesWithOpenclaw({
-                openclawBin: args.openclawBin,
+          args.driverMode === "merclaw"
+            ? await readMessagesWithMerclaw({
+                merclawBin: args.merclawBin,
                 target: threadId,
                 limit: 50,
                 timeoutMs: remainingTimeoutMs(deadline),
@@ -988,7 +988,7 @@ async function run(): Promise<SuccessResult | FailureResult> {
         ok: false,
         stage: "wait-ack",
         smokeId,
-        error: `Thread bound (${threadId}) but timed out waiting for ACK token "${ackToken}" from OpenClaw.`,
+        error: `Thread bound (${threadId}) but timed out waiting for ACK token "${ackToken}" from MerClaw.`,
         diagnostics: {
           bindingCandidates: [
             {

@@ -1,7 +1,7 @@
 import {
   normalizeOptionalLowercaseString,
   normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/normalization-core/string-coerce";
 import type { RealtimeVoiceTool } from "./provider-types.js";
 import type { TalkEvent } from "./talk-events.js";
 
@@ -19,13 +19,13 @@ export type RealtimeVoiceAgentControlProviderResult = {
   message: string;
 };
 
-export const REALTIME_VOICE_AGENT_CONTROL_TOOL_NAME = "openclaw_agent_control";
+export const REALTIME_VOICE_AGENT_CONTROL_TOOL_NAME = "merclaw_agent_control";
 
 export const REALTIME_VOICE_AGENT_CONTROL_TOOL: RealtimeVoiceTool = {
   type: "function",
   name: REALTIME_VOICE_AGENT_CONTROL_TOOL_NAME,
   description:
-    "Control an active OpenClaw tool-backed voice run. Use this when the caller asks in any language for status/progress, cancellation, a redirect/change to the active work, or a follow-up after the current work. Do not use this for ordinary greetings or chatter unless the caller is asking about the active work.",
+    "Control an active MerClaw tool-backed voice run. Use this when the caller asks in any language for status/progress, cancellation, a redirect/change to the active work, or a follow-up after the current work. Do not use this for ordinary greetings or chatter unless the caller is asking about the active work.",
   parameters: {
     type: "object",
     properties: {
@@ -251,15 +251,15 @@ function parseRealtimeVoiceAgentControlToolArgsRecord(args: unknown): unknown {
 
 export function buildRealtimeVoiceAgentControlSpeechMessage(text: string): string {
   return [
-    "Internal OpenClaw voice control result.",
-    "Do not call openclaw_agent_consult or any other tool for this message.",
-    "Speak this exact OpenClaw status to the voice call, without adding, removing, or rephrasing words.",
+    "Internal MerClaw voice control result.",
+    "Do not call merclaw_agent_consult or any other tool for this message.",
+    "Speak this exact MerClaw status to the voice call, without adding, removing, or rephrasing words.",
     `Status: ${JSON.stringify(text)}`,
   ].join("\n");
 }
 
 export function buildRealtimeVoiceAgentCancelProviderResult(
-  message = "Cancelled the active OpenClaw run.",
+  message = "Cancelled the active MerClaw run.",
 ): RealtimeVoiceAgentControlProviderResult {
   return {
     status: "cancelled",
@@ -281,14 +281,14 @@ export function formatRealtimeVoiceAgentQueueRejection(
   reason: string,
 ): string {
   if (reason === "compacting") {
-    return "OpenClaw is compacting the active run and cannot accept voice steering yet.";
+    return "MerClaw is compacting the active run and cannot accept voice steering yet.";
   }
   if (reason === "not_streaming") {
-    return "OpenClaw has an active run, but it is not currently accepting steering.";
+    return "MerClaw has an active run, but it is not currently accepting steering.";
   }
   return mode === "followup"
-    ? "OpenClaw could not queue that follow-up."
-    : "OpenClaw could not steer the active run.";
+    ? "MerClaw could not queue that follow-up."
+    : "MerClaw could not steer the active run.";
 }
 
 function isRealtimeVoiceAgentControlToolEvent(event: TalkEvent): boolean {
@@ -311,7 +311,7 @@ export function formatRealtimeVoiceAgentStatus(params: {
   if (!params.active) {
     const turnEnded = recent.find((event) => event.type === "turn.ended");
     return turnEnded
-      ? "OpenClaw finished the last voice request."
+      ? "MerClaw finished the last voice request."
       : "I'm not working on an active request right now.";
   }
 
@@ -326,29 +326,29 @@ export function formatRealtimeVoiceAgentStatus(params: {
     const name = normalizeOptionalString(payload.name);
     const phase = normalizeOptionalString(payload.phase);
     if (toolEvent.type === "tool.call") {
-      return name ? `OpenClaw is starting ${name}.` : "OpenClaw is starting a tool.";
+      return name ? `MerClaw is starting ${name}.` : "MerClaw is starting a tool.";
     }
     if (toolEvent.type === "tool.result") {
       return name
-        ? `OpenClaw finished ${name} and is continuing.`
-        : "OpenClaw finished a tool and is continuing.";
+        ? `MerClaw finished ${name} and is continuing.`
+        : "MerClaw finished a tool and is continuing.";
     }
     if (toolEvent.type === "tool.progress") {
       return name
-        ? `OpenClaw is working in ${name}${phase ? ` (${phase})` : ""}.`
-        : "OpenClaw is still working.";
+        ? `MerClaw is working in ${name}${phase ? ` (${phase})` : ""}.`
+        : "MerClaw is still working.";
     }
   }
 
   if (params.activity?.activeToolName) {
-    return `OpenClaw is running ${params.activity.activeToolName}.`;
+    return `MerClaw is running ${params.activity.activeToolName}.`;
   }
   if (params.activity?.activeWorkKind === "model_call") {
-    return "OpenClaw is waiting on the model.";
+    return "MerClaw is waiting on the model.";
   }
   if (params.activity?.activeWorkKind === "embedded_run" || params.activity?.hasActiveEmbeddedRun) {
-    return "OpenClaw is working on the current voice request.";
+    return "MerClaw is working on the current voice request.";
   }
 
-  return "OpenClaw is working on the current voice request.";
+  return "MerClaw is working on the current voice request.";
 }

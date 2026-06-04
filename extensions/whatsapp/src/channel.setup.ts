@@ -1,4 +1,4 @@
-import type { ChannelPlugin } from "openclaw/plugin-sdk/core";
+import type { ChannelPlugin } from "merclaw/plugin-sdk/core";
 import type { ResolvedWhatsAppAccount } from "./accounts.js";
 import { resolveWhatsAppGroupIntroHint } from "./group-intro.js";
 import {

@@ -5,7 +5,7 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest
 import { upsertAcpSessionMeta } from "../../acp/runtime/session-meta.js";
 import * as jsonFiles from "../../infra/json-files.js";
 import { createSuiteTempRootTracker, withTempDirSync } from "../../test-helpers/temp-dir.js";
-import type { OpenClawConfig } from "../config.js";
+import type { MerClawConfig } from "../config.js";
 import type { SessionConfig } from "../types.base.js";
 import { resolveSessionLifecycleTimestamps } from "./lifecycle.js";
 import {
@@ -54,18 +54,18 @@ describe("session path safety", () => {
   });
 
   it("resolves transcript path inside an explicit sessions dir", () => {
-    const sessionsDir = "/tmp/openclaw/agents/main/sessions";
+    const sessionsDir = "/tmp/merclaw/agents/main/sessions";
     const resolved = resolveSessionTranscriptPathInDir("sess-1", sessionsDir, "topic/a+b");
 
     expect(resolved).toBe(path.resolve(sessionsDir, "sess-1-topic-topic%2Fa%2Bb.jsonl"));
   });
 
   it("falls back to derived path when sessionFile is outside known agent sessions dirs", () => {
-    const sessionsDir = "/tmp/openclaw/agents/main/sessions";
+    const sessionsDir = "/tmp/merclaw/agents/main/sessions";
 
     const resolved = resolveSessionFilePath(
       "sess-1",
-      { sessionFile: "/tmp/openclaw/agents/work/not-sessions/abc-123.jsonl" },
+      { sessionFile: "/tmp/merclaw/agents/work/not-sessions/abc-123.jsonl" },
       { sessionsDir },
     );
     expect(resolved).toBe(path.resolve(sessionsDir, "sess-1.jsonl"));
@@ -82,7 +82,7 @@ describe("session path safety", () => {
     if (process.platform === "win32") {
       return;
     }
-    withTempDirSync({ prefix: "openclaw-symlink-session-" }, (tmpDir) => {
+    withTempDirSync({ prefix: "merclaw-symlink-session-" }, (tmpDir) => {
       const realRoot = path.join(tmpDir, "real-state");
       const aliasRoot = path.join(tmpDir, "alias-state");
       const sessionsDir = path.join(realRoot, "agents", "main", "sessions");
@@ -101,7 +101,7 @@ describe("session path safety", () => {
     if (process.platform === "win32") {
       return;
     }
-    withTempDirSync({ prefix: "openclaw-symlink-escape-" }, (tmpDir) => {
+    withTempDirSync({ prefix: "merclaw-symlink-escape-" }, (tmpDir) => {
       const sessionsDir = path.join(tmpDir, "agents", "main", "sessions");
       const outsideDir = path.join(tmpDir, "outside");
       fs.mkdirSync(sessionsDir, { recursive: true });
@@ -270,7 +270,7 @@ describe("resolveSessionResetPolicy", () => {
 
 describe("session lifecycle timestamps", () => {
   it("falls back to the JSONL session header for legacy session start time", async () => {
-    const dir = await fsPromises.mkdtemp("/tmp/openclaw-lifecycle-test-");
+    const dir = await fsPromises.mkdtemp("/tmp/merclaw-lifecycle-test-");
     try {
       const storePath = path.join(dir, "sessions.json");
       const sessionFile = path.join(dir, "legacy-session.jsonl");
@@ -303,7 +303,7 @@ describe("session lifecycle timestamps", () => {
   });
 
   it("ignores out-of-range lifecycle timestamps before header fallback", async () => {
-    const dir = await fsPromises.mkdtemp("/tmp/openclaw-lifecycle-test-");
+    const dir = await fsPromises.mkdtemp("/tmp/merclaw-lifecycle-test-");
     try {
       const storePath = path.join(dir, "sessions.json");
       const sessionFile = path.join(dir, "legacy-session.jsonl");
@@ -340,7 +340,7 @@ describe("session lifecycle timestamps", () => {
 });
 
 describe("session store writer queue", () => {
-  const writerFixtureRootTracker = createSuiteTempRootTracker({ prefix: "openclaw-writer-test-" });
+  const writerFixtureRootTracker = createSuiteTempRootTracker({ prefix: "merclaw-writer-test-" });
 
   async function makeTmpStore(
     initial: Record<string, unknown> = {},
@@ -727,7 +727,7 @@ describe("session store writer queue", () => {
 
   it("clones session store cache hits from cached serialized JSON", () => {
     const key = "agent:main:serialized-cache";
-    const storePath = "/tmp/openclaw-serialized-cache-test.json";
+    const storePath = "/tmp/merclaw-serialized-cache-test.json";
     const store = {
       [key]: {
         sessionId: "s-serialized-cache",
@@ -1000,7 +1000,7 @@ describe("session store writer queue", () => {
       session: {
         store: storePath,
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
 
     const result = await upsertAcpSessionMeta({
       cfg,

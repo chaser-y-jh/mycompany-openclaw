@@ -1,8 +1,8 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/memory-core-host-engine-foundation";
-import type { checkQmdBinaryAvailability as checkQmdBinaryAvailabilityFn } from "openclaw/plugin-sdk/memory-core-host-engine-qmd";
+import type { MerClawConfig } from "merclaw/plugin-sdk/memory-core-host-engine-foundation";
+import type { checkQmdBinaryAvailability as checkQmdBinaryAvailabilityFn } from "merclaw/plugin-sdk/memory-core-host-engine-qmd";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 type CheckQmdBinaryAvailability = typeof checkQmdBinaryAvailabilityFn;
@@ -120,7 +120,7 @@ vi.mock("./qmd-manager.js", () => ({
   },
 }));
 
-vi.mock("openclaw/plugin-sdk/memory-core-host-engine-qmd", () => ({
+vi.mock("merclaw/plugin-sdk/memory-core-host-engine-qmd", () => ({
   checkQmdBinaryAvailability,
   resolveQmdBinaryUnavailableReason: (result: { reason?: string }) => result.reason ?? "binary",
 }));
@@ -149,14 +149,14 @@ function createQmdCfg(
   agentId: string,
   workspace = "/tmp/workspace",
   qmd: Record<string, unknown> = {},
-): OpenClawConfig {
+): MerClawConfig {
   return {
     memory: { backend: "qmd", qmd },
     agents: { list: [{ id: agentId, default: true, workspace }] },
   };
 }
 
-function createBuiltinCfg(agentId: string): OpenClawConfig {
+function createBuiltinCfg(agentId: string): MerClawConfig {
   return {
     agents: {
       defaults: {
@@ -176,7 +176,7 @@ function createBuiltinCfg(agentId: string): OpenClawConfig {
       },
       list: [{ id: agentId, default: true, workspace: "/tmp/workspace" }],
     },
-  } as OpenClawConfig;
+  } as MerClawConfig;
 }
 
 function requireManager(result: SearchManagerResult): SearchManager {
@@ -220,8 +220,8 @@ function qmdCreateParams(index = 0): Record<string, unknown> {
 
 async function expectPendingQmdReplacement(params: {
   agentId: string;
-  firstCfg: OpenClawConfig;
-  secondCfg: OpenClawConfig;
+  firstCfg: MerClawConfig;
+  secondCfg: MerClawConfig;
   firstAvailability: { command: string; cwd: string };
   secondAvailability: { command: string; cwd: string };
 }) {
@@ -299,7 +299,7 @@ describe("getMemorySearchManager caching", () => {
   it("repairs an invalid shared singleton cache shape before using qmd cache maps", async () => {
     await closeAllMemorySearchManagers();
     vi.resetModules();
-    const cacheKey = Symbol.for("openclaw.memorySearchManagerCache");
+    const cacheKey = Symbol.for("merclaw.memorySearchManagerCache");
     (globalThis as Record<PropertyKey, unknown>)[cacheKey] = {};
 
     const freshModule = await import("./search-manager.js");
@@ -466,13 +466,13 @@ describe("getMemorySearchManager caching", () => {
   });
 
   it("creates a missing agent workspace before probing qmd availability", async () => {
-    const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-qmd-workspace-"));
+    const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-qmd-workspace-"));
     const workspace = path.join(tempRoot, "missing", "workspace");
     const agentId = "missing-workspace";
     const cfg = {
       memory: { backend: "qmd", qmd: {} },
       agents: { list: [{ id: agentId, default: true, workspace }] },
-    } as OpenClawConfig;
+    } as MerClawConfig;
 
     try {
       await getMemorySearchManager({ cfg, agentId });
@@ -579,7 +579,7 @@ describe("getMemorySearchManager caching", () => {
           },
         ],
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const firstPrimary = createManagerMock({
       backend: "qmd",
       provider: "qmd",
@@ -690,7 +690,7 @@ describe("getMemorySearchManager caching", () => {
     const secondCfg = {
       ...createQmdCfg(agentId),
       session: { store: "/tmp/alternate-session-store.json" },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const createGate = createDeferred<QmdManagerInstance>();
     createQmdManagerMock.mockImplementationOnce(async () => await createGate.promise);
 

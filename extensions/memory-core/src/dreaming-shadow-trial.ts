@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { formatMemoryDreamingDay } from "openclaw/plugin-sdk/memory-core-host-status";
+import { formatMemoryDreamingDay } from "merclaw/plugin-sdk/memory-core-host-status";
 
 export type DreamingShadowTrialVerdict = "helpful" | "neutral" | "harmful";
 export type DreamingShadowTrialRecommendation = "promote" | "defer" | "reject";

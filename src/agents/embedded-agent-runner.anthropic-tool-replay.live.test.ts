@@ -1,4 +1,4 @@
-import type { Message, Model } from "openclaw/plugin-sdk/llm";
+import type { Message, Model } from "merclaw/plugin-sdk/llm";
 import { describe, expect, it, vi } from "vitest";
 import { wrapStreamFnSanitizeMalformedToolCalls } from "./embedded-agent-runner/run/attempt.tool-call-normalization.js";
 import { OMITTED_ASSISTANT_REASONING_TEXT } from "./embedded-agent-runner/thinking.js";
@@ -32,7 +32,7 @@ function buildLiveAnthropicModel(): {
     throw new Error("missing ANTHROPIC_API_KEY");
   }
   const modelId =
-    (process.env.OPENCLAW_LIVE_ANTHROPIC_CACHE_MODEL || "claude-sonnet-4-6")
+    (process.env.MERCLAW_LIVE_ANTHROPIC_CACHE_MODEL || "claude-sonnet-4-6")
       .split(/[/:]/)
       .findLast(Boolean) || "claude-sonnet-4-6";
   return {

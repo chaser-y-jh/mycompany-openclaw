@@ -2,10 +2,10 @@ import fsSync from "node:fs";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { CURRENT_SESSION_VERSION, SessionManager } from "openclaw/plugin-sdk/agent-sessions";
-import type { AssistantMessage } from "openclaw/plugin-sdk/llm";
+import { CURRENT_SESSION_VERSION, SessionManager } from "merclaw/plugin-sdk/agent-sessions";
+import type { AssistantMessage } from "merclaw/plugin-sdk/llm";
 import { afterEach, describe, expect, test, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import {
   captureCompactionCheckpointSnapshotAsync,
   cleanupCompactionCheckpointSnapshot,
@@ -52,7 +52,7 @@ afterEach(async () => {
 
 describe("session-compaction-checkpoints", () => {
   test("async capture stores pre-compaction identity without copying the transcript", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-checkpoint-async-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-checkpoint-async-"));
     tempDirs.push(dir);
 
     const session = SessionManager.create(dir, dir);
@@ -105,7 +105,7 @@ describe("session-compaction-checkpoints", () => {
   });
 
   test("async capture derives session metadata without synchronous SessionManager.open", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-checkpoint-async-metadata-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-checkpoint-async-metadata-"));
     tempDirs.push(dir);
 
     const session = SessionManager.create(dir, dir);
@@ -154,7 +154,7 @@ describe("session-compaction-checkpoints", () => {
   });
 
   test("async capture scans bounded metadata without copying oversized transcripts", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-checkpoint-async-oversized-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-checkpoint-async-oversized-"));
     tempDirs.push(dir);
 
     const session = SessionManager.create(dir, dir);
@@ -193,7 +193,7 @@ describe("session-compaction-checkpoints", () => {
   });
 
   test("async fork creates a checkpoint branch transcript without SessionManager sync reads", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-checkpoint-fork-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-checkpoint-fork-"));
     tempDirs.push(dir);
 
     const session = SessionManager.create(dir, dir);
@@ -262,7 +262,7 @@ describe("session-compaction-checkpoints", () => {
   });
 
   test("async fork truncates mutable checkpoint sources at the stored leaf", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-checkpoint-fork-leaf-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-checkpoint-fork-leaf-"));
     tempDirs.push(dir);
 
     const session = SessionManager.create(dir, dir);
@@ -301,7 +301,7 @@ describe("session-compaction-checkpoints", () => {
   });
 
   test("async fork migrates legacy checkpoint snapshots before writing a current header", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-checkpoint-legacy-fork-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-checkpoint-legacy-fork-"));
     tempDirs.push(dir);
 
     const legacySessionFile = path.join(dir, "legacy.jsonl");
@@ -388,7 +388,7 @@ describe("session-compaction-checkpoints", () => {
   });
 
   test("async fork skips JSON-valid garbage transcript entries", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-checkpoint-garbage-fork-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-checkpoint-garbage-fork-"));
     tempDirs.push(dir);
 
     const sourceFile = path.join(dir, "garbage.jsonl");
@@ -456,7 +456,7 @@ describe("session-compaction-checkpoints", () => {
   });
 
   test("persist stores codex-style checkpoint metadata and trims old legacy snapshot files", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-checkpoint-trim-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-checkpoint-trim-"));
     tempDirs.push(dir);
 
     const storePath = path.join(dir, "sessions.json");
@@ -501,7 +501,7 @@ describe("session-compaction-checkpoints", () => {
       cfg: {
         session: { store: storePath },
         agents: { list: [{ id: "main", default: true }] },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       sessionKey: "main",
       sessionId,
       reason: "manual",
@@ -535,7 +535,7 @@ describe("session-compaction-checkpoints", () => {
   });
 
   test("persist skips codex-style checkpoints without a stable post-compaction leaf", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-checkpoint-no-leaf-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-checkpoint-no-leaf-"));
     tempDirs.push(dir);
 
     const storePath = path.join(dir, "sessions.json");
@@ -559,7 +559,7 @@ describe("session-compaction-checkpoints", () => {
       cfg: {
         session: { store: storePath },
         agents: { list: [{ id: "main", default: true }] },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       sessionKey: "main",
       sessionId,
       reason: "manual",
@@ -580,7 +580,7 @@ describe("session-compaction-checkpoints", () => {
   });
 
   test("persist trims retained checkpoint snapshots by total byte budget", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-checkpoint-byte-trim-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-checkpoint-byte-trim-"));
     tempDirs.push(dir);
 
     const storePath = path.join(dir, "sessions.json");
@@ -636,7 +636,7 @@ describe("session-compaction-checkpoints", () => {
       cfg: {
         session: { store: storePath },
         agents: { list: [{ id: "main", default: true }] },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       sessionKey: "main",
       sessionId,
       reason: "manual",

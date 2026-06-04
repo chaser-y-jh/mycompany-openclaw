@@ -1,8 +1,8 @@
 import crypto from "node:crypto";
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { privateFileStore } from "../infra/private-file-store.js";
 import { resolveAgentWorkspaceDir } from "./agent-scope.js";
 
@@ -90,7 +90,7 @@ type SubagentAttachmentRequest =
   | { status: "forbidden"; error: string }
   | { status: "error"; error: string };
 
-function resolveAttachmentLimits(config: OpenClawConfig): AttachmentLimits {
+function resolveAttachmentLimits(config: MerClawConfig): AttachmentLimits {
   const attachmentsCfg = (
     config as unknown as {
       tools?: { sessions_spawn?: { attachments?: Record<string, unknown> } };
@@ -117,7 +117,7 @@ function resolveAttachmentLimits(config: OpenClawConfig): AttachmentLimits {
 }
 
 function resolveSubagentAttachmentRequest(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   attachments?: SubagentInlineAttachment[];
 }): SubagentAttachmentRequest {
   const requestedAttachments = Array.isArray(params.attachments) ? params.attachments : [];
@@ -245,7 +245,7 @@ function prepareSubagentAttachments(params: {
 }
 
 export function resolveAcpSessionsSpawnImageAttachments(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   attachments?: SubagentInlineAttachment[];
 }):
   | { status: "ok"; attachments: AcpInlineImageAttachment[] }
@@ -282,7 +282,7 @@ export function resolveAcpSessionsSpawnImageAttachments(params: {
 }
 
 export async function materializeSubagentAttachments(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   targetAgentId: string;
   workspaceDir?: string;
   attachments?: SubagentInlineAttachment[];
@@ -300,8 +300,8 @@ export async function materializeSubagentAttachments(params: {
   const childWorkspaceDir =
     normalizeOptionalString(params.workspaceDir) ??
     resolveAgentWorkspaceDir(params.config, params.targetAgentId);
-  const absRootDir = path.join(childWorkspaceDir, ".openclaw", "attachments");
-  const relDir = path.posix.join(".openclaw", "attachments", attachmentId);
+  const absRootDir = path.join(childWorkspaceDir, ".merclaw", "attachments");
+  const relDir = path.posix.join(".merclaw", "attachments", attachmentId);
   const absDir = path.join(absRootDir, attachmentId);
 
   try {

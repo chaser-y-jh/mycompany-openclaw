@@ -1,11 +1,11 @@
 {
-  "name": "@openclaw/synology-chat",
+  "name": "@merclaw/synology-chat",
   "version": "2026.5.31",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
-      "name": "@openclaw/synology-chat",
+      "name": "@merclaw/synology-chat",
       "version": "2026.5.31",
       "dependencies": {
         "zod": "4.4.3"

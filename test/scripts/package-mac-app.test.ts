@@ -8,7 +8,7 @@ const tempDirs: string[] = [];
 const scriptPath = "scripts/package-mac-app.sh";
 
 function makePlist(): string {
-  const dir = mkdtempSync(path.join(tmpdir(), "openclaw-plistbuddy-"));
+  const dir = mkdtempSync(path.join(tmpdir(), "merclaw-plistbuddy-"));
   tempDirs.push(dir);
   const plist = path.join(dir, "Info.plist");
   writeFileSync(
@@ -68,8 +68,8 @@ describe("package-mac-app plist stamping", () => {
 
   it("falls back to corepack pnpm when the pnpm shim is absent", () => {
     const helperBlock = getPackageManagerHelperBlock();
-    const tempRoot = mkdtempSync(path.join(tmpdir(), "openclaw-package-pnpm-root-"));
-    const toolsDir = mkdtempSync(path.join(tmpdir(), "openclaw-package-pnpm-tools-"));
+    const tempRoot = mkdtempSync(path.join(tmpdir(), "merclaw-package-pnpm-root-"));
+    const toolsDir = mkdtempSync(path.join(tmpdir(), "merclaw-package-pnpm-tools-"));
     const logPath = path.join(tempRoot, "corepack.log");
     tempDirs.push(tempRoot, toolsDir);
 
@@ -79,7 +79,7 @@ describe("package-mac-app plist stamping", () => {
       [
         "#!/usr/bin/env bash",
         "set -euo pipefail",
-        "printf '%s|%s\\n' \"$PWD\" \"$*\" >> \"$OPENCLAW_TEST_LOG\"",
+        "printf '%s|%s\\n' \"$PWD\" \"$*\" >> \"$MERCLAW_TEST_LOG\"",
         "if [[ \"${1:-}\" == \"pnpm\" && \"${2:-}\" == \"--version\" ]]; then",
         "  echo '11.2.2'",
         "fi",
@@ -92,8 +92,8 @@ describe("package-mac-app plist stamping", () => {
     const result = runHelper(`
       set -euo pipefail
       ROOT_DIR=${JSON.stringify(tempRoot)}
-      OPENCLAW_TEST_LOG=${JSON.stringify(logPath)}
-      export OPENCLAW_TEST_LOG
+      MERCLAW_TEST_LOG=${JSON.stringify(logPath)}
+      export MERCLAW_TEST_LOG
       PATH=${JSON.stringify(`${toolsDir}:/usr/bin:/bin`)}
       ${helperBlock}
       run_pnpm install --frozen-lockfile --config.node-linker=hoisted
@@ -110,8 +110,8 @@ describe("package-mac-app plist stamping", () => {
 
   it("fails with an actionable error when neither pnpm nor corepack pnpm is available", () => {
     const helperBlock = getPackageManagerHelperBlock();
-    const tempRoot = mkdtempSync(path.join(tmpdir(), "openclaw-package-pnpm-root-"));
-    const toolsDir = mkdtempSync(path.join(tmpdir(), "openclaw-package-pnpm-tools-"));
+    const tempRoot = mkdtempSync(path.join(tmpdir(), "merclaw-package-pnpm-root-"));
+    const toolsDir = mkdtempSync(path.join(tmpdir(), "merclaw-package-pnpm-tools-"));
     tempDirs.push(tempRoot, toolsDir);
 
     const result = runHelper(`
@@ -126,15 +126,15 @@ describe("package-mac-app plist stamping", () => {
     expect(result.stderr).toContain("pnpm is not on PATH and corepack pnpm is unavailable");
   });
 
-  it("does not kill unrelated OpenClaw processes during packaging", () => {
+  it("does not kill unrelated MerClaw processes during packaging", () => {
     const script = readFileSync(scriptPath, "utf8");
     const stopBlock = script.slice(
       script.indexOf("running_packaged_app_pids()"),
       script.indexOf('echo "🔏 Signing bundle'),
     );
 
-    expect(script).not.toContain("killall -q OpenClaw");
-    expect(stopBlock).toContain('local app_binary="$APP_ROOT/Contents/MacOS/OpenClaw"');
+    expect(script).not.toContain("killall -q MerClaw");
+    expect(stopBlock).toContain('local app_binary="$APP_ROOT/Contents/MacOS/MerClaw"');
     expect(stopBlock).toContain('pgrep -x "$PRODUCT"');
     expect(stopBlock).toContain('grep -Fx "$app_binary"');
     expect(stopBlock).toContain(
@@ -155,17 +155,17 @@ describe("package-mac-app plist stamping", () => {
 
   it("fails closed when required Swift resources are missing", () => {
     const script = readFileSync(scriptPath, "utf8");
-    const openClawKitBlock = script.slice(
+    const merClawKitBlock = script.slice(
       script.indexOf(
-        'OPENCLAWKIT_BUNDLE="$(build_path_for_arch "$PRIMARY_ARCH")/$BUILD_CONFIG/OpenClawKit_OpenClawKit.bundle"',
+        'MERCLAWKIT_BUNDLE="$(build_path_for_arch "$PRIMARY_ARCH")/$BUILD_CONFIG/MerClawKit_MerClawKit.bundle"',
       ),
       script.indexOf('echo "📦 Copying Textual resources"'),
     );
 
-    expect(openClawKitBlock).toContain("ERROR: OpenClawKit resource bundle not found");
-    expect(openClawKitBlock).toContain("exit 1");
-    expect(openClawKitBlock).not.toContain("WARN:");
-    expect(openClawKitBlock).not.toContain("continuing");
+    expect(merClawKitBlock).toContain("ERROR: MerClawKit resource bundle not found");
+    expect(merClawKitBlock).toContain("exit 1");
+    expect(merClawKitBlock).not.toContain("WARN:");
+    expect(merClawKitBlock).not.toContain("continuing");
   });
 
   it("does not mask required Info.plist stamp failures", () => {
@@ -186,14 +186,14 @@ describe("package-mac-app plist stamping", () => {
       const result = runHelper(`
         set -euo pipefail
         source scripts/lib/plistbuddy.sh
-        plist_set_string_required ${JSON.stringify(plist)} CFBundleIdentifier 'ai.openclaw.test'
+        plist_set_string_required ${JSON.stringify(plist)} CFBundleIdentifier 'ai.merclaw.test'
         /usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' ${JSON.stringify(plist)}
         broken="$(mktemp -d)"
         plist_set_string_required "$broken" CFBundleIdentifier broken
       `);
 
       expect(result.status).toBe(1);
-      expect(result.stdout).toContain("ai.openclaw.test");
+      expect(result.stdout).toContain("ai.merclaw.test");
       expect(result.stderr).toContain("Error Reading File");
     },
   );

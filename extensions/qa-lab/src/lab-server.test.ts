@@ -11,7 +11,7 @@ import {
   type QaLabServerStartParams,
 } from "./lab-server.js";
 
-vi.mock("@openclaw/qa-channel/api.js", async () => await import("../../qa-channel/api.js"));
+vi.mock("@merclaw/qa-channel/api.js", async () => await import("../../qa-channel/api.js"));
 
 const captureMock = vi.hoisted(() => {
   const sessions: Array<Record<string, unknown>> = [];
@@ -126,16 +126,16 @@ const captureMock = vi.hoisted(() => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/proxy-capture", () => ({
+vi.mock("merclaw/plugin-sdk/proxy-capture", () => ({
   acquireDebugProxyCaptureStore: () => ({
     store: captureMock.store,
     release: captureMock.store.close,
   }),
   getDebugProxyCaptureStore: () => captureMock.store,
   resolveDebugProxySettings: () => ({
-    dbPath: process.env.OPENCLAW_DEBUG_PROXY_DB_PATH ?? "",
-    blobDir: process.env.OPENCLAW_DEBUG_PROXY_BLOB_DIR ?? "",
-    proxyUrl: process.env.OPENCLAW_DEBUG_PROXY_URL ?? "",
+    dbPath: process.env.MERCLAW_DEBUG_PROXY_DB_PATH ?? "",
+    blobDir: process.env.MERCLAW_DEBUG_PROXY_BLOB_DIR ?? "",
+    proxyUrl: process.env.MERCLAW_DEBUG_PROXY_URL ?? "",
     sessionId: "qa-lab-test",
   }),
 }));
@@ -648,7 +648,7 @@ describe("qa-lab server", () => {
         `  fs.writeFileSync(${JSON.stringify(stoppedPath)}, "terminated", "utf8");`,
         "  process.exit(0);",
         "});",
-        `fs.writeFileSync(${JSON.stringify(markerPath)}, process.env.OPENCLAW_CODEX_DISCOVERY_LIVE || "", "utf8");`,
+        `fs.writeFileSync(${JSON.stringify(markerPath)}, process.env.MERCLAW_CODEX_DISCOVERY_LIVE || "", "utf8");`,
         "setInterval(() => {}, 1000);",
       ].join("\n"),
       "utf8",
@@ -784,23 +784,23 @@ describe("qa-lab server", () => {
     cleanups.push(async () => {
       await rm(tempDir, { recursive: true, force: true });
     });
-    process.env.OPENCLAW_DEBUG_PROXY_DB_PATH = path.join(tempDir, "capture.sqlite");
-    process.env.OPENCLAW_DEBUG_PROXY_BLOB_DIR = path.join(tempDir, "blobs");
+    process.env.MERCLAW_DEBUG_PROXY_DB_PATH = path.join(tempDir, "capture.sqlite");
+    process.env.MERCLAW_DEBUG_PROXY_BLOB_DIR = path.join(tempDir, "blobs");
     const store = captureMock.store;
     store.upsertSession({
       id: "qa-capture-session",
       startedAt: Date.now(),
       mode: "proxy-run",
-      sourceScope: "openclaw",
-      sourceProcess: "openclaw",
-      dbPath: process.env.OPENCLAW_DEBUG_PROXY_DB_PATH,
-      blobDir: process.env.OPENCLAW_DEBUG_PROXY_BLOB_DIR,
+      sourceScope: "merclaw",
+      sourceProcess: "merclaw",
+      dbPath: process.env.MERCLAW_DEBUG_PROXY_DB_PATH,
+      blobDir: process.env.MERCLAW_DEBUG_PROXY_BLOB_DIR,
     });
     store.recordEvent({
       sessionId: "qa-capture-session",
       ts: Date.now(),
-      sourceScope: "openclaw",
-      sourceProcess: "openclaw",
+      sourceScope: "merclaw",
+      sourceProcess: "merclaw",
       protocol: "https",
       direction: "outbound",
       kind: "request",
@@ -820,8 +820,8 @@ describe("qa-lab server", () => {
     store.recordEvent({
       sessionId: "qa-capture-session",
       ts: Date.now() + 1,
-      sourceScope: "openclaw",
-      sourceProcess: "openclaw",
+      sourceScope: "merclaw",
+      sourceProcess: "merclaw",
       protocol: "https",
       direction: "outbound",
       kind: "request",
@@ -841,8 +841,8 @@ describe("qa-lab server", () => {
     store.recordEvent({
       sessionId: "qa-capture-session",
       ts: Date.now() + 2,
-      sourceScope: "openclaw",
-      sourceProcess: "openclaw",
+      sourceScope: "merclaw",
+      sourceProcess: "merclaw",
       protocol: "https",
       direction: "outbound",
       kind: "request",
@@ -862,8 +862,8 @@ describe("qa-lab server", () => {
       port: 0,
     });
     cleanups.push(async () => {
-      delete process.env.OPENCLAW_DEBUG_PROXY_DB_PATH;
-      delete process.env.OPENCLAW_DEBUG_PROXY_BLOB_DIR;
+      delete process.env.MERCLAW_DEBUG_PROXY_DB_PATH;
+      delete process.env.MERCLAW_DEBUG_PROXY_BLOB_DIR;
       await lab.stop();
     });
 

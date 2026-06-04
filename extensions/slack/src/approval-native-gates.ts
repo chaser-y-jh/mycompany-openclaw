@@ -1,18 +1,18 @@
 import {
   isChannelExecApprovalClientEnabledFromConfig,
   matchesApprovalRequestFilters,
-} from "openclaw/plugin-sdk/approval-client-runtime";
+} from "merclaw/plugin-sdk/approval-client-runtime";
 import {
   doesApprovalRequestMatchChannelAccount,
   resolveApprovalRequestSessionConversation,
-} from "openclaw/plugin-sdk/approval-native-runtime";
+} from "merclaw/plugin-sdk/approval-native-runtime";
 import type {
   ExecApprovalRequest,
   PluginApprovalRequest,
-} from "openclaw/plugin-sdk/approval-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { normalizeMessageChannel } from "openclaw/plugin-sdk/routing";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/approval-runtime";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { normalizeMessageChannel } from "merclaw/plugin-sdk/routing";
+import { normalizeOptionalString } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { resolveSlackAccount } from "./accounts.js";
 import { getSlackApprovalApprovers } from "./approval-auth.js";
 import {
@@ -28,18 +28,18 @@ export function resolveSlackApprovalKind(request: SlackNativeApprovalRequest): S
 }
 
 function resolveSlackNativeApprovalConfig(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   accountId?: string | null;
 }) {
   return resolveSlackAccount(params).config.execApprovals;
 }
 
-function resolvePluginApprovalForwardingConfig(cfg: OpenClawConfig) {
+function resolvePluginApprovalForwardingConfig(cfg: MerClawConfig) {
   return cfg.approvals?.plugin;
 }
 
 function getSlackNativeApprovalApprovers(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   accountId?: string | null;
   approvalKind: SlackApprovalKind;
 }): string[] {
@@ -70,7 +70,7 @@ function modeIncludesTargets(mode: "session" | "targets" | "both" | undefined): 
 }
 
 function hasSlackPluginForwardingTarget(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   accountId?: string | null;
 }): boolean {
   const targets = resolvePluginApprovalForwardingConfig(params.cfg)?.targets ?? [];
@@ -87,7 +87,7 @@ function hasSlackPluginForwardingTarget(params: {
 }
 
 function requestHasSlackOriginOrSession(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   request: SlackNativeApprovalRequest;
   accountId?: string | null;
 }): boolean {
@@ -118,7 +118,7 @@ function requestHasSlackOriginOrSession(params: {
 }
 
 function isPluginForwardingEnabledForRequest(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   request: SlackNativeApprovalRequest;
 }): boolean {
   const config = resolvePluginApprovalForwardingConfig(params.cfg);
@@ -133,7 +133,7 @@ function isPluginForwardingEnabledForRequest(params: {
 }
 
 function canPluginForwardingRouteToSlack(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   accountId?: string | null;
   request: SlackNativeApprovalRequest;
 }): boolean {
@@ -153,7 +153,7 @@ function canPluginForwardingRouteToSlack(params: {
 }
 
 function isSlackPluginNativeApprovalClientEnabled(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   accountId?: string | null;
 }): boolean {
   const slackNativeConfig = resolveSlackNativeApprovalConfig(params);
@@ -177,7 +177,7 @@ function isSlackPluginNativeApprovalClientEnabled(params: {
 }
 
 function shouldHandleSlackPluginViaNativeClientConfig(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   accountId?: string | null;
   request: SlackNativeApprovalRequest;
 }): boolean {
@@ -208,7 +208,7 @@ function shouldHandleSlackPluginViaNativeClientConfig(params: {
 }
 
 function shouldHandleSlackPluginNativeApprovalRequest(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   accountId?: string | null;
   request: SlackNativeApprovalRequest;
 }): boolean {
@@ -225,7 +225,7 @@ function shouldHandleSlackPluginNativeApprovalRequest(params: {
 }
 
 export function isSlackNativeApprovalClientEnabled(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   accountId?: string | null;
   approvalKind: SlackApprovalKind;
 }): boolean {
@@ -236,7 +236,7 @@ export function isSlackNativeApprovalClientEnabled(params: {
 }
 
 export function isSlackAnyNativeApprovalClientEnabled(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   accountId?: string | null;
 }): boolean {
   return (
@@ -252,7 +252,7 @@ export function isSlackAnyNativeApprovalClientEnabled(params: {
 }
 
 export function shouldHandleSlackNativeApprovalRequest(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   accountId?: string | null;
   approvalKind?: SlackApprovalKind;
   request: SlackNativeApprovalRequest;

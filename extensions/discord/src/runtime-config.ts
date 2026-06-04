@@ -2,10 +2,10 @@ import {
   getRuntimeConfigSnapshot,
   getRuntimeConfigSourceSnapshot,
   selectApplicableRuntimeConfig,
-} from "openclaw/plugin-sdk/runtime-config-snapshot";
-import type { OpenClawConfig } from "./runtime-api.js";
+} from "merclaw/plugin-sdk/runtime-config-snapshot";
+import type { MerClawConfig } from "./runtime-api.js";
 
-export function selectDiscordRuntimeConfig(inputConfig: OpenClawConfig): OpenClawConfig {
+export function selectDiscordRuntimeConfig(inputConfig: MerClawConfig): MerClawConfig {
   return (
     selectApplicableRuntimeConfig({
       inputConfig,

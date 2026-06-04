@@ -87,7 +87,7 @@ describe("plugin gateway gauntlet helpers", () => {
   it("discovers bundled plugin manifests into lifecycle matrix rows", async () => {
     await writeManifest(
       "alpha",
-      "openclaw.plugin.json",
+      "merclaw.plugin.json",
       JSON.stringify({
         id: "alpha",
         enabledByDefault: true,
@@ -107,7 +107,7 @@ describe("plugin gateway gauntlet helpers", () => {
     );
     await writeManifest(
       "beta",
-      "openclaw.plugin.json",
+      "merclaw.plugin.json",
       JSON.stringify({ id: "beta", commandAliases: ["dreaming"], onboardingScopes: ["memory"] }),
     );
 
@@ -126,7 +126,7 @@ describe("plugin gateway gauntlet helpers", () => {
       hasConfigSchema: true,
       hasRequiredConfigFields: true,
       id: "alpha",
-      manifestPath: path.join("extensions", "alpha", "openclaw.plugin.json"),
+      manifestPath: path.join("extensions", "alpha", "merclaw.plugin.json"),
       name: "alpha",
       onboardingScopes: ["models"],
       providers: ["openai"],
@@ -140,7 +140,7 @@ describe("plugin gateway gauntlet helpers", () => {
   });
 
   it("keeps manifest ids separate from bounded build entry ids", async () => {
-    await writeManifest("kimi-coding", "openclaw.plugin.json", JSON.stringify({ id: "kimi" }));
+    await writeManifest("kimi-coding", "merclaw.plugin.json", JSON.stringify({ id: "kimi" }));
 
     const matrix = discoverBundledPluginManifests(repoRoot);
 
@@ -151,14 +151,14 @@ describe("plugin gateway gauntlet helpers", () => {
       }),
     ]);
     expect(buildGauntletPrebuildEnv({}, { buildIds: [matrix[0].buildId] })).toEqual({
-      OPENCLAW_BUNDLED_PLUGIN_BUILD_IDS: "kimi-coding",
+      MERCLAW_BUNDLED_PLUGIN_BUILD_IDS: "kimi-coding",
     });
   });
 
   it("skips source-only plugin dirs that are excluded from the built runtime", async () => {
-    await writeManifest("qa-lab", "openclaw.plugin.json", JSON.stringify({ id: "qa-lab" }));
-    await writeManifest("qqbot", "openclaw.plugin.json", JSON.stringify({ id: "qqbot" }));
-    await writeManifest("telegram", "openclaw.plugin.json", JSON.stringify({ id: "telegram" }));
+    await writeManifest("qa-lab", "merclaw.plugin.json", JSON.stringify({ id: "qa-lab" }));
+    await writeManifest("qqbot", "merclaw.plugin.json", JSON.stringify({ id: "qqbot" }));
+    await writeManifest("telegram", "merclaw.plugin.json", JSON.stringify({ id: "telegram" }));
 
     const matrix = discoverBundledPluginManifests(repoRoot);
 
@@ -357,9 +357,9 @@ describe("plugin gateway gauntlet helpers", () => {
   it("prebuilds private QA dist when QA chunks are enabled", () => {
     expect(buildGauntletPrebuildEnv({ EXISTING: "1" }, { includePrivateQa: true })).toEqual({
       EXISTING: "1",
-      OPENCLAW_BUILD_PRIVATE_QA: "1",
-      OPENCLAW_BUNDLED_PLUGIN_BUILD_IDS: "qa-channel,qa-lab,qa-matrix",
-      OPENCLAW_ENABLE_PRIVATE_QA_CLI: "1",
+      MERCLAW_BUILD_PRIVATE_QA: "1",
+      MERCLAW_BUNDLED_PLUGIN_BUILD_IDS: "qa-channel,qa-lab,qa-matrix",
+      MERCLAW_ENABLE_PRIVATE_QA_CLI: "1",
     });
     const env = { EXISTING: "1" };
     expect(buildGauntletPrebuildEnv(env, { includePrivateQa: false })).toBe(env);
@@ -376,8 +376,8 @@ describe("plugin gateway gauntlet helpers", () => {
       ),
     ).toEqual({
       EXISTING: "1",
-      OPENCLAW_BUNDLED_PLUGIN_BUILD_IDS: "acpx",
-      OPENCLAW_RUN_NODE_SKIP_DTS_BUILD: "1",
+      MERCLAW_BUNDLED_PLUGIN_BUILD_IDS: "acpx",
+      MERCLAW_RUN_NODE_SKIP_DTS_BUILD: "1",
     });
   });
 
@@ -392,9 +392,9 @@ describe("plugin gateway gauntlet helpers", () => {
       ),
     ).toEqual({
       EXISTING: "1",
-      OPENCLAW_BUILD_PRIVATE_QA: "1",
-      OPENCLAW_BUNDLED_PLUGIN_BUILD_IDS: "acpx,active-memory,qa-channel,qa-lab,qa-matrix",
-      OPENCLAW_ENABLE_PRIVATE_QA_CLI: "1",
+      MERCLAW_BUILD_PRIVATE_QA: "1",
+      MERCLAW_BUNDLED_PLUGIN_BUILD_IDS: "acpx,active-memory,qa-channel,qa-lab,qa-matrix",
+      MERCLAW_ENABLE_PRIVATE_QA_CLI: "1",
     });
   });
 
@@ -667,7 +667,7 @@ describe("plugin gateway gauntlet helpers", () => {
     const qaSummaryJson = JSON.stringify(
       minimalQaSuiteSummary({ gatewayCpuCoreRatio: 0, wallMs: 1 }),
     );
-    await writeManifest("alpha", "openclaw.plugin.json", JSON.stringify({ id: "alpha" }));
+    await writeManifest("alpha", "merclaw.plugin.json", JSON.stringify({ id: "alpha" }));
     await fs.writeFile(path.join(repoRoot, "extensions", "alpha", "index.ts"), "export {};\n");
     await fs.mkdir(path.join(repoRoot, "scripts"), { recursive: true });
     await fs.writeFile(
@@ -678,7 +678,7 @@ describe("plugin gateway gauntlet helpers", () => {
         'const outputArgIndex = process.argv.indexOf("--output-dir");',
         "const outputDir = path.resolve(process.cwd(), process.argv[outputArgIndex + 1]);",
         "fs.mkdirSync(outputDir, { recursive: true });",
-        'fs.writeFileSync(path.join(outputDir, "env.txt"), process.env.OPENCLAW_BUNDLED_PLUGIN_BUILD_IDS ?? "", "utf8");',
+        'fs.writeFileSync(path.join(outputDir, "env.txt"), process.env.MERCLAW_BUNDLED_PLUGIN_BUILD_IDS ?? "", "utf8");',
         `fs.writeFileSync(path.join(outputDir, "qa-suite-summary.json"), ${JSON.stringify(qaSummaryJson)}, "utf8");`,
       ].join("\n"),
       "utf8",
@@ -714,7 +714,7 @@ describe("plugin gateway gauntlet helpers", () => {
 
   it("fails successful QA chunks that do not write the requested summary", async () => {
     const outputDir = path.join(repoRoot, "artifacts");
-    await writeManifest("alpha", "openclaw.plugin.json", JSON.stringify({ id: "alpha" }));
+    await writeManifest("alpha", "merclaw.plugin.json", JSON.stringify({ id: "alpha" }));
     await fs.writeFile(path.join(repoRoot, "extensions", "alpha", "index.ts"), "export {};\n");
     await fs.mkdir(path.join(repoRoot, "scripts"), { recursive: true });
     await fs.writeFile(
@@ -777,7 +777,7 @@ describe("plugin gateway gauntlet helpers", () => {
 
   it("fails successful QA chunks that write unusable summary JSON", async () => {
     const outputDir = path.join(repoRoot, "artifacts");
-    await writeManifest("alpha", "openclaw.plugin.json", JSON.stringify({ id: "alpha" }));
+    await writeManifest("alpha", "merclaw.plugin.json", JSON.stringify({ id: "alpha" }));
     await fs.writeFile(path.join(repoRoot, "extensions", "alpha", "index.ts"), "export {};\n");
     await fs.mkdir(path.join(repoRoot, "scripts"), { recursive: true });
     await fs.writeFile(

@@ -4,11 +4,11 @@ import {
   embeddedAgentLog,
   invokeNativeHookRelay,
   nativeHookRelayTesting,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "merclaw/plugin-sdk/agent-harness-runtime";
 import {
   onInternalDiagnosticEvent,
   type DiagnosticEventPayload,
-} from "openclaw/plugin-sdk/diagnostic-runtime";
+} from "merclaw/plugin-sdk/diagnostic-runtime";
 import { describe, expect, it, vi } from "vitest";
 import { createCodexAttemptTurnWatchController } from "./attempt-turn-watches.js";
 import * as authBridge from "./auth-bridge.js";
@@ -156,7 +156,7 @@ describe("runCodexAppServerAttempt turn watches", () => {
     expect(toolResult.success).toBe(false);
     expect(toolResult.contentItems?.[0]?.type).toBe("inputText");
     expect(toolResult.contentItems?.[0]?.text).toMatch(
-      /^(Unknown OpenClaw tool: message|Action send requires a target\.)$/u,
+      /^(Unknown MerClaw tool: message|Action send requires a target\.)$/u,
     );
 
     const result = await run;
@@ -228,7 +228,7 @@ describe("runCodexAppServerAttempt turn watches", () => {
       path.join(tempDir, "workspace"),
     );
     params.timeoutMs = 200;
-    vi.stubEnv("OPENCLAW_STATE_DIR", path.join(tempDir, "state"));
+    vi.stubEnv("MERCLAW_STATE_DIR", path.join(tempDir, "state"));
 
     const run = runCodexAppServerAttempt(params, {
       pluginConfig: { appServer: { turnCompletionIdleTimeoutMs: 5 } },
@@ -1277,7 +1277,7 @@ describe("runCodexAppServerAttempt turn watches", () => {
     expect(request.mock.calls.some(([method]) => method === "turn/interrupt")).toBe(false);
   });
 
-  it("keeps waiting after an OpenClaw dynamic tool response before final synthesis", async () => {
+  it("keeps waiting after an MerClaw dynamic tool response before final synthesis", async () => {
     let notify: (notification: CodexServerNotification) => Promise<void> = async () => undefined;
     let handleRequest:
       | ((request: { id: string; method: string; params?: unknown }) => Promise<unknown>)
@@ -3768,7 +3768,7 @@ describe("runCodexAppServerAttempt turn watches", () => {
   });
 
   it("releases completion when a projector callback throws during turn/completed", async () => {
-    // Regression for openclaw/openclaw#67996: a throw inside the projector's
+    // Regression for merclaw/merclaw#67996: a throw inside the projector's
     // turn/completed handler must not strand resolveCompletion, otherwise the
     // gateway session lane stays locked and every follow-up message queues
     // behind a run that will never resolve.

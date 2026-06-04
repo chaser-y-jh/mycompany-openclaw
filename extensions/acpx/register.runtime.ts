@@ -3,8 +3,8 @@ import {
   registerAcpRuntimeBackend,
   unregisterAcpRuntimeBackend,
   type AcpRuntime,
-} from "openclaw/plugin-sdk/acp-runtime-backend";
-import type { OpenClawPluginService, OpenClawPluginServiceContext } from "openclaw/plugin-sdk/core";
+} from "merclaw/plugin-sdk/acp-runtime-backend";
+import type { MerClawPluginService, MerClawPluginServiceContext } from "merclaw/plugin-sdk/core";
 import { createLazyAcpRuntimeProxy } from "./src/runtime-proxy.js";
 
 const ACPX_BACKEND_ID = "acpx";
@@ -15,10 +15,10 @@ type CreateAcpxRuntimeServiceParams = NonNullable<
 >;
 
 type DeferredServiceState = {
-  ctx: OpenClawPluginServiceContext | null;
+  ctx: MerClawPluginServiceContext | null;
   params: CreateAcpxRuntimeServiceParams;
   realRuntime: AcpRuntime | null;
-  realService: OpenClawPluginService | null;
+  realService: MerClawPluginService | null;
   startPromise: Promise<AcpRuntime> | null;
 };
 
@@ -40,7 +40,7 @@ async function startRealService(state: DeferredServiceState): Promise<AcpRuntime
     const { createAcpxRuntimeService } = await loadServiceModule();
     const service = createAcpxRuntimeService(state.params);
     state.realService = service;
-    await service.start(state.ctx as OpenClawPluginServiceContext);
+    await service.start(state.ctx as MerClawPluginServiceContext);
     const backend = getAcpRuntimeBackend(ACPX_BACKEND_ID);
     if (!backend?.runtime) {
       throw new Error("ACPX runtime service did not register an ACP backend");
@@ -64,7 +64,7 @@ function createDeferredRuntime(state: DeferredServiceState): AcpRuntime {
 
 export function createAcpxRuntimeService(
   params: CreateAcpxRuntimeServiceParams = {},
-): OpenClawPluginService {
+): MerClawPluginService {
   const state: DeferredServiceState = {
     ctx: null,
     params,
@@ -76,8 +76,8 @@ export function createAcpxRuntimeService(
   return {
     id: "acpx-runtime",
     async start(ctx) {
-      if (process.env.OPENCLAW_SKIP_ACPX_RUNTIME === "1") {
-        ctx.logger.info("skipping embedded acpx runtime backend (OPENCLAW_SKIP_ACPX_RUNTIME=1)");
+      if (process.env.MERCLAW_SKIP_ACPX_RUNTIME === "1") {
+        ctx.logger.info("skipping embedded acpx runtime backend (MERCLAW_SKIP_ACPX_RUNTIME=1)");
         return;
       }
 

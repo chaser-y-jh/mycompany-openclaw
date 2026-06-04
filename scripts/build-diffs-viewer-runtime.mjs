@@ -7,7 +7,7 @@ import { build } from "esbuild";
 
 const modulePath = fileURLToPath(import.meta.url);
 const repoRoot = path.resolve(path.dirname(modulePath), "..");
-const pierreDiffsEmptySideEffectNamespace = "openclaw-diffs-empty-side-effect";
+const pierreDiffsEmptySideEffectNamespace = "merclaw-diffs-empty-side-effect";
 const pierreDiffsEmptySideEffectPath = "pierre-diffs-parse-decorations-side-effect";
 
 const targets = {
@@ -28,7 +28,7 @@ function toPosixPath(value) {
 
 export function createPierreDiffsSideEffectImportPlugin() {
   return {
-    name: "openclaw-diffs-pierre-side-effect-imports",
+    name: "merclaw-diffs-pierre-side-effect-imports",
     setup(buildContext) {
       buildContext.onResolve({ filter: /^diff$/ }, (args) => {
         const importer = toPosixPath(args.importer);
@@ -84,7 +84,7 @@ export async function buildDiffsViewerRuntime(targetName) {
       ...(target.shikiAlias
         ? [
             {
-              name: "openclaw-diffs-curated-shiki",
+              name: "merclaw-diffs-curated-shiki",
               setup(buildContext) {
                 buildContext.onResolve({ filter: /^shiki$/ }, () => ({
                   path: path.join(repoRoot, target.shikiAlias),

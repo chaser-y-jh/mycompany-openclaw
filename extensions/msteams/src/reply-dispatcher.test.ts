@@ -493,7 +493,7 @@ describe("createMSTeamsReplyDispatcher", () => {
 
     // With toolProgress disabled, the previewToolProgressEnabled gate flips
     // false so we don't claim to suppress the agent's default messages —
-    // they should flow through openclaw's normal block delivery instead.
+    // they should flow through merclaw's normal block delivery instead.
     expect(dispatcher.replyOptions.suppressDefaultToolProgressMessages).toBeUndefined();
   });
 

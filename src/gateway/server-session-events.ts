@@ -1,5 +1,5 @@
-import { asPositiveSafeInteger } from "@openclaw/normalization-core/number-coercion";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { asPositiveSafeInteger } from "@merclaw/normalization-core/number-coercion";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import { resolveDefaultAgentId } from "../agents/agent-scope.js";
 import { getRuntimeConfig } from "../config/io.js";
 import { normalizeAgentId } from "../routing/session-key.js";
@@ -13,7 +13,7 @@ import type {
 } from "./server-chat.js";
 import { resolveSessionKeyForTranscriptFile } from "./session-transcript-key.js";
 import {
-  attachOpenClawTranscriptMeta,
+  attachMerClawTranscriptMeta,
   loadGatewaySessionRow,
   loadSessionEntry,
   readSessionMessageCountAsync,
@@ -173,7 +173,7 @@ async function handleTranscriptUpdateBroadcast(
     agentId: visibleAgentId,
     includeSession: true,
   });
-  const rawMessage = attachOpenClawTranscriptMeta(update.message, {
+  const rawMessage = attachMerClawTranscriptMeta(update.message, {
     ...(typeof update.messageId === "string" ? { id: update.messageId } : {}),
     ...(messageSeq !== undefined ? { seq: messageSeq } : {}),
   });

@@ -283,7 +283,7 @@ describe("setOcPath — jsonc leaf with coercion", () => {
     ).ast;
     const r = setOcPath(
       ast,
-      parseOcPath("oc://openclaw.json/agents/list/0/tools/exec/security"),
+      parseOcPath("oc://merclaw.json/agents/list/0/tools/exec/security"),
       "allowlist",
     );
     expect(r.ok).toBe(true);
@@ -297,7 +297,7 @@ describe("setOcPath — jsonc leaf with coercion", () => {
 
   it("keeps JSON-looking strings as strings by default", () => {
     const ast = parseJsonc('{ "token": "${TOKEN}" }').ast;
-    const r = setOcPath(ast, parseOcPath("oc://openclaw.json/token"), '{"source":"file"}');
+    const r = setOcPath(ast, parseOcPath("oc://merclaw.json/token"), '{"source":"file"}');
     expect(r.ok).toBe(true);
     if (r.ok) {
       const ast2 = r.ast as Parameters<typeof emitJsonc>[0];
@@ -309,7 +309,7 @@ describe("setOcPath — jsonc leaf with coercion", () => {
     const ast = parseJsonc('{ "token": "${TOKEN}" }').ast;
     const r = setOcPath(
       ast,
-      parseOcPath("oc://openclaw.json/token"),
+      parseOcPath("oc://merclaw.json/token"),
       '{"source":"file","provider":"secrets","id":"/test"}',
       { valueJson: true },
     );
@@ -324,7 +324,7 @@ describe("setOcPath — jsonc leaf with coercion", () => {
 
   it("rejects non-finite parsed JSON replacement values", () => {
     const ast = parseJsonc('{ "limit": 1 }').ast;
-    const r = setOcPath(ast, parseOcPath("oc://openclaw.json/limit"), "1e999", {
+    const r = setOcPath(ast, parseOcPath("oc://merclaw.json/limit"), "1e999", {
       valueJson: true,
     });
     expect(r.ok).toBe(false);

@@ -1,5 +1,5 @@
 import { normalizeProviderId } from "../../agents/model-selection.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import {
   loadPluginManifestRegistry,
   type PluginManifestRecord,
@@ -7,7 +7,7 @@ import {
 import type { PluginMetadataSnapshot } from "../../plugins/plugin-metadata-snapshot.js";
 
 type ProviderAliasSource = {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   metadataSnapshot?: Pick<PluginMetadataSnapshot, "manifestRegistry">;
 };
 

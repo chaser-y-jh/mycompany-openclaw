@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import type { OnboardOptions } from "../commands/onboard-types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import type { MigrationProviderPlugin } from "../plugins/types.js";
 import type { RuntimeEnv } from "../runtime.js";
@@ -66,14 +66,14 @@ async function hasDirectoryEntries(candidate: string): Promise<boolean> {
   }
 }
 
-function hasMeaningfulConfig(config: OpenClawConfig): boolean {
+function hasMeaningfulConfig(config: MerClawConfig): boolean {
   return Object.keys(config as Record<string, unknown>).some(
     (key) => !MEANINGFUL_CONFIG_IGNORED_KEYS.has(key),
   );
 }
 
 export async function inspectSetupMigrationFreshness(params: {
-  baseConfig: OpenClawConfig;
+  baseConfig: MerClawConfig;
   stateDir: string;
   workspaceDir: string;
 }): Promise<{ fresh: boolean; reasons: string[] }> {
@@ -98,12 +98,12 @@ function assertFreshSetupMigrationTarget(freshness: {
   fresh: boolean;
   reasons: readonly string[];
 }): void {
-  if (freshness.fresh || process.env.OPENCLAW_MIGRATION_EXISTING_IMPORT === "1") {
+  if (freshness.fresh || process.env.MERCLAW_MIGRATION_EXISTING_IMPORT === "1") {
     return;
   }
   throw new Error(
     [
-      "Migration import during onboarding requires a fresh OpenClaw setup.",
+      "Migration import during onboarding requires a fresh MerClaw setup.",
       "Create a fresh setup or reset config, credentials, sessions, and workspace before importing.",
       "Backup plus overwrite/merge imports are feature-gated for now.",
       "Existing setup:",
@@ -113,7 +113,7 @@ function assertFreshSetupMigrationTarget(freshness: {
 }
 
 export async function detectSetupMigrationSources(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   runtime: RuntimeEnv;
 }): Promise<SetupMigrationDetection[]> {
   const [
@@ -171,7 +171,7 @@ function resolveImportSourceDefault(params: {
 
 async function selectSetupMigrationProvider(params: {
   opts: OnboardOptions;
-  baseConfig: OpenClawConfig;
+  baseConfig: MerClawConfig;
   detections: readonly SetupMigrationDetection[];
   prompter: WizardPrompter;
 }): Promise<{
@@ -225,11 +225,11 @@ async function selectSetupMigrationProvider(params: {
 
 export async function runSetupMigrationImport(params: {
   opts: OnboardOptions;
-  baseConfig: OpenClawConfig;
+  baseConfig: MerClawConfig;
   detections: readonly SetupMigrationDetection[];
   prompter: WizardPrompter;
   runtime: RuntimeEnv;
-  commitConfigFile: (config: OpenClawConfig) => Promise<OpenClawConfig>;
+  commitConfigFile: (config: MerClawConfig) => Promise<MerClawConfig>;
 }): Promise<void> {
   const [
     { applyLocalSetupWorkspaceConfig, applySkipBootstrapConfig },

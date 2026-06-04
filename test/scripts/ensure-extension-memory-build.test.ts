@@ -11,7 +11,7 @@ import {
 const tempRoots: string[] = [];
 
 function makeTempRoot(): string {
-  const root = mkdtempSync(path.join(tmpdir(), "openclaw-extension-memory-build-"));
+  const root = mkdtempSync(path.join(tmpdir(), "merclaw-extension-memory-build-"));
   tempRoots.push(root);
   mkdirSync(path.join(root, "scripts"), { recursive: true });
   writeFileSync(path.join(root, "scripts", "build-all.mjs"), "", "utf8");
@@ -112,7 +112,7 @@ describe("ensure-extension-memory-build", () => {
 
     ensureExtensionMemoryBuild({
       rootDir: root,
-      env: { OPENCLAW_EXTENSION_MEMORY_BUILD_TIMEOUT_MS: "1234" },
+      env: { MERCLAW_EXTENSION_MEMORY_BUILD_TIMEOUT_MS: "1234" },
       requiredExtensionIds: ["discord"],
       spawnSync: (command, args, options) => {
         calls.push({ command, args, options });
@@ -152,7 +152,7 @@ describe("resolveExtensionMemoryBuildTimeoutMs", () => {
     ] as const) {
       expect(
         resolveExtensionMemoryBuildTimeoutMs({
-          OPENCLAW_EXTENSION_MEMORY_BUILD_TIMEOUT_MS: raw,
+          MERCLAW_EXTENSION_MEMORY_BUILD_TIMEOUT_MS: raw,
         }),
       ).toBe(expected);
     }

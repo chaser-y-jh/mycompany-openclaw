@@ -1,11 +1,11 @@
-import { SessionManager } from "openclaw/plugin-sdk/agent-sessions";
+import { SessionManager } from "merclaw/plugin-sdk/agent-sessions";
 import { afterEach, describe, expect, it } from "vitest";
 import { createEmptyPluginRegistry } from "../plugins/registry.js";
 import { setActivePluginRegistry } from "../plugins/runtime.js";
 import { buildEmbeddedExtensionFactories } from "./embedded-agent-runner/extensions.js";
 import { cleanupTempPluginTestEnvironment } from "./test-helpers/temp-plugin-extension-fixtures.js";
 
-const originalBundledPluginsDir = process.env.OPENCLAW_BUNDLED_PLUGINS_DIR;
+const originalBundledPluginsDir = process.env.MERCLAW_BUNDLED_PLUGINS_DIR;
 const tempDirs: string[] = [];
 
 afterEach(() => {
@@ -25,7 +25,7 @@ describe("buildEmbeddedExtensionFactories", () => {
         event.result.content = [{ type: "text", text: `compacted ${seenToolCallIds.length}` }];
         return undefined;
       },
-      runtimes: ["openclaw"],
+      runtimes: ["merclaw"],
       source: "test",
     });
     setActivePluginRegistry(registry);
@@ -65,8 +65,8 @@ describe("buildEmbeddedExtensionFactories", () => {
       details: {},
     });
     expect(seenToolCallIds).toHaveLength(2);
-    expect(seenToolCallIds[0]).toMatch(/^openclaw-/);
-    expect(seenToolCallIds[1]).toMatch(/^openclaw-/);
+    expect(seenToolCallIds[0]).toMatch(/^merclaw-/);
+    expect(seenToolCallIds[1]).toMatch(/^merclaw-/);
     expect(seenToolCallIds[0]).not.toBe(seenToolCallIds[1]);
   });
 
@@ -124,7 +124,7 @@ describe("buildEmbeddedExtensionFactories", () => {
         event.result.details = { redacted: true };
         return undefined;
       },
-      runtimes: ["openclaw"],
+      runtimes: ["merclaw"],
       source: "test",
     });
     setActivePluginRegistry(registry);

@@ -51,17 +51,17 @@ try {
     {
       baseline: CLI_STARTUP_BENCH_FIXTURE_PATH,
       report: "",
-      entry: "openclaw.mjs",
+      entry: "merclaw.mjs",
       preset: "all",
       runs: 1,
       warmup: 0,
       timeoutMs: 30_000,
       maxDurationRegressionPct:
-        readBudgetEnvNumber("OPENCLAW_STARTUP_BENCH_MAX_DURATION_REGRESSION_PCT") ?? 20,
+        readBudgetEnvNumber("MERCLAW_STARTUP_BENCH_MAX_DURATION_REGRESSION_PCT") ?? 20,
       maxFirstOutputRegressionPct:
-        readBudgetEnvNumber("OPENCLAW_STARTUP_BENCH_MAX_FIRST_OUTPUT_REGRESSION_PCT") ?? 20,
+        readBudgetEnvNumber("MERCLAW_STARTUP_BENCH_MAX_FIRST_OUTPUT_REGRESSION_PCT") ?? 20,
       maxRssRegressionPct:
-        readBudgetEnvNumber("OPENCLAW_STARTUP_BENCH_MAX_RSS_REGRESSION_PCT") ?? 20,
+        readBudgetEnvNumber("MERCLAW_STARTUP_BENCH_MAX_RSS_REGRESSION_PCT") ?? 20,
       skipBaseline: false,
     },
     [

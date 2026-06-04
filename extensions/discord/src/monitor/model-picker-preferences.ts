@@ -1,17 +1,17 @@
 import { createHash } from "node:crypto";
 import os from "node:os";
 import path from "node:path";
-import { normalizeAccountId as normalizeSharedAccountId } from "openclaw/plugin-sdk/account-id";
-import { readJsonFileWithFallback } from "openclaw/plugin-sdk/json-store";
+import { normalizeAccountId as normalizeSharedAccountId } from "merclaw/plugin-sdk/account-id";
+import { readJsonFileWithFallback } from "merclaw/plugin-sdk/json-store";
 import {
   MAX_DATE_TIMESTAMP_MS,
   resolveDateTimestampMs,
   resolveTimestampMsToIsoString,
   timestampMsToIsoString,
-} from "openclaw/plugin-sdk/number-runtime";
-import { normalizeProviderId } from "openclaw/plugin-sdk/provider-model-shared";
-import { resolveStateDir } from "openclaw/plugin-sdk/state-paths";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/number-runtime";
+import { normalizeProviderId } from "merclaw/plugin-sdk/provider-model-shared";
+import { resolveStateDir } from "merclaw/plugin-sdk/state-paths";
+import { normalizeOptionalString } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { getDiscordRuntime } from "../runtime.js";
 
 const DEFAULT_RECENT_LIMIT = 5;

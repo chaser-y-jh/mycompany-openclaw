@@ -7,8 +7,8 @@
  * Converts common inline HTML to lightweight-markup equivalents used by
  * WhatsApp/Signal/Telegram and strips any remaining tags.
  *
- * @see https://github.com/openclaw/openclaw/issues/31884
- * @see https://github.com/openclaw/openclaw/issues/18558
+ * @see https://github.com/merclaw/merclaw/issues/31884
+ * @see https://github.com/merclaw/merclaw/issues/18558
  */
 
 import { stripPlainTextToolCallBlocks } from "../../../packages/tool-call-repair/src/index.js";
@@ -28,7 +28,7 @@ const INTERNAL_RUNTIME_SCAFFOLDING_TAG_RE = new RegExp(
   "gi",
 );
 const INTERNAL_RUNTIME_DELIMITED_BLOCKS = [
-  ["<<<BEGIN_OPENCLAW_INTERNAL_CONTEXT>>>", "<<<END_OPENCLAW_INTERNAL_CONTEXT>>>"],
+  ["<<<BEGIN_MERCLAW_INTERNAL_CONTEXT>>>", "<<<END_MERCLAW_INTERNAL_CONTEXT>>>"],
 ] as const;
 const INTERNAL_RUNTIME_MARKER_LINES = [
   "<<<BEGIN_UNTRUSTED_CHILD_RESULT>>>",

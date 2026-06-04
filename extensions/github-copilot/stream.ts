@@ -1,11 +1,11 @@
-import type { StreamFn } from "openclaw/plugin-sdk/agent-core";
-import type { Context } from "openclaw/plugin-sdk/llm";
-import type { ProviderWrapStreamFnContext } from "openclaw/plugin-sdk/plugin-entry";
-import { buildCopilotIdeHeaders, COPILOT_INTEGRATION_ID } from "openclaw/plugin-sdk/provider-auth";
+import type { StreamFn } from "merclaw/plugin-sdk/agent-core";
+import type { Context } from "merclaw/plugin-sdk/llm";
+import type { ProviderWrapStreamFnContext } from "merclaw/plugin-sdk/plugin-entry";
+import { buildCopilotIdeHeaders, COPILOT_INTEGRATION_ID } from "merclaw/plugin-sdk/provider-auth";
 import {
   applyAnthropicEphemeralCacheControlMarkers,
   streamWithPayloadPatch,
-} from "openclaw/plugin-sdk/provider-stream-shared";
+} from "merclaw/plugin-sdk/provider-stream-shared";
 import { rewriteCopilotResponsePayloadConnectionBoundIds } from "./connection-bound-ids.js";
 
 type StreamOptions = Parameters<StreamFn>[2];

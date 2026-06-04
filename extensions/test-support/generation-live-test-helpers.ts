@@ -1,1 +1,1 @@
-export { maybeLoadShellEnvForGenerationProviders } from "openclaw/plugin-sdk/test-env";
+export { maybeLoadShellEnvForGenerationProviders } from "merclaw/plugin-sdk/test-env";

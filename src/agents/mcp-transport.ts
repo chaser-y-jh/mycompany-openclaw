@@ -4,7 +4,7 @@ import {
 } from "@modelcontextprotocol/sdk/client/sse.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import type { FetchLike, Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import { normalizeHeadersInitForFetch } from "../infra/fetch-headers.js";
 import { retainSafeHeadersForCrossOriginRedirect } from "../infra/net/redirect-headers.js";
 import { logDebug } from "../logger.js";
@@ -14,7 +14,7 @@ import {
   withSameOriginMcpHttpHeaders,
 } from "./mcp-http-fetch.js";
 import { createMcpOAuthClientProvider } from "./mcp-oauth.js";
-import { OpenClawStdioClientTransport } from "./mcp-stdio-transport.js";
+import { MerClawStdioClientTransport } from "./mcp-stdio-transport.js";
 import { resolveMcpTransportConfig } from "./mcp-transport-config.js";
 
 type ResolvedMcpTransport = {
@@ -27,7 +27,7 @@ type ResolvedMcpTransport = {
   detachStderr?: () => void;
 };
 
-function attachStderrLogging(serverName: string, transport: OpenClawStdioClientTransport) {
+function attachStderrLogging(serverName: string, transport: MerClawStdioClientTransport) {
   const stderr = transport.stderr;
   if (!stderr || typeof stderr.on !== "function") {
     return undefined;
@@ -204,7 +204,7 @@ export function resolveMcpTransport(
     return null;
   }
   if (resolved.kind === "stdio") {
-    const transport = new OpenClawStdioClientTransport({
+    const transport = new MerClawStdioClientTransport({
       command: resolved.command,
       args: resolved.args,
       env: resolved.env,

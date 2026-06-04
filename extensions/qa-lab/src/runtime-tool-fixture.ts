@@ -122,9 +122,9 @@ function formatCodexNativeWorkspaceDetails(params: {
   failureRequest?: QaRuntimeToolFixtureRequest;
 }) {
   return [
-    `codex-native-workspace ${params.toolName}: OpenClaw dynamic exposure is intentionally omitted because Codex owns this workspace operation natively`,
+    `codex-native-workspace ${params.toolName}: MerClaw dynamic exposure is intentionally omitted because Codex owns this workspace operation natively`,
     params.reason ? `reason: ${params.reason}` : undefined,
-    `available OpenClaw dynamic tools: ${[...params.tools].toSorted().join(", ")}`,
+    `available MerClaw dynamic tools: ${[...params.tools].toSorted().join(", ")}`,
     params.happyRequest
       ? `${params.toolName} mock provider happy planned args (diagnostic only): ${JSON.stringify(params.happyRequest.plannedToolArgs ?? {})}`
       : undefined,
@@ -180,7 +180,7 @@ export async function runRuntimeToolFixture(
     config: config as Record<string, unknown>,
   });
   const dynamicExposureIntentionallyExcluded =
-    env.gateway.runtimeEnv.OPENCLAW_QA_FORCE_RUNTIME === "codex" &&
+    env.gateway.runtimeEnv.MERCLAW_QA_FORCE_RUNTIME === "codex" &&
     metadata.expectedLayer === "codex-native-workspace";
   const expectedAvailable = readBoolean(config.expectedAvailable, true);
   if (!tools.has(toolName) && !dynamicExposureIntentionallyExcluded) {

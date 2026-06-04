@@ -2,17 +2,17 @@ import {
   buildChannelOutboundSessionRoute,
   buildThreadAwareOutboundSessionRoute,
   createChatChannelPlugin,
-} from "openclaw/plugin-sdk/channel-core";
-import type { ChannelPlugin } from "openclaw/plugin-sdk/channel-core";
+} from "merclaw/plugin-sdk/channel-core";
+import type { ChannelPlugin } from "merclaw/plugin-sdk/channel-core";
 import {
   createMessageReceiptFromOutboundResults,
   defineChannelMessageAdapter,
-} from "openclaw/plugin-sdk/channel-outbound";
-import { getChatChannelMeta } from "openclaw/plugin-sdk/channel-plugin-common";
+} from "merclaw/plugin-sdk/channel-outbound";
+import { getChatChannelMeta } from "merclaw/plugin-sdk/channel-plugin-common";
 import {
   createComputedAccountStatusAdapter,
   createDefaultChannelRuntimeState,
-} from "openclaw/plugin-sdk/status-helpers";
+} from "merclaw/plugin-sdk/status-helpers";
 import {
   DEFAULT_ACCOUNT_ID,
   listClickClackAccountIds,

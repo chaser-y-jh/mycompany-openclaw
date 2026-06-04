@@ -2,7 +2,7 @@ import type {
   AcpRuntime,
   AcpRuntimeHandle,
   AcpRuntimeSessionMode,
-} from "@openclaw/acp-core/runtime/types";
+} from "@merclaw/acp-core/runtime/types";
 
 export type CachedRuntimeState = {
   runtime: AcpRuntime;

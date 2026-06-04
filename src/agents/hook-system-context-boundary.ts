@@ -1,7 +1,7 @@
 import { normalizeStructuredPromptSection } from "./prompt-cache-stability.js";
 
 const HOOK_SYSTEM_CONTEXT_HEADER =
-  "OpenClaw plugin-injected system context. This block is not workspace file content.";
+  "MerClaw plugin-injected system context. This block is not workspace file content.";
 
 export function wrapPluginSystemContextSection(value?: string): string | undefined {
   if (typeof value !== "string") {

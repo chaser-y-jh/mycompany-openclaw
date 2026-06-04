@@ -2,12 +2,12 @@
   "stateDirName": "crestodian-ring-zero-state",
   "defaultWorkspaceName": "crestodian-main-workspace",
   "agentWorkspaceName": "crestodian-reef-workspace",
-  "dockerDefaultWorkspace": "/tmp/openclaw-first-run",
-  "dockerAgentWorkspace": "/tmp/openclaw-reef",
+  "dockerDefaultWorkspace": "/tmp/merclaw-first-run",
+  "dockerAgentWorkspace": "/tmp/merclaw-reef",
   "agentId": "reef",
   "model": "openai/gpt-5.2",
   "discordEnv": "DISCORD_BOT_TOKEN",
-  "discordToken": "openclaw-crestodian-discord-e2e-token",
+  "discordToken": "merclaw-crestodian-discord-e2e-token",
   "commands": [
     {
       "id": "setup",

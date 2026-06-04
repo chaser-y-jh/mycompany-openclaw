@@ -70,7 +70,7 @@ export async function agentsDeleteCommand(
   const input = opts.id?.trim();
   if (!input) {
     runtime.error(
-      `Agent id is required. Run ${formatCliCommand("openclaw agents list")} to choose one.`,
+      `Agent id is required. Run ${formatCliCommand("merclaw agents list")} to choose one.`,
     );
     runtime.exit(1);
     return;
@@ -88,7 +88,7 @@ export async function agentsDeleteCommand(
 
   if (findAgentEntryIndex(listAgentEntries(cfg), agentId) < 0) {
     runtime.error(
-      `Agent "${agentId}" not found. Run ${formatCliCommand("openclaw agents list")} to see configured agents.`,
+      `Agent "${agentId}" not found. Run ${formatCliCommand("merclaw agents list")} to see configured agents.`,
     );
     runtime.exit(1);
     return;

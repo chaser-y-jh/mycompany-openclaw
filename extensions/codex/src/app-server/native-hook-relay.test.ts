@@ -1,5 +1,5 @@
-import type { NativeHookRelayRegistrationHandle } from "openclaw/plugin-sdk/agent-harness-runtime";
-import { MAX_TIMER_TIMEOUT_MS } from "openclaw/plugin-sdk/number-runtime";
+import type { NativeHookRelayRegistrationHandle } from "merclaw/plugin-sdk/agent-harness-runtime";
+import { MAX_TIMER_TIMEOUT_MS } from "merclaw/plugin-sdk/number-runtime";
 import { describe, expect, it } from "vitest";
 import {
   buildCodexNativeHookRelayConfig,
@@ -22,10 +22,10 @@ describe("Codex native hook relay config", () => {
             {
               type: "command",
               command:
-                "openclaw hooks relay --provider codex --relay-id relay-1 --generation generation-1 --event pre_tool_use",
+                "merclaw hooks relay --provider codex --relay-id relay-1 --generation generation-1 --event pre_tool_use",
               timeout: 7,
               async: false,
-              statusMessage: "OpenClaw native hook relay",
+              statusMessage: "MerClaw native hook relay",
             },
           ],
         },
@@ -36,10 +36,10 @@ describe("Codex native hook relay config", () => {
             {
               type: "command",
               command:
-                "openclaw hooks relay --provider codex --relay-id relay-1 --generation generation-1 --event post_tool_use",
+                "merclaw hooks relay --provider codex --relay-id relay-1 --generation generation-1 --event post_tool_use",
               timeout: 7,
               async: false,
-              statusMessage: "OpenClaw native hook relay",
+              statusMessage: "MerClaw native hook relay",
             },
           ],
         },
@@ -50,10 +50,10 @@ describe("Codex native hook relay config", () => {
             {
               type: "command",
               command:
-                "openclaw hooks relay --provider codex --relay-id relay-1 --generation generation-1 --event permission_request",
+                "merclaw hooks relay --provider codex --relay-id relay-1 --generation generation-1 --event permission_request",
               timeout: 7,
               async: false,
-              statusMessage: "OpenClaw native hook relay",
+              statusMessage: "MerClaw native hook relay",
             },
           ],
         },
@@ -64,10 +64,10 @@ describe("Codex native hook relay config", () => {
             {
               type: "command",
               command:
-                "openclaw hooks relay --provider codex --relay-id relay-1 --generation generation-1 --event before_agent_finalize",
+                "merclaw hooks relay --provider codex --relay-id relay-1 --generation generation-1 --event before_agent_finalize",
               timeout: 7,
               async: false,
-              statusMessage: "OpenClaw native hook relay",
+              statusMessage: "MerClaw native hook relay",
             },
           ],
         },
@@ -127,10 +127,10 @@ describe("Codex native hook relay config", () => {
             {
               type: "command",
               command:
-                "openclaw hooks relay --provider codex --relay-id relay-1 --generation generation-1 --event permission_request",
+                "merclaw hooks relay --provider codex --relay-id relay-1 --generation generation-1 --event permission_request",
               timeout: 5,
               async: false,
-              statusMessage: "OpenClaw native hook relay",
+              statusMessage: "MerClaw native hook relay",
             },
           ],
         },
@@ -162,10 +162,10 @@ describe("Codex native hook relay config", () => {
             {
               type: "command",
               command:
-                "openclaw hooks relay --provider codex --relay-id relay-1 --generation generation-1 --event pre_tool_use",
+                "merclaw hooks relay --provider codex --relay-id relay-1 --generation generation-1 --event pre_tool_use",
               timeout: 5,
               async: false,
-              statusMessage: "OpenClaw native hook relay",
+              statusMessage: "MerClaw native hook relay",
             },
           ],
         },
@@ -202,10 +202,10 @@ describe("Codex native hook relay config", () => {
             {
               type: "command",
               command:
-                "openclaw hooks relay --provider codex --relay-id relay-1 --generation generation-1 --event permission_request",
+                "merclaw hooks relay --provider codex --relay-id relay-1 --generation generation-1 --event permission_request",
               timeout: 5,
               async: false,
-              statusMessage: "OpenClaw native hook relay",
+              statusMessage: "MerClaw native hook relay",
             },
           ],
         },
@@ -276,7 +276,7 @@ function createRelay(options?: {
     expiresAtMs: Date.now() + 1000,
     shouldRelayEvent: (event) => !inactiveEvents.has(event),
     commandForEvent: (event) =>
-      `openclaw hooks relay --provider codex --relay-id relay-1 --generation generation-1 --event ${event}`,
+      `merclaw hooks relay --provider codex --relay-id relay-1 --generation generation-1 --event ${event}`,
     renew: () => undefined,
     unregister: () => undefined,
   };

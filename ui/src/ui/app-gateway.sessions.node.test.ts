@@ -151,7 +151,7 @@ function createHost() {
     toolsCatalogError: null,
     toolsCatalogResult: null,
     debugHealth: null,
-    assistantName: "OpenClaw",
+    assistantName: "MerClaw",
     assistantAvatar: null,
     assistantAgentId: null,
     serverVersion: null,

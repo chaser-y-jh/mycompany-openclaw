@@ -1,6 +1,6 @@
 import { parseStrictNonNegativeInteger } from "../infra/parse-finite-number.js";
 
-const DEFAULT_TAGLINE = "All your chats, one OpenClaw.";
+const DEFAULT_TAGLINE = "All your chats, one MerClaw.";
 export type TaglineMode = "random" | "default" | "off";
 
 const HOLIDAY_TAGLINES = {
@@ -101,7 +101,7 @@ const TAGLINES: string[] = [
   "Alexa, but with taste.",
   "I'm not AI-powered, I'm AI-possessed. Big difference.",
   "Deployed locally, trusted globally, debugged eternally.",
-  "You had me at 'openclaw gateway start.'",
+  "You had me at 'merclaw gateway start.'",
   HOLIDAY_TAGLINES.newYear,
   HOLIDAY_TAGLINES.lunarNewYear,
   HOLIDAY_TAGLINES.christmas,
@@ -271,7 +271,7 @@ export function pickTagline(options: TaglineOptions = {}): string {
     return DEFAULT_TAGLINE;
   }
   const env = options.env ?? process.env;
-  const override = env?.OPENCLAW_TAGLINE_INDEX;
+  const override = env?.MERCLAW_TAGLINE_INDEX;
   if (override !== undefined) {
     const parsed = parseStrictNonNegativeInteger(override);
     if (parsed !== undefined) {

@@ -2,7 +2,7 @@ import {
   createQaDockerRuntime,
   type QaDockerFetchLike as FetchLike,
   type QaDockerRunCommand as RunCommand,
-} from "openclaw/plugin-sdk/qa-runtime";
+} from "merclaw/plugin-sdk/qa-runtime";
 
 export type { FetchLike, RunCommand };
 

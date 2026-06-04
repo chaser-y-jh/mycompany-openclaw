@@ -13,7 +13,7 @@ describe("embedded runner compatibility aliases", () => {
   });
 
   it("normalizes shipped runtime aliases", () => {
-    expect(normalizeEmbeddedAgentRuntime("pi")).toBe("openclaw");
+    expect(normalizeEmbeddedAgentRuntime("pi")).toBe("merclaw");
     expect(normalizeEmbeddedAgentRuntime("codex-app-server")).toBe("codex");
   });
 

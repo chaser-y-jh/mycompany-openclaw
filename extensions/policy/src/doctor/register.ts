@@ -5,10 +5,10 @@ import {
   type HealthCheck,
   type HealthCheckContext,
   type HealthFinding,
-} from "openclaw/plugin-sdk/health";
-import { normalizeProviderId } from "openclaw/plugin-sdk/provider-model-shared";
-import { normalizeAgentId } from "openclaw/plugin-sdk/routing";
-import { isRecord, uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/health";
+import { normalizeProviderId } from "merclaw/plugin-sdk/provider-model-shared";
+import { normalizeAgentId } from "merclaw/plugin-sdk/routing";
+import { isRecord, uniqueStrings } from "merclaw/plugin-sdk/string-coerce-runtime";
 import {
   collectPolicyEvidence,
   createPolicyAttestation,
@@ -1076,7 +1076,7 @@ const policySecretsUnmanagedProviderCheck: HealthCheck = {
   id: CHECK_IDS.policySecretsUnmanagedProvider,
   kind: "plugin",
   description:
-    "OpenClaw config SecretRefs use configured secret providers when policy requires managed providers.",
+    "MerClaw config SecretRefs use configured secret providers when policy requires managed providers.",
   source: "policy",
   async detect(ctx) {
     return findingsForCheck(await evaluatePolicy(ctx), CHECK_IDS.policySecretsUnmanagedProvider);
@@ -1087,7 +1087,7 @@ const policySecretsDeniedProviderSourceCheck: HealthCheck = {
   id: CHECK_IDS.policySecretsDeniedProviderSource,
   kind: "plugin",
   description:
-    "OpenClaw config secret providers and SecretRefs do not use sources denied by policy.",
+    "MerClaw config secret providers and SecretRefs do not use sources denied by policy.",
   source: "policy",
   async detect(ctx) {
     return findingsForCheck(await evaluatePolicy(ctx), CHECK_IDS.policySecretsDeniedProviderSource);
@@ -1108,7 +1108,7 @@ const policySecretsInsecureProviderCheck: HealthCheck = {
 const policyAuthProfileInvalidMetadataCheck: HealthCheck = {
   id: CHECK_IDS.policyAuthProfileInvalidMetadata,
   kind: "plugin",
-  description: "OpenClaw config auth profiles declare required provider and mode metadata.",
+  description: "MerClaw config auth profiles declare required provider and mode metadata.",
   source: "policy",
   async detect(ctx) {
     return findingsForCheck(await evaluatePolicy(ctx), CHECK_IDS.policyAuthProfileInvalidMetadata);
@@ -1118,7 +1118,7 @@ const policyAuthProfileInvalidMetadataCheck: HealthCheck = {
 const policyAuthProfileUnapprovedModeCheck: HealthCheck = {
   id: CHECK_IDS.policyAuthProfileUnapprovedMode,
   kind: "plugin",
-  description: "OpenClaw config auth profile modes stay within the policy allowlist.",
+  description: "MerClaw config auth profile modes stay within the policy allowlist.",
   source: "policy",
   async detect(ctx) {
     return findingsForCheck(await evaluatePolicy(ctx), CHECK_IDS.policyAuthProfileUnapprovedMode);
@@ -1245,7 +1245,7 @@ async function evaluatePolicyUncached(ctx: HealthCheckContext): Promise<PolicyEv
       source: "policy",
       path: policyFile.displayName,
       target: `oc://${policyFile.ocDocName}`,
-      requirement: "oc://openclaw.config/plugins/entries/policy/config/expectedHash",
+      requirement: "oc://merclaw.config/plugins/entries/policy/config/expectedHash",
       fixHint: `Restore the approved policy artifact or update plugins.entries.policy.config.expectedHash after review.`,
     });
     return {
@@ -1404,7 +1404,7 @@ function channelFindings(
         severity: "error",
         message: `Channel '${channel.id}' uses denied provider '${channel.provider}'.`,
         source: "policy",
-        path: "openclaw config",
+        path: "merclaw config",
         ocPath: channel.source,
         target: channel.source,
         requirement: rule.requirement,
@@ -1446,7 +1446,7 @@ function policyAttestationFindings(
       source: "policy",
       path: "policy attestation",
       target: "oc://policy/attestation/current",
-      requirement: "oc://openclaw.config/plugins/entries/policy/config/expectedAttestationHash",
+      requirement: "oc://merclaw.config/plugins/entries/policy/config/expectedAttestationHash",
       fixHint: `Run policy check, review attestation ${current.attestationHash}, then update plugins.entries.policy.config.expectedAttestationHash and the supervisor/gateway accepted attestation.`,
     },
   ];
@@ -2710,7 +2710,7 @@ function mcpServerFindings(
         severity: "error",
         message: `MCP server '${server.id}' is denied by policy.`,
         source: "policy",
-        path: "openclaw config",
+        path: "merclaw config",
         ocPath: server.source,
         target: server.source,
         requirement: `oc://${policyDocName}/mcp/servers/deny`,
@@ -2724,7 +2724,7 @@ function mcpServerFindings(
         severity: "error",
         message: `MCP server '${server.id}' is not in the policy allowlist.`,
         source: "policy",
-        path: "openclaw config",
+        path: "merclaw config",
         ocPath: server.source,
         target: server.source,
         requirement: `oc://${policyDocName}/mcp/servers/allow`,
@@ -2773,7 +2773,7 @@ function modelProviderConformanceFindings(
       severity: "error",
       message: `Model provider '${provider.id}' is denied by policy.`,
       source: "policy",
-      path: "openclaw config",
+      path: "merclaw config",
       ocPath: provider.source,
       target: provider.source,
       requirement: `oc://${policyDocName}/models/providers/deny`,
@@ -2786,7 +2786,7 @@ function modelProviderConformanceFindings(
       severity: "error",
       message: `Model provider '${provider.id}' is not in the policy allowlist.`,
       source: "policy",
-      path: "openclaw config",
+      path: "merclaw config",
       ocPath: provider.source,
       target: provider.source,
       requirement: `oc://${policyDocName}/models/providers/allow`,
@@ -2809,7 +2809,7 @@ function modelRefConformanceFindings(
       severity: "error",
       message: `Model ref '${modelRef.ref}' uses denied provider '${modelRef.provider}'.`,
       source: "policy",
-      path: "openclaw config",
+      path: "merclaw config",
       ocPath: modelRef.source,
       target: modelRef.source,
       requirement: `oc://${policyDocName}/models/providers/deny`,
@@ -2822,7 +2822,7 @@ function modelRefConformanceFindings(
       severity: "error",
       message: `Model ref '${modelRef.ref}' uses unapproved provider '${modelRef.provider}'.`,
       source: "policy",
-      path: "openclaw config",
+      path: "merclaw config",
       ocPath: modelRef.source,
       target: modelRef.source,
       requirement: `oc://${policyDocName}/models/providers/allow`,
@@ -2849,7 +2849,7 @@ function networkFindings(
         severity: "error",
         message: `Network setting '${setting.id}' allows private-network access.`,
         source: "policy",
-        path: "openclaw config",
+        path: "merclaw config",
         ocPath: setting.source,
         target: setting.source,
         requirement: `oc://${policyDocName}/network/privateNetwork/allow`,
@@ -3050,7 +3050,7 @@ function isGroupIngressDisabled(
   groupPolicies: readonly PolicyIngressEvidence[],
 ): boolean {
   const entryParent = ocPathParent(entry.source);
-  const channelDefaultsParent = "oc://openclaw.config/channels/defaults";
+  const channelDefaultsParent = "oc://merclaw.config/channels/defaults";
   const matches = groupPolicies
     .filter((candidate) => {
       const candidateParent = ocPathParent(candidate.source);
@@ -3100,7 +3100,7 @@ function ingressFinding(
     severity: "error",
     message: params.message,
     source: "policy",
-    path: "openclaw config",
+    path: "merclaw config",
     ocPath: entry.source,
     target: entry.source,
     requirement: params.requirement,
@@ -3149,7 +3149,7 @@ function gatewayNonLoopbackBindFindings(
             ? "Gateway bind is omitted while the runtime default can permit non-loopback exposure."
             : `Gateway bind setting '${entry.id}' permits non-loopback exposure.`,
         source: "policy",
-        path: "openclaw config",
+        path: "merclaw config",
         ocPath: entry.source,
         target: entry.source,
         requirement: `oc://${policyDocName}/gateway/exposure/allowNonLoopbackBind`,
@@ -3174,7 +3174,7 @@ function gatewayAuthFindings(
             severity: "error",
             message: "Gateway authentication is disabled.",
             source: "policy",
-            path: "openclaw config",
+            path: "merclaw config",
             ocPath: entry.source,
             target: entry.source,
             requirement: `oc://${policyDocName}/gateway/auth/requireAuth`,
@@ -3193,7 +3193,7 @@ function gatewayAuthFindings(
             severity: "error",
             message: "Gateway authentication rate-limit posture is not explicit.",
             source: "policy",
-            path: "openclaw config",
+            path: "merclaw config",
             ocPath: entry.source,
             target: entry.source,
             requirement: `oc://${policyDocName}/gateway/auth/requireExplicitRateLimit`,
@@ -3228,7 +3228,7 @@ function gatewayControlUiFindings(
         severity: "error",
         message: `Gateway Control UI insecure toggle '${entry.id}' is enabled.`,
         source: "policy",
-        path: "openclaw config",
+        path: "merclaw config",
         ocPath: entry.source,
         target: entry.source,
         requirement: `oc://${policyDocName}/gateway/controlUi/allowInsecure`,
@@ -3253,7 +3253,7 @@ function gatewayTailscaleFindings(
         severity: "error",
         message: "Gateway Tailscale Funnel exposure is enabled.",
         source: "policy",
-        path: "openclaw config",
+        path: "merclaw config",
         ocPath: entry.source,
         target: entry.source,
         requirement: `oc://${policyDocName}/gateway/exposure/allowTailscaleFunnel`,
@@ -3278,7 +3278,7 @@ function gatewayRemoteFindings(
         severity: "error",
         message: `Gateway remote posture '${entry.id}' is enabled.`,
         source: "policy",
-        path: "openclaw config",
+        path: "merclaw config",
         ocPath: entry.source,
         target: entry.source,
         requirement: `oc://${policyDocName}/gateway/remote/allow`,
@@ -3313,7 +3313,7 @@ function gatewayHttpEndpointFindings(
         severity: "error",
         message: `Gateway HTTP endpoint '${entry.endpoint ?? entry.id}' is denied by policy.`,
         source: "policy",
-        path: "openclaw config",
+        path: "merclaw config",
         ocPath: entry.source,
         target: entry.source,
         requirement: `oc://${policyDocName}/gateway/http/denyEndpoints`,
@@ -3338,7 +3338,7 @@ function gatewayHttpUrlFetchFindings(
         severity: "error",
         message: `Gateway HTTP URL-fetch input '${entry.id}' has no URL allowlist.`,
         source: "policy",
-        path: "openclaw config",
+        path: "merclaw config",
         ocPath: entry.source,
         target: entry.source,
         requirement: `oc://${policyDocName}/gateway/http/requireUrlAllowlists`,
@@ -3414,7 +3414,7 @@ function agentWorkspaceAccessFindings(
         severity: "error",
         message: `${label} ${observed} is not allowed by policy.`,
         source: "policy",
-        path: "openclaw config",
+        path: "merclaw config",
         ocPath,
         target: ocPath,
         requirement: `oc://${policyDocName}/${requirementPath}`,
@@ -3451,7 +3451,7 @@ function agentWorkspaceToolDenyFindings(
         severity: "error",
         message: `${label} does not deny required tool '${entry.tool ?? ""}'.`,
         source: "policy",
-        path: "openclaw config",
+        path: "merclaw config",
         ocPath: entry.source,
         target: entry.source,
         requirement: `oc://${policyDocName}/${requirementPath}`,
@@ -3892,7 +3892,7 @@ function toolPostureFinding(
     severity: "error",
     message: params.message,
     source: "policy",
-    path: "openclaw config",
+    path: "merclaw config",
     ocPath: entry.source,
     target: entry.source,
     requirement: params.requirement,
@@ -4355,7 +4355,7 @@ function sandboxPostureFinding(
     severity: "error",
     message: params.message,
     source: "policy",
-    path: "openclaw config",
+    path: "merclaw config",
     ocPath: entry.source,
     target: entry.source,
     requirement: params.requirement,
@@ -4950,7 +4950,7 @@ function secretPolicyShapeFindings(
           policyPath,
           `oc://${policyDocName}/secrets/denySources/#${invalidIndex}`,
           `${policyPath} secrets.denySources[${invalidIndex}] must be a non-empty source name.`,
-          "Use non-empty source names such as env, file, exec, or openclaw.",
+          "Use non-empty source names such as env, file, exec, or merclaw.",
         ),
       );
     }
@@ -5030,7 +5030,7 @@ function secretManagedProviderFindings(
         severity: "error",
         message: `SecretRef uses unmanaged provider '${secret.refProvider ?? "default"}'.`,
         source: "policy",
-        path: "openclaw config",
+        path: "merclaw config",
         ocPath: secret.source,
         target: secret.source,
         requirement: `oc://${policyDocName}/secrets/requireManagedProviders`,
@@ -5061,7 +5061,7 @@ function secretDeniedSourceFindings(
         severity: "error",
         message: `Secret ${secret.kind} '${secret.id}' uses denied source '${source}'.`,
         source: "policy",
-        path: "openclaw config",
+        path: "merclaw config",
         ocPath: secret.source,
         target: secret.source,
         requirement: `oc://${policyDocName}/secrets/denySources`,
@@ -5086,7 +5086,7 @@ function secretInsecureProviderFindings(
         severity: "error",
         message: `Secret provider '${secret.id}' enables insecure posture: ${(secret.insecure ?? []).join(", ")}.`,
         source: "policy",
-        path: "openclaw config",
+        path: "merclaw config",
         ocPath: secret.source,
         target: secret.source,
         requirement: `oc://${policyDocName}/secrets/allowInsecureProviders`,
@@ -5117,7 +5117,7 @@ function authProfileMetadataFindings(
         severity: "error",
         message: `Auth profile '${profile.id}' is missing required metadata: ${missing.join(", ")}.`,
         source: "policy",
-        path: "openclaw config",
+        path: "merclaw config",
         ocPath: profile.source,
         target: profile.source,
         requirement: `oc://${policyDocName}/auth/profiles/requireMetadata`,
@@ -5144,7 +5144,7 @@ function authProfileModeFindings(
         severity: "error",
         message: `Auth profile '${profile.id}' uses mode '${profile.mode}' outside the policy allowlist.`,
         source: "policy",
-        path: "openclaw config",
+        path: "merclaw config",
         ocPath: profile.source,
         target: profile.source,
         requirement: `oc://${policyDocName}/auth/profiles/allowModes`,
@@ -5422,7 +5422,7 @@ function channelIdsFromFindings(findings: readonly HealthFinding[]): readonly st
     ...new Set(
       findings
         .filter((finding) => finding.checkId === CHECK_IDS.policyDeniedChannelProvider)
-        .map((finding) => finding.ocPath?.match(/^oc:\/\/openclaw\.config\/channels\/(.+)$/)?.[1])
+        .map((finding) => finding.ocPath?.match(/^oc:\/\/merclaw\.config\/channels\/(.+)$/)?.[1])
         .filter((id): id is string => id !== undefined && id !== ""),
     ),
   ];

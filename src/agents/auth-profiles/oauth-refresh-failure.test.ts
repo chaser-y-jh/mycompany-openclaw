@@ -13,7 +13,7 @@ describe("oauth refresh failure hints", () => {
       reason: "invalid_grant",
     });
     expect(buildOAuthRefreshFailureLoginCommand("openai")).toBe(
-      "openclaw models auth login --provider openai",
+      "merclaw models auth login --provider openai",
     );
   });
 });

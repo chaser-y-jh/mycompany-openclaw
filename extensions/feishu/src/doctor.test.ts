@@ -1,22 +1,22 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { loadSessionStore } from "openclaw/plugin-sdk/session-store-runtime";
+import { loadSessionStore } from "merclaw/plugin-sdk/session-store-runtime";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../runtime-api.js";
+import type { MerClawConfig } from "../runtime-api.js";
 import { isFeishuSessionStoreKey, runFeishuDoctorSequence } from "./doctor.js";
 
 type EnvSnapshot = {
   HOME?: string;
-  OPENCLAW_HOME?: string;
-  OPENCLAW_STATE_DIR?: string;
+  MERCLAW_HOME?: string;
+  MERCLAW_STATE_DIR?: string;
 };
 
 function captureEnv(): EnvSnapshot {
   return {
     HOME: process.env.HOME,
-    OPENCLAW_HOME: process.env.OPENCLAW_HOME,
-    OPENCLAW_STATE_DIR: process.env.OPENCLAW_STATE_DIR,
+    MERCLAW_HOME: process.env.MERCLAW_HOME,
+    MERCLAW_STATE_DIR: process.env.MERCLAW_STATE_DIR,
   };
 }
 
@@ -31,7 +31,7 @@ function restoreEnv(snapshot: EnvSnapshot) {
   }
 }
 
-function feishuConfig(): OpenClawConfig {
+function feishuConfig(): MerClawConfig {
   return {
     channels: {
       feishu: {
@@ -39,13 +39,13 @@ function feishuConfig(): OpenClawConfig {
         appSecret: "secret_xxx",
       },
     },
-  } as OpenClawConfig;
+  } as MerClawConfig;
 }
 
 function stateDir(): string {
-  const dir = process.env.OPENCLAW_STATE_DIR;
+  const dir = process.env.MERCLAW_STATE_DIR;
   if (!dir) {
-    throw new Error("OPENCLAW_STATE_DIR is not set");
+    throw new Error("MERCLAW_STATE_DIR is not set");
   }
   return dir;
 }
@@ -105,11 +105,11 @@ describe("Feishu doctor state repair", () => {
 
   beforeEach(() => {
     envSnapshot = captureEnv();
-    tempHome = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-feishu-doctor-"));
+    tempHome = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-feishu-doctor-"));
     process.env.HOME = tempHome;
-    process.env.OPENCLAW_HOME = tempHome;
-    process.env.OPENCLAW_STATE_DIR = path.join(tempHome, ".openclaw");
-    fs.mkdirSync(process.env.OPENCLAW_STATE_DIR, { recursive: true, mode: 0o700 });
+    process.env.MERCLAW_HOME = tempHome;
+    process.env.MERCLAW_STATE_DIR = path.join(tempHome, ".merclaw");
+    fs.mkdirSync(process.env.MERCLAW_STATE_DIR, { recursive: true, mode: 0o700 });
   });
 
   afterEach(() => {
@@ -169,7 +169,7 @@ describe("Feishu doctor state repair", () => {
       cfg: {
         ...feishuConfig(),
         session: { store: customStorePath },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       env: process.env,
       shouldRepair: false,
     });
@@ -217,7 +217,7 @@ describe("Feishu doctor state repair", () => {
     expect(result.changeNotes).toEqual([]);
     expect(result.warningNotes.join("\n")).toContain("Feishu local channel state may need repair");
     expect(result.warningNotes.join("\n")).toContain("preserving Feishu App ID/secret config");
-    expect(result.warningNotes.join("\n")).toContain("openclaw doctor --fix");
+    expect(result.warningNotes.join("\n")).toContain("merclaw doctor --fix");
   });
 
   it("rebuilds corrupt Feishu state without deleting healthy Feishu sessions", async () => {

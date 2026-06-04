@@ -1,6 +1,6 @@
-import { normalizeModelCatalog } from "@openclaw/model-catalog-core/model-catalog-normalize";
-import { normalizeModelCatalogProviderId } from "@openclaw/model-catalog-core/model-catalog-refs";
-import type { ModelCatalogProvider } from "@openclaw/model-catalog-core/model-catalog-types";
+import { normalizeModelCatalog } from "@merclaw/model-catalog-core/model-catalog-normalize";
+import { normalizeModelCatalogProviderId } from "@merclaw/model-catalog-core/model-catalog-refs";
+import type { ModelCatalogProvider } from "@merclaw/model-catalog-core/model-catalog-types";
 import { parseClawHubPluginSpec } from "../../infra/clawhub-spec.js";
 import { parseRegistryNpmSpec } from "../../infra/npm-registry-spec.js";
 import { isBlockedObjectKey } from "../../infra/prototype-keys.js";
@@ -9,21 +9,21 @@ import { normalizeOptionalString } from "../../../packages/normalization-core/sr
 import { normalizeUniqueTrimmedStringList } from "../../../packages/normalization-core/src/string-normalization.js";
 import { isRecord } from "../../utils.js";
 import type {
-  OpenClawProviderIndex,
-  OpenClawProviderIndexPluginInstall,
-  OpenClawProviderIndexPlugin,
-  OpenClawProviderIndexProviderAuthChoice,
-  OpenClawProviderIndexProvider,
+  MerClawProviderIndex,
+  MerClawProviderIndexPluginInstall,
+  MerClawProviderIndexPlugin,
+  MerClawProviderIndexProviderAuthChoice,
+  MerClawProviderIndexProvider,
 } from "./types.js";
 
-const OPENCLAW_PROVIDER_INDEX_VERSION = 1;
+const MERCLAW_PROVIDER_INDEX_VERSION = 1;
 
 function normalizeSafeKey(value: unknown): string {
   const key = normalizeOptionalString(value) ?? "";
   return key && !isBlockedObjectKey(key) ? key : "";
 }
 
-function normalizeInstall(value: unknown): OpenClawProviderIndexPluginInstall | undefined {
+function normalizeInstall(value: unknown): MerClawProviderIndexPluginInstall | undefined {
   if (!isRecord(value)) {
     return undefined;
   }
@@ -51,7 +51,7 @@ function normalizeInstall(value: unknown): OpenClawProviderIndexPluginInstall | 
   };
 }
 
-function normalizePlugin(value: unknown): OpenClawProviderIndexPlugin | undefined {
+function normalizePlugin(value: unknown): MerClawProviderIndexPlugin | undefined {
   if (!isRecord(value)) {
     return undefined;
   }
@@ -94,7 +94,7 @@ function normalizePreviewCatalog(params: {
 
 function normalizeOnboardingScopes(
   value: unknown,
-): OpenClawProviderIndexProviderAuthChoice["onboardingScopes"] | undefined {
+): MerClawProviderIndexProviderAuthChoice["onboardingScopes"] | undefined {
   const scopes = normalizeUniqueTrimmedStringList(value).filter(
     (scope): scope is "text-inference" | "image-generation" | "music-generation" =>
       scope === "text-inference" || scope === "image-generation" || scope === "music-generation",
@@ -104,7 +104,7 @@ function normalizeOnboardingScopes(
 
 function normalizeAssistantVisibility(
   value: unknown,
-): OpenClawProviderIndexProviderAuthChoice["assistantVisibility"] | undefined {
+): MerClawProviderIndexProviderAuthChoice["assistantVisibility"] | undefined {
   return value === "visible" || value === "manual-only" ? value : undefined;
 }
 
@@ -112,7 +112,7 @@ function normalizeAuthChoice(params: {
   providerId: string;
   providerName: string;
   value: unknown;
-}): OpenClawProviderIndexProviderAuthChoice | undefined {
+}): MerClawProviderIndexProviderAuthChoice | undefined {
   if (!isRecord(params.value)) {
     return undefined;
   }
@@ -155,20 +155,20 @@ function normalizeAuthChoices(params: {
   providerId: string;
   providerName: string;
   value: unknown;
-}): readonly OpenClawProviderIndexProviderAuthChoice[] | undefined {
+}): readonly MerClawProviderIndexProviderAuthChoice[] | undefined {
   if (!Array.isArray(params.value)) {
     return undefined;
   }
   const choices = params.value
     .map((value) => normalizeAuthChoice({ ...params, value }))
-    .filter((choice): choice is OpenClawProviderIndexProviderAuthChoice => Boolean(choice));
+    .filter((choice): choice is MerClawProviderIndexProviderAuthChoice => Boolean(choice));
   return choices.length > 0 ? choices : undefined;
 }
 
 function normalizeProvider(
   rawProviderId: string,
   value: unknown,
-): OpenClawProviderIndexProvider | undefined {
+): MerClawProviderIndexProvider | undefined {
   if (!isRecord(value)) {
     return undefined;
   }
@@ -207,14 +207,14 @@ function normalizeProvider(
   };
 }
 
-export function normalizeOpenClawProviderIndex(value: unknown): OpenClawProviderIndex | undefined {
-  if (!isRecord(value) || value.version !== OPENCLAW_PROVIDER_INDEX_VERSION) {
+export function normalizeMerClawProviderIndex(value: unknown): MerClawProviderIndex | undefined {
+  if (!isRecord(value) || value.version !== MERCLAW_PROVIDER_INDEX_VERSION) {
     return undefined;
   }
   if (!isRecord(value.providers)) {
     return undefined;
   }
-  const providers: Record<string, OpenClawProviderIndexProvider> = {};
+  const providers: Record<string, MerClawProviderIndexProvider> = {};
   for (const [rawProviderId, rawProvider] of Object.entries(value.providers)) {
     const providerId = normalizeModelCatalogProviderId(rawProviderId);
     if (!providerId || isBlockedObjectKey(providerId)) {
@@ -226,7 +226,7 @@ export function normalizeOpenClawProviderIndex(value: unknown): OpenClawProvider
     }
   }
   return {
-    version: OPENCLAW_PROVIDER_INDEX_VERSION,
+    version: MERCLAW_PROVIDER_INDEX_VERSION,
     providers: Object.fromEntries(
       Object.entries(providers).toSorted(([left], [right]) => left.localeCompare(right)),
     ),

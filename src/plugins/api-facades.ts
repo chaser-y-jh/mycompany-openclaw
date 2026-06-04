@@ -1,12 +1,12 @@
-import type { OpenClawPluginApi } from "./types.js";
+import type { MerClawPluginApi } from "./types.js";
 
 type PluginApiFacadeFields = Pick<
-  OpenClawPluginApi,
+  MerClawPluginApi,
   "agent" | "lifecycle" | "runContext" | "session"
 >;
-export type OpenClawPluginApiWithoutFacades = Omit<OpenClawPluginApi, keyof PluginApiFacadeFields>;
+export type MerClawPluginApiWithoutFacades = Omit<MerClawPluginApi, keyof PluginApiFacadeFields>;
 type PluginApiFacadeSource = Pick<
-  OpenClawPluginApi,
+  MerClawPluginApi,
   | "clearRunContext"
   | "emitAgentEvent"
   | "enqueueNextTurnInjection"

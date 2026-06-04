@@ -2,7 +2,7 @@ import { promises as fs } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import type { SkillStatusEntry } from "../skills/discovery/status.js";
 import {
   CORE_HEALTH_CHECKS,
@@ -35,8 +35,8 @@ function createSkill(overrides: Partial<SkillStatusEntry> = {}): SkillStatusEntr
     description: "Missing tool",
     source: "workspace",
     bundled: false,
-    filePath: "/tmp/openclaw-test-workspace/skills/missing-tool/SKILL.md",
-    baseDir: "/tmp/openclaw-test-workspace/skills/missing-tool",
+    filePath: "/tmp/merclaw-test-workspace/skills/missing-tool/SKILL.md",
+    baseDir: "/tmp/merclaw-test-workspace/skills/missing-tool",
     skillKey: "missing-tool",
     always: false,
     disabled: false,
@@ -47,14 +47,14 @@ function createSkill(overrides: Partial<SkillStatusEntry> = {}): SkillStatusEntr
     userInvocable: true,
     commandVisible: false,
     requirements: {
-      bins: ["openclaw-test-missing-skill-bin"],
+      bins: ["merclaw-test-missing-skill-bin"],
       anyBins: [],
       env: [],
       config: [],
       os: [],
     },
     missing: {
-      bins: ["openclaw-test-missing-skill-bin"],
+      bins: ["merclaw-test-missing-skill-bin"],
       anyBins: [],
       env: [],
       config: [],
@@ -106,7 +106,7 @@ describe("registerCoreHealthChecks", () => {
     resetCoreHealthChecksForTest();
     mocks.loadModelCatalog.mockClear();
     mocks.loadModelCatalog.mockResolvedValue([]);
-    const cfg: OpenClawConfig = {
+    const cfg: MerClawConfig = {
       hooks: {
         gmail: {
           model: "openai/gpt-5.5",
@@ -202,10 +202,10 @@ describe("registerCoreHealthChecks", () => {
 
   it("converts unavailable skills into repair-capable health findings", async () => {
     const unavailableSkill = createSkill();
-    const cfg: OpenClawConfig = {
+    const cfg: MerClawConfig = {
       agents: {
         defaults: {
-          workspace: "/tmp/openclaw-test-workspace",
+          workspace: "/tmp/merclaw-test-workspace",
           skills: ["missing-tool"],
         },
       },
@@ -227,7 +227,7 @@ describe("registerCoreHealthChecks", () => {
       mode: "lint",
       runtime,
       cfg,
-      cwd: "/tmp/openclaw-test-workspace",
+      cwd: "/tmp/merclaw-test-workspace",
     });
     expect(findings).toContainEqual(
       expect.objectContaining({
@@ -242,7 +242,7 @@ describe("registerCoreHealthChecks", () => {
           mode: "fix",
           runtime,
           cfg,
-          cwd: "/tmp/openclaw-test-workspace",
+          cwd: "/tmp/merclaw-test-workspace",
         },
         { paths: ["skills.entries.other-tool.enabled"] },
       ),
@@ -253,7 +253,7 @@ describe("registerCoreHealthChecks", () => {
           mode: "fix",
           runtime,
           cfg,
-          cwd: "/tmp/openclaw-test-workspace",
+          cwd: "/tmp/merclaw-test-workspace",
         },
         { paths: ["skills.entries.missing-tool.enabled"] },
       ),
@@ -268,7 +268,7 @@ describe("registerCoreHealthChecks", () => {
         mode: "fix",
         runtime,
         cfg,
-        cwd: "/tmp/openclaw-test-workspace",
+        cwd: "/tmp/merclaw-test-workspace",
       },
       findings,
     );
@@ -328,7 +328,7 @@ describe("registerCoreHealthChecks", () => {
   });
 
   it("uses the read-only model catalog for hooks.gmail.model checks", async () => {
-    const cfg: OpenClawConfig = {
+    const cfg: MerClawConfig = {
       hooks: {
         gmail: {
           model: "openai/gpt-5.5",
@@ -340,8 +340,8 @@ describe("registerCoreHealthChecks", () => {
 
   it("skips gateway auth warning when SecretRef-managed token resolves in lint checks", async () => {
     const check = CORE_HEALTH_CHECKS.find((entry) => entry.id === "core/doctor/gateway-auth");
-    const previousToken = process.env.OPENCLAW_TEST_GATEWAY_TOKEN;
-    process.env.OPENCLAW_TEST_GATEWAY_TOKEN = "resolved-test-token";
+    const previousToken = process.env.MERCLAW_TEST_GATEWAY_TOKEN;
+    process.env.MERCLAW_TEST_GATEWAY_TOKEN = "resolved-test-token";
     try {
       const findings = await check?.detect({
         mode: "lint",
@@ -354,7 +354,7 @@ describe("registerCoreHealthChecks", () => {
               token: {
                 source: "env",
                 provider: "default",
-                id: "OPENCLAW_TEST_GATEWAY_TOKEN",
+                id: "MERCLAW_TEST_GATEWAY_TOKEN",
               },
             },
           },
@@ -370,19 +370,19 @@ describe("registerCoreHealthChecks", () => {
       expect(findings).toEqual([]);
     } finally {
       if (previousToken === undefined) {
-        delete process.env.OPENCLAW_TEST_GATEWAY_TOKEN;
+        delete process.env.MERCLAW_TEST_GATEWAY_TOKEN;
       } else {
-        process.env.OPENCLAW_TEST_GATEWAY_TOKEN = previousToken;
+        process.env.MERCLAW_TEST_GATEWAY_TOKEN = previousToken;
       }
     }
   });
 
-  it("reports unresolved SecretRefs even when OPENCLAW_GATEWAY_TOKEN is set", async () => {
+  it("reports unresolved SecretRefs even when MERCLAW_GATEWAY_TOKEN is set", async () => {
     const check = CORE_HEALTH_CHECKS.find((entry) => entry.id === "core/doctor/gateway-auth");
-    const previousFallbackToken = process.env.OPENCLAW_GATEWAY_TOKEN;
-    const previousRefToken = process.env.OPENCLAW_MISSING_GATEWAY_REF_TOKEN;
-    process.env.OPENCLAW_GATEWAY_TOKEN = "fallback-token";
-    delete process.env.OPENCLAW_MISSING_GATEWAY_REF_TOKEN;
+    const previousFallbackToken = process.env.MERCLAW_GATEWAY_TOKEN;
+    const previousRefToken = process.env.MERCLAW_MISSING_GATEWAY_REF_TOKEN;
+    process.env.MERCLAW_GATEWAY_TOKEN = "fallback-token";
+    delete process.env.MERCLAW_MISSING_GATEWAY_REF_TOKEN;
     try {
       const findings = await check?.detect({
         mode: "lint",
@@ -395,7 +395,7 @@ describe("registerCoreHealthChecks", () => {
               token: {
                 source: "env",
                 provider: "default",
-                id: "OPENCLAW_MISSING_GATEWAY_REF_TOKEN",
+                id: "MERCLAW_MISSING_GATEWAY_REF_TOKEN",
               },
             },
           },
@@ -416,20 +416,20 @@ describe("registerCoreHealthChecks", () => {
       );
     } finally {
       if (previousFallbackToken === undefined) {
-        delete process.env.OPENCLAW_GATEWAY_TOKEN;
+        delete process.env.MERCLAW_GATEWAY_TOKEN;
       } else {
-        process.env.OPENCLAW_GATEWAY_TOKEN = previousFallbackToken;
+        process.env.MERCLAW_GATEWAY_TOKEN = previousFallbackToken;
       }
       if (previousRefToken === undefined) {
-        delete process.env.OPENCLAW_MISSING_GATEWAY_REF_TOKEN;
+        delete process.env.MERCLAW_MISSING_GATEWAY_REF_TOKEN;
       } else {
-        process.env.OPENCLAW_MISSING_GATEWAY_REF_TOKEN = previousRefToken;
+        process.env.MERCLAW_MISSING_GATEWAY_REF_TOKEN = previousRefToken;
       }
     }
   });
 
   it("does not execute or warn for valid exec SecretRefs during default gateway auth lint checks", async () => {
-    tmp = await fs.mkdtemp(join(tmpdir(), "openclaw-health-exec-ref-"));
+    tmp = await fs.mkdtemp(join(tmpdir(), "merclaw-health-exec-ref-"));
     const markerPath = join(tmp, "exec-ran");
     const check = CORE_HEALTH_CHECKS.find((entry) => entry.id === "core/doctor/gateway-auth");
 
@@ -468,7 +468,7 @@ describe("registerCoreHealthChecks", () => {
   });
 
   it("executes exec SecretRefs when gateway auth lint explicitly allows exec checks", async () => {
-    tmp = await fs.mkdtemp(join(tmpdir(), "openclaw-health-exec-ref-"));
+    tmp = await fs.mkdtemp(join(tmpdir(), "merclaw-health-exec-ref-"));
     const markerPath = join(tmp, "exec-ran");
     const resolverPath = join(tmp, "resolve-token.cjs");
     await fs.writeFile(
@@ -522,7 +522,7 @@ describe("registerCoreHealthChecks", () => {
   });
 
   it("reports exec SecretRef failures when gateway auth lint explicitly allows exec checks", async () => {
-    tmp = await fs.mkdtemp(join(tmpdir(), "openclaw-health-exec-ref-"));
+    tmp = await fs.mkdtemp(join(tmpdir(), "merclaw-health-exec-ref-"));
     const resolverPath = join(tmp, "fail-token.cjs");
     await fs.writeFile(
       resolverPath,
@@ -530,8 +530,8 @@ describe("registerCoreHealthChecks", () => {
       "utf8",
     );
     const check = CORE_HEALTH_CHECKS.find((entry) => entry.id === "core/doctor/gateway-auth");
-    const previousFallbackToken = process.env.OPENCLAW_GATEWAY_TOKEN;
-    process.env.OPENCLAW_GATEWAY_TOKEN = "fallback-token";
+    const previousFallbackToken = process.env.MERCLAW_GATEWAY_TOKEN;
+    process.env.MERCLAW_GATEWAY_TOKEN = "fallback-token";
 
     let findings: readonly HealthFinding[] | undefined;
     try {
@@ -567,9 +567,9 @@ describe("registerCoreHealthChecks", () => {
       });
     } finally {
       if (previousFallbackToken === undefined) {
-        delete process.env.OPENCLAW_GATEWAY_TOKEN;
+        delete process.env.MERCLAW_GATEWAY_TOKEN;
       } else {
-        process.env.OPENCLAW_GATEWAY_TOKEN = previousFallbackToken;
+        process.env.MERCLAW_GATEWAY_TOKEN = previousFallbackToken;
       }
     }
 
@@ -579,7 +579,7 @@ describe("registerCoreHealthChecks", () => {
         severity: "warning",
         message: expect.stringContaining("Gateway token SecretRef could not be resolved:"),
         fixHint:
-          "Run `openclaw doctor --allow-exec` to verify exec SecretRefs during doctor, or `openclaw secrets audit --allow-exec` to audit all exec SecretRefs.",
+          "Run `merclaw doctor --allow-exec` to verify exec SecretRefs during doctor, or `merclaw secrets audit --allow-exec` to audit all exec SecretRefs.",
       }),
     );
   });
@@ -592,7 +592,7 @@ describe("registerCoreHealthChecks", () => {
             return [
               [
                 "- Tip: back up the workspace in a private git repo (GitHub or GitLab).",
-                "- Keep ~/.openclaw out of git; it contains credentials and session history.",
+                "- Keep ~/.merclaw out of git; it contains credentials and session history.",
               ].join("\n"),
               "Memory system not found in workspace.",
             ];
@@ -608,11 +608,11 @@ describe("registerCoreHealthChecks", () => {
       cfg: {
         agents: {
           defaults: {
-            workspace: "/tmp/openclaw-test-workspace",
+            workspace: "/tmp/merclaw-test-workspace",
           },
         },
       },
-      cwd: "/tmp/openclaw-test-workspace",
+      cwd: "/tmp/merclaw-test-workspace",
     });
 
     expect(findings).toContainEqual(

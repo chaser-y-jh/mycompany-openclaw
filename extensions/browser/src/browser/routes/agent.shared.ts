@@ -1,4 +1,4 @@
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { normalizeOptionalString } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { resolveBrowserNavigationProxyMode } from "../browser-proxy-mode.js";
 import { toBrowserErrorResponse } from "../errors.js";
 import {
@@ -93,7 +93,7 @@ export async function requirePwAi(
     501,
     [
       `Playwright is not available in this gateway build; '${feature}' is unsupported.`,
-      "Reinstall or update OpenClaw so the core browser runtime dependency is present, then restart the gateway. In Docker, also install Chromium with the bundled playwright-core CLI.",
+      "Reinstall or update MerClaw so the core browser runtime dependency is present, then restart the gateway. In Docker, also install Chromium with the bundled playwright-core CLI.",
       "Docs: /tools/browser#playwright-requirement",
     ].join("\n"),
   );

@@ -1,16 +1,16 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
 import {
   resolveRealtimeVoiceFastContextConsult,
   type RealtimeVoiceFastContextConsultResult,
   type RealtimeVoiceFastContextConfig,
-} from "openclaw/plugin-sdk/realtime-voice";
+} from "merclaw/plugin-sdk/realtime-voice";
 
 type Logger = {
   debug?: (message: string) => void;
 };
 
 export async function resolveRealtimeFastContextConsult(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentId: string;
   sessionKey: string;
   config: RealtimeVoiceFastContextConfig;
@@ -21,7 +21,7 @@ export async function resolveRealtimeFastContextConsult(params: {
     ...params,
     labels: {
       audienceLabel: "caller",
-      contextName: "OpenClaw memory or session context",
+      contextName: "MerClaw memory or session context",
     },
   });
 }

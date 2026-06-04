@@ -2,7 +2,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createEmptyPluginRegistry } from "../registry.js";
 
 const mocks = vi.hoisted(() => ({
-  loadOpenClawPlugins: vi.fn<typeof import("../loader.js").loadOpenClawPlugins>(),
+  loadMerClawPlugins: vi.fn<typeof import("../loader.js").loadMerClawPlugins>(),
   resolveCompatibleRuntimePluginRegistry:
     vi.fn<typeof import("../loader.js").resolveCompatibleRuntimePluginRegistry>(),
   resolveRuntimePluginRegistry: vi.fn<typeof import("../loader.js").resolveRuntimePluginRegistry>(),
@@ -40,7 +40,7 @@ function requireRecord(value: unknown, label: string): Record<string, unknown> {
 }
 
 function loadOptions(index = 0) {
-  return requireRecord(mocks.loadOpenClawPlugins.mock.calls[index]?.[0], `load options ${index}`);
+  return requireRecord(mocks.loadMerClawPlugins.mock.calls[index]?.[0], `load options ${index}`);
 }
 
 function configuredChannelOptions(index = 0) {
@@ -66,8 +66,8 @@ function pluginEntries(config: Record<string, unknown>) {
 }
 
 vi.mock("../loader.js", () => ({
-  loadOpenClawPlugins: (...args: Parameters<typeof mocks.loadOpenClawPlugins>) =>
-    mocks.loadOpenClawPlugins(...args),
+  loadMerClawPlugins: (...args: Parameters<typeof mocks.loadMerClawPlugins>) =>
+    mocks.loadMerClawPlugins(...args),
   resolveCompatibleRuntimePluginRegistry: (
     ...args: Parameters<typeof mocks.resolveCompatibleRuntimePluginRegistry>
   ) => mocks.resolveCompatibleRuntimePluginRegistry(...args),
@@ -127,7 +127,7 @@ describe("ensurePluginRegistryLoaded", () => {
   });
 
   beforeEach(() => {
-    mocks.loadOpenClawPlugins.mockReset();
+    mocks.loadMerClawPlugins.mockReset();
     mocks.resolveCompatibleRuntimePluginRegistry.mockReset();
     mocks.resolveRuntimePluginRegistry.mockReset();
     mocks.getActivePluginRegistry.mockReset();
@@ -145,9 +145,9 @@ describe("ensurePluginRegistryLoaded", () => {
     mocks.getActivePluginRegistry.mockReturnValue(null);
     mocks.getActivePluginRegistryWorkspaceDir.mockReturnValue(undefined);
     mocks.resolveCompatibleRuntimePluginRegistry.mockReturnValue(undefined);
-    mocks.loadOpenClawPlugins.mockReturnValue(createEmptyPluginRegistry());
+    mocks.loadMerClawPlugins.mockReturnValue(createEmptyPluginRegistry());
     mocks.resolveRuntimePluginRegistry.mockImplementation(
-      (...args: Parameters<typeof mocks.loadOpenClawPlugins>) => mocks.loadOpenClawPlugins(...args),
+      (...args: Parameters<typeof mocks.loadMerClawPlugins>) => mocks.loadMerClawPlugins(...args),
     );
     mocks.applyPluginAutoEnable.mockImplementation((params) => ({
       config:
@@ -180,7 +180,7 @@ describe("ensurePluginRegistryLoaded", () => {
         },
       },
     };
-    const env = { HOME: "/tmp/openclaw-home" } as NodeJS.ProcessEnv;
+    const env = { HOME: "/tmp/merclaw-home" } as NodeJS.ProcessEnv;
 
     mocks.resolveConfiguredChannelPluginIds.mockReturnValue(["demo-channel"]);
     ensurePluginRegistryLoaded({
@@ -257,7 +257,7 @@ describe("ensurePluginRegistryLoaded", () => {
       onlyPluginIds: ["demo-b"],
     });
 
-    expect(mocks.loadOpenClawPlugins).toHaveBeenCalledTimes(2);
+    expect(mocks.loadMerClawPlugins).toHaveBeenCalledTimes(2);
     expect(loadOptions(0).onlyPluginIds).toEqual(["demo-a"]);
     expect(loadOptions(1).onlyPluginIds).toEqual(["demo-b"]);
   });
@@ -328,7 +328,7 @@ describe("ensurePluginRegistryLoaded", () => {
       plugins: { enabled: true },
       channels: { "demo-channel-a": { enabled: true } },
     };
-    const env = { HOME: "/tmp/openclaw-home" } as NodeJS.ProcessEnv;
+    const env = { HOME: "/tmp/merclaw-home" } as NodeJS.ProcessEnv;
 
     mocks.resolveEffectivePluginIds.mockReturnValue(["demo-effective", "demo-hook"]);
 
@@ -365,7 +365,7 @@ describe("ensurePluginRegistryLoaded", () => {
     } as never);
     mocks.getActivePluginRegistry.mockReturnValue(activeRegistry);
     mocks.getActivePluginRegistryWorkspaceDir.mockReturnValue("/resolved-workspace");
-    mocks.loadOpenClawPlugins.mockClear();
+    mocks.loadMerClawPlugins.mockClear();
 
     ensurePluginRegistryLoaded({
       scope: "all",
@@ -396,14 +396,14 @@ describe("ensurePluginRegistryLoaded", () => {
     const emptyRegistry = createEmptyPluginRegistry();
     mocks.getActivePluginRegistry.mockReturnValue(emptyRegistry);
     mocks.getActivePluginRegistryWorkspaceDir.mockReturnValue("/resolved-workspace");
-    mocks.loadOpenClawPlugins.mockClear();
+    mocks.loadMerClawPlugins.mockClear();
 
     ensurePluginRegistryLoaded({
       scope: "all",
       config: { plugins: { enabled: true } } as never,
     });
 
-    expect(mocks.loadOpenClawPlugins).not.toHaveBeenCalled();
+    expect(mocks.loadMerClawPlugins).not.toHaveBeenCalled();
   });
 
   it("does not reuse an empty active registry from another workspace", () => {
@@ -416,7 +416,7 @@ describe("ensurePluginRegistryLoaded", () => {
     const emptyRegistry = createEmptyPluginRegistry();
     mocks.getActivePluginRegistry.mockReturnValue(emptyRegistry);
     mocks.getActivePluginRegistryWorkspaceDir.mockReturnValue("/other-workspace");
-    mocks.loadOpenClawPlugins.mockClear();
+    mocks.loadMerClawPlugins.mockClear();
 
     ensurePluginRegistryLoaded({
       scope: "all",
@@ -442,7 +442,7 @@ describe("ensurePluginRegistryLoaded", () => {
       status: "loaded",
     } as never);
     mocks.getActivePluginRegistry.mockReturnValue(staleRegistry);
-    mocks.loadOpenClawPlugins.mockClear();
+    mocks.loadMerClawPlugins.mockClear();
 
     ensurePluginRegistryLoaded({
       scope: "all",
@@ -469,7 +469,7 @@ describe("ensurePluginRegistryLoaded", () => {
     } as never);
     mocks.getActivePluginRegistry.mockReturnValue(disabledRegistry);
     mocks.getActivePluginRegistryWorkspaceDir.mockReturnValue("/resolved-workspace");
-    mocks.loadOpenClawPlugins.mockClear();
+    mocks.loadMerClawPlugins.mockClear();
 
     ensurePluginRegistryLoaded({
       scope: "all",
@@ -547,6 +547,6 @@ describe("ensurePluginRegistryLoaded", () => {
     });
 
     expect(mocks.resolveRuntimePluginRegistry).not.toHaveBeenCalled();
-    expect(mocks.loadOpenClawPlugins).not.toHaveBeenCalled();
+    expect(mocks.loadMerClawPlugins).not.toHaveBeenCalled();
   });
 });

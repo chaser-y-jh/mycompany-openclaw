@@ -1,4 +1,4 @@
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
 import { getRuntimeConfig } from "../../config/config.js";
 import { resolveStorePath } from "../../config/sessions/paths.js";
 import { loadSessionStore } from "../../config/sessions/store-load.js";
@@ -8,7 +8,7 @@ import {
   type SessionAcpMeta,
   type SessionEntry,
 } from "../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { parseAgentSessionKey } from "../../routing/session-key.js";
 
 let sessionStoreRuntimePromise:
@@ -21,7 +21,7 @@ function loadSessionStoreRuntime() {
 }
 
 export type AcpSessionStoreEntry = {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   storePath: string;
   sessionKey: string;
   storeSessionKey: string;
@@ -52,8 +52,8 @@ function resolveStoreSessionKey(store: Record<string, SessionEntry>, sessionKey:
 
 export function resolveSessionStorePathForAcp(params: {
   sessionKey: string;
-  cfg?: OpenClawConfig;
-}): { cfg: OpenClawConfig; storePath: string } {
+  cfg?: MerClawConfig;
+}): { cfg: MerClawConfig; storePath: string } {
   const cfg = params.cfg ?? getRuntimeConfig();
   const parsed = parseAgentSessionKey(params.sessionKey);
   const storePath = resolveStorePath(cfg.session?.store, {
@@ -64,7 +64,7 @@ export function resolveSessionStorePathForAcp(params: {
 
 export function readAcpSessionEntry(params: {
   sessionKey: string;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   clone?: boolean;
 }): AcpSessionStoreEntry | null {
   const sessionKey = params.sessionKey.trim();
@@ -97,7 +97,7 @@ export function readAcpSessionEntry(params: {
 }
 
 export async function listAcpSessionEntries(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   env?: NodeJS.ProcessEnv;
   clone?: boolean;
 }): Promise<AcpSessionStoreEntry[]> {
@@ -136,7 +136,7 @@ export async function listAcpSessionEntries(params: {
 
 export async function upsertAcpSessionMeta(params: {
   sessionKey: string;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   skipMaintenance?: boolean;
   takeCacheOwnership?: boolean;
   mutate: (

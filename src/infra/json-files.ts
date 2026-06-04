@@ -3,7 +3,7 @@ import {
   JsonFileReadError,
   readJson as readJsonImpl,
   readJsonIfExists as readJsonIfExistsImpl,
-} from "@openclaw/fs-safe/json";
+} from "@merclaw/fs-safe/json";
 import { replaceFileAtomic } from "./replace-file.js";
 
 type WriteTextAtomicBeforeRename = (params: {
@@ -22,7 +22,7 @@ export {
   writeJson,
   writeJson as writeJsonAtomic,
   writeJsonSync,
-} from "@openclaw/fs-safe/json";
+} from "@merclaw/fs-safe/json";
 
 export async function readJson<T>(filePath: string): Promise<T> {
   try {
@@ -53,7 +53,7 @@ export async function readDurableJsonFile<T>(filePath: string): Promise<T | null
 
 /**
  * tryReadJson delegates to readJsonIfExists instead of the internal
- * tryReadJsonImpl from @openclaw/fs-safe. The fs-safe implementation retries
+ * tryReadJsonImpl from @merclaw/fs-safe. The fs-safe implementation retries
  * race conditions before propagating errors; this wrapper keeps the historical
  * null-on-error contract for callers that intentionally treat reads as optional.
  */
@@ -69,7 +69,7 @@ export async function readJsonFile<T>(filePath: string): Promise<T | null> {
   return tryReadJson<T>(filePath);
 }
 
-export { createAsyncLock } from "@openclaw/fs-safe/advanced";
+export { createAsyncLock } from "@merclaw/fs-safe/advanced";
 
 export type WriteTextAtomicOptions = {
   mode?: number;

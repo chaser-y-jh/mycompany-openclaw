@@ -61,15 +61,15 @@ function runAssertInstalled({
   env?: NodeJS.ProcessEnv;
 } = {}) {
   const label = `diagnostics-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-  const pluginId = "openclaw-kitchen-sink-fixture";
-  const home = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-home-"));
-  const installPath = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-install-"));
+  const pluginId = "merclaw-kitchen-sink-fixture";
+  const home = mkdtempSync(path.join(tmpdir(), "merclaw-kitchen-sink-home-"));
+  const installPath = mkdtempSync(path.join(tmpdir(), "merclaw-kitchen-sink-install-"));
   const scratchRoot = tmpdir();
   const pluginsJsonPath = path.join(scratchRoot, `kitchen-sink-${label}-plugins.json`);
   const inspectJsonPath = path.join(scratchRoot, `kitchen-sink-${label}-inspect.json`);
   const inspectAllJsonPath = path.join(scratchRoot, `kitchen-sink-${label}-inspect-all.json`);
   const installPathMarker = path.join(scratchRoot, `kitchen-sink-${label}-install-path.txt`);
-  const installsPath = path.join(home, ".openclaw", "plugins", "installs.json");
+  const installsPath = path.join(home, ".merclaw", "plugins", "installs.json");
   const spawnEnv = { ...process.env };
   delete spawnEnv.KITCHEN_SINK_REQUIRE_ALL_DIAGNOSTICS;
 
@@ -84,10 +84,10 @@ function runAssertInstalled({
       installRecords: {
         [pluginId]: {
           installPath,
-          resolvedSpec: "@openclaw/kitchen-sink@latest",
+          resolvedSpec: "@merclaw/kitchen-sink@latest",
           resolvedVersion: "1.0.0",
           source: "npm",
-          spec: "@openclaw/kitchen-sink@latest",
+          spec: "@merclaw/kitchen-sink@latest",
         },
       },
     });
@@ -101,7 +101,7 @@ function runAssertInstalled({
         KITCHEN_SINK_ID: pluginId,
         KITCHEN_SINK_LABEL: label,
         KITCHEN_SINK_SOURCE: "npm",
-        KITCHEN_SINK_SPEC: "npm:@openclaw/kitchen-sink@latest",
+        KITCHEN_SINK_SPEC: "npm:@merclaw/kitchen-sink@latest",
         KITCHEN_SINK_SURFACE_MODE: "full",
         KITCHEN_SINK_TMP_DIR: scratchRoot,
       },
@@ -122,15 +122,15 @@ function runAssertClawhubInstalled({
   contextEngineIds?: string[];
 } = {}) {
   const label = `clawhub-context-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-  const pluginId = "openclaw-kitchen-sink-fixture";
-  const home = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-home-"));
-  const installPath = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-install-"));
+  const pluginId = "merclaw-kitchen-sink-fixture";
+  const home = mkdtempSync(path.join(tmpdir(), "merclaw-kitchen-sink-home-"));
+  const installPath = mkdtempSync(path.join(tmpdir(), "merclaw-kitchen-sink-install-"));
   const scratchRoot = tmpdir();
   const pluginsJsonPath = path.join(scratchRoot, `kitchen-sink-${label}-plugins.json`);
   const inspectJsonPath = path.join(scratchRoot, `kitchen-sink-${label}-inspect.json`);
   const inspectAllJsonPath = path.join(scratchRoot, `kitchen-sink-${label}-inspect-all.json`);
   const installPathMarker = path.join(scratchRoot, `kitchen-sink-${label}-install-path.txt`);
-  const installsPath = path.join(home, ".openclaw", "plugins", "installs.json");
+  const installsPath = path.join(home, ".merclaw", "plugins", "installs.json");
   try {
     const inspectPayload = fullSurfaceInspectPayload(pluginId);
     inspectPayload.plugin.contextEngineIds = contextEngineIds;
@@ -146,14 +146,14 @@ function runAssertClawhubInstalled({
           artifactFormat: "zip",
           artifactKind: "legacy-zip",
           clawhubFamily: "code-plugin",
-          clawhubPackage: "@openclaw/kitchen-sink",
+          clawhubPackage: "@merclaw/kitchen-sink",
           integrity: "sha256-test",
           installPath,
-          resolvedSpec: "clawhub:@openclaw/kitchen-sink@latest",
+          resolvedSpec: "clawhub:@merclaw/kitchen-sink@latest",
           resolvedVersion: "1.0.0",
           resolvedAt: 1,
           source: "clawhub",
-          spec: "clawhub:@openclaw/kitchen-sink@latest",
+          spec: "clawhub:@merclaw/kitchen-sink@latest",
           version: "1.0.0",
         },
       },
@@ -167,7 +167,7 @@ function runAssertClawhubInstalled({
         KITCHEN_SINK_ID: pluginId,
         KITCHEN_SINK_LABEL: label,
         KITCHEN_SINK_SOURCE: "clawhub",
-        KITCHEN_SINK_SPEC: "clawhub:@openclaw/kitchen-sink@latest",
+        KITCHEN_SINK_SPEC: "clawhub:@merclaw/kitchen-sink@latest",
         KITCHEN_SINK_SURFACE_MODE: "basic",
         KITCHEN_SINK_TMP_DIR: scratchRoot,
       },
@@ -220,7 +220,7 @@ describe("kitchen-sink plugin assertions", () => {
 
   it("accepts ClawHub kitchen-sink fixtures with a context engine", () => {
     const result = runAssertClawhubInstalled({
-      contextEngineIds: ["openclaw-kitchen-sink-fixture"],
+      contextEngineIds: ["merclaw-kitchen-sink-fixture"],
     });
 
     expect(result.status).toBe(0);
@@ -239,7 +239,7 @@ describe("kitchen-sink plugin assertions", () => {
   });
 
   it("scans only the configured kitchen-sink scratch root", () => {
-    const parent = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-scan-"));
+    const parent = mkdtempSync(path.join(tmpdir(), "merclaw-kitchen-sink-scan-"));
     const home = path.join(parent, "home");
     const scratchRoot = path.join(parent, "scratch");
     const siblingRoot = path.join(parent, "sibling");
@@ -261,7 +261,7 @@ describe("kitchen-sink plugin assertions", () => {
   });
 
   it("bounds repeated kitchen-sink log scan findings", () => {
-    const parent = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-scan-"));
+    const parent = mkdtempSync(path.join(tmpdir(), "merclaw-kitchen-sink-scan-"));
     const home = path.join(parent, "home");
     const scratchRoot = path.join(parent, "scratch");
     try {
@@ -283,7 +283,7 @@ describe("kitchen-sink plugin assertions", () => {
   });
 
   it("rejects kitchen-sink log scans without an isolated scratch root", () => {
-    const parent = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-scan-"));
+    const parent = mkdtempSync(path.join(tmpdir(), "merclaw-kitchen-sink-scan-"));
     try {
       const spawnEnv = { ...process.env, HOME: parent };
       delete spawnEnv.KITCHEN_SINK_TMP_DIR;
@@ -302,9 +302,9 @@ describe("kitchen-sink plugin assertions", () => {
   it("allocates an isolated scratch root by default", () => {
     const sweep = readFileSync(SWEEP_SCRIPT, "utf8");
 
-    expect(sweep).toContain('mktemp -d "/tmp/openclaw-kitchen-sink.XXXXXX"');
+    expect(sweep).toContain('mktemp -d "/tmp/merclaw-kitchen-sink.XXXXXX"');
     expect(sweep).toContain('mktemp -d "${KITCHEN_SINK_TMP_DIR}/clawhub.XXXXXX"');
     expect(sweep).not.toContain('KITCHEN_SINK_TMP_DIR="${KITCHEN_SINK_TMP_DIR:-/tmp}"');
-    expect(sweep).not.toContain('mktemp -d "/tmp/openclaw-kitchen-sink-clawhub.XXXXXX"');
+    expect(sweep).not.toContain('mktemp -d "/tmp/merclaw-kitchen-sink-clawhub.XXXXXX"');
   });
 });

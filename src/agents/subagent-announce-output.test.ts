@@ -74,7 +74,7 @@ describe("readSubagentOutput", () => {
         {
           role: "system",
           content: [{ type: "text", text: "Compaction" }],
-          __openclaw: { kind: "compaction" },
+          __merclaw: { kind: "compaction" },
         },
         {
           role: "assistant",
@@ -173,13 +173,13 @@ describe("readSubagentOutput", () => {
 
     await expect(
       readSubagentOutput("agent:main:subagent:child", undefined, {
-        sessionFile: "/tmp/openclaw-internal-run.jsonl",
+        sessionFile: "/tmp/merclaw-internal-run.jsonl",
       }),
     ).resolves.toBe("fresh recovered output");
     expect(deps.readSessionMessagesAsync).toHaveBeenCalledWith(
       "agent:main:subagent:child",
       undefined,
-      "/tmp/openclaw-internal-run.jsonl",
+      "/tmp/merclaw-internal-run.jsonl",
       { mode: "recent", maxMessages: 100, maxBytes: 1024 * 1024 },
     );
     expect(deps.callGateway).not.toHaveBeenCalled();
@@ -198,7 +198,7 @@ describe("readSubagentOutput", () => {
 
     await expect(
       readSubagentOutput("agent:main:subagent:child", undefined, {
-        sessionFile: "/tmp/openclaw-empty-internal-run.jsonl",
+        sessionFile: "/tmp/merclaw-empty-internal-run.jsonl",
       }),
     ).resolves.toBeUndefined();
     expect(deps.callGateway).not.toHaveBeenCalled();

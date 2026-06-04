@@ -1,11 +1,11 @@
 {
-  "name": "@openclaw/memory-lancedb",
+  "name": "@merclaw/memory-lancedb",
   "version": "2026.5.31",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
-      "name": "@openclaw/memory-lancedb",
+      "name": "@merclaw/memory-lancedb",
       "version": "2026.5.31",
       "dependencies": {
         "@lancedb/lancedb": "0.30.0",

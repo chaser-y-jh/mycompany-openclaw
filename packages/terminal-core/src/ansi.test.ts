@@ -11,8 +11,8 @@ describe("terminal ansi helpers", () => {
   it("strips ANSI and OSC8 sequences", () => {
     expect(stripAnsi("\u001B[31mred\u001B[0m")).toBe("red");
     expect(stripAnsi("\u001B[2K\u001B[1Ared")).toBe("red");
-    expect(stripAnsi("\u001B]8;;https://openclaw.ai\u001B\\link\u001B]8;;\u001B\\")).toBe("link");
-    expect(stripAnsi("\u001B]8;;https://openclaw.ai\u0007link\u001B]8;;\u0007")).toBe("link");
+    expect(stripAnsi("\u001B]8;;https://merclaw.ai\u001B\\link\u001B]8;;\u001B\\")).toBe("link");
+    expect(stripAnsi("\u001B]8;;https://merclaw.ai\u0007link\u001B]8;;\u0007")).toBe("link");
     expect(stripAnsi("copy\u001B]52;c;YWJj\u0007safe")).toBe("copysafe");
   });
 

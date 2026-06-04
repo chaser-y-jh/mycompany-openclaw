@@ -1,5 +1,5 @@
 ---
-summary: "Adds Cloudflare AI Gateway model provider support to OpenClaw."
+summary: "Adds Cloudflare AI Gateway model provider support to MerClaw."
 read_when:
   - You are installing, configuring, or auditing the cloudflare-ai-gateway plugin
 title: "Cloudflare AI Gateway plugin"
@@ -7,12 +7,12 @@ title: "Cloudflare AI Gateway plugin"
 
 # Cloudflare AI Gateway plugin
 
-Adds Cloudflare AI Gateway model provider support to OpenClaw.
+Adds Cloudflare AI Gateway model provider support to MerClaw.
 
 ## Distribution
 
-- Package: `@openclaw/cloudflare-ai-gateway-provider`
-- Install route: included in OpenClaw
+- Package: `@merclaw/cloudflare-ai-gateway-provider`
+- Install route: included in MerClaw
 
 ## Surface
 

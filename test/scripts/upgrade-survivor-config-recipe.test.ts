@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { resolveUpgradeSurvivorOpenClawCommand } from "../../scripts/e2e/lib/upgrade-survivor/config-recipe.mjs";
+import { resolveUpgradeSurvivorMerClawCommand } from "../../scripts/e2e/lib/upgrade-survivor/config-recipe.mjs";
 
 describe("upgrade survivor config recipe command resolution", () => {
-  it("wraps Windows openclaw npm shims through cmd.exe", () => {
+  it("wraps Windows merclaw npm shims through cmd.exe", () => {
     expect(
-      resolveUpgradeSurvivorOpenClawCommand(
+      resolveUpgradeSurvivorMerClawCommand(
         ["config", "set", "models.providers.openai", '{"apiKey":"sk test"}', "--strict-json"],
         {
           comSpec: String.raw`C:\Windows\System32\cmd.exe`,
@@ -16,25 +16,25 @@ describe("upgrade survivor config recipe command resolution", () => {
         "/d",
         "/s",
         "/c",
-        'openclaw.cmd config set models.providers.openai "{""apiKey"":""sk test""}" --strict-json',
+        'merclaw.cmd config set models.providers.openai "{""apiKey"":""sk test""}" --strict-json',
       ],
       command: String.raw`C:\Windows\System32\cmd.exe`,
       commandLabel:
-        'openclaw config set models.providers.openai {"apiKey":"sk test"} --strict-json',
+        'merclaw config set models.providers.openai {"apiKey":"sk test"} --strict-json',
       shell: false,
       windowsVerbatimArguments: true,
     });
   });
 
-  it("keeps POSIX openclaw invocations direct", () => {
+  it("keeps POSIX merclaw invocations direct", () => {
     expect(
-      resolveUpgradeSurvivorOpenClawCommand(["config", "validate"], {
+      resolveUpgradeSurvivorMerClawCommand(["config", "validate"], {
         platform: "linux",
       }),
     ).toEqual({
       args: ["config", "validate"],
-      command: "openclaw",
-      commandLabel: "openclaw config validate",
+      command: "merclaw",
+      commandLabel: "merclaw config validate",
       shell: false,
     });
   });

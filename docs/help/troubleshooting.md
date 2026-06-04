@@ -1,7 +1,7 @@
 ---
-summary: "Symptom first troubleshooting hub for OpenClaw"
+summary: "Symptom first troubleshooting hub for MerClaw"
 read_when:
-  - OpenClaw is not working and you need the fastest path to a fix
+  - MerClaw is not working and you need the fastest path to a fix
   - You want a triage flow before diving into deep runbooks
 title: "General troubleshooting"
 ---
@@ -13,26 +13,26 @@ If you only have 2 minutes, use this page as a triage front door.
 Run this exact ladder in order:
 
 ```bash
-openclaw status
-openclaw status --all
-openclaw gateway probe
-openclaw gateway status
-openclaw doctor
-openclaw channels status --probe
-openclaw logs --follow
+merclaw status
+merclaw status --all
+merclaw gateway probe
+merclaw gateway status
+merclaw doctor
+merclaw channels status --probe
+merclaw logs --follow
 ```
 
 Good output in one line:
 
-- `openclaw status` → shows configured channels and no obvious auth errors.
-- `openclaw status --all` → full report is present and shareable.
-- `openclaw gateway probe` → expected gateway target is reachable (`Reachable: yes`). `Capability: ...` tells you what auth level the probe could prove, and `Read probe: limited - missing scope: operator.read` is degraded diagnostics, not a connect failure.
-- `openclaw gateway status` → `Runtime: running`, `Connectivity probe: ok`, and a plausible `Capability: ...` line. Use `--require-rpc` if you need read-scope RPC proof too.
-- `openclaw doctor` → no blocking config/service errors.
-- `openclaw channels status --probe` → reachable gateway returns live per-account
+- `merclaw status` → shows configured channels and no obvious auth errors.
+- `merclaw status --all` → full report is present and shareable.
+- `merclaw gateway probe` → expected gateway target is reachable (`Reachable: yes`). `Capability: ...` tells you what auth level the probe could prove, and `Read probe: limited - missing scope: operator.read` is degraded diagnostics, not a connect failure.
+- `merclaw gateway status` → `Runtime: running`, `Connectivity probe: ok`, and a plausible `Capability: ...` line. Use `--require-rpc` if you need read-scope RPC proof too.
+- `merclaw doctor` → no blocking config/service errors.
+- `merclaw channels status --probe` → reachable gateway returns live per-account
   transport state plus probe/audit results such as `works` or `audit ok`; if the
   gateway is unreachable, the command falls back to config-only summaries.
-- `openclaw logs --follow` → steady activity, no repeating fatal errors.
+- `merclaw logs --follow` → steady activity, no repeating fatal errors.
 
 ## Assistant feels limited or missing tools
 
@@ -40,9 +40,9 @@ If the assistant cannot inspect files, run commands, use browser automation, or
 see expected tools, check the effective tool profile first:
 
 ```bash
-openclaw status
-openclaw status --all
-openclaw doctor
+merclaw status
+merclaw status --all
+merclaw doctor
 ```
 
 Common causes:
@@ -56,7 +56,7 @@ Common causes:
   profile for one agent.
 
 Change the root or per-agent tool profile, then restart or reload the Gateway
-and run `openclaw status --all` again. See [Tools](/tools) for the profile
+and run `merclaw status --all` again. See [Tools](/tools) for the profile
 model and allow/deny overrides.
 
 ## Anthropic long context 429
@@ -65,39 +65,39 @@ If you see:
 `HTTP 429: rate_limit_error: Extra usage is required for long context requests`,
 go to [/gateway/troubleshooting#anthropic-429-extra-usage-required-for-long-context](/gateway/troubleshooting#anthropic-429-extra-usage-required-for-long-context).
 
-## Local OpenAI-compatible backend works directly but fails in OpenClaw
+## Local OpenAI-compatible backend works directly but fails in MerClaw
 
 If your local or self-hosted `/v1` backend answers small direct
-`/v1/chat/completions` probes but fails on `openclaw infer model run` or normal
+`/v1/chat/completions` probes but fails on `merclaw infer model run` or normal
 agent turns:
 
 1. If the error mentions `messages[].content` expecting a string, set
    `models.providers.<provider>.models[].compat.requiresStringContent: true`.
-2. If the backend still fails only on OpenClaw agent turns, set
+2. If the backend still fails only on MerClaw agent turns, set
    `models.providers.<provider>.models[].compat.supportsTools: false` and retry.
-3. If tiny direct calls still work but larger OpenClaw prompts crash the
+3. If tiny direct calls still work but larger MerClaw prompts crash the
    backend, treat the remaining issue as an upstream model/server limitation and
    continue in the deep runbook:
    [/gateway/troubleshooting#local-openai-compatible-backend-passes-direct-probes-but-agent-runs-fail](/gateway/troubleshooting#local-openai-compatible-backend-passes-direct-probes-but-agent-runs-fail)
 
-## Plugin install fails with missing openclaw extensions
+## Plugin install fails with missing merclaw extensions
 
-If install fails with `package.json missing openclaw.extensions`, the plugin package
-is using an old shape that OpenClaw no longer accepts.
+If install fails with `package.json missing merclaw.extensions`, the plugin package
+is using an old shape that MerClaw no longer accepts.
 
 Fix in the plugin package:
 
-1. Add `openclaw.extensions` to `package.json`.
+1. Add `merclaw.extensions` to `package.json`.
 2. Point entries at built runtime files (usually `./dist/index.js`).
-3. Republish the plugin and run `openclaw plugins install <package>` again.
+3. Republish the plugin and run `merclaw plugins install <package>` again.
 
 Example:
 
 ```json
 {
-  "name": "@openclaw/my-plugin",
+  "name": "@merclaw/my-plugin",
   "version": "1.2.3",
-  "openclaw": {
+  "merclaw": {
     "extensions": ["./dist/index.js"]
   }
 }
@@ -107,7 +107,7 @@ Reference: [Plugin architecture](/plugins/architecture)
 
 ## Plugin present but blocked by suspicious ownership
 
-If `openclaw doctor`, setup, or startup warnings show:
+If `merclaw doctor`, setup, or startup warnings show:
 
 ```text
 blocked plugin candidate: suspicious ownership (... uid=1000, expected uid=0 or root)
@@ -115,23 +115,23 @@ plugin present but blocked
 ```
 
 the plugin files are owned by a different Unix user than the process loading
-them. Do not remove the plugin config. Fix the file ownership or run OpenClaw as
+them. Do not remove the plugin config. Fix the file ownership or run MerClaw as
 the same user that owns the state directory.
 
 Docker installs normally run as `node` (uid `1000`). For the default Docker
 setup, repair the host bind mounts:
 
 ```bash
-sudo chown -R 1000:1000 /path/to/openclaw-config /path/to/openclaw-workspace
-openclaw doctor --fix
+sudo chown -R 1000:1000 /path/to/merclaw-config /path/to/merclaw-workspace
+merclaw doctor --fix
 ```
 
-If you intentionally run OpenClaw as root, repair the managed plugin root to
+If you intentionally run MerClaw as root, repair the managed plugin root to
 root ownership instead:
 
 ```bash
-sudo chown -R root:root /path/to/openclaw-config/npm
-openclaw doctor --fix
+sudo chown -R root:root /path/to/merclaw-config/npm
+merclaw doctor --fix
 ```
 
 Deeper docs:
@@ -143,7 +143,7 @@ Deeper docs:
 
 ```mermaid
 flowchart TD
-  A[OpenClaw is not working] --> B{What breaks first}
+  A[MerClaw is not working] --> B{What breaks first}
   B --> C[No replies]
   B --> D[Dashboard or Control UI will not connect]
   B --> E[Gateway will not start or service not running]
@@ -164,11 +164,11 @@ flowchart TD
 <AccordionGroup>
   <Accordion title="No replies">
     ```bash
-    openclaw status
-    openclaw gateway status
-    openclaw channels status --probe
-    openclaw pairing list --channel <channel> [--account <id>]
-    openclaw logs --follow
+    merclaw status
+    merclaw gateway status
+    merclaw channels status --probe
+    merclaw pairing list --channel <channel> [--account <id>]
+    merclaw logs --follow
     ```
 
     Good output looks like:
@@ -195,16 +195,16 @@ flowchart TD
 
   <Accordion title="Dashboard or Control UI will not connect">
     ```bash
-    openclaw status
-    openclaw gateway status
-    openclaw logs --follow
-    openclaw doctor
-    openclaw channels status --probe
+    merclaw status
+    merclaw gateway status
+    merclaw logs --follow
+    merclaw doctor
+    merclaw channels status --probe
     ```
 
     Good output looks like:
 
-    - `Dashboard: http://...` is shown in `openclaw gateway status`
+    - `Dashboard: http://...` is shown in `merclaw gateway status`
     - `Connectivity probe: ok`
     - `Capability: read-only`, `write-capable`, or `admin-capable`
     - No auth loop in logs
@@ -237,11 +237,11 @@ flowchart TD
 
   <Accordion title="Gateway will not start or service installed but not running">
     ```bash
-    openclaw status
-    openclaw gateway status
-    openclaw logs --follow
-    openclaw doctor
-    openclaw channels status --probe
+    merclaw status
+    merclaw gateway status
+    merclaw logs --follow
+    merclaw doctor
+    merclaw channels status --probe
     ```
 
     Good output looks like:
@@ -267,11 +267,11 @@ flowchart TD
 
   <Accordion title="Channel connects but messages do not flow">
     ```bash
-    openclaw status
-    openclaw gateway status
-    openclaw logs --follow
-    openclaw doctor
-    openclaw channels status --probe
+    merclaw status
+    merclaw gateway status
+    merclaw logs --follow
+    merclaw doctor
+    merclaw channels status --probe
     ```
 
     Good output looks like:
@@ -295,12 +295,12 @@ flowchart TD
 
   <Accordion title="Cron or heartbeat did not fire or did not deliver">
     ```bash
-    openclaw status
-    openclaw gateway status
-    openclaw cron status
-    openclaw cron list
-    openclaw cron runs --id <jobId> --limit 20
-    openclaw logs --follow
+    merclaw status
+    merclaw gateway status
+    merclaw cron status
+    merclaw cron list
+    merclaw cron runs --id <jobId> --limit 20
+    merclaw logs --follow
     ```
 
     Good output looks like:
@@ -329,11 +329,11 @@ flowchart TD
 
   <Accordion title="Node is paired but tool fails camera canvas screen exec">
     ```bash
-    openclaw status
-    openclaw gateway status
-    openclaw nodes status
-    openclaw nodes describe --node <idOrNameOrIp>
-    openclaw logs --follow
+    merclaw status
+    merclaw gateway status
+    merclaw nodes status
+    merclaw nodes describe --node <idOrNameOrIp>
+    merclaw logs --follow
     ```
 
     Good output looks like:
@@ -359,10 +359,10 @@ flowchart TD
 
   <Accordion title="Exec suddenly asks for approval">
     ```bash
-    openclaw config get tools.exec.host
-    openclaw config get tools.exec.security
-    openclaw config get tools.exec.ask
-    openclaw gateway restart
+    merclaw config get tools.exec.host
+    merclaw config get tools.exec.security
+    merclaw config get tools.exec.ask
+    merclaw gateway restart
     ```
 
     What changed:
@@ -377,10 +377,10 @@ flowchart TD
     Restore current default no-approval behavior:
 
     ```bash
-    openclaw config set tools.exec.host gateway
-    openclaw config set tools.exec.security full
-    openclaw config set tools.exec.ask off
-    openclaw gateway restart
+    merclaw config set tools.exec.host gateway
+    merclaw config set tools.exec.security full
+    merclaw config set tools.exec.ask off
+    merclaw gateway restart
     ```
 
     Safer alternatives:
@@ -405,17 +405,17 @@ flowchart TD
 
   <Accordion title="Browser tool fails">
     ```bash
-    openclaw status
-    openclaw gateway status
-    openclaw browser status
-    openclaw logs --follow
-    openclaw doctor
+    merclaw status
+    merclaw gateway status
+    merclaw browser status
+    merclaw logs --follow
+    merclaw doctor
     ```
 
     Good output looks like:
 
     - Browser status shows `running: true` and a chosen browser/profile.
-    - `openclaw` starts, or `user` can see local Chrome tabs.
+    - `merclaw` starts, or `user` can see local Chrome tabs.
 
     Common log signatures:
 
@@ -427,7 +427,7 @@ flowchart TD
     - `No Chrome tabs found for profile="user"` → the Chrome MCP attach profile has no open local Chrome tabs.
     - `Remote CDP for profile "<name>" is not reachable` → the configured remote CDP endpoint is not reachable from this host.
     - `Browser attachOnly is enabled ... not reachable` or `Browser attachOnly is enabled and CDP websocket ... is not reachable` → attach-only profile has no live CDP target.
-    - stale viewport / dark-mode / locale / offline overrides on attach-only or remote CDP profiles → run `openclaw browser stop --browser-profile <name>` to close the active control session and release emulation state without restarting the gateway.
+    - stale viewport / dark-mode / locale / offline overrides on attach-only or remote CDP profiles → run `merclaw browser stop --browser-profile <name>` to close the active control session and release emulation state without restarting the gateway.
 
     Deep pages:
 

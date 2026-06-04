@@ -1,4 +1,4 @@
-import { asNullableRecord as readRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { asNullableRecord as readRecord } from "merclaw/plugin-sdk/string-coerce-runtime";
 import type { FeishuMessageEvent } from "./event-types.js";
 import { normalizeFeishuExternalKey } from "./external-keys.js";
 import { parsePostContent } from "./post.js";

@@ -1,4 +1,4 @@
-import { getChatChannelMeta } from "openclaw/plugin-sdk/channel-plugin-common";
+import { getChatChannelMeta } from "merclaw/plugin-sdk/channel-plugin-common";
 import {
   listQaChannelAccountIds,
   resolveDefaultQaChannelAccountId,
@@ -19,7 +19,7 @@ export const qaChannelRuntimeMeta = {
   label: "QA Channel",
   selectionLabel: "QA Channel",
   docsPath: "/channels/qa-channel",
-  blurb: "Synthetic QA channel for OpenClaw QA runs.",
+  blurb: "Synthetic QA channel for MerClaw QA runs.",
 };
 
 type QaChannelPluginBase = Pick<

@@ -1,52 +1,52 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-source scripts/lib/openclaw-e2e-instance.sh
+source scripts/lib/merclaw-e2e-instance.sh
 
 export npm_config_loglevel=error
 export npm_config_fund=false
 export npm_config_audit=false
 export CI=true
-export OPENCLAW_NO_ONBOARD=1
-export OPENCLAW_NO_PROMPT=1
-export OPENCLAW_SKIP_PROVIDERS=1
-export OPENCLAW_SKIP_CHANNELS=1
-export OPENCLAW_DISABLE_BONJOUR=1
+export MERCLAW_NO_ONBOARD=1
+export MERCLAW_NO_PROMPT=1
+export MERCLAW_SKIP_PROVIDERS=1
+export MERCLAW_SKIP_CHANNELS=1
+export MERCLAW_DISABLE_BONJOUR=1
 export GATEWAY_AUTH_TOKEN_REF="upgrade-survivor-token"
-export OPENAI_API_KEY="sk-openclaw-upgrade-survivor"
+export OPENAI_API_KEY="sk-merclaw-upgrade-survivor"
 export DISCORD_BOT_TOKEN="upgrade-survivor-discord-token"
 export TELEGRAM_BOT_TOKEN="123456:upgrade-survivor-telegram-token"
 export FEISHU_APP_SECRET="upgrade-survivor-feishu-secret"
 export MATRIX_ACCESS_TOKEN="upgrade-survivor-matrix-token"
 export BRAVE_API_KEY="BSA_upgrade_survivor_brave_key"
 
-ARTIFACT_ROOT="$(dirname "${OPENCLAW_UPGRADE_SURVIVOR_SUMMARY_JSON:-/tmp/openclaw-upgrade-survivor-artifacts/summary.json}")"
-export OPENCLAW_UPGRADE_SURVIVOR_RUNTIME_ROOT="${OPENCLAW_UPGRADE_SURVIVOR_RUNTIME_ROOT:-/tmp/openclaw-upgrade-survivor-runtime}"
-RUNTIME_ROOT="$OPENCLAW_UPGRADE_SURVIVOR_RUNTIME_ROOT"
-STATE_HOME_ROOT="${OPENCLAW_UPGRADE_SURVIVOR_STATE_HOME_ROOT:-$RUNTIME_ROOT/state-home}"
+ARTIFACT_ROOT="$(dirname "${MERCLAW_UPGRADE_SURVIVOR_SUMMARY_JSON:-/tmp/merclaw-upgrade-survivor-artifacts/summary.json}")"
+export MERCLAW_UPGRADE_SURVIVOR_RUNTIME_ROOT="${MERCLAW_UPGRADE_SURVIVOR_RUNTIME_ROOT:-/tmp/merclaw-upgrade-survivor-runtime}"
+RUNTIME_ROOT="$MERCLAW_UPGRADE_SURVIVOR_RUNTIME_ROOT"
+STATE_HOME_ROOT="${MERCLAW_UPGRADE_SURVIVOR_STATE_HOME_ROOT:-$RUNTIME_ROOT/state-home}"
 mkdir -p "$ARTIFACT_ROOT"
 mkdir -p "$RUNTIME_ROOT"
-export TMPDIR="${OPENCLAW_UPGRADE_SURVIVOR_TMPDIR:-$RUNTIME_ROOT/tmp}"
-export OPENCLAW_TEST_STATE_TMPDIR="${OPENCLAW_UPGRADE_SURVIVOR_TEST_STATE_TMPDIR:-$RUNTIME_ROOT/state-tmp}"
-mkdir -p "$TMPDIR" "$OPENCLAW_TEST_STATE_TMPDIR"
+export TMPDIR="${MERCLAW_UPGRADE_SURVIVOR_TMPDIR:-$RUNTIME_ROOT/tmp}"
+export MERCLAW_TEST_STATE_TMPDIR="${MERCLAW_UPGRADE_SURVIVOR_TEST_STATE_TMPDIR:-$RUNTIME_ROOT/state-tmp}"
+mkdir -p "$TMPDIR" "$MERCLAW_TEST_STATE_TMPDIR"
 export npm_config_prefix="$ARTIFACT_ROOT/npm-prefix"
 export NPM_CONFIG_PREFIX="$npm_config_prefix"
-export npm_config_cache="${OPENCLAW_UPGRADE_SURVIVOR_NPM_CACHE:-$OPENCLAW_UPGRADE_SURVIVOR_RUNTIME_ROOT/npm-cache}"
+export npm_config_cache="${MERCLAW_UPGRADE_SURVIVOR_NPM_CACHE:-$MERCLAW_UPGRADE_SURVIVOR_RUNTIME_ROOT/npm-cache}"
 export NPM_CONFIG_CACHE="$npm_config_cache"
 export npm_config_tmp="$TMPDIR"
 mkdir -p "$npm_config_prefix" "$npm_config_cache"
 chmod 700 "$npm_config_cache" || true
 export PATH="$npm_config_prefix/bin:$PATH"
 
-SUMMARY_JSON="${OPENCLAW_UPGRADE_SURVIVOR_SUMMARY_JSON:-$ARTIFACT_ROOT/summary.json}"
+SUMMARY_JSON="${MERCLAW_UPGRADE_SURVIVOR_SUMMARY_JSON:-$ARTIFACT_ROOT/summary.json}"
 PHASE_LOG="$ARTIFACT_ROOT/phases.jsonl"
-BASELINE_RAW="${OPENCLAW_UPGRADE_SURVIVOR_BASELINE:?missing OPENCLAW_UPGRADE_SURVIVOR_BASELINE}"
-CANDIDATE_KIND="${OPENCLAW_UPGRADE_SURVIVOR_CANDIDATE_KIND:-tarball}"
-CANDIDATE_SPEC="${OPENCLAW_UPGRADE_SURVIVOR_CANDIDATE_SPEC:-${OPENCLAW_CURRENT_PACKAGE_TGZ:-}}"
-SCENARIO="${OPENCLAW_UPGRADE_SURVIVOR_SCENARIO:-base}"
-UPDATE_RESTART_MODE="${OPENCLAW_UPGRADE_SURVIVOR_UPDATE_RESTART_MODE:-manual}"
-ROOT_MANAGED_VPS="${OPENCLAW_UPGRADE_SURVIVOR_ROOT_MANAGED_VPS:-0}"
-COMMAND_TIMEOUT="${OPENCLAW_UPGRADE_SURVIVOR_COMMAND_TIMEOUT:-900s}"
+BASELINE_RAW="${MERCLAW_UPGRADE_SURVIVOR_BASELINE:?missing MERCLAW_UPGRADE_SURVIVOR_BASELINE}"
+CANDIDATE_KIND="${MERCLAW_UPGRADE_SURVIVOR_CANDIDATE_KIND:-tarball}"
+CANDIDATE_SPEC="${MERCLAW_UPGRADE_SURVIVOR_CANDIDATE_SPEC:-${MERCLAW_CURRENT_PACKAGE_TGZ:-}}"
+SCENARIO="${MERCLAW_UPGRADE_SURVIVOR_SCENARIO:-base}"
+UPDATE_RESTART_MODE="${MERCLAW_UPGRADE_SURVIVOR_UPDATE_RESTART_MODE:-manual}"
+ROOT_MANAGED_VPS="${MERCLAW_UPGRADE_SURVIVOR_ROOT_MANAGED_VPS:-0}"
+COMMAND_TIMEOUT="${MERCLAW_UPGRADE_SURVIVOR_COMMAND_TIMEOUT:-900s}"
 CURRENT_PHASE="setup"
 FAILURE_PHASE=""
 FAILURE_MESSAGE=""
@@ -80,37 +80,37 @@ SYSTEMCTL_SHIM_LOG="$ARTIFACT_ROOT/systemctl-shim.log"
 SYSTEMCTL_SHIM_PID_FILE="$ARTIFACT_ROOT/systemctl-shim.pid"
 SYSTEMCTL_SHIM_DAEMON_LOG="$ARTIFACT_ROOT/systemctl-shim-gateway.log"
 CONFIG_COVERAGE_JSON="$ARTIFACT_ROOT/config-recipe.json"
-export OPENCLAW_UPGRADE_SURVIVOR_CONFIG_COVERAGE_JSON="$CONFIG_COVERAGE_JSON"
+export MERCLAW_UPGRADE_SURVIVOR_CONFIG_COVERAGE_JSON="$CONFIG_COVERAGE_JSON"
 rm -f "$SUMMARY_JSON" "$CONFIG_COVERAGE_JSON"
 : >"$PHASE_LOG"
 
 validate_baseline_package_spec() {
   local spec="$1"
-  if [[ "$spec" =~ ^openclaw@(alpha|beta|latest|[0-9]{4}\.[1-9][0-9]*\.[1-9][0-9]*(-[1-9][0-9]*|-(alpha|beta)\.[1-9][0-9]*)?)$ ]]; then
+  if [[ "$spec" =~ ^merclaw@(alpha|beta|latest|[0-9]{4}\.[1-9][0-9]*\.[1-9][0-9]*(-[1-9][0-9]*|-(alpha|beta)\.[1-9][0-9]*)?)$ ]]; then
     return 0
   fi
-  echo "OPENCLAW_UPGRADE_SURVIVOR_BASELINE must be openclaw@latest, openclaw@beta, openclaw@alpha, an exact OpenClaw release version, or a bare release version; got: $spec" >&2
+  echo "MERCLAW_UPGRADE_SURVIVOR_BASELINE must be merclaw@latest, merclaw@beta, merclaw@alpha, an exact MerClaw release version, or a bare release version; got: $spec" >&2
   return 1
 }
 
 normalize_baseline() {
   local raw="${BASELINE_RAW//[[:space:]]/}"
   if [ -z "$raw" ]; then
-    echo "OPENCLAW_UPGRADE_SURVIVOR_BASELINE cannot be empty" >&2
+    echo "MERCLAW_UPGRADE_SURVIVOR_BASELINE cannot be empty" >&2
     return 1
   fi
   case "$raw" in
-    openclaw@*)
+    merclaw@*)
       baseline_spec="$raw"
-      baseline_version="${raw#openclaw@}"
+      baseline_version="${raw#merclaw@}"
       ;;
     *@*)
-      echo "OPENCLAW_UPGRADE_SURVIVOR_BASELINE must be openclaw@<version> or a bare version" >&2
+      echo "MERCLAW_UPGRADE_SURVIVOR_BASELINE must be merclaw@<version> or a bare version" >&2
       return 1
       ;;
     *)
       baseline_version="$raw"
-      baseline_spec="openclaw@$raw"
+      baseline_spec="merclaw@$raw"
       ;;
   esac
   case "$baseline_version" in
@@ -119,7 +119,7 @@ normalize_baseline() {
       baseline_version_expected="0"
       ;;
     dev | main | "")
-      echo "OPENCLAW_UPGRADE_SURVIVOR_BASELINE must be openclaw@latest, openclaw@beta, openclaw@alpha, openclaw@<version>, or a bare version" >&2
+      echo "MERCLAW_UPGRADE_SURVIVOR_BASELINE must be merclaw@latest, merclaw@beta, merclaw@alpha, merclaw@<version>, or a bare version" >&2
       return 1
       ;;
     *)
@@ -134,7 +134,7 @@ validate_update_restart_mode() {
     manual | auto-auth)
       ;;
     *)
-      echo "OPENCLAW_UPGRADE_SURVIVOR_UPDATE_RESTART_MODE must be manual or auto-auth; got: $UPDATE_RESTART_MODE" >&2
+      echo "MERCLAW_UPGRADE_SURVIVOR_UPDATE_RESTART_MODE must be manual or auto-auth; got: $UPDATE_RESTART_MODE" >&2
       return 1
       ;;
   esac
@@ -197,8 +197,8 @@ const summary = {
   },
   scenario: process.env.SUMMARY_SCENARIO || "base",
   candidate: {
-    kind: process.env.OPENCLAW_UPGRADE_SURVIVOR_CANDIDATE_KIND || null,
-    spec: process.env.OPENCLAW_UPGRADE_SURVIVOR_CANDIDATE_SPEC || process.env.OPENCLAW_CURRENT_PACKAGE_TGZ || null,
+    kind: process.env.MERCLAW_UPGRADE_SURVIVOR_CANDIDATE_KIND || null,
+    spec: process.env.MERCLAW_UPGRADE_SURVIVOR_CANDIDATE_SPEC || process.env.MERCLAW_CURRENT_PACKAGE_TGZ || null,
     version: process.env.SUMMARY_CANDIDATE_VERSION || null,
   },
   installedVersion: process.env.SUMMARY_INSTALLED_VERSION || null,
@@ -227,12 +227,12 @@ cleanup() {
   if [ -n "${plugin_registry_pid:-}" ]; then
     kill "$plugin_registry_pid" >/dev/null 2>&1 || true
   fi
-  openclaw_e2e_terminate_gateways "${gateway_pid:-}"
+  merclaw_e2e_terminate_gateways "${gateway_pid:-}"
   if [ -s "$SYSTEMCTL_SHIM_PID_FILE" ]; then
     local shim_pid
     shim_pid="$(cat "$SYSTEMCTL_SHIM_PID_FILE" 2>/dev/null || true)"
     if [[ "$shim_pid" =~ ^[0-9]+$ ]] && [ "$shim_pid" -gt 1 ]; then
-      openclaw_e2e_terminate_gateways "$shim_pid"
+      merclaw_e2e_terminate_gateways "$shim_pid"
     fi
   fi
 }
@@ -276,17 +276,17 @@ phase() {
 }
 
 package_root() {
-  printf '%s/lib/node_modules/openclaw\n' "$npm_config_prefix"
+  printf '%s/lib/node_modules/merclaw\n' "$npm_config_prefix"
 }
 
 legacy_runtime_deps_symlink_plugin() {
-  local plugin="${OPENCLAW_UPGRADE_SURVIVOR_LEGACY_RUNTIME_DEPS_SYMLINK:-}"
+  local plugin="${MERCLAW_UPGRADE_SURVIVOR_LEGACY_RUNTIME_DEPS_SYMLINK:-}"
   if [ -z "$plugin" ]; then
     return 1
   fi
   case "$plugin" in
     *[!A-Za-z0-9._-]*)
-      echo "OPENCLAW_UPGRADE_SURVIVOR_LEGACY_RUNTIME_DEPS_SYMLINK must be a plugin id, got: $plugin" >&2
+      echo "MERCLAW_UPGRADE_SURVIVOR_LEGACY_RUNTIME_DEPS_SYMLINK must be a plugin id, got: $plugin" >&2
       return 2
       ;;
   esac
@@ -295,7 +295,7 @@ legacy_runtime_deps_symlink_plugin() {
 
 legacy_runtime_deps_symlink_target() {
   local plugin="$1"
-  printf '%s/@openclaw-upgrade-survivor/%s-runtime-dep\n' "$(dirname "$(package_root)")" "$plugin"
+  printf '%s/@merclaw-upgrade-survivor/%s-runtime-dep\n' "$(dirname "$(package_root)")" "$plugin"
 }
 
 legacy_runtime_deps_symlink_source() {
@@ -310,7 +310,7 @@ plugin_deps_cleanup_enabled() {
 }
 
 plugin_deps_cleanup_plugins() {
-  printf '%s\n' "${OPENCLAW_UPGRADE_SURVIVOR_PLUGIN_DEPS_CLEANUP_PLUGINS:-discord telegram}"
+  printf '%s\n' "${MERCLAW_UPGRADE_SURVIVOR_PLUGIN_DEPS_CLEANUP_PLUGINS:-discord telegram}"
 }
 
 plugin_deps_cleanup_plugin_dirs() {
@@ -331,20 +331,20 @@ source_only_plugin_shadow_enabled() {
 seed_source_only_plugin_shadow() {
   source_only_plugin_shadow_enabled || return 0
 
-  local shadow_root="$OPENCLAW_STATE_DIR/extensions/opik-openclaw"
+  local shadow_root="$MERCLAW_STATE_DIR/extensions/opik-merclaw"
   mkdir -p "$shadow_root/src"
   cat >"$shadow_root/package.json" <<'JSON'
 {
-  "name": "@opik/opik-openclaw",
+  "name": "@opik/opik-merclaw",
   "version": "0.0.0-upgrade-survivor",
-  "openclaw": {
+  "merclaw": {
     "extensions": ["./src/index.ts"]
   }
 }
 JSON
-  cat >"$shadow_root/openclaw.plugin.json" <<'JSON'
+  cat >"$shadow_root/merclaw.plugin.json" <<'JSON'
 {
-  "id": "opik-openclaw",
+  "id": "opik-merclaw",
   "activation": {
     "onStartup": false
   },
@@ -357,7 +357,7 @@ JSON
 JSON
   cat >"$shadow_root/src/index.ts" <<'TS'
 export default {
-  id: "opik-openclaw",
+  id: "opik-merclaw",
   name: "Source-only Opik shadow",
   register() {},
 };
@@ -370,7 +370,7 @@ configure_configured_plugin_install_fixture_registry() {
 
   local fixture_root="$ARTIFACT_ROOT/configured-plugin-installs-npm-fixture"
   local package_dir="$fixture_root/package"
-  local tarball="$fixture_root/openclaw-brave-plugin-2026.5.2.tgz"
+  local tarball="$fixture_root/merclaw-brave-plugin-2026.5.2.tgz"
   local port_file="$fixture_root/npm-registry-port"
   local log_file="$fixture_root/npm-registry.log"
   mkdir -p "$package_dir"
@@ -383,16 +383,16 @@ fs.writeFileSync(
   path.join(root, "package.json"),
   `${JSON.stringify(
     {
-      name: "@openclaw/brave-plugin",
+      name: "@merclaw/brave-plugin",
       version: "2026.5.2",
-      openclaw: { extensions: ["./index.js"] },
+      merclaw: { extensions: ["./index.js"] },
     },
     null,
     2,
   )}\n`,
 );
 fs.writeFileSync(
-  path.join(root, "openclaw.plugin.json"),
+  path.join(root, "merclaw.plugin.json"),
   `${JSON.stringify(
     {
       id: "brave",
@@ -427,7 +427,7 @@ NODE
   tar -czf "$tarball" -C "$fixture_root" package
   node scripts/e2e/lib/plugins/npm-registry-server.mjs \
     "$port_file" \
-    "@openclaw/brave-plugin" \
+    "@merclaw/brave-plugin" \
     "2026.5.2" \
     "$tarball" \
     >"$log_file" 2>&1 &
@@ -457,16 +457,16 @@ legacy_plugin_dependency_probe_paths() {
   while IFS= read -r plugin_dir; do
     printf '%s\n' \
       "$plugin_dir/node_modules" \
-      "$plugin_dir/.openclaw-runtime-deps.json" \
-      "$plugin_dir/.openclaw-runtime-deps-stamp.json" \
-      "$plugin_dir/.openclaw-runtime-deps-copy-upgrade-survivor" \
-      "$plugin_dir/.openclaw-install-stage-upgrade-survivor" \
-      "$plugin_dir/.openclaw-pnpm-store"
+      "$plugin_dir/.merclaw-runtime-deps.json" \
+      "$plugin_dir/.merclaw-runtime-deps-stamp.json" \
+      "$plugin_dir/.merclaw-runtime-deps-copy-upgrade-survivor" \
+      "$plugin_dir/.merclaw-install-stage-upgrade-survivor" \
+      "$plugin_dir/.merclaw-pnpm-store"
   done < <(plugin_deps_cleanup_plugin_dirs "$plugin")
   printf '%s\n' \
     "$(package_root)/.local/bundled-plugin-runtime-deps/$plugin-upgrade-survivor" \
-    "$OPENCLAW_STATE_DIR/.local/bundled-plugin-runtime-deps/$plugin-upgrade-survivor" \
-    "$OPENCLAW_STATE_DIR/plugin-runtime-deps/$plugin-upgrade-survivor"
+    "$MERCLAW_STATE_DIR/.local/bundled-plugin-runtime-deps/$plugin-upgrade-survivor" \
+    "$MERCLAW_STATE_DIR/plugin-runtime-deps/$plugin-upgrade-survivor"
 }
 
 install_baseline_plugin_dependencies() {
@@ -492,27 +492,27 @@ seed_legacy_plugin_dependency_debris() {
     [ -n "$plugin_dir" ] || continue
     found=1
     mkdir -p \
-      "$plugin_dir/node_modules/openclaw-upgrade-survivor-dep" \
-      "$plugin_dir/.openclaw-runtime-deps-copy-upgrade-survivor/node_modules/openclaw-upgrade-survivor-dep" \
-      "$plugin_dir/.openclaw-install-stage-upgrade-survivor" \
-      "$plugin_dir/.openclaw-pnpm-store" \
-      "$(package_root)/.local/bundled-plugin-runtime-deps/$plugin-upgrade-survivor/node_modules/openclaw-upgrade-survivor-dep" \
-      "$OPENCLAW_STATE_DIR/.local/bundled-plugin-runtime-deps/$plugin-upgrade-survivor/node_modules/openclaw-upgrade-survivor-dep" \
-      "$OPENCLAW_STATE_DIR/plugin-runtime-deps/$plugin-upgrade-survivor/node_modules/openclaw-upgrade-survivor-dep"
-    printf '{"name":"openclaw-upgrade-survivor-dep","version":"0.0.0"}\n' \
-      >"$plugin_dir/node_modules/openclaw-upgrade-survivor-dep/package.json"
+      "$plugin_dir/node_modules/merclaw-upgrade-survivor-dep" \
+      "$plugin_dir/.merclaw-runtime-deps-copy-upgrade-survivor/node_modules/merclaw-upgrade-survivor-dep" \
+      "$plugin_dir/.merclaw-install-stage-upgrade-survivor" \
+      "$plugin_dir/.merclaw-pnpm-store" \
+      "$(package_root)/.local/bundled-plugin-runtime-deps/$plugin-upgrade-survivor/node_modules/merclaw-upgrade-survivor-dep" \
+      "$MERCLAW_STATE_DIR/.local/bundled-plugin-runtime-deps/$plugin-upgrade-survivor/node_modules/merclaw-upgrade-survivor-dep" \
+      "$MERCLAW_STATE_DIR/plugin-runtime-deps/$plugin-upgrade-survivor/node_modules/merclaw-upgrade-survivor-dep"
+    printf '{"name":"merclaw-upgrade-survivor-dep","version":"0.0.0"}\n' \
+      >"$plugin_dir/node_modules/merclaw-upgrade-survivor-dep/package.json"
     printf '{"plugin":"%s","scenario":"plugin-deps-cleanup"}\n' "$plugin" \
-      >"$plugin_dir/.openclaw-runtime-deps.json"
+      >"$plugin_dir/.merclaw-runtime-deps.json"
     printf '{"plugin":"%s","scenario":"plugin-deps-cleanup","stale":true}\n' "$plugin" \
-      >"$plugin_dir/.openclaw-runtime-deps-stamp.json"
-    printf '{"name":"openclaw-upgrade-survivor-dep","version":"0.0.0"}\n' \
-      >"$plugin_dir/.openclaw-runtime-deps-copy-upgrade-survivor/node_modules/openclaw-upgrade-survivor-dep/package.json"
-    printf '{"name":"openclaw-upgrade-survivor-dep","version":"0.0.0"}\n' \
-      >"$(package_root)/.local/bundled-plugin-runtime-deps/$plugin-upgrade-survivor/node_modules/openclaw-upgrade-survivor-dep/package.json"
-    printf '{"name":"openclaw-upgrade-survivor-dep","version":"0.0.0"}\n' \
-      >"$OPENCLAW_STATE_DIR/.local/bundled-plugin-runtime-deps/$plugin-upgrade-survivor/node_modules/openclaw-upgrade-survivor-dep/package.json"
-    printf '{"name":"openclaw-upgrade-survivor-dep","version":"0.0.0"}\n' \
-      >"$OPENCLAW_STATE_DIR/plugin-runtime-deps/$plugin-upgrade-survivor/node_modules/openclaw-upgrade-survivor-dep/package.json"
+      >"$plugin_dir/.merclaw-runtime-deps-stamp.json"
+    printf '{"name":"merclaw-upgrade-survivor-dep","version":"0.0.0"}\n' \
+      >"$plugin_dir/.merclaw-runtime-deps-copy-upgrade-survivor/node_modules/merclaw-upgrade-survivor-dep/package.json"
+    printf '{"name":"merclaw-upgrade-survivor-dep","version":"0.0.0"}\n' \
+      >"$(package_root)/.local/bundled-plugin-runtime-deps/$plugin-upgrade-survivor/node_modules/merclaw-upgrade-survivor-dep/package.json"
+    printf '{"name":"merclaw-upgrade-survivor-dep","version":"0.0.0"}\n' \
+      >"$MERCLAW_STATE_DIR/.local/bundled-plugin-runtime-deps/$plugin-upgrade-survivor/node_modules/merclaw-upgrade-survivor-dep/package.json"
+    printf '{"name":"merclaw-upgrade-survivor-dep","version":"0.0.0"}\n' \
+      >"$MERCLAW_STATE_DIR/plugin-runtime-deps/$plugin-upgrade-survivor/node_modules/merclaw-upgrade-survivor-dep/package.json"
     echo "Seeded legacy plugin dependency debris for configured plugin: $plugin"
   done
 
@@ -602,7 +602,7 @@ seed_legacy_runtime_deps_symlink() {
   target_dir="$(legacy_runtime_deps_symlink_target "$plugin")"
   mkdir -p "$source_dir"
   mkdir -p "$(dirname "$target_dir")"
-  printf '{"name":"openclaw-upgrade-survivor-legacy-runtime-deps","version":"0.0.0"}\n' \
+  printf '{"name":"merclaw-upgrade-survivor-legacy-runtime-deps","version":"0.0.0"}\n' \
     >"$source_dir/package.json"
   rm -rf "$target_dir"
   ln -s "$source_dir" "$target_dir"
@@ -649,21 +649,21 @@ rm_rf_retry() {
 }
 
 reset_run_state() {
-  rm_rf_retry "$npm_config_prefix" "$TMPDIR" "$OPENCLAW_TEST_STATE_TMPDIR" "$STATE_HOME_ROOT"
+  rm_rf_retry "$npm_config_prefix" "$TMPDIR" "$MERCLAW_TEST_STATE_TMPDIR" "$STATE_HOME_ROOT"
   rm -f "$SYSTEMCTL_SHIM_PID_FILE" "$SYSTEMCTL_SHIM_DAEMON_LOG"
-  mkdir -p "$npm_config_prefix" "$npm_config_cache" "$TMPDIR" "$OPENCLAW_TEST_STATE_TMPDIR"
+  mkdir -p "$npm_config_prefix" "$npm_config_cache" "$TMPDIR" "$MERCLAW_TEST_STATE_TMPDIR"
 }
 
 install_baseline() {
   normalize_baseline
   echo "Installing baseline package: $baseline_spec"
-  if ! openclaw_e2e_maybe_timeout "${OPENCLAW_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install -g --prefix "$npm_config_prefix" "$baseline_spec" --no-fund --no-audit >"$BASELINE_INSTALL_LOG" 2>&1; then
+  if ! merclaw_e2e_maybe_timeout "${MERCLAW_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install -g --prefix "$npm_config_prefix" "$baseline_spec" --no-fund --no-audit >"$BASELINE_INSTALL_LOG" 2>&1; then
     echo "baseline npm install failed" >&2
     cat "$BASELINE_INSTALL_LOG" >&2 || true
     return 1
   fi
-  if ! command -v openclaw >/dev/null; then
-    echo "baseline install did not expose openclaw on PATH" >&2
+  if ! command -v merclaw >/dev/null; then
+    echo "baseline install did not expose merclaw on PATH" >&2
     echo "PATH=$PATH" >&2
     find "$npm_config_prefix" -maxdepth 3 -type f -o -type l >&2 || true
     return 1
@@ -676,31 +676,31 @@ install_baseline() {
   fi
   baseline_version="$installed_version"
   local version_output
-  if ! version_output="$(openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" openclaw --version 2>&1)"; then
-    echo "baseline openclaw --version failed" >&2
+  if ! version_output="$(merclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" merclaw --version 2>&1)"; then
+    echo "baseline merclaw --version failed" >&2
     echo "$version_output" >&2
     return 1
   fi
   if [[ "$version_output" != *"$baseline_version"* ]]; then
-    echo "baseline openclaw --version mismatch: expected output to include $baseline_version" >&2
+    echo "baseline merclaw --version mismatch: expected output to include $baseline_version" >&2
     echo "$version_output" >&2
     return 1
   fi
 }
 
 seed_state() {
-  openclaw_e2e_eval_test_state_from_b64 "${OPENCLAW_TEST_STATE_FUNCTION_B64:?missing OPENCLAW_TEST_STATE_FUNCTION_B64}"
+  merclaw_e2e_eval_test_state_from_b64 "${MERCLAW_TEST_STATE_FUNCTION_B64:?missing MERCLAW_TEST_STATE_FUNCTION_B64}"
   if [ "$ROOT_MANAGED_VPS" = "1" ]; then
     if [ "$(id -u)" -ne 0 ]; then
       echo "root-managed VPS survivor mode must run as uid 0" >&2
       return 1
     fi
-    rm -rf /root/.openclaw /root/workspace
-    openclaw_test_state_create /root minimal
+    rm -rf /root/.merclaw /root/workspace
+    merclaw_test_state_create /root minimal
   else
-    openclaw_test_state_create "$STATE_HOME_ROOT" minimal
+    merclaw_test_state_create "$STATE_HOME_ROOT" minimal
   fi
-  export OPENCLAW_UPGRADE_SURVIVOR_BASELINE_VERSION="$baseline_version"
+  export MERCLAW_UPGRADE_SURVIVOR_BASELINE_VERSION="$baseline_version"
   node scripts/e2e/lib/upgrade-survivor/assertions.mjs seed
 }
 
@@ -711,7 +711,7 @@ apply_baseline_config_recipe() {
 }
 
 validate_baseline_config() {
-  if ! openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" openclaw config validate >"$BASELINE_CONFIG_VALIDATE_LOG" 2>&1; then
+  if ! merclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" merclaw config validate >"$BASELINE_CONFIG_VALIDATE_LOG" 2>&1; then
     echo "generated baseline config failed baseline validation" >&2
     cat "$BASELINE_CONFIG_VALIDATE_LOG" >&2 || true
     return 1
@@ -725,9 +725,9 @@ install_update_restart_systemctl_shim() {
 #!/usr/bin/env bash
 set -euo pipefail
 
-log_file="${OPENCLAW_UPGRADE_SURVIVOR_SYSTEMCTL_SHIM_LOG:-/tmp/openclaw-systemctl-shim.log}"
-pid_file="${OPENCLAW_UPGRADE_SURVIVOR_SYSTEMCTL_SHIM_PID_FILE:-/tmp/openclaw-systemctl-shim.pid}"
-daemon_log="${OPENCLAW_UPGRADE_SURVIVOR_SYSTEMCTL_SHIM_DAEMON_LOG:-/tmp/openclaw-systemctl-shim-gateway.log}"
+log_file="${MERCLAW_UPGRADE_SURVIVOR_SYSTEMCTL_SHIM_LOG:-/tmp/merclaw-systemctl-shim.log}"
+pid_file="${MERCLAW_UPGRADE_SURVIVOR_SYSTEMCTL_SHIM_PID_FILE:-/tmp/merclaw-systemctl-shim.pid}"
+daemon_log="${MERCLAW_UPGRADE_SURVIVOR_SYSTEMCTL_SHIM_DAEMON_LOG:-/tmp/merclaw-systemctl-shim-gateway.log}"
 printf '%s\n' "$*" >>"$log_file"
 
 filtered=()
@@ -771,7 +771,7 @@ stop_gateway() {
 }
 
 unit_path() {
-  printf '%s/.config/systemd/user/openclaw-gateway.service\n' "${HOME:?missing HOME}"
+  printf '%s/.config/systemd/user/merclaw-gateway.service\n' "${HOME:?missing HOME}"
 }
 
 load_unit_environment() {
@@ -854,14 +854,14 @@ case "$command" in
 esac
 SHIM
   chmod +x "$shim_dir/systemctl"
-  export OPENCLAW_UPGRADE_SURVIVOR_SYSTEMCTL_SHIM_LOG="$SYSTEMCTL_SHIM_LOG"
-  export OPENCLAW_UPGRADE_SURVIVOR_SYSTEMCTL_SHIM_PID_FILE="$SYSTEMCTL_SHIM_PID_FILE"
-  export OPENCLAW_UPGRADE_SURVIVOR_SYSTEMCTL_SHIM_DAEMON_LOG="$SYSTEMCTL_SHIM_DAEMON_LOG"
+  export MERCLAW_UPGRADE_SURVIVOR_SYSTEMCTL_SHIM_LOG="$SYSTEMCTL_SHIM_LOG"
+  export MERCLAW_UPGRADE_SURVIVOR_SYSTEMCTL_SHIM_PID_FILE="$SYSTEMCTL_SHIM_PID_FILE"
+  export MERCLAW_UPGRADE_SURVIVOR_SYSTEMCTL_SHIM_DAEMON_LOG="$SYSTEMCTL_SHIM_DAEMON_LOG"
   export PATH="$shim_dir:$PATH"
 }
 
 install_update_restart_service_unit() {
-  if ! openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" env -u OPENCLAW_GATEWAY_TOKEN -u OPENCLAW_GATEWAY_PASSWORD openclaw gateway install --force --json >"$BASELINE_SERVICE_INSTALL_JSON" 2>"$BASELINE_SERVICE_INSTALL_ERR"; then
+  if ! merclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" env -u MERCLAW_GATEWAY_TOKEN -u MERCLAW_GATEWAY_PASSWORD merclaw gateway install --force --json >"$BASELINE_SERVICE_INSTALL_JSON" 2>"$BASELINE_SERVICE_INSTALL_ERR"; then
     echo "baseline gateway service install failed" >&2
     cat "$BASELINE_SERVICE_INSTALL_ERR" >&2 || true
     cat "$BASELINE_SERVICE_INSTALL_JSON" >&2 || true
@@ -875,9 +875,9 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
-const stateDir = process.env.OPENCLAW_STATE_DIR;
+const stateDir = process.env.MERCLAW_STATE_DIR;
 if (!stateDir) {
-  throw new Error("missing OPENCLAW_STATE_DIR");
+  throw new Error("missing MERCLAW_STATE_DIR");
 }
 
 const base64UrlEncode = (buf) =>
@@ -956,8 +956,8 @@ NODE
 }
 
 write_update_restart_service_secretref_env() {
-  mkdir -p "$OPENCLAW_STATE_DIR"
-  local dotenv_path="$OPENCLAW_STATE_DIR/.env"
+  mkdir -p "$MERCLAW_STATE_DIR"
+  local dotenv_path="$MERCLAW_STATE_DIR/.env"
   local tmp_path="$dotenv_path.tmp.$$"
   if [ -f "$dotenv_path" ]; then
     grep -v '^GATEWAY_AUTH_TOKEN_REF=' "$dotenv_path" >"$tmp_path" || true
@@ -970,8 +970,8 @@ write_update_restart_service_secretref_env() {
 }
 
 write_update_restart_service_auth_env() {
-  mkdir -p "$OPENCLAW_STATE_DIR"
-  local dotenv_path="$OPENCLAW_STATE_DIR/.env"
+  mkdir -p "$MERCLAW_STATE_DIR"
+  local dotenv_path="$MERCLAW_STATE_DIR/.env"
   local tmp_path="$dotenv_path.tmp.$$"
   if [ -f "$dotenv_path" ]; then
     grep -v '^GATEWAY_AUTH_TOKEN_REF=' "$dotenv_path" >"$tmp_path" || true
@@ -980,7 +980,7 @@ write_update_restart_service_auth_env() {
   fi
   printf 'GATEWAY_AUTH_TOKEN_REF=%s\n' "$GATEWAY_AUTH_TOKEN_REF" >>"$tmp_path"
   mv "$tmp_path" "$dotenv_path"
-  local systemd_env_path="$OPENCLAW_STATE_DIR/gateway.systemd.env"
+  local systemd_env_path="$MERCLAW_STATE_DIR/gateway.systemd.env"
   printf 'GATEWAY_AUTH_TOKEN_REF=%s\n' "$GATEWAY_AUTH_TOKEN_REF" >"$systemd_env_path"
 }
 
@@ -1009,15 +1009,15 @@ prepare_update_restart_probe_current_install() {
 }
 
 assert_baseline_state() {
-  OPENCLAW_UPGRADE_SURVIVOR_ASSERT_STAGE=baseline \
+  MERCLAW_UPGRADE_SURVIVOR_ASSERT_STAGE=baseline \
     node scripts/e2e/lib/upgrade-survivor/assertions.mjs assert-config
-  OPENCLAW_UPGRADE_SURVIVOR_ASSERT_STAGE=baseline \
+  MERCLAW_UPGRADE_SURVIVOR_ASSERT_STAGE=baseline \
     node scripts/e2e/lib/upgrade-survivor/assertions.mjs assert-state
 }
 
 resolve_candidate_version() {
   if [ -z "$CANDIDATE_SPEC" ]; then
-    echo "missing OPENCLAW_UPGRADE_SURVIVOR_CANDIDATE_SPEC" >&2
+    echo "missing MERCLAW_UPGRADE_SURVIVOR_CANDIDATE_SPEC" >&2
     return 1
   fi
   case "$CANDIDATE_KIND" in
@@ -1044,10 +1044,10 @@ resolve_candidate_version() {
     echo "could not resolve candidate version from $CANDIDATE_KIND:$CANDIDATE_SPEC" >&2
     return 1
   fi
-  OPENCLAW_PACKAGE_ACCEPTANCE_LEGACY_COMPAT="$(
+  MERCLAW_PACKAGE_ACCEPTANCE_LEGACY_COMPAT="$(
     node scripts/e2e/lib/package-compat.mjs "$candidate_version"
   )"
-  export OPENCLAW_PACKAGE_ACCEPTANCE_LEGACY_COMPAT
+  export MERCLAW_PACKAGE_ACCEPTANCE_LEGACY_COMPAT
 }
 
 candidate_update_spec() {
@@ -1097,9 +1097,9 @@ update_candidate() {
   local update_args=(update --tag "$update_spec" --yes --json)
   local update_env=(
     env
-    -u OPENCLAW_GATEWAY_TOKEN
-    -u OPENCLAW_GATEWAY_PASSWORD
-    -u OPENCLAW_ALLOW_ROOT
+    -u MERCLAW_GATEWAY_TOKEN
+    -u MERCLAW_GATEWAY_PASSWORD
+    -u MERCLAW_ALLOW_ROOT
   )
   if [ "$UPDATE_RESTART_MODE" = "manual" ]; then
     update_args+=(--no-restart)
@@ -1107,10 +1107,10 @@ update_candidate() {
     update_start="$(node -e "process.stdout.write(String(Date.now()))")"
   fi
   if [ "$ROOT_MANAGED_VPS" != "1" ]; then
-    update_env+=(OPENCLAW_ALLOW_ROOT=1)
+    update_env+=(MERCLAW_ALLOW_ROOT=1)
   fi
-  if ! openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" "${update_env[@]}" openclaw "${update_args[@]}" >"$UPDATE_JSON" 2>"$UPDATE_ERR"; then
-    echo "openclaw update failed" >&2
+  if ! merclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" "${update_env[@]}" merclaw "${update_args[@]}" >"$UPDATE_JSON" 2>"$UPDATE_ERR"; then
+    echo "merclaw update failed" >&2
     cat "$UPDATE_ERR" >&2 || true
     cat "$UPDATE_JSON" >&2 || true
     return 1
@@ -1129,24 +1129,24 @@ assert_root_managed_vps_cli_usable() {
   fi
   local root_cli_env=(
     env
-    -u OPENCLAW_GATEWAY_TOKEN
-    -u OPENCLAW_GATEWAY_PASSWORD
-    -u OPENCLAW_ALLOW_ROOT
+    -u MERCLAW_GATEWAY_TOKEN
+    -u MERCLAW_GATEWAY_PASSWORD
+    -u MERCLAW_ALLOW_ROOT
   )
-  openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" "${root_cli_env[@]}" openclaw config file >"$ARTIFACT_ROOT/root-vps-config-file.out" 2>"$ARTIFACT_ROOT/root-vps-config-file.err"
-  openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" "${root_cli_env[@]}" openclaw plugins >"$ARTIFACT_ROOT/root-vps-plugins.out" 2>"$ARTIFACT_ROOT/root-vps-plugins.err"
+  merclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" "${root_cli_env[@]}" merclaw config file >"$ARTIFACT_ROOT/root-vps-config-file.out" 2>"$ARTIFACT_ROOT/root-vps-config-file.err"
+  merclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" "${root_cli_env[@]}" merclaw plugins >"$ARTIFACT_ROOT/root-vps-plugins.out" 2>"$ARTIFACT_ROOT/root-vps-plugins.err"
 }
 
 run_doctor() {
-  if ! openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" openclaw doctor --fix --non-interactive >"$DOCTOR_LOG" 2>&1; then
-    echo "openclaw doctor failed" >&2
+  if ! merclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" merclaw doctor --fix --non-interactive >"$DOCTOR_LOG" 2>&1; then
+    echo "merclaw doctor failed" >&2
     cat "$DOCTOR_LOG" >&2 || true
     return 1
   fi
 }
 
 validate_post_doctor_config() {
-  if ! openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" openclaw config validate >>"$DOCTOR_LOG" 2>&1; then
+  if ! merclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" merclaw config validate >>"$DOCTOR_LOG" 2>&1; then
     echo "post-doctor config validation failed" >&2
     cat "$DOCTOR_LOG" >&2 || true
     return 1
@@ -1174,8 +1174,8 @@ probe_gateway_endpoint() {
     --path "$path"
     --expect "$expect_kind"
   )
-  if [ -n "${OPENCLAW_UPGRADE_SURVIVOR_READYZ_ALLOW_FAILING:-}" ]; then
-    args+=(--allow-failing "$OPENCLAW_UPGRADE_SURVIVOR_READYZ_ALLOW_FAILING")
+  if [ -n "${MERCLAW_UPGRADE_SURVIVOR_READYZ_ALLOW_FAILING:-}" ]; then
+    args+=(--allow-failing "$MERCLAW_UPGRADE_SURVIVOR_READYZ_ALLOW_FAILING")
   fi
   args+=(--out "$out_file")
   start_epoch="$(node -e "process.stdout.write(String(Date.now()))")"
@@ -1186,16 +1186,16 @@ probe_gateway_endpoint() {
 
 start_gateway() {
   local port=18789
-  local budget="${OPENCLAW_UPGRADE_SURVIVOR_START_BUDGET_SECONDS:-90}"
+  local budget="${MERCLAW_UPGRADE_SURVIVOR_START_BUDGET_SECONDS:-90}"
   local start_epoch
   local ready_epoch
   start_epoch="$(node -e "process.stdout.write(String(Date.now()))")"
-  env -u OPENCLAW_GATEWAY_TOKEN -u OPENCLAW_GATEWAY_PASSWORD openclaw gateway --port "$port" --bind loopback --allow-unconfigured >"$GATEWAY_LOG" 2>&1 &
+  env -u MERCLAW_GATEWAY_TOKEN -u MERCLAW_GATEWAY_PASSWORD merclaw gateway --port "$port" --bind loopback --allow-unconfigured >"$GATEWAY_LOG" 2>&1 &
   gateway_pid="$!"
   if [ "$UPDATE_RESTART_MODE" = "auto-auth" ]; then
     printf '%s\n' "$gateway_pid" >"$SYSTEMCTL_SHIM_PID_FILE"
   fi
-  openclaw_e2e_wait_gateway_ready "$gateway_pid" "$GATEWAY_LOG" 360
+  merclaw_e2e_wait_gateway_ready "$gateway_pid" "$GATEWAY_LOG" 360
   ready_epoch="$(node -e "process.stdout.write(String(Date.now()))")"
   start_seconds=$(((ready_epoch - start_epoch + 999) / 1000))
   if [ "$start_seconds" -gt "$budget" ]; then
@@ -1214,18 +1214,18 @@ ensure_gateway_started() {
 
 check_gateway_probes() {
   healthz_seconds="$(probe_gateway_endpoint /healthz live "$HEALTHZ_JSON")"
-  export OPENCLAW_UPGRADE_SURVIVOR_READYZ_ALLOW_FAILING="discord,telegram,whatsapp,feishu,matrix"
+  export MERCLAW_UPGRADE_SURVIVOR_READYZ_ALLOW_FAILING="discord,telegram,whatsapp,feishu,matrix"
   readyz_seconds="$(probe_gateway_endpoint /readyz ready "$READYZ_JSON")"
-  unset OPENCLAW_UPGRADE_SURVIVOR_READYZ_ALLOW_FAILING
+  unset MERCLAW_UPGRADE_SURVIVOR_READYZ_ALLOW_FAILING
 }
 
 check_gateway_status() {
   local port=18789
-  local budget="${OPENCLAW_UPGRADE_SURVIVOR_STATUS_BUDGET_SECONDS:-30}"
+  local budget="${MERCLAW_UPGRADE_SURVIVOR_STATUS_BUDGET_SECONDS:-30}"
   local status_start
   local status_end
   status_start="$(node -e "process.stdout.write(String(Date.now()))")"
-  if ! openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" openclaw gateway status --url "ws://127.0.0.1:$port" --token "$GATEWAY_AUTH_TOKEN_REF" --require-rpc --timeout 30000 --json >"$STATUS_JSON" 2>"$STATUS_ERR"; then
+  if ! merclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" merclaw gateway status --url "ws://127.0.0.1:$port" --token "$GATEWAY_AUTH_TOKEN_REF" --require-rpc --timeout 30000 --json >"$STATUS_JSON" 2>"$STATUS_ERR"; then
     echo "gateway status failed" >&2
     cat "$STATUS_ERR" >&2 || true
     cat "$GATEWAY_LOG" >&2 || true

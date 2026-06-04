@@ -3,7 +3,7 @@ import {
   isHttpsUrlAllowedByHostnameSuffixAllowlist,
   normalizeHostnameSuffixAllowlist,
   type SsrFPolicy,
-} from "openclaw/plugin-sdk/ssrf-policy";
+} from "merclaw/plugin-sdk/ssrf-policy";
 
 const DEFAULT_BOT_FRAMEWORK_SERVICE_URL_HOST_ALLOWLIST = [
   // Microsoft Teams Bot Framework serviceUrl endpoints documented for

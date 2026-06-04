@@ -1,8 +1,8 @@
 import {
   findNormalizedProviderValue,
   normalizeProviderId,
-} from "@openclaw/model-catalog-core/provider-id";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+} from "@merclaw/model-catalog-core/provider-id";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { resolveProviderIdForAuth } from "../provider-auth-aliases.js";
 import {
   evaluateStoredCredentialEligibility,
@@ -31,7 +31,7 @@ const OPENAI_PROVIDER_ID = "openai";
 const OPENAI_CODEX_PROVIDER_ID = "openai";
 
 function isOpenAIApiKeyCompatibleWithCodexAuth(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   providerAuthKey: string;
   credential?: AuthProfileCredential;
   profileProvider?: string;
@@ -48,7 +48,7 @@ function isOpenAIApiKeyCompatibleWithCodexAuth(params: {
 }
 
 function isCredentialProviderCompatibleWithAuthProvider(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   providerAuthKey: string;
   credential: AuthProfileCredential;
 }): boolean {
@@ -67,7 +67,7 @@ function isCredentialProviderCompatibleWithAuthProvider(params: {
 }
 
 export function isStoredCredentialCompatibleWithAuthProvider(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   provider: string;
   credential: AuthProfileCredential;
 }): boolean {
@@ -79,7 +79,7 @@ export function isStoredCredentialCompatibleWithAuthProvider(params: {
 }
 
 function isConfiguredProfileCompatibleWithAuthProvider(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   providerAuthKey: string;
   provider: string;
   mode?: string;
@@ -99,7 +99,7 @@ function isConfiguredProfileCompatibleWithAuthProvider(params: {
 }
 
 function listProfilesCompatibleWithAuthProvider(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   store: AuthProfileStore;
   provider: string;
   providerAuthKey: string;
@@ -119,7 +119,7 @@ function listProfilesCompatibleWithAuthProvider(params: {
 }
 
 function resolveProviderAuthMode(
-  cfg: OpenClawConfig | undefined,
+  cfg: MerClawConfig | undefined,
   provider: string,
 ): string | undefined {
   const providers = cfg?.models?.providers;
@@ -131,13 +131,13 @@ function resolveProviderAuthMode(
   return typeof auth === "string" ? auth : undefined;
 }
 
-function providerAllowsAwsSdkAuth(cfg: OpenClawConfig | undefined, provider: string): boolean {
+function providerAllowsAwsSdkAuth(cfg: MerClawConfig | undefined, provider: string): boolean {
   const authMode = resolveProviderAuthMode(cfg, provider);
   return authMode === "aws-sdk";
 }
 
 export function isConfiguredAwsSdkAuthProfileForProvider(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   provider: string;
   profileId: string;
 }): boolean {
@@ -155,7 +155,7 @@ export function isConfiguredAwsSdkAuthProfileForProvider(params: {
 }
 
 export function resolveAuthProfileEligibility(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   store: AuthProfileStore;
   provider: string;
   profileId: string;
@@ -215,7 +215,7 @@ export function resolveAuthProfileEligibility(params: {
 }
 
 export function resolveAuthProfileOrder(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   store: AuthProfileStore;
   provider: string;
   preferredProfile?: string;
@@ -370,7 +370,7 @@ function resolveAuthOrder(
 }
 
 function isNativeCredentialProviderCompatibleWithAuthProvider(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   providerAuthKey: string;
   credential: AuthProfileCredential | undefined;
 }): boolean {

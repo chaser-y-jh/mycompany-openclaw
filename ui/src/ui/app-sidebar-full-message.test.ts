@@ -3,10 +3,10 @@
 import { describe, expect, it, vi } from "vitest";
 import type { SidebarContent } from "./sidebar-content.ts";
 
-describe("OpenClawApp full-message sidebar upgrade", () => {
+describe("MerClawApp full-message sidebar upgrade", () => {
   async function createApp() {
     await import("./app.ts");
-    return document.createElement("openclaw-app") as import("./app.ts").OpenClawApp;
+    return document.createElement("merclaw-app") as import("./app.ts").MerClawApp;
   }
 
   it("uses string content returned by chat.message.get", async () => {

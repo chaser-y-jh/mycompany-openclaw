@@ -1,7 +1,7 @@
 import Foundation
-import OpenClawKit
+import MerClawKit
 import Testing
-@testable import OpenClaw
+@testable import MerClaw
 
 @MainActor
 private final class UnusedPCMStreamingAudioPlayer: PCMStreamingAudioPlaying {

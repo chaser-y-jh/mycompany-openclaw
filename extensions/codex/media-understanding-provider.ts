@@ -1,15 +1,15 @@
 import {
   type JsonSchemaObject,
   validateJsonSchemaValue,
-} from "openclaw/plugin-sdk/json-schema-runtime";
+} from "merclaw/plugin-sdk/json-schema-runtime";
 import type {
   ImagesDescriptionRequest,
   ImagesDescriptionResult,
   MediaUnderstandingProvider,
   StructuredExtractionRequest,
   StructuredExtractionResult,
-} from "openclaw/plugin-sdk/media-understanding";
-import { resolveTimerTimeoutMs } from "openclaw/plugin-sdk/number-runtime";
+} from "merclaw/plugin-sdk/media-understanding";
+import { resolveTimerTimeoutMs } from "merclaw/plugin-sdk/number-runtime";
 import { CODEX_PROVIDER_ID, FALLBACK_CODEX_MODELS } from "./provider-catalog.js";
 import type { CodexAppServerClientFactory } from "./src/app-server/client-factory.js";
 import type { CodexAppServerClient } from "./src/app-server/client.js";
@@ -96,7 +96,7 @@ async function describeCodexImages(
     options,
     taskLabel: "image understanding",
     developerInstructions:
-      "You are OpenClaw's bounded image-understanding worker. Describe only the provided image content. Do not call tools, edit files, or ask follow-up questions.",
+      "You are MerClaw's bounded image-understanding worker. Describe only the provided image content. Do not call tools, edit files, or ask follow-up questions.",
     input: [
       { type: "text", text: buildCodexImagePrompt(req), text_elements: [] },
       ...req.images.map((image) => ({
@@ -158,7 +158,7 @@ async function runBoundedCodexVisionTurn(params: BoundedCodexVisionTurnParams): 
           cwd: params.agentDir || process.cwd(),
           approvalPolicy: "on-request",
           sandbox: "read-only",
-          serviceName: "OpenClaw",
+          serviceName: "MerClaw",
           developerInstructions: params.developerInstructions,
           config: buildCodexRuntimeThreadConfig(undefined, { nativeCodeModeEnabled: false }),
           environments: [],
@@ -232,7 +232,7 @@ async function extractCodexStructured(
     options,
     taskLabel: "structured extraction",
     developerInstructions:
-      "You are OpenClaw's bounded structured-extraction worker. Return only the requested extraction. Do not call tools, edit files, ask follow-up questions, or include secrets.",
+      "You are MerClaw's bounded structured-extraction worker. Return only the requested extraction. Do not call tools, edit files, ask follow-up questions, or include secrets.",
     input: buildCodexStructuredInput(req),
     requiredModalities: requiredStructuredModalities(),
   });
@@ -246,7 +246,7 @@ function denyCodexImageApprovalRequest(request: { method: string }): JsonValue |
   ) {
     return {
       decision: "decline",
-      reason: "OpenClaw Codex image understanding does not grant tool or file approvals.",
+      reason: "MerClaw Codex image understanding does not grant tool or file approvals.",
     };
   }
   if (request.method === "item/permissions/requestApproval") {
@@ -255,7 +255,7 @@ function denyCodexImageApprovalRequest(request: { method: string }): JsonValue |
   if (request.method.includes("requestApproval")) {
     return {
       decision: "decline",
-      reason: "OpenClaw Codex image understanding does not grant native approvals.",
+      reason: "MerClaw Codex image understanding does not grant native approvals.",
     };
   }
   if (request.method === "mcpServer/elicitation/request") {

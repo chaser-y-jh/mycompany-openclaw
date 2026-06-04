@@ -1,4 +1,4 @@
-import { normalizeStringEntries } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { normalizeStringEntries } from "merclaw/plugin-sdk/string-coerce-runtime";
 
 const DEFAULT_ONCHAR_PREFIXES = [">", "!"];
 

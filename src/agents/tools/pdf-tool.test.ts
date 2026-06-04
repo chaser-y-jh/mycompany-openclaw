@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { MerClawConfig } from "../../config/config.js";
 import * as pdfExtractModule from "../../media/pdf-extract.js";
 import * as webMedia from "../../media/web-media.js";
 import * as modelDiscovery from "../agent-model-discovery.js";
@@ -68,16 +68,16 @@ async function withConfiguredPdfTool(
   });
 }
 
-function withPdfModel(primary: string): OpenClawConfig {
+function withPdfModel(primary: string): MerClawConfig {
   return {
     agents: { defaults: { pdfModel: { primary } } },
-  } as OpenClawConfig;
+  } as MerClawConfig;
 }
 
-function withDefaultModel(primary: string): OpenClawConfig {
+function withDefaultModel(primary: string): MerClawConfig {
   return {
     agents: { defaults: { model: { primary } } },
-  } as OpenClawConfig;
+  } as MerClawConfig;
 }
 
 function expectFields(value: unknown, expected: Record<string, unknown>): void {
@@ -142,7 +142,7 @@ async function stubPdfToolInfra(
           }) as never;
   vi.spyOn(modelDiscovery, "discoverModels").mockReturnValue({ find } as never);
 
-  vi.spyOn(modelsConfig, "ensureOpenClawModelsJson").mockResolvedValue({
+  vi.spyOn(modelsConfig, "ensureMerClawModelsJson").mockResolvedValue({
     agentDir,
     wrote: false,
   });
@@ -156,13 +156,13 @@ async function stubPdfToolInfra(
 async function withManagedInboundPdf(
   run: (params: { stateDir: string; mediaId: string; mediaPath: string }) => Promise<void>,
 ) {
-  const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-pdf-managed-inbound-"));
+  const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-pdf-managed-inbound-"));
   const inboundDir = path.join(stateDir, "media", "inbound");
   const mediaId = "claim-check-test.pdf";
   const mediaPath = path.join(inboundDir, mediaId);
   await fs.mkdir(inboundDir, { recursive: true });
   await fs.writeFile(mediaPath, FAKE_PDF_MEDIA.buffer);
-  vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+  vi.stubEnv("MERCLAW_STATE_DIR", stateDir);
   try {
     await run({ stateDir, mediaId, mediaPath });
   } finally {
@@ -325,8 +325,8 @@ describe("createPdfTool", () => {
 
   it("respects fsPolicy.workspaceOnly for non-sandbox pdf paths", async () => {
     await withTempPdfAgentDir(async (agentDir) => {
-      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-pdf-ws-"));
-      const outsideDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-pdf-out-"));
+      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-pdf-ws-"));
+      const outsideDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-pdf-out-"));
       try {
         const cfg = withPdfModel(ANTHROPIC_PDF_MODEL);
         const tool = requirePdfTool(
@@ -403,7 +403,7 @@ describe("createPdfTool", () => {
         input: ["text", "document"],
       });
       vi.spyOn(pdfNativeProviders, "anthropicAnalyzePdf").mockResolvedValue("native summary");
-      const cfg: OpenClawConfig = {
+      const cfg: MerClawConfig = {
         ...withPdfModel(ANTHROPIC_PDF_MODEL),
         tools: {
           web: {
@@ -498,10 +498,10 @@ describe("createPdfTool", () => {
         pdf: "/tmp/doc.pdf",
       });
 
-      const ensureModelsJsonMock = vi.mocked(modelsConfig.ensureOpenClawModelsJson);
+      const ensureModelsJsonMock = vi.mocked(modelsConfig.ensureMerClawModelsJson);
       const [modelsConfigArg, modelsAgentDir, modelsOptions] = firstMockCall(
         ensureModelsJsonMock,
-        "ensureOpenClawModelsJson",
+        "ensureMerClawModelsJson",
       );
       expectFields(
         (modelsConfigArg as { agents?: { defaults?: unknown } } | undefined)?.agents?.defaults,

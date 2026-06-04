@@ -95,7 +95,7 @@ describe("secrets runtime fast path", () => {
         },
       }),
       env: {},
-      agentDirs: ["/tmp/openclaw-agent-main"],
+      agentDirs: ["/tmp/merclaw-agent-main"],
       loadAuthStore: emptyAuthStore,
     });
 
@@ -103,7 +103,7 @@ describe("secrets runtime fast path", () => {
     expect(requireGatewayAuth(snapshot).token).toBe("plain-startup-token");
     expect(snapshot.authStores).toEqual([
       {
-        agentDir: "/tmp/openclaw-agent-main",
+        agentDir: "/tmp/merclaw-agent-main",
         store: emptyAuthStore(),
       },
     ]);
@@ -130,7 +130,7 @@ describe("secrets runtime fast path", () => {
         },
       }),
       env: {},
-      agentDirs: ["/tmp/openclaw-agent-main"],
+      agentDirs: ["/tmp/merclaw-agent-main"],
       loadAuthStore: emptyAuthStore,
     });
 
@@ -153,7 +153,7 @@ describe("secrets runtime fast path", () => {
         },
       }),
       env: {},
-      agentDirs: ["/tmp/openclaw-agent-main"],
+      agentDirs: ["/tmp/merclaw-agent-main"],
       loadAuthStore: emptyAuthStore,
     });
 
@@ -166,7 +166,7 @@ describe("secrets runtime fast path", () => {
     await prepareSecretsRuntimeSnapshot({
       config: asConfig({}),
       env: {},
-      agentDirs: ["/tmp/openclaw-agent-main"],
+      agentDirs: ["/tmp/merclaw-agent-main"],
       loadAuthStore: () => ({
         version: 1,
         profiles: {
@@ -196,7 +196,7 @@ describe("secrets runtime fast path", () => {
         },
       }),
       env: {},
-      agentDirs: ["/tmp/openclaw-agent-main"],
+      agentDirs: ["/tmp/merclaw-agent-main"],
       loadAuthStore: emptyAuthStore,
     });
 
@@ -229,10 +229,10 @@ describe("secrets runtime fast path", () => {
     },
   ])("skips the startup-only fast path when $name exists", async ({ setup }) => {
     const { prepareSecretsRuntimeFastPathSnapshot } = await import("./runtime-fast-path.js");
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-runtime-fast-path-"));
+    const root = mkdtempSync(path.join(tmpdir(), "merclaw-runtime-fast-path-"));
     const env: NodeJS.ProcessEnv = {
       HOME: root,
-      OPENCLAW_STATE_DIR: root,
+      MERCLAW_STATE_DIR: root,
     };
     const mainAgentDir = resolveDefaultAgentDir({}, env);
     const agentDir = path.join(root, "custom-agent");
@@ -260,10 +260,10 @@ describe("secrets runtime fast path", () => {
     const { activateSecretsRuntimeSnapshotState, getActiveSecretsRuntimeSnapshot } =
       await import("./runtime-state.js");
     const { refreshActiveSecretsRuntimeSnapshot } = await import("./runtime.js");
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-runtime-fast-path-refresh-"));
+    const root = mkdtempSync(path.join(tmpdir(), "merclaw-runtime-fast-path-refresh-"));
     const env: NodeJS.ProcessEnv = {
       HOME: root,
-      OPENCLAW_STATE_DIR: root,
+      MERCLAW_STATE_DIR: root,
     };
     const agentDir = path.join(root, "custom-agent");
     mkdirSync(agentDir, { recursive: true });
@@ -304,10 +304,10 @@ describe("secrets runtime fast path", () => {
       await import("../agents/auth-profiles/store.js");
     const { prepareSecretsRuntimeFastPathSnapshot } = await import("./runtime-fast-path.js");
     const { activateSecretsRuntimeSnapshotState } = await import("./runtime-state.js");
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-runtime-fast-path-empty-store-"));
+    const root = mkdtempSync(path.join(tmpdir(), "merclaw-runtime-fast-path-empty-store-"));
     const env: NodeJS.ProcessEnv = {
       HOME: root,
-      OPENCLAW_STATE_DIR: root,
+      MERCLAW_STATE_DIR: root,
     };
     const agentDir = path.join(root, "custom-agent");
     mkdirSync(agentDir, { recursive: true });

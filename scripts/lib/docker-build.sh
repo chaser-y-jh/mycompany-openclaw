@@ -10,7 +10,7 @@ if ! declare -F docker_e2e_timeout_cmd >/dev/null 2>&1; then
 fi
 
 docker_build_on_missing_enabled() {
-  case "${OPENCLAW_DOCKER_BUILD_ON_MISSING:-}" in
+  case "${MERCLAW_DOCKER_BUILD_ON_MISSING:-}" in
     1 | true | TRUE | yes | YES)
       return 0
       ;;
@@ -19,18 +19,18 @@ docker_build_on_missing_enabled() {
       ;;
   esac
 
-  [ "${OPENCLAW_TESTBOX:-0}" = "1" ]
+  [ "${MERCLAW_TESTBOX:-0}" = "1" ]
 }
 
 docker_build_command() {
   local build_cmd=(docker build)
-  if [ "${OPENCLAW_DOCKER_BUILD_USE_BUILDX:-0}" = "1" ] || docker_build_args_need_buildx "$@"; then
+  if [ "${MERCLAW_DOCKER_BUILD_USE_BUILDX:-0}" = "1" ] || docker_build_args_need_buildx "$@"; then
     build_cmd=(docker buildx build --load)
-    if [ -n "${OPENCLAW_DOCKER_BUILD_CACHE_FROM:-}" ]; then
-      build_cmd+=(--cache-from "${OPENCLAW_DOCKER_BUILD_CACHE_FROM}")
+    if [ -n "${MERCLAW_DOCKER_BUILD_CACHE_FROM:-}" ]; then
+      build_cmd+=(--cache-from "${MERCLAW_DOCKER_BUILD_CACHE_FROM}")
     fi
-    if [ -n "${OPENCLAW_DOCKER_BUILD_CACHE_TO:-}" ]; then
-      build_cmd+=(--cache-to "${OPENCLAW_DOCKER_BUILD_CACHE_TO}")
+    if [ -n "${MERCLAW_DOCKER_BUILD_CACHE_TO:-}" ]; then
+      build_cmd+=(--cache-to "${MERCLAW_DOCKER_BUILD_CACHE_TO}")
     fi
   fi
 
@@ -56,7 +56,7 @@ docker_build_transient_failure() {
 }
 
 docker_build_retry_count() {
-  local configured="${OPENCLAW_DOCKER_BUILD_RETRIES:-2}"
+  local configured="${MERCLAW_DOCKER_BUILD_RETRIES:-2}"
   if [[ "$configured" =~ ^[0-9]+$ ]]; then
     echo "$configured"
     return 0
@@ -65,7 +65,7 @@ docker_build_retry_count() {
 }
 
 docker_build_timeout_required() {
-  case "${OPENCLAW_DOCKER_BUILD_REQUIRE_TIMEOUT:-0}" in
+  case "${MERCLAW_DOCKER_BUILD_REQUIRE_TIMEOUT:-0}" in
     1 | true | TRUE | yes | YES)
       return 0
       ;;
@@ -98,7 +98,7 @@ docker_build_with_retries() {
     command+=("$part")
   done < <(docker_build_command "$@")
 
-  local timeout_value="${OPENCLAW_DOCKER_BUILD_TIMEOUT:-3600s}"
+  local timeout_value="${MERCLAW_DOCKER_BUILD_TIMEOUT:-3600s}"
   while true; do
     log_file="$(docker_e2e_run_log "$label")"
     if docker_build_run_command "$timeout_value" "${command[@]}" >"$log_file" 2>&1; then
@@ -128,6 +128,6 @@ docker_build_run() {
   local label="$1"
   shift
 
-  OPENCLAW_DOCKER_BUILD_REQUIRE_TIMEOUT="${OPENCLAW_DOCKER_BUILD_REQUIRE_TIMEOUT:-1}" \
+  MERCLAW_DOCKER_BUILD_REQUIRE_TIMEOUT="${MERCLAW_DOCKER_BUILD_REQUIRE_TIMEOUT:-1}" \
     docker_build_with_retries "$label" "$@"
 }

@@ -13,7 +13,7 @@ function shellQuote(value: string): string {
 }
 
 function runGatewayPortCheck(fakeLsof: string) {
-  const root = mkdtempSync(join(tmpdir(), "openclaw-restart-mac-test-"));
+  const root = mkdtempSync(join(tmpdir(), "merclaw-restart-mac-test-"));
   tempRoots.push(root);
 
   const binDir = join(root, "bin");
@@ -81,11 +81,11 @@ describe("scripts/restart-mac.sh", () => {
       script.indexOf("choose_app_bundle", script.indexOf("choose_app_bundle()") + 1),
     );
 
-    expect(chooseBlock).toContain('fail "OPENCLAW_APP_BUNDLE does not exist: ${APP_BUNDLE}"');
-    expect(chooseBlock.indexOf('${ROOT_DIR}/dist/OpenClaw.app')).toBeGreaterThan(-1);
-    expect(chooseBlock.indexOf('/Applications/OpenClaw.app')).toBeGreaterThan(-1);
-    expect(chooseBlock.indexOf('${ROOT_DIR}/dist/OpenClaw.app')).toBeLessThan(
-      chooseBlock.indexOf('/Applications/OpenClaw.app'),
+    expect(chooseBlock).toContain('fail "MERCLAW_APP_BUNDLE does not exist: ${APP_BUNDLE}"');
+    expect(chooseBlock.indexOf('${ROOT_DIR}/dist/MerClaw.app')).toBeGreaterThan(-1);
+    expect(chooseBlock.indexOf('/Applications/MerClaw.app')).toBeGreaterThan(-1);
+    expect(chooseBlock.indexOf('${ROOT_DIR}/dist/MerClaw.app')).toBeLessThan(
+      chooseBlock.indexOf('/Applications/MerClaw.app'),
     );
   });
 });

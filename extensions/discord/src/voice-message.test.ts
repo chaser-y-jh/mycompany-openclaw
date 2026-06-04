@@ -20,13 +20,13 @@ const fetchWithSsrFGuardMock = vi.hoisted(() =>
   ),
 );
 
-vi.mock("openclaw/plugin-sdk/temp-path", async () => {
+vi.mock("merclaw/plugin-sdk/temp-path", async () => {
   return {
-    resolvePreferredOpenClawTmpDir: () => "/tmp",
+    resolvePreferredMerClawTmpDir: () => "/tmp",
   };
 });
 
-vi.mock("openclaw/plugin-sdk/media-runtime", async () => {
+vi.mock("merclaw/plugin-sdk/media-runtime", async () => {
   return {
     runFfprobe: runFfprobeMock,
     runFfmpeg: runFfmpegMock,
@@ -42,7 +42,7 @@ vi.mock("openclaw/plugin-sdk/media-runtime", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/ssrf-runtime", async () => {
+vi.mock("merclaw/plugin-sdk/ssrf-runtime", async () => {
   return {
     fetchWithSsrFGuard: fetchWithSsrFGuardMock,
   };

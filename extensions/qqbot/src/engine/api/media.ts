@@ -12,8 +12,8 @@
  */
 
 import * as fs from "node:fs";
-import { readResponseWithLimit } from "openclaw/plugin-sdk/response-limit-runtime";
-import { fetchWithSsrFGuard, isBlockedHostnameOrIp } from "openclaw/plugin-sdk/ssrf-runtime";
+import { readResponseWithLimit } from "merclaw/plugin-sdk/response-limit-runtime";
+import { fetchWithSsrFGuard, isBlockedHostnameOrIp } from "merclaw/plugin-sdk/ssrf-runtime";
 import {
   MediaFileType,
   type ChatScope,

@@ -2,7 +2,7 @@ import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
   normalizeOptionalThreadValue,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/normalization-core/string-coerce";
 import {
   channelRouteTargetsMatchExact,
   channelRouteTargetsShareConversation,
@@ -95,7 +95,7 @@ export function resolveComparableTargetForLoadedChannel(params: {
   return resolveRouteTargetForLoadedChannel(params);
 }
 
-/** @deprecated Use `channelRouteTargetsMatchExact` from `openclaw/plugin-sdk/channel-route`. */
+/** @deprecated Use `channelRouteTargetsMatchExact` from `merclaw/plugin-sdk/channel-route`. */
 export function comparableChannelTargetsMatch(params: {
   left?: ChannelRouteParsedTarget | null;
   right?: ChannelRouteParsedTarget | null;
@@ -103,7 +103,7 @@ export function comparableChannelTargetsMatch(params: {
   return channelRouteTargetsMatchExact(params);
 }
 
-/** @deprecated Use `channelRouteTargetsShareConversation` from `openclaw/plugin-sdk/channel-route`. */
+/** @deprecated Use `channelRouteTargetsShareConversation` from `merclaw/plugin-sdk/channel-route`. */
 export function comparableChannelTargetsShareRoute(params: {
   left?: ChannelRouteParsedTarget | null;
   right?: ChannelRouteParsedTarget | null;

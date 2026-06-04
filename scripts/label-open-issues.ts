@@ -26,7 +26,7 @@ const OPENAI_ERROR_BODY_MAX_CHARS = 4096;
 const OPENAI_RESPONSE_BODY_MAX_BYTES = 256 * 1024;
 const STATE_FILE_NAME = "issue-labeler-state.json";
 const CONFIG_BASE_DIR = process.env.XDG_CONFIG_HOME ?? join(homedir(), ".config");
-const STATE_FILE_PATH = join(CONFIG_BASE_DIR, "openclaw", STATE_FILE_NAME);
+const STATE_FILE_PATH = join(CONFIG_BASE_DIR, "merclaw", STATE_FILE_NAME);
 
 const ISSUE_QUERY = `
   query($owner: String!, $name: String!, $after: String, $pageSize: Int!) {
@@ -253,10 +253,10 @@ function isMainModule() {
   return entry ? import.meta.url === pathToFileURL(entry).href : false;
 }
 
-function resolveOpenAITimeoutMs(raw = process.env.OPENCLAW_LABEL_OPEN_ISSUES_OPENAI_TIMEOUT_MS) {
+function resolveOpenAITimeoutMs(raw = process.env.MERCLAW_LABEL_OPEN_ISSUES_OPENAI_TIMEOUT_MS) {
   return parseStrictIntegerOption({
     fallback: DEFAULT_OPENAI_TIMEOUT_MS,
-    label: "OPENCLAW_LABEL_OPEN_ISSUES_OPENAI_TIMEOUT_MS",
+    label: "MERCLAW_LABEL_OPEN_ISSUES_OPENAI_TIMEOUT_MS",
     min: 1,
     raw,
   });
@@ -721,7 +721,7 @@ async function classifyItem(
             {
               role: "system",
               content:
-                "You classify GitHub issues and pull requests for OpenClaw. Respond with JSON only, no extra text.",
+                "You classify GitHub issues and pull requests for MerClaw. Respond with JSON only, no extra text.",
             },
             {
               role: "user",
@@ -804,7 +804,7 @@ async function main() {
   }
   const openAITimeoutMs = resolveOpenAITimeoutMs();
 
-  logHeader("OpenClaw Issue Label Audit");
+  logHeader("MerClaw Issue Label Audit");
   logStep(`Mode: ${dryRun ? "dry-run" : "apply labels"}`);
   logStep(`Model: ${model}`);
   logStep(`OpenAI timeout: ${openAITimeoutMs}ms`);

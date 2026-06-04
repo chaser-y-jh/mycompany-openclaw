@@ -37,7 +37,7 @@ describe("diagnostic support export", () => {
   let tempDir: string;
 
   beforeEach(() => {
-    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-support-export-"));
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-support-export-"));
     resetDiagnosticEventsForTest();
     resetDiagnosticStabilityRecorderForTest();
     resetDiagnosticStabilityBundleForTest();
@@ -63,7 +63,7 @@ describe("diagnostic support export", () => {
     const webhookBody = "raw webhook body with message contents";
     const credentialUrl =
       "wss://support-user:support-password@gateway.example/ws?token=short-token&ok=1";
-    const configPath = path.join(tempDir, "openclaw.json");
+    const configPath = path.join(tempDir, "merclaw.json");
     fs.writeFileSync(
       configPath,
       JSON.stringify(
@@ -122,7 +122,7 @@ describe("diagnostic support export", () => {
     expect(bundle.status).toBe("written");
 
     const logTail: LogTailPayload = {
-      file: path.join(tempDir, "logs", "openclaw.log"),
+      file: path.join(tempDir, "logs", "merclaw.log"),
       cursor: 200,
       size: 200,
       truncated: false,
@@ -182,7 +182,7 @@ describe("diagnostic support export", () => {
       env: {
         ...process.env,
         HOME: tempDir,
-        OPENCLAW_STATE_DIR: tempDir,
+        MERCLAW_STATE_DIR: tempDir,
       },
       stateDir: tempDir,
       outputPath,
@@ -195,10 +195,10 @@ describe("diagnostic support export", () => {
         service: {
           loaded: true,
           command: {
-            programArguments: ["openclaw", "gateway", "run", "--token", fakeToken],
+            programArguments: ["merclaw", "gateway", "run", "--token", fakeToken],
             environment: {
               HOME: tempDir,
-              OPENCLAW_GATEWAY_TOKEN: fakeToken,
+              MERCLAW_GATEWAY_TOKEN: fakeToken,
             },
           },
         },
@@ -241,7 +241,7 @@ describe("diagnostic support export", () => {
       "config/shape.json",
       "diagnostics.json",
       "health/gateway-health.json",
-      "logs/openclaw-sanitized.jsonl",
+      "logs/merclaw-sanitized.jsonl",
       "manifest.json",
       "stability/latest.json",
       "status/gateway-status.json",
@@ -269,13 +269,13 @@ describe("diagnostic support export", () => {
     expect(combined).not.toContain(fakeJwt);
     expect(combined).toContain("payload.large");
     expect(combined).toContain("gateway.http.json");
-    expect(combined).toContain("$OPENCLAW_STATE_DIR");
+    expect(combined).toContain("$MERCLAW_STATE_DIR");
     expect(combined).toContain("<redacted-hostname>");
     expect(combined).toContain("gateway-status.json");
     expect(combined).toContain("gateway-health.json");
     expect(combined).toContain("Attach this zip to the bug report");
 
-    const sanitizedLogs = entries["logs/openclaw-sanitized.jsonl"];
+    const sanitizedLogs = entries["logs/merclaw-sanitized.jsonl"];
     expect(sanitizedLogs).toContain('"subsystem":"gateway"');
     expect(sanitizedLogs).toContain('"component":"gateway/server"');
     expect(sanitizedLogs).toContain('"channel":"telegram"');
@@ -313,13 +313,13 @@ describe("diagnostic support export", () => {
       };
     };
     expect(status.data?.service?.command?.programArguments).toEqual([
-      "openclaw",
+      "merclaw",
       "gateway",
       "run",
       "--token",
       "<redacted>",
     ]);
-    expect(status.data?.service?.command?.environment?.OPENCLAW_GATEWAY_TOKEN).toBe("<redacted>");
+    expect(status.data?.service?.command?.environment?.MERCLAW_GATEWAY_TOKEN).toBe("<redacted>");
     expect(JSON.stringify(status)).toContain(
       "wss://<redacted>:<redacted>@gateway.example/ws?token=<redacted>",
     );
@@ -427,14 +427,14 @@ describe("diagnostic support export", () => {
       env: {
         ...process.env,
         HOME: tempDir,
-        OPENCLAW_STATE_DIR: tempDir,
+        MERCLAW_STATE_DIR: tempDir,
       },
       stateDir: tempDir,
       outputPath,
       stabilityBundle: bundlePath,
       now: new Date("2026-04-22T12:00:01.000Z"),
       readLogTail: async () => ({
-        file: path.join(tempDir, "logs", "openclaw.log"),
+        file: path.join(tempDir, "logs", "merclaw.log"),
         cursor: 0,
         size: 0,
         truncated: false,
@@ -479,7 +479,7 @@ describe("diagnostic support export", () => {
   });
 
   it("includes mDNS config state and recent Bonjour log summary", async () => {
-    const configPath = path.join(tempDir, "openclaw.json");
+    const configPath = path.join(tempDir, "merclaw.json");
     const outputPath = path.join(tempDir, "support-bonjour.zip");
     fs.writeFileSync(
       configPath,
@@ -497,15 +497,15 @@ describe("diagnostic support export", () => {
       env: {
         ...process.env,
         HOME: tempDir,
-        OPENCLAW_CONFIG_PATH: configPath,
-        OPENCLAW_DISABLE_BONJOUR: "1",
-        OPENCLAW_STATE_DIR: tempDir,
+        MERCLAW_CONFIG_PATH: configPath,
+        MERCLAW_DISABLE_BONJOUR: "1",
+        MERCLAW_STATE_DIR: tempDir,
       },
       stateDir: tempDir,
       outputPath,
       now: new Date("2026-04-22T12:00:01.000Z"),
       readLogTail: async () => ({
-        file: path.join(tempDir, "logs", "openclaw.log"),
+        file: path.join(tempDir, "logs", "merclaw.log"),
         cursor: 0,
         size: 0,
         truncated: false,
@@ -570,7 +570,7 @@ describe("diagnostic support export", () => {
     const redaction = {
       env: {
         HOME: tempDir,
-        OPENCLAW_STATE_DIR: tempDir,
+        MERCLAW_STATE_DIR: tempDir,
       },
       stateDir: tempDir,
     };
@@ -586,7 +586,7 @@ describe("diagnostic support export", () => {
     const redaction = {
       env: {
         HOME: tempDir,
-        OPENCLAW_STATE_DIR: tempDir,
+        MERCLAW_STATE_DIR: tempDir,
       },
       stateDir: tempDir,
     };
@@ -669,17 +669,17 @@ describe("diagnostic support export", () => {
 
   it("redacts Windows USERPROFILE paths when HOME is unset", () => {
     const userProfile = "C:\\Users\\support-user";
-    const stateDir = `${userProfile}\\AppData\\Roaming\\openclaw`;
+    const stateDir = `${userProfile}\\AppData\\Roaming\\merclaw`;
     const redaction = {
       env: {
         USERPROFILE: userProfile,
-        OPENCLAW_STATE_DIR: stateDir,
+        MERCLAW_STATE_DIR: stateDir,
       },
       stateDir,
     };
 
     expect(redactSupportString(`${stateDir}\\logs\\gateway.log`, redaction)).toBe(
-      "$OPENCLAW_STATE_DIR\\logs\\gateway.log",
+      "$MERCLAW_STATE_DIR\\logs\\gateway.log",
     );
     expect(
       redactSupportString(`failed at ${userProfile}\\Documents\\snapshot-error.txt`, redaction),
@@ -697,11 +697,11 @@ describe("diagnostic support export", () => {
           command: {
             programArguments: [
               "node",
-              `${userProfile}\\openclaw\\dist\\index.js`,
+              `${userProfile}\\merclaw\\dist\\index.js`,
               "--config",
-              `${stateDir}\\openclaw.json`,
+              `${stateDir}\\merclaw.json`,
             ],
-            sourcePath: "c:\\users\\support-user\\AppData\\Local\\openclaw\\gateway-service.json",
+            sourcePath: "c:\\users\\support-user\\AppData\\Local\\merclaw\\gateway-service.json",
           },
         },
       },
@@ -709,9 +709,9 @@ describe("diagnostic support export", () => {
     );
     const serialized = JSON.stringify(status);
     expect(serialized).not.toContain("support-user");
-    expect(serialized).toContain("~\\\\openclaw\\\\dist\\\\index.js");
-    expect(serialized).toContain("$OPENCLAW_STATE_DIR\\\\openclaw.json");
-    expect(serialized).toContain("~\\\\AppData\\\\Local\\\\openclaw\\\\gateway-service.json");
+    expect(serialized).toContain("~\\\\merclaw\\\\dist\\\\index.js");
+    expect(serialized).toContain("$MERCLAW_STATE_DIR\\\\merclaw.json");
+    expect(serialized).toContain("~\\\\AppData\\\\Local\\\\merclaw\\\\gateway-service.json");
   });
 
   it("keeps writing when status and health snapshots fail", async () => {
@@ -722,13 +722,13 @@ describe("diagnostic support export", () => {
       env: {
         ...process.env,
         HOME: tempDir,
-        OPENCLAW_STATE_DIR: tempDir,
+        MERCLAW_STATE_DIR: tempDir,
       },
       stateDir: tempDir,
       outputPath,
       now: new Date("2026-04-22T12:00:01.000Z"),
       readLogTail: async () => ({
-        file: path.join(tempDir, "logs", "openclaw.log"),
+        file: path.join(tempDir, "logs", "merclaw.log"),
         cursor: 0,
         size: 0,
         truncated: false,
@@ -763,18 +763,18 @@ describe("diagnostic support export", () => {
       env: {
         ...process.env,
         HOME: tempDir,
-        OPENCLAW_STATE_DIR: tempDir,
+        MERCLAW_STATE_DIR: tempDir,
       },
       stateDir: tempDir,
       outputPath,
       now: new Date("2026-04-22T12:00:02.000Z"),
       readLogTail: async () => {
-        throw new Error(`log tail failed at ${tempDir}/openclaw.log with token ${fakeToken}`);
+        throw new Error(`log tail failed at ${tempDir}/merclaw.log with token ${fakeToken}`);
       },
     });
 
     const entries = await readZipTextEntries(outputPath);
-    expect(Object.keys(entries).toSorted()).toContain("logs/openclaw-sanitized.jsonl");
+    expect(Object.keys(entries).toSorted()).toContain("logs/merclaw-sanitized.jsonl");
 
     const combined = Object.values(entries).join("\n");
     expect(combined).not.toContain(fakeToken);
@@ -785,7 +785,7 @@ describe("diagnostic support export", () => {
 
   it("keeps writing when config stat fails", async () => {
     const fakeToken = "sk-test-config-stat-secret-token-1234567890";
-    const configPath = path.join(tempDir, "openclaw.json");
+    const configPath = path.join(tempDir, "merclaw.json");
     const outputPath = path.join(tempDir, "support-failed-config-stat.zip");
     fs.writeFileSync(configPath, "{}\n", "utf8");
 
@@ -802,14 +802,14 @@ describe("diagnostic support export", () => {
         env: {
           ...process.env,
           HOME: tempDir,
-          OPENCLAW_CONFIG_PATH: configPath,
-          OPENCLAW_STATE_DIR: tempDir,
+          MERCLAW_CONFIG_PATH: configPath,
+          MERCLAW_STATE_DIR: tempDir,
         },
         stateDir: tempDir,
         outputPath,
         now: new Date("2026-04-22T12:00:03.000Z"),
         readLogTail: async () => ({
-          file: path.join(tempDir, "logs", "openclaw.log"),
+          file: path.join(tempDir, "logs", "merclaw.log"),
           cursor: 0,
           size: 0,
           truncated: false,

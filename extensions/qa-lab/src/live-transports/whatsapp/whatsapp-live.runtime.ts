@@ -3,12 +3,12 @@ import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
-import { startWhatsAppQaDriverSession } from "@openclaw/whatsapp/api.js";
-import { normalizeE164 } from "openclaw/plugin-sdk/account-resolution";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { normalizeStringEntries, uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+import { startWhatsAppQaDriverSession } from "@merclaw/whatsapp/api.js";
+import { normalizeE164 } from "merclaw/plugin-sdk/account-resolution";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { formatErrorMessage } from "merclaw/plugin-sdk/error-runtime";
+import { normalizeStringEntries, uniqueStrings } from "merclaw/plugin-sdk/string-coerce-runtime";
+import { resolvePreferredMerClawTmpDir } from "merclaw/plugin-sdk/temp-path";
 import { z } from "zod";
 import { startQaGatewayChild } from "../../gateway-child.js";
 import { DEFAULT_QA_LIVE_PROVIDER_MODE } from "../../providers/index.js";
@@ -179,18 +179,18 @@ type WhatsAppCredentialLease = Awaited<
 >;
 type WhatsAppCredentialHeartbeat = ReturnType<typeof startQaCredentialLeaseHeartbeat>;
 
-const WHATSAPP_QA_CAPTURE_CONTENT_ENV = "OPENCLAW_QA_WHATSAPP_CAPTURE_CONTENT";
-const QA_REDACT_PUBLIC_METADATA_ENV = "OPENCLAW_QA_REDACT_PUBLIC_METADATA";
+const WHATSAPP_QA_CAPTURE_CONTENT_ENV = "MERCLAW_QA_WHATSAPP_CAPTURE_CONTENT";
+const QA_REDACT_PUBLIC_METADATA_ENV = "MERCLAW_QA_REDACT_PUBLIC_METADATA";
 const WHATSAPP_QA_TRANSIENT_DRIVER_ATTEMPTS = 5;
 const WHATSAPP_QA_READY_TIMEOUT_MS = 150_000;
 const WHATSAPP_QA_READY_STABILITY_MS = 20_000;
 const WHATSAPP_QA_DRIVER_RECONNECT_DELAY_MS = 10_000;
 const WHATSAPP_QA_APPROVAL_DECISION_TIMEOUT_MS = 60_000;
 const WHATSAPP_QA_ENV_KEYS = [
-  "OPENCLAW_QA_WHATSAPP_DRIVER_PHONE_E164",
-  "OPENCLAW_QA_WHATSAPP_SUT_PHONE_E164",
-  "OPENCLAW_QA_WHATSAPP_DRIVER_AUTH_ARCHIVE_BASE64",
-  "OPENCLAW_QA_WHATSAPP_SUT_AUTH_ARCHIVE_BASE64",
+  "MERCLAW_QA_WHATSAPP_DRIVER_PHONE_E164",
+  "MERCLAW_QA_WHATSAPP_SUT_PHONE_E164",
+  "MERCLAW_QA_WHATSAPP_DRIVER_AUTH_ARCHIVE_BASE64",
+  "MERCLAW_QA_WHATSAPP_SUT_AUTH_ARCHIVE_BASE64",
 ] as const;
 
 const whatsappQaCredentialPayloadSchema = z.object({
@@ -227,7 +227,7 @@ const WHATSAPP_QA_SCENARIOS: WhatsAppQaScenarioDefinition[] = [
       configMode: "pairing",
       expectReply: true,
       input: `Do not run the agent for this pairing QA marker ${randomUUID().slice(0, 8)}`,
-      matchText: /OpenClaw: access not configured|Pairing code:/iu,
+      matchText: /MerClaw: access not configured|Pairing code:/iu,
       target: "dm",
     }),
   },
@@ -243,7 +243,7 @@ const WHATSAPP_QA_SCENARIOS: WhatsAppQaScenarioDefinition[] = [
       return {
         configMode: "allowlist",
         expectReply: true,
-        input: `openclawqa reply with only this exact marker: ${replyToken}`,
+        input: `merclawqa reply with only this exact marker: ${replyToken}`,
         matchText: replyToken,
         quietInput: `This group message is intentionally unmentioned. If you respond, include ${quietToken}.`,
         quietMatchText: quietToken,
@@ -309,7 +309,7 @@ function inferWhatsAppCredentialSource(
   env: NodeJS.ProcessEnv = process.env,
 ): "convex" | "env" {
   const normalized =
-    value?.trim().toLowerCase() || env.OPENCLAW_QA_CREDENTIAL_SOURCE?.trim().toLowerCase();
+    value?.trim().toLowerCase() || env.MERCLAW_QA_CREDENTIAL_SOURCE?.trim().toLowerCase();
   return normalized === "convex" ? "convex" : "env";
 }
 
@@ -353,16 +353,16 @@ function validateWhatsAppQaRuntimeEnv(
 function resolveWhatsAppQaRuntimeEnv(env: NodeJS.ProcessEnv = process.env): WhatsAppQaRuntimeEnv {
   return validateWhatsAppQaRuntimeEnv(
     {
-      driverPhoneE164: resolveEnvValue(env, "OPENCLAW_QA_WHATSAPP_DRIVER_PHONE_E164"),
-      sutPhoneE164: resolveEnvValue(env, "OPENCLAW_QA_WHATSAPP_SUT_PHONE_E164"),
+      driverPhoneE164: resolveEnvValue(env, "MERCLAW_QA_WHATSAPP_DRIVER_PHONE_E164"),
+      sutPhoneE164: resolveEnvValue(env, "MERCLAW_QA_WHATSAPP_SUT_PHONE_E164"),
       driverAuthArchiveBase64: resolveEnvValue(
         env,
-        "OPENCLAW_QA_WHATSAPP_DRIVER_AUTH_ARCHIVE_BASE64",
+        "MERCLAW_QA_WHATSAPP_DRIVER_AUTH_ARCHIVE_BASE64",
       ),
-      sutAuthArchiveBase64: resolveEnvValue(env, "OPENCLAW_QA_WHATSAPP_SUT_AUTH_ARCHIVE_BASE64"),
-      groupJid: env.OPENCLAW_QA_WHATSAPP_GROUP_JID?.trim() || undefined,
+      sutAuthArchiveBase64: resolveEnvValue(env, "MERCLAW_QA_WHATSAPP_SUT_AUTH_ARCHIVE_BASE64"),
+      groupJid: env.MERCLAW_QA_WHATSAPP_GROUP_JID?.trim() || undefined,
     },
-    "OPENCLAW_QA_WHATSAPP",
+    "MERCLAW_QA_WHATSAPP",
   );
 }
 
@@ -385,7 +385,7 @@ function findScenarios(ids?: string[]) {
 }
 
 function buildWhatsAppQaConfig(
-  baseCfg: OpenClawConfig,
+  baseCfg: MerClawConfig,
   params: {
     allowFrom: string[];
     authDir: string;
@@ -394,7 +394,7 @@ function buildWhatsAppQaConfig(
     overrides?: WhatsAppQaConfigOverrides;
     sutAccountId: string;
   },
-): OpenClawConfig {
+): MerClawConfig {
   const pluginAllow = uniqueStrings([...(baseCfg.plugins?.allow ?? []), "whatsapp"]);
   const approvalOverrides = params.overrides?.approvals;
   const approvalForwardingConfig =
@@ -467,7 +467,7 @@ function buildWhatsAppQaConfig(
               mentionPatterns: [
                 ...new Set([
                   ...(baseCfg.messages?.groupChat?.mentionPatterns ?? []),
-                  "\\bopenclawqa\\b",
+                  "\\bmerclawqa\\b",
                 ]),
               ],
             },
@@ -1245,7 +1245,7 @@ export async function runWhatsAppQaLive(params: {
     };
     runtimeEnv = credentialLease.payload;
     tempAuthRoot = await fs.mkdtemp(
-      path.join(resolvePreferredOpenClawTmpDir(), "openclaw-whatsapp-qa-"),
+      path.join(resolvePreferredMerClawTmpDir(), "merclaw-whatsapp-qa-"),
     );
     const [driverAuthDir, sutAuthDir] = await Promise.all([
       unpackWhatsAppAuthArchive({

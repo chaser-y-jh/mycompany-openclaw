@@ -1,4 +1,4 @@
-import type { Model } from "openclaw/plugin-sdk/llm";
+import type { Model } from "merclaw/plugin-sdk/llm";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { attachModelProviderRequestTransport } from "./provider-request-config.js";
 
@@ -519,7 +519,7 @@ describe("anthropic transport stream", () => {
     );
 
     expect(result.stopReason).toBe("error");
-    expect(result.errorMessage).toBe("OpenClaw transport error: malformed_streaming_fragment");
+    expect(result.errorMessage).toBe("MerClaw transport error: malformed_streaming_fragment");
   });
 
   it("preserves unsafe integer Anthropic tool-use input deltas", async () => {
@@ -1436,7 +1436,7 @@ describe("anthropic transport stream", () => {
     ]);
   });
 
-  it("backfills MiMo v2-flash tool-use replay when OpenClaw thinking is off", async () => {
+  it("backfills MiMo v2-flash tool-use replay when MerClaw thinking is off", async () => {
     await runTransportStream(
       makeAnthropicTransportModel({
         id: "mimo-v2-flash",

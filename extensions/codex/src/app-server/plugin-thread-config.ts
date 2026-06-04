@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { embeddedAgentLog } from "openclaw/plugin-sdk/agent-harness-runtime";
+import { embeddedAgentLog } from "merclaw/plugin-sdk/agent-harness-runtime";
 import {
   defaultCodexAppInventoryCache,
   serializeCodexAppInventoryError,

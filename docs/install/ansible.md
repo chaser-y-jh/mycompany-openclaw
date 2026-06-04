@@ -1,5 +1,5 @@
 ---
-summary: "Automated, hardened OpenClaw installation with Ansible, Tailscale VPN, and firewall isolation"
+summary: "Automated, hardened MerClaw installation with Ansible, Tailscale VPN, and firewall isolation"
 read_when:
   - You want automated server deployment with security hardening
   - You need firewall-isolated setup with VPN access
@@ -7,10 +7,10 @@ read_when:
 title: "Ansible"
 ---
 
-Deploy OpenClaw to production servers with **[openclaw-ansible](https://github.com/openclaw/openclaw-ansible)** -- an automated installer with security-first architecture.
+Deploy MerClaw to production servers with **[merclaw-ansible](https://github.com/merclaw/merclaw-ansible)** -- an automated installer with security-first architecture.
 
 <Info>
-The [openclaw-ansible](https://github.com/openclaw/openclaw-ansible) repo is the source of truth for Ansible deployment. This page is a quick overview.
+The [merclaw-ansible](https://github.com/merclaw/merclaw-ansible) repo is the source of truth for Ansible deployment. This page is a quick overview.
 </Info>
 
 ## Prerequisites
@@ -36,7 +36,7 @@ The [openclaw-ansible](https://github.com/openclaw/openclaw-ansible) repo is the
 One-command install:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/openclaw/openclaw-ansible/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/merclaw/merclaw-ansible/main/install.sh | bash
 ```
 
 ## What gets installed
@@ -47,7 +47,7 @@ The Ansible playbook installs and configures:
 2. **UFW firewall** -- SSH + Tailscale ports only
 3. **Docker CE + Compose V2** -- for the default agent sandbox backend
 4. **Node.js 24 + pnpm** -- runtime dependencies (Node 22 LTS, currently `22.19+`, remains supported)
-5. **OpenClaw** -- host-based, not containerized
+5. **MerClaw** -- host-based, not containerized
 6. **Systemd service** -- auto-start with security hardening
 
 <Note>
@@ -59,24 +59,24 @@ backend. See [Sandboxing](/gateway/sandboxing) for details and other backends.
 ## Post-Install Setup
 
 <Steps>
-  <Step title="Switch to the openclaw user">
+  <Step title="Switch to the merclaw user">
     ```bash
-    sudo -i -u openclaw
+    sudo -i -u merclaw
     ```
   </Step>
   <Step title="Run the onboarding wizard">
-    The post-install script guides you through configuring OpenClaw settings.
+    The post-install script guides you through configuring MerClaw settings.
   </Step>
   <Step title="Connect messaging providers">
     Log in to WhatsApp, Telegram, Discord, or Signal:
     ```bash
-    openclaw channels login
+    merclaw channels login
     ```
   </Step>
   <Step title="Verify the installation">
     ```bash
-    sudo systemctl status openclaw
-    sudo journalctl -u openclaw -f
+    sudo systemctl status merclaw
+    sudo journalctl -u merclaw -f
     ```
   </Step>
   <Step title="Connect to Tailscale">
@@ -88,17 +88,17 @@ backend. See [Sandboxing](/gateway/sandboxing) for details and other backends.
 
 ```bash
 # Check service status
-sudo systemctl status openclaw
+sudo systemctl status merclaw
 
 # View live logs
-sudo journalctl -u openclaw -f
+sudo journalctl -u merclaw -f
 
 # Restart gateway
-sudo systemctl restart openclaw
+sudo systemctl restart merclaw
 
-# Provider login (run as openclaw user)
-sudo -i -u openclaw
-openclaw channels login
+# Provider login (run as merclaw user)
+sudo -i -u merclaw
+merclaw channels login
 ```
 
 ## Security architecture
@@ -132,8 +132,8 @@ If you prefer manual control over the automation:
   </Step>
   <Step title="Clone the repository">
     ```bash
-    git clone https://github.com/openclaw/openclaw-ansible.git
-    cd openclaw-ansible
+    git clone https://github.com/merclaw/merclaw-ansible.git
+    cd merclaw-ansible
     ```
   </Step>
   <Step title="Install Ansible collections">
@@ -149,7 +149,7 @@ If you prefer manual control over the automation:
     Alternatively, run directly and then manually execute the setup script afterward:
     ```bash
     ansible-playbook playbook.yml --ask-become-pass
-    # Then run: /tmp/openclaw-setup.sh
+    # Then run: /tmp/merclaw-setup.sh
     ```
 
   </Step>
@@ -157,12 +157,12 @@ If you prefer manual control over the automation:
 
 ## Updating
 
-The Ansible installer sets up OpenClaw for manual updates. See [Updating](/install/updating) for the standard update flow.
+The Ansible installer sets up MerClaw for manual updates. See [Updating](/install/updating) for the standard update flow.
 
 To re-run the Ansible playbook (for example, for configuration changes):
 
 ```bash
-cd openclaw-ansible
+cd merclaw-ansible
 ./run-playbook.sh
 ```
 
@@ -180,15 +180,15 @@ This is idempotent and safe to run multiple times.
   <Accordion title="Service will not start">
     ```bash
     # Check logs
-    sudo journalctl -u openclaw -n 100
+    sudo journalctl -u merclaw -n 100
 
     # Verify permissions
-    sudo ls -la /opt/openclaw
+    sudo ls -la /opt/merclaw
 
     # Test manual start
-    sudo -i -u openclaw
-    cd ~/openclaw
-    openclaw gateway run
+    sudo -i -u merclaw
+    cd ~/merclaw
+    merclaw gateway run
     ```
 
   </Accordion>
@@ -198,36 +198,36 @@ This is idempotent and safe to run multiple times.
     sudo systemctl status docker
 
     # Check sandbox image
-    sudo docker images | grep openclaw-sandbox
+    sudo docker images | grep merclaw-sandbox
 
     # Build sandbox image if missing (requires source checkout)
-    cd /opt/openclaw/openclaw
-    sudo -u openclaw ./scripts/sandbox-setup.sh
+    cd /opt/merclaw/merclaw
+    sudo -u merclaw ./scripts/sandbox-setup.sh
     # For npm installs without a source checkout, see
-    # https://docs.openclaw.ai/gateway/sandboxing#images-and-setup
+    # https://docs.merclaw.ai/gateway/sandboxing#images-and-setup
     ```
 
   </Accordion>
   <Accordion title="Provider login fails">
-    Make sure you are running as the `openclaw` user:
+    Make sure you are running as the `merclaw` user:
     ```bash
-    sudo -i -u openclaw
-    openclaw channels login
+    sudo -i -u merclaw
+    merclaw channels login
     ```
   </Accordion>
 </AccordionGroup>
 
 ## Advanced configuration
 
-For detailed security architecture and troubleshooting, see the openclaw-ansible repo:
+For detailed security architecture and troubleshooting, see the merclaw-ansible repo:
 
-- [Security Architecture](https://github.com/openclaw/openclaw-ansible/blob/main/docs/security.md)
-- [Technical Details](https://github.com/openclaw/openclaw-ansible/blob/main/docs/architecture.md)
-- [Troubleshooting Guide](https://github.com/openclaw/openclaw-ansible/blob/main/docs/troubleshooting.md)
+- [Security Architecture](https://github.com/merclaw/merclaw-ansible/blob/main/docs/security.md)
+- [Technical Details](https://github.com/merclaw/merclaw-ansible/blob/main/docs/architecture.md)
+- [Troubleshooting Guide](https://github.com/merclaw/merclaw-ansible/blob/main/docs/troubleshooting.md)
 
 ## Related
 
-- [openclaw-ansible](https://github.com/openclaw/openclaw-ansible) -- full deployment guide
+- [merclaw-ansible](https://github.com/merclaw/merclaw-ansible) -- full deployment guide
 - [Docker](/install/docker) -- containerized gateway setup
 - [Sandboxing](/gateway/sandboxing) -- agent sandbox configuration
 - [Multi-Agent Sandbox and Tools](/tools/multi-agent-sandbox-tools) -- per-agent isolation

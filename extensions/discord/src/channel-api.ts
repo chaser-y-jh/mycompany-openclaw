@@ -1,12 +1,12 @@
-export { DEFAULT_ACCOUNT_ID } from "openclaw/plugin-sdk/account-id";
+export { DEFAULT_ACCOUNT_ID } from "merclaw/plugin-sdk/account-id";
 export {
   buildTokenChannelStatusSummary,
   PAIRING_APPROVED_MESSAGE,
   projectCredentialSnapshotFields,
   resolveConfiguredFromCredentialStatuses,
-} from "openclaw/plugin-sdk/channel-status";
-export type { ChannelPlugin } from "openclaw/plugin-sdk/channel-core";
-export type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+} from "merclaw/plugin-sdk/channel-status";
+export type { ChannelPlugin } from "merclaw/plugin-sdk/channel-core";
+export type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
 
 const DISCORD_CHANNEL_META = {
   id: "discord",

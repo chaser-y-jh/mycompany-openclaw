@@ -1,15 +1,15 @@
-import type { Context, Model } from "openclaw/plugin-sdk/llm";
+import type { Context, Model } from "merclaw/plugin-sdk/llm";
 import type {
   ProviderReplaySessionEntry,
   ProviderSanitizeReplayHistoryContext,
-} from "openclaw/plugin-sdk/plugin-entry";
-import { createTestPluginApi } from "openclaw/plugin-sdk/plugin-test-api";
+} from "merclaw/plugin-sdk/plugin-entry";
+import { createTestPluginApi } from "merclaw/plugin-sdk/plugin-test-api";
 import {
   registerProviderPlugin,
   requireRegisteredProvider,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
-import { createCapturedThinkingConfigStream } from "openclaw/plugin-sdk/provider-test-contracts";
-import type { RealtimeVoiceProviderPlugin } from "openclaw/plugin-sdk/realtime-voice";
+} from "merclaw/plugin-sdk/plugin-test-runtime";
+import { createCapturedThinkingConfigStream } from "merclaw/plugin-sdk/provider-test-contracts";
+import type { RealtimeVoiceProviderPlugin } from "merclaw/plugin-sdk/realtime-voice";
 import { describe, expect, it, vi } from "vitest";
 import { registerGoogleGeminiCliProvider } from "./gemini-cli-provider.js";
 import googlePlugin from "./index.js";

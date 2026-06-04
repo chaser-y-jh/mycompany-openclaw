@@ -40,7 +40,7 @@ vi.mock("./manifest-registry-installed.js", async (importOriginal) => {
 const tempDirs: string[] = [];
 
 function tempStateDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-metadata-memo-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-metadata-memo-"));
   tempDirs.push(dir);
   return dir;
 }
@@ -65,7 +65,7 @@ function writePersistedIndex(params: {
   stateDir: string;
 }): void {
   const pluginDir = path.join(params.stateDir, "extensions", params.pluginId);
-  const manifestPath = params.manifestPath ?? path.join(pluginDir, "openclaw.plugin.json");
+  const manifestPath = params.manifestPath ?? path.join(pluginDir, "merclaw.plugin.json");
   const packageJsonPath = params.packageJsonPath ?? path.join(pluginDir, "package.json");
   writeJson(path.join(params.stateDir, "plugins", "installs.json"), {
     version: 1,
@@ -119,11 +119,11 @@ function writeRecoverableNpmPlugin(params: {
   writeJson(path.join(packageDir, "package.json"), {
     name: params.packageName,
     version: params.version,
-    openclaw: {
+    merclaw: {
       extensions: ["."],
     },
   });
-  writeJson(path.join(packageDir, "openclaw.plugin.json"), { id: params.pluginId });
+  writeJson(path.join(packageDir, "merclaw.plugin.json"), { id: params.pluginId });
 }
 
 function writePersistedInstallRecords(
@@ -151,7 +151,7 @@ function makeIndex(
   } = {},
 ): InstalledPluginIndex {
   const rootDir = options.rootDir ?? `/plugins/${pluginId}`;
-  const manifestPath = options.manifestPath ?? path.join(rootDir, "openclaw.plugin.json");
+  const manifestPath = options.manifestPath ?? path.join(rootDir, "merclaw.plugin.json");
   return {
     version: 1,
     hostContractVersion: "test",
@@ -193,7 +193,7 @@ function makeManifestRegistry(pluginId = "demo"): PluginManifestRegistry {
     commandAliases: [{ name: `${pluginId}-command` }],
     rootDir: `/plugins/${pluginId}`,
     source: `/plugins/${pluginId}/index.js`,
-    manifestPath: `/plugins/${pluginId}/openclaw.plugin.json`,
+    manifestPath: `/plugins/${pluginId}/merclaw.plugin.json`,
     origin: "global",
   };
   return { plugins: [plugin], diagnostics: [] };
@@ -536,7 +536,7 @@ describe("loadPluginMetadataSnapshot process memo", () => {
     const stateDir = tempStateDir();
     touchPersistedIndex(stateDir);
     const pluginDir = path.join(stateDir, "current", "derived");
-    const manifestPath = path.join(pluginDir, "openclaw.plugin.json");
+    const manifestPath = path.join(pluginDir, "merclaw.plugin.json");
     writeJson(manifestPath, { id: "derived", version: "1.0.0" });
     loadPluginRegistrySnapshotWithMetadata.mockReturnValue({
       source: "derived",
@@ -602,7 +602,7 @@ describe("loadPluginMetadataSnapshot process memo", () => {
 
   it("reuses the expanded freshness fingerprint on hot cache hits", () => {
     const stateDir = tempStateDir();
-    const manifestPath = path.join(stateDir, "extensions", "demo", "openclaw.plugin.json");
+    const manifestPath = path.join(stateDir, "extensions", "demo", "merclaw.plugin.json");
     writePersistedIndex({ manifestPath, pluginId: "demo", stateDir });
     loadPluginRegistrySnapshotWithMetadata.mockReturnValue({
       source: "persisted",
@@ -624,7 +624,7 @@ describe("loadPluginMetadataSnapshot process memo", () => {
   });
 
   it.each([
-    ["manifest", "openclaw.plugin.json", "manifestPath"],
+    ["manifest", "merclaw.plugin.json", "manifestPath"],
     ["source", "index.js", "source"],
     ["setup source", "setup.js", "setupSource"],
     ["package manifest", "package.json", "packageJsonPath"],
@@ -824,7 +824,7 @@ describe("loadPluginMetadataSnapshot process memo", () => {
 
   it("does not fingerprint persisted plugin paths outside the plugin root", () => {
     const stateDir = tempStateDir();
-    const outsideManifestPath = path.join(stateDir, "outside", "openclaw.plugin.json");
+    const outsideManifestPath = path.join(stateDir, "outside", "merclaw.plugin.json");
     const outsideSourcePath = path.join(stateDir, "outside", "index.js");
     writePersistedIndex({
       manifestPath: outsideManifestPath,
@@ -856,8 +856,8 @@ describe("loadPluginMetadataSnapshot process memo", () => {
   it("does not hash symlinked persisted plugin files that escape the plugin root", () => {
     const stateDir = tempStateDir();
     const pluginDir = path.join(stateDir, "extensions", "demo");
-    const manifestPath = path.join(pluginDir, "openclaw.plugin.json");
-    const outsideManifestPath = path.join(stateDir, "outside", "openclaw.plugin.json");
+    const manifestPath = path.join(pluginDir, "merclaw.plugin.json");
+    const outsideManifestPath = path.join(stateDir, "outside", "merclaw.plugin.json");
     fs.mkdirSync(pluginDir, { recursive: true });
     writeJson(outsideManifestPath, { id: "outside" });
     fs.symlinkSync(outsideManifestPath, manifestPath);

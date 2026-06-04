@@ -1,6 +1,6 @@
 import Combine
 import CoreImage
-import OpenClawKit
+import MerClawKit
 import PhotosUI
 import SwiftUI
 import UIKit
@@ -60,7 +60,7 @@ struct OnboardingWizardView: View {
     @State private var gatewayToken: String = ""
     @State private var gatewayPassword: String = ""
     @State private var connectMessage: String?
-    @State private var statusLine: String = "In your OpenClaw chat, run /pair qr, then scan the code here."
+    @State private var statusLine: String = "In your MerClaw chat, run /pair qr, then scan the code here."
     @State private var connectingGatewayID: String?
     @State private var issue: GatewayConnectionIssue = .none
     @State private var didMarkCompleted = false
@@ -493,15 +493,15 @@ struct OnboardingWizardView: View {
                         if let id = self.currentProblem?.requestId ?? self.issue.requestId, !id.isEmpty {
                             return "Request ID: \(id)"
                         }
-                        return "Request ID: check `openclaw devices list`."
+                        return "Request ID: check `merclaw devices list`."
                     }()
-                    let commandLine = self.currentProblem?.actionCommand ?? "openclaw devices approve <requestId>"
+                    let commandLine = self.currentProblem?.actionCommand ?? "merclaw devices approve <requestId>"
                     Text(
                         "Approve this device on the gateway.\n"
                             + "1) `\(commandLine)`\n"
-                            + "2) `/pair approve` in your OpenClaw chat\n"
+                            + "2) `/pair approve` in your MerClaw chat\n"
                             + "\(requestLine)\n"
-                            + "OpenClaw will also retry automatically when you return to this app.")
+                            + "MerClaw will also retry automatically when you return to this app.")
                 }
             }
 
@@ -558,7 +558,7 @@ struct OnboardingWizardView: View {
             Button {
                 self.onClose()
             } label: {
-                Text("Open OpenClaw")
+                Text("Open MerClaw")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
@@ -739,7 +739,7 @@ extension OnboardingWizardView {
 
     private func advanceFromIntro() {
         OnboardingStateStore.markFirstRunIntroSeen()
-        self.statusLine = "In your OpenClaw chat, run /pair qr, then scan the code here."
+        self.statusLine = "In your MerClaw chat, run /pair qr, then scan the code here."
         self.step = .welcome
     }
 
@@ -764,12 +764,12 @@ extension OnboardingWizardView {
                     self.manualPort = port
                     self.manualTLS = useTLS
                 case .discovered:
-                    self.manualHost = "openclaw.local"
+                    self.manualHost = "merclaw.local"
                     self.manualPort = 18789
                     self.manualTLS = true
                 }
             } else {
-                self.manualHost = "openclaw.local"
+                self.manualHost = "merclaw.local"
                 self.manualPort = 18789
                 self.manualTLS = true
             }
@@ -778,7 +778,7 @@ extension OnboardingWizardView {
         if self.selectedMode == nil {
             self.selectedMode = OnboardingStateStore.lastMode()
         }
-        if self.selectedMode == .developerLocal, self.manualHost == "openclaw.local" {
+        if self.selectedMode == .developerLocal, self.manualHost == "merclaw.local" {
             self.manualHost = "localhost"
             self.manualTLS = false
         }
@@ -793,7 +793,7 @@ extension OnboardingWizardView {
         let hasToken = !self.gatewayToken.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         let hasPassword = !self.gatewayPassword.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         if !hasSavedGateway, !hasToken, !hasPassword {
-            self.statusLine = "No saved pairing found. In your OpenClaw chat, run /pair qr, then scan the code here."
+            self.statusLine = "No saved pairing found. In your MerClaw chat, run /pair qr, then scan the code here."
         }
     }
 
@@ -838,15 +838,15 @@ extension OnboardingWizardView {
 
     private func applyModeDefaults(_ mode: OnboardingConnectionMode) {
         let host = self.manualHost.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        let hostIsDefaultLike = host.isEmpty || host == "openclaw.local" || host == "localhost"
+        let hostIsDefaultLike = host.isEmpty || host == "merclaw.local" || host == "localhost"
 
         switch mode {
         case .homeNetwork:
-            if hostIsDefaultLike { self.manualHost = "openclaw.local" }
+            if hostIsDefaultLike { self.manualHost = "merclaw.local" }
             self.manualTLS = true
             if self.manualPort <= 0 || self.manualPort > 65535 { self.manualPort = 18789 }
         case .remoteDomain:
-            if host == "openclaw.local" || host == "localhost" { self.manualHost = "" }
+            if host == "merclaw.local" || host == "localhost" { self.manualHost = "" }
             self.manualTLS = true
             if self.manualPort <= 0 || self.manualPort > 65535 { self.manualPort = 18789 }
         case .developerLocal:

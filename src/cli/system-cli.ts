@@ -1,4 +1,4 @@
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import type { Command } from "commander";
 import { formatDocsLink } from "../../packages/terminal-core/src/links.js";
 import { theme } from "../../packages/terminal-core/src/theme.js";
@@ -52,7 +52,7 @@ export function registerSystemCli(program: Command) {
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/system", "docs.openclaw.ai/cli/system")}\n`,
+        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/system", "docs.merclaw.ai/cli/system")}\n`,
     );
 
   addGatewayClientOptions(
@@ -73,7 +73,7 @@ export function registerSystemCli(program: Command) {
         const text = normalizeOptionalString(opts.text) ?? "";
         if (!text) {
           throw new Error(
-            `--text is required. Example: ${formatCliCommand('openclaw system event --text "deploy finished"')}.`,
+            `--text is required. Example: ${formatCliCommand('merclaw system event --text "deploy finished"')}.`,
           );
         }
         const mode = normalizeWakeMode(opts.mode);

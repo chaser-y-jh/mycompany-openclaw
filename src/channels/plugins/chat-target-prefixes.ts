@@ -1,8 +1,8 @@
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
-import { normalizeStringEntries } from "@openclaw/normalization-core/string-normalization";
+} from "@merclaw/normalization-core/string-coerce";
+import { normalizeStringEntries } from "@merclaw/normalization-core/string-normalization";
 import { parseStrictInteger } from "../../infra/parse-finite-number.js";
 
 export type ServicePrefix<TService extends string> = { prefix: string; service: TService };

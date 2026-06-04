@@ -1,10 +1,10 @@
 import { createRequire } from "node:module";
 import net from "node:net";
-import { isRecord as isObjectRecord } from "@openclaw/normalization-core/record-coerce";
+import { isRecord as isObjectRecord } from "@merclaw/normalization-core/record-coerce";
 import { addActiveManagedProxyTlsOptions } from "./proxy/managed-proxy-undici.js";
 import { resolveUndiciAutoSelectFamilyConnectOptions } from "./undici-family-policy.js";
 
-export const TEST_UNDICI_RUNTIME_DEPS_KEY = "__OPENCLAW_TEST_UNDICI_RUNTIME_DEPS__";
+export const TEST_UNDICI_RUNTIME_DEPS_KEY = "__MERCLAW_TEST_UNDICI_RUNTIME_DEPS__";
 
 /** Runtime-loaded undici constructors/functions used where static imports would affect globals. */
 export type UndiciRuntimeDeps = {
@@ -211,7 +211,7 @@ function withHttp1OnlyDispatcherOptions<T extends object | undefined>(
   return base;
 }
 
-/** Creates a direct undici Agent with OpenClaw's HTTP/1-only dispatcher policy. */
+/** Creates a direct undici Agent with MerClaw's HTTP/1-only dispatcher policy. */
 export function createHttp1Agent(
   options?: UndiciAgentOptions,
   timeoutMs?: number,
@@ -221,7 +221,7 @@ export function createHttp1Agent(
 }
 
 /**
- * Creates an EnvHttpProxyAgent with OpenClaw proxy TLS, IP-safe proxy pools,
+ * Creates an EnvHttpProxyAgent with MerClaw proxy TLS, IP-safe proxy pools,
  * timeout propagation, and HTTP/1-only dispatch.
  */
 export function createHttp1EnvHttpProxyAgent(

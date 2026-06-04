@@ -1,5 +1,5 @@
-import { optionalPositiveIntegerSchema } from "openclaw/plugin-sdk/channel-actions";
-import type { AnyAgentTool } from "openclaw/plugin-sdk/plugin-entry";
+import { optionalPositiveIntegerSchema } from "merclaw/plugin-sdk/channel-actions";
+import type { AnyAgentTool } from "merclaw/plugin-sdk/plugin-entry";
 import { Type } from "typebox";
 
 type FileTransferToolDescriptor = Pick<

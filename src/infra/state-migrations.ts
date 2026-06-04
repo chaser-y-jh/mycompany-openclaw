@@ -2,7 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import type { DatabaseSync, SQLInputValue } from "node:sqlite";
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
 import { resolveDefaultAgentId } from "../agents/agent-scope.js";
 import {
   listBundledChannelLegacySessionSurfaces,
@@ -19,7 +19,7 @@ import type { SessionEntry } from "../config/sessions.js";
 import { saveSessionStore } from "../config/sessions.js";
 import { canonicalizeMainSessionAlias } from "../config/sessions/main-session.js";
 import type { SessionScope } from "../config/sessions/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import {
   countPluginStateLiveEntries,
@@ -41,8 +41,8 @@ import {
   parseAgentSessionKey,
 } from "../routing/session-key.js";
 import { normalizeSessionKeyPreservingOpaquePeerIds } from "../sessions/session-key-utils.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import { runOpenClawStateWriteTransaction } from "../state/openclaw-state-db.js";
+import type { DB as MerClawStateKyselyDatabase } from "../state/merclaw-state-db.generated.js";
+import { runMerClawStateWriteTransaction } from "../state/merclaw-state-db.js";
 import { expandHomePrefix } from "./home-dir.js";
 import {
   executeSqliteQuerySync,
@@ -127,7 +127,7 @@ type LegacyPluginStateSidecarRow = {
   expires_at: number | bigint | null;
 };
 
-type LegacyPluginStateImportDatabase = Pick<OpenClawStateKyselyDatabase, "plugin_state_entries">;
+type LegacyPluginStateImportDatabase = Pick<MerClawStateKyselyDatabase, "plugin_state_entries">;
 type SqliteBindRow = Record<string, SQLInputValue>;
 
 type DetectedPluginDoctorStateMigrationPlan = {
@@ -610,7 +610,7 @@ async function migrateLegacyTaskRunsSidecar(params: {
     let importedTasks = 0;
     let importedDeliveryStates = 0;
     let skippedOrphanDeliveryStates = 0;
-    runOpenClawStateWriteTransaction(
+    runMerClawStateWriteTransaction(
       ({ db }) => {
         const taskColumns = [
           "runtime",
@@ -679,7 +679,7 @@ async function migrateLegacyTaskRunsSidecar(params: {
           throw new LegacyTaskStateSidecarConflictError(conflicts);
         }
       },
-      { env: { ...process.env, OPENCLAW_STATE_DIR: params.stateDir } },
+      { env: { ...process.env, MERCLAW_STATE_DIR: params.stateDir } },
     );
     if (importedTasks > 0) {
       changes.push(
@@ -737,7 +737,7 @@ async function migrateLegacyFlowRunsSidecar(params: {
   try {
     const conflicts: string[] = [];
     let imported = 0;
-    runOpenClawStateWriteTransaction(
+    runMerClawStateWriteTransaction(
       ({ db }) => {
         const columns = [
           "shape",
@@ -776,7 +776,7 @@ async function migrateLegacyFlowRunsSidecar(params: {
           throw new LegacyTaskStateSidecarConflictError(conflicts);
         }
       },
-      { env: { ...process.env, OPENCLAW_STATE_DIR: params.stateDir } },
+      { env: { ...process.env, MERCLAW_STATE_DIR: params.stateDir } },
     );
     if (imported > 0) {
       changes.push(
@@ -838,7 +838,7 @@ async function migrateLegacyPluginStateSidecar(params: {
     const rowsToInsert: LegacyPluginStateSidecarRow[] = [];
     let imported = 0;
     const now = Date.now();
-    runOpenClawStateWriteTransaction(
+    runMerClawStateWriteTransaction(
       ({ db }) => {
         const stateDb = getNodeSqliteKysely<LegacyPluginStateImportDatabase>(db);
         for (const row of rows) {
@@ -892,7 +892,7 @@ async function migrateLegacyPluginStateSidecar(params: {
           imported += 1;
         }
       },
-      { env: { ...process.env, OPENCLAW_STATE_DIR: params.stateDir } },
+      { env: { ...process.env, MERCLAW_STATE_DIR: params.stateDir } },
     );
     if (imported > 0) {
       changes.push(
@@ -938,15 +938,15 @@ async function withPluginStateImportEnv<T>(
   if (!plan.stateDir) {
     return await run();
   }
-  const previous = process.env.OPENCLAW_STATE_DIR;
-  process.env.OPENCLAW_STATE_DIR = plan.stateDir;
+  const previous = process.env.MERCLAW_STATE_DIR;
+  process.env.MERCLAW_STATE_DIR = plan.stateDir;
   try {
     return await run();
   } finally {
     if (previous === undefined) {
-      delete process.env.OPENCLAW_STATE_DIR;
+      delete process.env.MERCLAW_STATE_DIR;
     } else {
-      process.env.OPENCLAW_STATE_DIR = previous;
+      process.env.MERCLAW_STATE_DIR = previous;
     }
   }
 }
@@ -1711,7 +1711,7 @@ export async function autoMigrateLegacyStateDir(params: {
   autoMigrateStateDirChecked = true;
 
   const env = params.env ?? process.env;
-  if (env.OPENCLAW_STATE_DIR?.trim()) {
+  if (env.MERCLAW_STATE_DIR?.trim()) {
     return { migrated: false, skipped: true, changes: [], warnings: [] };
   }
 
@@ -1836,7 +1836,7 @@ export async function autoMigrateLegacyStateDir(params: {
           `State dir moved but failed to link legacy path (${legacyDir ?? "unknown"} → ${targetDir}): ${String(fallbackErr)}`,
         );
         warnings.push(
-          `Rollback failed; set OPENCLAW_STATE_DIR=${targetDir} to avoid split state: ${String(rollbackErr)}`,
+          `Rollback failed; set MERCLAW_STATE_DIR=${targetDir} to avoid split state: ${String(rollbackErr)}`,
         );
         changes.push(`State dir: ${legacyDir ?? "unknown"} → ${targetDir}`);
       }
@@ -1883,7 +1883,7 @@ export async function autoMigrateLegacyTaskStateSidecars(params: {
 }
 
 async function collectChannelLegacyStateMigrationPlans(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env: NodeJS.ProcessEnv;
   stateDir: string;
   oauthDir: string;
@@ -1913,7 +1913,7 @@ async function collectChannelLegacyStateMigrationPlans(params: {
 }
 
 async function collectPluginDoctorStateMigrationPlans(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env: NodeJS.ProcessEnv;
   stateDir: string;
   oauthDir: string;
@@ -1956,7 +1956,7 @@ function createPluginDoctorStateMigrationContext(
 }
 
 export async function detectLegacyStateMigrations(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env?: NodeJS.ProcessEnv;
   homedir?: () => string;
 }): Promise<LegacyStateDetection> {
@@ -2160,7 +2160,7 @@ async function migrateLegacySessions(
       }
     } else {
       warnings.push(
-        `Target sessions store unreadable; left untouched to avoid overwriting at ${detected.sessions.targetStorePath}. Run openclaw doctor --fix to archive it and retry the legacy merge.`,
+        `Target sessions store unreadable; left untouched to avoid overwriting at ${detected.sessions.targetStorePath}. Run merclaw doctor --fix to archive it and retry the legacy merge.`,
       );
     }
   }
@@ -2288,7 +2288,7 @@ export async function migrateLegacyAgentDir(
 
 async function runPluginDoctorStateMigrationPlans(params: {
   detected: LegacyStateDetection;
-  config: OpenClawConfig;
+  config: MerClawConfig;
 }): Promise<{ changes: string[]; warnings: string[] }> {
   const changes: string[] = [];
   const warnings: string[] = [];
@@ -2320,7 +2320,7 @@ async function runPluginDoctorStateMigrationPlans(params: {
 
 export async function runLegacyStateMigrations(params: {
   detected: LegacyStateDetection;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   now?: () => number;
   recoverCorruptTargetStore?: boolean;
 }): Promise<{ changes: string[]; warnings: string[] }> {
@@ -2337,7 +2337,7 @@ export async function runLegacyStateMigrations(params: {
   );
   const pluginPlans = await runPluginDoctorStateMigrationPlans({
     detected,
-    config: params.config ?? ({} as OpenClawConfig),
+    config: params.config ?? ({} as MerClawConfig),
   });
   const sessions = await migrateLegacySessions(detected, now, {
     recoverCorruptTargetStore: params.recoverCorruptTargetStore,
@@ -2369,7 +2369,7 @@ export async function runLegacyStateMigrations(params: {
 }
 
 export async function autoMigrateLegacyAgentDir(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env?: NodeJS.ProcessEnv;
   homedir?: () => string;
   log?: MigrationLogger;
@@ -2395,7 +2395,7 @@ export async function autoMigrateLegacyAgentDir(params: {
  * Safe to run multiple times (idempotent). See #29683.
  */
 export async function migrateOrphanedSessionKeys(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env?: NodeJS.ProcessEnv;
 }): Promise<{ changes: string[]; warnings: string[] }> {
   const changes: string[] = [];
@@ -2541,7 +2541,7 @@ function resolveStorePathFromTemplate(
 }
 
 export async function autoMigrateLegacyState(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env?: NodeJS.ProcessEnv;
   homedir?: () => string;
   log?: MigrationLogger;
@@ -2592,7 +2592,7 @@ export async function autoMigrateLegacyState(params: {
     env,
     homedir: params.homedir,
   });
-  const hasCustomAgentDir = env.OPENCLAW_AGENT_DIR?.trim() || env.PI_CODING_AGENT_DIR?.trim();
+  const hasCustomAgentDir = env.MERCLAW_AGENT_DIR?.trim() || env.PI_CODING_AGENT_DIR?.trim();
   if (hasCustomAgentDir) {
     const pluginStateSidecar = await migrateLegacyPluginStateSidecar({
       stateDir: detected.stateDir,

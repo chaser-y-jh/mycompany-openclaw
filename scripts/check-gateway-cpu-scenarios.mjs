@@ -172,9 +172,9 @@ function hasPrivateQaDist(repoRoot, fsImpl = fs) {
 function buildPrivateQaEnv(env) {
   return {
     ...env,
-    OPENCLAW_BUILD_PRIVATE_QA: "1",
-    OPENCLAW_ENABLE_PRIVATE_QA_CLI: "1",
-    OPENCLAW_RUN_NODE_SKIP_DTS_BUILD: env.OPENCLAW_RUN_NODE_SKIP_DTS_BUILD ?? "1",
+    MERCLAW_BUILD_PRIVATE_QA: "1",
+    MERCLAW_ENABLE_PRIVATE_QA_CLI: "1",
+    MERCLAW_RUN_NODE_SKIP_DTS_BUILD: env.MERCLAW_RUN_NODE_SKIP_DTS_BUILD ?? "1",
   };
 }
 
@@ -238,7 +238,7 @@ async function runGatewayCpuScenarios(options, params = {}) {
   if (!options.skipQa) {
     const qaCommand = pnpmCommand(
       [
-        "openclaw",
+        "merclaw",
         "qa",
         "suite",
         "--provider-mode",

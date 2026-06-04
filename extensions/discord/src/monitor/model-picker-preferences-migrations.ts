@@ -1,9 +1,9 @@
 import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import type { BundledChannelLegacyStateMigrationDetector } from "openclaw/plugin-sdk/channel-entry-contract";
-import { MAX_DATE_TIMESTAMP_MS, timestampMsToIsoString } from "openclaw/plugin-sdk/number-runtime";
-import { normalizeProviderId } from "openclaw/plugin-sdk/provider-model-shared";
+import type { BundledChannelLegacyStateMigrationDetector } from "merclaw/plugin-sdk/channel-entry-contract";
+import { MAX_DATE_TIMESTAMP_MS, timestampMsToIsoString } from "merclaw/plugin-sdk/number-runtime";
+import { normalizeProviderId } from "merclaw/plugin-sdk/provider-model-shared";
 
 const PREFERENCE_MAX_ENTRIES = 2_000;
 const MAX_PLUGIN_STATE_KEY_BYTES = 512;

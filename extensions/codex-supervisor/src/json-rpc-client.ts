@@ -34,7 +34,7 @@ export function resolveSafeApprovalResult(method: string): Record<string, unknow
       contentItems: [
         {
           type: "inputText",
-          text: "OpenClaw Codex supervisor did not register a handler for this app-server tool call.",
+          text: "MerClaw Codex supervisor did not register a handler for this app-server tool call.",
         },
       ],
       success: false,
@@ -52,7 +52,7 @@ export function resolveSafeApprovalResult(method: string): Record<string, unknow
   if (method.endsWith("/requestApproval")) {
     return {
       decision: "decline",
-      reason: "OpenClaw Codex supervisor does not grant native approvals.",
+      reason: "MerClaw Codex supervisor does not grant native approvals.",
     };
   }
   if (method === "item/tool/requestUserInput") {
@@ -74,8 +74,8 @@ abstract class BaseCodexJsonRpcConnection implements CodexJsonRpcConnection {
   async initialize(): Promise<void> {
     await this.request("initialize", {
       clientInfo: {
-        name: "openclaw-codex-supervisor",
-        title: "OpenClaw Codex Supervisor",
+        name: "merclaw-codex-supervisor",
+        title: "MerClaw Codex Supervisor",
         version: "0.1.0",
       },
       capabilities: {
@@ -128,7 +128,7 @@ abstract class BaseCodexJsonRpcConnection implements CodexJsonRpcConnection {
                 id,
                 error: {
                   code: -32601,
-                  message: `OpenClaw Codex supervisor cannot handle app-server request: ${method}`,
+                  message: `MerClaw Codex supervisor cannot handle app-server request: ${method}`,
                 },
               }
             : { id, result },

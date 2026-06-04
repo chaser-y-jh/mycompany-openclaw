@@ -1,4 +1,4 @@
-import { normalizeStringEntries } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { normalizeStringEntries } from "merclaw/plugin-sdk/string-coerce-runtime";
 
 export function buildLineQuickReplyFallbackText(labels: readonly string[] | undefined): string {
   const normalized = normalizeStringEntries(labels ?? []).slice(0, 13);

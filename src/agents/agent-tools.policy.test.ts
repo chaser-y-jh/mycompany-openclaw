@@ -2,7 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { MerClawConfig } from "../config/config.js";
 import { createWarnLogCapture } from "../logging/test-helpers/warn-log-capture.js";
 import {
   filterToolsByPolicy,
@@ -53,7 +53,7 @@ describe("agent-tools.policy", () => {
 });
 
 describe("resolveGroupToolPolicy group context validation", () => {
-  const cfg: OpenClawConfig = {
+  const cfg: MerClawConfig = {
     channels: {
       whatsapp: {
         groups: {
@@ -131,7 +131,7 @@ describe("resolveGroupToolPolicy group context validation", () => {
   });
 
   it("keeps specific session group policy ahead of trusted parent caller groupId", () => {
-    const scopedCfg: OpenClawConfig = {
+    const scopedCfg: MerClawConfig = {
       channels: {
         whatsapp: {
           groups: {
@@ -170,7 +170,7 @@ describe("resolveGroupToolPolicy group context validation", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     const policy = resolveGroupToolPolicy({
       config: channelCfg,
@@ -186,21 +186,21 @@ describe("resolveGroupToolPolicy group context validation", () => {
 describe("resolveSubagentToolPolicy depth awareness", () => {
   const baseCfg = {
     agents: { defaults: { subagents: { maxSpawnDepth: 2 } } },
-  } as unknown as OpenClawConfig;
+  } as unknown as MerClawConfig;
 
   const deepCfg = {
     agents: { defaults: { subagents: { maxSpawnDepth: 3 } } },
-  } as unknown as OpenClawConfig;
+  } as unknown as MerClawConfig;
 
   const leafCfg = {
     agents: { defaults: { subagents: { maxSpawnDepth: 1 } } },
-  } as unknown as OpenClawConfig;
+  } as unknown as MerClawConfig;
 
   it("applies subagent tools.alsoAllow to re-enable default-denied tools", () => {
     const cfg = {
       agents: { defaults: { subagents: { maxSpawnDepth: 2 } } },
       tools: { subagents: { tools: { alsoAllow: ["sessions_send"] } } },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
     const policy = resolveSubagentToolPolicy(cfg, 1);
     expect(isToolAllowedByPolicyName("sessions_send", policy)).toBe(true);
     expect(isToolAllowedByPolicyName("cron", policy)).toBe(false);
@@ -210,7 +210,7 @@ describe("resolveSubagentToolPolicy depth awareness", () => {
     const cfg = {
       agents: { defaults: { subagents: { maxSpawnDepth: 2 } } },
       tools: { subagents: { tools: { allow: ["sessions_send"] } } },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
     const policy = resolveSubagentToolPolicy(cfg, 1);
     expect(isToolAllowedByPolicyName("sessions_send", policy)).toBe(true);
   });
@@ -221,7 +221,7 @@ describe("resolveSubagentToolPolicy depth awareness", () => {
       tools: {
         subagents: { tools: { allow: ["sessions_spawn"], alsoAllow: ["sessions_send"] } },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
     const policy = resolveSubagentToolPolicy(cfg, 1);
     expect(policy.allow).toEqual(["sessions_spawn", "sessions_send"]);
   });
@@ -238,7 +238,7 @@ describe("resolveSubagentToolPolicy depth awareness", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
     const policy = resolveSubagentToolPolicy(cfg, 1);
     expect(isToolAllowedByPolicyName("sessions_send", policy)).toBe(false);
   });
@@ -253,7 +253,7 @@ describe("resolveSubagentToolPolicy depth awareness", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
     const policy = resolveSubagentToolPolicy(cfg, 1);
     expect(isToolAllowedByPolicyName("memory_search", policy)).toBe(false);
     expect(isToolAllowedByPolicyName("memory_get", policy)).toBe(false);
@@ -263,7 +263,7 @@ describe("resolveSubagentToolPolicy depth awareness", () => {
     const cfg = {
       agents: { defaults: { subagents: { maxSpawnDepth: 2 } } },
       tools: { subagents: { tools: { alsoAllow: ["sessions_send"] } } },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
     const policy = resolveSubagentToolPolicy(cfg, 1);
     expect(policy.allow).toBeUndefined();
     expect(isToolAllowedByPolicyName("subagents", policy)).toBe(true);
@@ -336,7 +336,7 @@ describe("resolveSubagentToolPolicy depth awareness", () => {
   it("uses stored leaf role for flat depth-1 session keys", () => {
     const storePath = path.join(
       os.tmpdir(),
-      `openclaw-subagent-policy-${Date.now()}-${Math.random().toString(16).slice(2)}.json`,
+      `merclaw-subagent-policy-${Date.now()}-${Math.random().toString(16).slice(2)}.json`,
     );
     fs.mkdirSync(path.dirname(storePath), { recursive: true });
     fs.writeFileSync(
@@ -361,7 +361,7 @@ describe("resolveSubagentToolPolicy depth awareness", () => {
       session: {
         store: storePath,
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     const policy = resolveSubagentToolPolicyForSession(cfg, "agent:main:subagent:flat-leaf");
     expect(isToolAllowedByPolicyName("sessions_spawn", policy)).toBe(false);
@@ -373,7 +373,7 @@ describe("resolveSubagentToolPolicy depth awareness", () => {
   it("resolves inherited tool denies from stored subagent sessions", () => {
     const storePath = path.join(
       os.tmpdir(),
-      `openclaw-subagent-inherited-deny-${Date.now()}-${Math.random().toString(16).slice(2)}.json`,
+      `merclaw-subagent-inherited-deny-${Date.now()}-${Math.random().toString(16).slice(2)}.json`,
     );
     fs.mkdirSync(path.dirname(storePath), { recursive: true });
     fs.writeFileSync(
@@ -399,7 +399,7 @@ describe("resolveSubagentToolPolicy depth awareness", () => {
       session: {
         store: storePath,
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     const policy = resolveInheritedToolPolicyForSession(cfg, "agent:main:subagent:limited");
     expect(isToolAllowedByPolicyName("exec", policy)).toBe(false);
@@ -410,7 +410,7 @@ describe("resolveSubagentToolPolicy depth awareness", () => {
   it("resolves inherited tool allows from stored subagent sessions", () => {
     const storePath = path.join(
       os.tmpdir(),
-      `openclaw-subagent-inherited-allow-${Date.now()}-${Math.random().toString(16).slice(2)}.json`,
+      `merclaw-subagent-inherited-allow-${Date.now()}-${Math.random().toString(16).slice(2)}.json`,
     );
     fs.mkdirSync(path.dirname(storePath), { recursive: true });
     fs.writeFileSync(
@@ -436,7 +436,7 @@ describe("resolveSubagentToolPolicy depth awareness", () => {
       session: {
         store: storePath,
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     const policy = resolveInheritedToolPolicyForSession(cfg, "agent:main:subagent:limited");
     expect(isToolAllowedByPolicyName("sessions_spawn", policy)).toBe(true);
@@ -448,7 +448,7 @@ describe("resolveSubagentToolPolicy depth awareness", () => {
   it("keeps configured plugin allows separate from inherited tool allows", () => {
     const storePath = path.join(
       os.tmpdir(),
-      `openclaw-subagent-inherited-allow-separate-${Date.now()}-${Math.random()
+      `merclaw-subagent-inherited-allow-separate-${Date.now()}-${Math.random()
         .toString(16)
         .slice(2)}.json`,
     );
@@ -483,7 +483,7 @@ describe("resolveSubagentToolPolicy depth awareness", () => {
       session: {
         store: storePath,
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     const subagentPolicy = resolveSubagentToolPolicyForSession(cfg, "agent:main:subagent:limited");
     const inheritedPolicy = resolveInheritedToolPolicyForSession(
@@ -497,7 +497,7 @@ describe("resolveSubagentToolPolicy depth awareness", () => {
   it("applies inherited tool policy from stored ACP sessions without subagent metadata", () => {
     const storePath = path.join(
       os.tmpdir(),
-      `openclaw-acp-inherited-deny-${Date.now()}-${Math.random().toString(16).slice(2)}.json`,
+      `merclaw-acp-inherited-deny-${Date.now()}-${Math.random().toString(16).slice(2)}.json`,
     );
     fs.mkdirSync(path.dirname(storePath), { recursive: true });
     fs.writeFileSync(
@@ -521,7 +521,7 @@ describe("resolveSubagentToolPolicy depth awareness", () => {
       session: {
         store: storePath,
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     const policy = resolveInheritedToolPolicyForSession(cfg, "agent:main:acp:limited");
     expect(isToolAllowedByPolicyName("custom_plugin_tool", policy)).toBe(true);
@@ -551,7 +551,7 @@ describe("resolveEffectiveToolPolicy", () => {
           "openrouter/anthropic/claude-sonnet": { deny: ["read"] },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     expect(
       resolveEffectiveToolPolicy({
@@ -569,7 +569,7 @@ describe("resolveEffectiveToolPolicy", () => {
           "anthropic/claude-sonnet": { deny: ["exec"] },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     expect(
       resolveEffectiveToolPolicy({
@@ -586,7 +586,7 @@ describe("resolveEffectiveToolPolicy", () => {
         profile: "messaging",
         exec: { host: "sandbox" },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const result = resolveEffectiveToolPolicy({ config: cfg });
     expect(result.profileAlsoAllow).toBeUndefined();
   });
@@ -597,7 +597,7 @@ describe("resolveEffectiveToolPolicy", () => {
         profile: "messaging",
         fs: { workspaceOnly: false },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const result = resolveEffectiveToolPolicy({ config: cfg });
     expect(result.profileAlsoAllow).toBeUndefined();
   });
@@ -609,7 +609,7 @@ describe("resolveEffectiveToolPolicy", () => {
         alsoAllow: ["web_search"],
         exec: { host: "sandbox" },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const result = resolveEffectiveToolPolicy({ config: cfg });
     expect(result.profileAlsoAllow).toEqual(["web_search"]);
   });
@@ -629,7 +629,7 @@ describe("resolveEffectiveToolPolicy", () => {
           },
         ],
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const result = resolveEffectiveToolPolicy({ config: cfg, agentId: "coder" });
     expect(result.profileAlsoAllow).toBeUndefined();
   });
@@ -650,7 +650,7 @@ describe("resolveEffectiveToolPolicy", () => {
           },
         ],
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const result = resolveEffectiveToolPolicy({ config: cfg, agentId: "messenger" });
     expect(result.profileAlsoAllow).toEqual(["image"]);
     expect(result.profileAlsoAllow).not.toContain("exec");
@@ -658,7 +658,7 @@ describe("resolveEffectiveToolPolicy", () => {
   });
 
   it("does not warn an agent profile about inherited global tool sections (#47487)", async () => {
-    const warnLogs = createWarnLogCapture("openclaw-agent-tools-policy-test");
+    const warnLogs = createWarnLogCapture("merclaw-agent-tools-policy-test");
     try {
       const cfg = {
         tools: {
@@ -676,7 +676,7 @@ describe("resolveEffectiveToolPolicy", () => {
             },
           ],
         },
-      } as OpenClawConfig;
+      } as MerClawConfig;
 
       resolveEffectiveToolPolicy({ config: cfg, agentId: "sage" });
 
@@ -687,7 +687,7 @@ describe("resolveEffectiveToolPolicy", () => {
   });
 
   it("still warns when an agent profile has its own configured exec section (#47487)", async () => {
-    const warnLogs = createWarnLogCapture("openclaw-agent-tools-policy-test");
+    const warnLogs = createWarnLogCapture("merclaw-agent-tools-policy-test");
     try {
       const cfg = {
         agents: {
@@ -701,7 +701,7 @@ describe("resolveEffectiveToolPolicy", () => {
             },
           ],
         },
-      } as OpenClawConfig;
+      } as MerClawConfig;
 
       resolveEffectiveToolPolicy({ config: cfg, agentId: "sage" });
 
@@ -715,7 +715,7 @@ describe("resolveEffectiveToolPolicy", () => {
   });
 
   it("only lists configured sections whose grants are still missing (#47487)", async () => {
-    const warnLogs = createWarnLogCapture("openclaw-agent-tools-policy-test");
+    const warnLogs = createWarnLogCapture("merclaw-agent-tools-policy-test");
     try {
       const cfg = {
         agents: {
@@ -731,7 +731,7 @@ describe("resolveEffectiveToolPolicy", () => {
             },
           ],
         },
-      } as OpenClawConfig;
+      } as MerClawConfig;
 
       resolveEffectiveToolPolicy({ config: cfg, agentId: "echo" });
 
@@ -755,7 +755,7 @@ describe("resolveEffectiveToolPolicy", () => {
         alsoAllow: ["exec", "process"],
         exec: { host: "sandbox" },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const result = resolveEffectiveToolPolicy({ config: cfg });
     expect(result.profileAlsoAllow).toEqual(["exec", "process"]);
   });

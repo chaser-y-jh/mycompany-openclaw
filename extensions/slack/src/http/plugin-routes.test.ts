@@ -1,11 +1,11 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { createTestPluginApi } from "openclaw/plugin-sdk/plugin-test-api";
+import { createTestPluginApi } from "merclaw/plugin-sdk/plugin-test-api";
 import { describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig, OpenClawPluginApi } from "../runtime-api.js";
+import type { MerClawConfig, MerClawPluginApi } from "../runtime-api.js";
 import { registerSlackPluginHttpRoutes } from "./plugin-routes.js";
 import { registerSlackHttpHandler } from "./registry.js";
 
-function createApi(config: OpenClawConfig, registerHttpRoute = vi.fn()): OpenClawPluginApi {
+function createApi(config: MerClawConfig, registerHttpRoute = vi.fn()): MerClawPluginApi {
   return createTestPluginApi({
     id: "slack",
     config,
@@ -26,7 +26,7 @@ function registeredRouteAt(registerHttpRoute: ReturnType<typeof vi.fn>, index: n
 describe("registerSlackPluginHttpRoutes", () => {
   it("registers account webhook paths without resolving unresolved token refs", () => {
     const registerHttpRoute = vi.fn();
-    const cfg: OpenClawConfig = {
+    const cfg: MerClawConfig = {
       channels: {
         slack: {
           accounts: {

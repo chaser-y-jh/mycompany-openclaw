@@ -5,7 +5,7 @@ import { readPositiveIntEnv } from "../env-limits.mjs";
 
 const port = readPositiveIntEnv("CLICKCLACK_FIXTURE_PORT", 44181);
 const token = process.env.CLICKCLACK_FIXTURE_TOKEN ?? "clickclack-release-token";
-const statePath = process.env.CLICKCLACK_FIXTURE_STATE ?? "/tmp/openclaw-clickclack-fixture.json";
+const statePath = process.env.CLICKCLACK_FIXTURE_STATE ?? "/tmp/merclaw-clickclack-fixture.json";
 const workspace = {
   id: "ws_release",
   name: "Release Workspace",
@@ -22,8 +22,8 @@ const channel = {
 const botUser = {
   id: "usr_bot",
   kind: "bot",
-  display_name: "OpenClaw Bot",
-  handle: "openclaw",
+  display_name: "MerClaw Bot",
+  handle: "merclaw",
   avatar_url: "",
   created_at: new Date(0).toISOString(),
 };

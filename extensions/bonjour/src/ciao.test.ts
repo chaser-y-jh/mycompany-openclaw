@@ -53,13 +53,13 @@ describe("bonjour-ciao", () => {
     expect(
       classifyCiaoUnhandledRejection(
         new Error(
-          "Can't probe for a service which is announced already. Received announcing for service OpenClaw Gateway._openclaw._tcp.local.",
+          "Can't probe for a service which is announced already. Received announcing for service MerClaw Gateway._merclaw._tcp.local.",
         ),
       ),
     ).toEqual({
       kind: "self-probe",
       formatted:
-        "Can't probe for a service which is announced already. Received announcing for service OpenClaw Gateway._openclaw._tcp.local.",
+        "Can't probe for a service which is announced already. Received announcing for service MerClaw Gateway._merclaw._tcp.local.",
     });
   });
 

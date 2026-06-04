@@ -1,6 +1,6 @@
-import { createTestPluginApi } from "openclaw/plugin-sdk/plugin-test-api";
+import { createTestPluginApi } from "merclaw/plugin-sdk/plugin-test-api";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawPluginApi, PluginRuntime } from "../runtime-api.js";
+import type { MerClawPluginApi, PluginRuntime } from "../runtime-api.js";
 
 const createFeishuClientMock = vi.hoisted(() => vi.fn());
 const chatGetMock = vi.hoisted(() => vi.fn());
@@ -19,9 +19,9 @@ function createFeishuToolRuntime(): PluginRuntime {
 
 describe("registerFeishuChatTools", () => {
   function createChatToolApi(params: {
-    config: OpenClawPluginApi["config"];
-    registerTool: OpenClawPluginApi["registerTool"];
-  }): OpenClawPluginApi {
+    config: MerClawPluginApi["config"];
+    registerTool: MerClawPluginApi["registerTool"];
+  }): MerClawPluginApi {
     return createTestPluginApi({
       id: "feishu-test",
       name: "Feishu Test",

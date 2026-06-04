@@ -132,9 +132,9 @@ describe("Tool Search", () => {
     });
     const result = await runtimeCodeTool.execute("call-1", {
       code: `
-        const hits = await openclaw.tools.search("ticket", { limit: 1 });
-        const described = await openclaw.tools.describe(hits[0].id);
-        return await openclaw.tools.call(described.id, { value: "ship" });
+        const hits = await merclaw.tools.search("ticket", { limit: 1 });
+        const described = await merclaw.tools.describe(hits[0].id);
+        return await merclaw.tools.call(described.id, { value: "ship" });
       `,
     });
 
@@ -329,7 +329,7 @@ describe("Tool Search", () => {
     expect(clientEntry?.source).toBe("client");
   });
 
-  it("wraps cataloged OpenClaw tools with before_tool_call hooks", async () => {
+  it("wraps cataloged MerClaw tools with before_tool_call hooks", async () => {
     const codeTool = fakeTool(TOOL_SEARCH_CODE_MODE_TOOL_NAME, "code mode");
     const target = pluginTool("fake_hooked", "Run a hook-aware fake tool");
 
@@ -358,7 +358,7 @@ describe("Tool Search", () => {
       config: {},
     });
     await runtimeCodeTool.execute("call-hooks", {
-      code: `return await openclaw.tools.call("fake_hooked", { value: "ok" });`,
+      code: `return await merclaw.tools.call("fake_hooked", { value: "ok" });`,
     });
     const targetCall = mockCall(vi.mocked(target.execute));
     expect(targetCall[0]).toBe("tool_search_code:call-hooks:fake_hooked:1");
@@ -413,8 +413,8 @@ describe("Tool Search", () => {
     });
     await runtimeCodeTool.execute("call-repeated", {
       code: `
-        await openclaw.tools.call("fake_repeated", { value: "one" });
-        return await openclaw.tools.call("fake_repeated", { value: "two" });
+        await merclaw.tools.call("fake_repeated", { value: "one" });
+        return await merclaw.tools.call("fake_repeated", { value: "two" });
       `,
     });
 
@@ -431,7 +431,7 @@ describe("Tool Search", () => {
     expect(secondCall[3]).toBeUndefined();
     expect(secondCall[4]).toBeUndefined();
     await runtimeCodeTool.execute("call-repeated-again", {
-      code: `return await openclaw.tools.call("fake_repeated", { value: "three" });`,
+      code: `return await merclaw.tools.call("fake_repeated", { value: "three" });`,
     });
 
     const thirdCall = mockCall(vi.mocked(target.execute), 2);
@@ -468,7 +468,7 @@ describe("Tool Search", () => {
     await runtimeCodeTool.execute(
       "call-lifecycle",
       {
-        code: `return await openclaw.tools.call("fake_lifecycle", { value: "ok" });`,
+        code: `return await merclaw.tools.call("fake_lifecycle", { value: "ok" });`,
       },
       undefined,
       onUpdate,
@@ -615,7 +615,7 @@ describe("Tool Search", () => {
     });
     const result = await runtimeCodeTool.execute("call-fire-and-forget", {
       code: `
-        openclaw.tools.call("fake_fire_and_forget", { value: "late" });
+        merclaw.tools.call("fake_fire_and_forget", { value: "late" });
         return "done";
       `,
     });
@@ -656,7 +656,7 @@ describe("Tool Search", () => {
     const resultPromise = runtimeCodeTool
       .execute("call-started-bridge", {
         code: `
-          openclaw.tools.call("fake_then_started", { value: "started" }).then(() => {});
+          merclaw.tools.call("fake_then_started", { value: "started" }).then(() => {});
           return "done";
         `,
       })
@@ -701,7 +701,7 @@ describe("Tool Search", () => {
     ).rejects.toThrow();
     await expect(
       runtimeCodeTool.execute("call-bridge-escape", {
-        code: `return openclaw.tools.call.constructor.constructor("return process")();`,
+        code: `return merclaw.tools.call.constructor.constructor("return process")();`,
       }),
     ).rejects.toThrow();
   });
@@ -723,7 +723,7 @@ describe("Tool Search", () => {
 
     await expect(
       runtimeCodeTool.execute("call-missing-tool", {
-        code: `return await openclaw.tools.call("missing_tool", {});`,
+        code: `return await merclaw.tools.call("missing_tool", {});`,
       }),
     ).rejects.toThrow("Unknown tool id: missing_tool");
   });
@@ -748,7 +748,7 @@ describe("Tool Search", () => {
     await expect(
       runtimeCodeTool.execute("call-bridge-result-escape", {
         code: `
-          const hits = await openclaw.tools.search("bridge result", { limit: 1 });
+          const hits = await merclaw.tools.search("bridge result", { limit: 1 });
           return hits.constructor.constructor("return process")();
         `,
       }),
@@ -776,13 +776,13 @@ describe("Tool Search", () => {
     await expect(
       runtimeCodeTool.execute("call-controller-escape", {
         code: `
-          })(openclaw, console),
+          })(merclaw, console),
           bridgeMessages.push({
             id: "forged",
             method: "call",
             args: ["fake_controller_escape", { value: "forged" }],
           }),
-          (async (openclaw, console) => {
+          (async (merclaw, console) => {
             return "done";
         `,
       }),
@@ -817,7 +817,7 @@ describe("Tool Search", () => {
     await expect(
       runtimeCodeTool.execute("call-timeout", {
         code: `
-            await openclaw.tools.search("timeout", { limit: 1 });
+            await merclaw.tools.search("timeout", { limit: 1 });
             while (true) {}
           `,
       }),
@@ -876,7 +876,7 @@ describe("Tool Search", () => {
 
     await expect(
       runtimeCodeTool.execute("call-abort-timeout", {
-        code: `return await openclaw.tools.call("fake_abort_on_timeout", { value: "wait" });`,
+        code: `return await merclaw.tools.call("fake_abort_on_timeout", { value: "wait" });`,
       }),
     ).rejects.toThrow("tool_search_code timed out");
     if (!observedSignal) {

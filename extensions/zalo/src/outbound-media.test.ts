@@ -1,12 +1,12 @@
 import { stat } from "node:fs/promises";
 import { join } from "node:path";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+import { resolvePreferredMerClawTmpDir } from "merclaw/plugin-sdk/temp-path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const loadOutboundMediaFromUrlMock = vi.fn();
-const ZALO_OUTBOUND_MEDIA_DIR_NAME = "openclaw-zalo-outbound-media";
+const ZALO_OUTBOUND_MEDIA_DIR_NAME = "merclaw-zalo-outbound-media";
 
-vi.mock("openclaw/plugin-sdk/outbound-media", () => ({
+vi.mock("merclaw/plugin-sdk/outbound-media", () => ({
   loadOutboundMediaFromUrl: (...args: unknown[]) => loadOutboundMediaFromUrlMock(...args),
 }));
 
@@ -47,7 +47,7 @@ describe("zalo outbound hosted media", () => {
     });
   });
 
-  it("loads outbound media under OpenClaw control and returns a hosted URL", async () => {
+  it("loads outbound media under MerClaw control and returns a hosted URL", async () => {
     const hostedUrl = await prepareHostedZaloMediaUrl({
       mediaUrl: "https://example.com/photo.png",
       webhookUrl: "https://gateway.example.com/zalo-webhook",
@@ -96,7 +96,7 @@ describe("zalo outbound hosted media", () => {
     expect(id).toHaveLength(24);
     expect(/^[0-9a-f]+$/.test(id)).toBe(true);
 
-    const storageDir = join(resolvePreferredOpenClawTmpDir(), resolveHostedZaloMediaDirName());
+    const storageDir = join(resolvePreferredMerClawTmpDir(), resolveHostedZaloMediaDirName());
     const [dirStats, metadataStats, bufferStats] = await Promise.all([
       stat(storageDir),
       stat(join(storageDir, `${id}.json`)),

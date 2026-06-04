@@ -3,11 +3,11 @@ import path from "node:path";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/normalization-core/string-coerce";
 import {
   normalizeStringEntries,
   sortUniqueStrings,
-} from "@openclaw/normalization-core/string-normalization";
+} from "@merclaw/normalization-core/string-normalization";
 import { normalizeEnvVarKey } from "../infra/host-env-security.js";
 import { parseTcpPort } from "../infra/tcp-port.js";
 import { resolveLaunchAgentPlistPath } from "./launchd.js";
@@ -332,8 +332,8 @@ function auditGatewayToken(
   }
   issues.push({
     code: SERVICE_AUDIT_CODES.gatewayTokenEmbedded,
-    message: "Gateway service embeds OPENCLAW_GATEWAY_TOKEN and should be reinstalled.",
-    detail: "Run `openclaw gateway install --force` to remove embedded service token.",
+    message: "Gateway service embeds MERCLAW_GATEWAY_TOKEN and should be reinstalled.",
+    detail: "Run `merclaw gateway install --force` to remove embedded service token.",
     level: "recommended",
   });
   const expectedToken = normalizeOptionalString(expectedGatewayToken);
@@ -343,7 +343,7 @@ function auditGatewayToken(
   issues.push({
     code: SERVICE_AUDIT_CODES.gatewayTokenMismatch,
     message:
-      "Gateway service OPENCLAW_GATEWAY_TOKEN does not match gateway.auth.token in openclaw.json",
+      "Gateway service MERCLAW_GATEWAY_TOKEN does not match gateway.auth.token in merclaw.json",
     detail: "service token is stale",
     level: "recommended",
   });
@@ -430,10 +430,10 @@ export function readEmbeddedGatewayToken(command: GatewayServiceCommand): string
   if (!command) {
     return undefined;
   }
-  if (isEnvironmentFileOnlySource(command.environmentValueSources?.OPENCLAW_GATEWAY_TOKEN)) {
+  if (isEnvironmentFileOnlySource(command.environmentValueSources?.MERCLAW_GATEWAY_TOKEN)) {
     return undefined;
   }
-  return normalizeOptionalString(command.environment?.OPENCLAW_GATEWAY_TOKEN);
+  return normalizeOptionalString(command.environment?.MERCLAW_GATEWAY_TOKEN);
 }
 
 function getPathModule(platform: NodeJS.Platform) {
@@ -594,7 +594,7 @@ export function checkTokenDrift(params: {
       code: SERVICE_AUDIT_CODES.gatewayTokenDrift,
       message:
         "Config token differs from service token. The daemon will use the old token after restart.",
-      detail: "Run `openclaw gateway install --force` to sync the token.",
+      detail: "Run `merclaw gateway install --force` to sync the token.",
       level: "recommended",
     };
   }

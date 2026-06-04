@@ -15,7 +15,7 @@ import {
 
 describe("package dist inventory", () => {
   it("tracks missing and stale dist files", async () => {
-    await withTempDir({ prefix: "openclaw-dist-inventory-" }, async (packageRoot) => {
+    await withTempDir({ prefix: "merclaw-dist-inventory-" }, async (packageRoot) => {
       const currentFile = path.join(packageRoot, "dist", "current-BR6xv1a1.js");
       await fs.mkdir(path.dirname(currentFile), { recursive: true });
       await fs.writeFile(currentFile, "export {};\n", "utf8");
@@ -40,7 +40,7 @@ describe("package dist inventory", () => {
   });
 
   it("keeps npm-omitted dist artifacts out of the inventory", async () => {
-    await withTempDir({ prefix: "openclaw-dist-inventory-pack-" }, async (packageRoot) => {
+    await withTempDir({ prefix: "merclaw-dist-inventory-pack-" }, async (packageRoot) => {
       const packagedQaChannelRuntime = path.join(
         packageRoot,
         "dist",
@@ -134,7 +134,7 @@ describe("package dist inventory", () => {
 
   it("honors package files exclusions when writing the dist inventory", async () => {
     await withTempDir(
-      { prefix: "openclaw-dist-inventory-package-files-" },
+      { prefix: "merclaw-dist-inventory-package-files-" },
       async (packageRoot) => {
         const packagedRuntime = path.join(packageRoot, "dist", "plugin-sdk", "runtime.js");
         const omittedTestRuntime = path.join(
@@ -196,14 +196,14 @@ describe("package dist inventory", () => {
   });
 
   it("keeps transient plugin dependency trees out of the inventory", async () => {
-    await withTempDir({ prefix: "openclaw-dist-inventory-plugin-deps-" }, async (packageRoot) => {
+    await withTempDir({ prefix: "merclaw-dist-inventory-plugin-deps-" }, async (packageRoot) => {
       const realFile = path.join(packageRoot, "dist", "index.js");
       const rootDependencyPackage = path.join(
         packageRoot,
         "dist",
         "extensions",
         "node_modules",
-        "openclaw",
+        "merclaw",
         "package.json",
       );
       const pluginDependencyPackage = path.join(
@@ -228,7 +228,7 @@ describe("package dist inventory", () => {
 
   it("omits packaged extension node_modules while keeping extension runtime files", async () => {
     await withTempDir(
-      { prefix: "openclaw-dist-inventory-extension-node-modules-" },
+      { prefix: "merclaw-dist-inventory-extension-node-modules-" },
       async (packageRoot) => {
         const extensionRuntime = path.join(
           packageRoot,
@@ -242,7 +242,7 @@ describe("package dist inventory", () => {
           "dist",
           "extensions",
           "node_modules",
-          "openclaw",
+          "merclaw",
           "package.json",
         );
         const extensionDependencyPackage = path.join(
@@ -270,7 +270,7 @@ describe("package dist inventory", () => {
   });
 
   it("keeps publishable externalized bundled plugin dist trees out of the inventory", async () => {
-    await withTempDir({ prefix: "openclaw-dist-inventory-externalized-" }, async (packageRoot) => {
+    await withTempDir({ prefix: "merclaw-dist-inventory-externalized-" }, async (packageRoot) => {
       const externalizedRuntime = path.join(
         packageRoot,
         "dist",
@@ -315,8 +315,8 @@ describe("package dist inventory", () => {
       await fs.writeFile(
         externalizedPackageJson,
         JSON.stringify({
-          name: "@openclaw/external-chat",
-          openclaw: {
+          name: "@merclaw/external-chat",
+          merclaw: {
             release: {
               publishToClawHub: true,
               publishToNpm: true,
@@ -328,8 +328,8 @@ describe("package dist inventory", () => {
       await fs.writeFile(
         bundledPackageJson,
         JSON.stringify({
-          name: "@openclaw/bundled-chat",
-          openclaw: {},
+          name: "@merclaw/bundled-chat",
+          merclaw: {},
         }),
         "utf8",
       );
@@ -341,7 +341,7 @@ describe("package dist inventory", () => {
   });
 
   it("keeps publishable core-package runtime plugin dist trees in the inventory", async () => {
-    await withTempDir({ prefix: "openclaw-dist-inventory-core-runtime-" }, async (packageRoot) => {
+    await withTempDir({ prefix: "merclaw-dist-inventory-core-runtime-" }, async (packageRoot) => {
       const coreRuntime = path.join(packageRoot, "dist", "extensions", "core-chat", "index.js");
       const corePackageJson = path.join(packageRoot, "extensions", "core-chat", "package.json");
 
@@ -351,8 +351,8 @@ describe("package dist inventory", () => {
       await fs.writeFile(
         corePackageJson,
         JSON.stringify({
-          name: "@openclaw/core-chat",
-          openclaw: {
+          name: "@merclaw/core-chat",
+          merclaw: {
             release: {
               publishToClawHub: true,
               publishToNpm: true,
@@ -369,7 +369,7 @@ describe("package dist inventory", () => {
   });
 
   it("reports runtime-created install staging dirs during installed dist verification", async () => {
-    await withTempDir({ prefix: "openclaw-dist-inventory-stage-" }, async (packageRoot) => {
+    await withTempDir({ prefix: "merclaw-dist-inventory-stage-" }, async (packageRoot) => {
       const realFile = path.join(packageRoot, "dist", "real-AbC123.js");
       await fs.mkdir(path.dirname(realFile), { recursive: true });
       await fs.writeFile(realFile, "export {};\n", "utf8");
@@ -380,7 +380,7 @@ describe("package dist inventory", () => {
         "dist",
         "extensions",
         "brave",
-        ".openclaw-install-stage",
+        ".merclaw-install-stage",
         "node_modules",
         "typebox",
         "build",
@@ -392,7 +392,7 @@ describe("package dist inventory", () => {
         "dist",
         "extensions",
         "browser",
-        ".openclaw-install-stage-AbC123",
+        ".merclaw-install-stage-AbC123",
         "node_modules",
         "playwright-core",
         "package.json",
@@ -403,8 +403,8 @@ describe("package dist inventory", () => {
       await fs.writeFile(suffixedStageFile, "{}", "utf8");
 
       await expect(collectPackageDistInventoryErrors(packageRoot)).resolves.toEqual([
-        "unexpected packaged dist file dist/extensions/brave/.openclaw-install-stage/node_modules/typebox/build/compile/code.mjs",
-        "unexpected packaged dist file dist/extensions/browser/.openclaw-install-stage-AbC123/node_modules/playwright-core/package.json",
+        "unexpected packaged dist file dist/extensions/brave/.merclaw-install-stage/node_modules/typebox/build/compile/code.mjs",
+        "unexpected packaged dist file dist/extensions/browser/.merclaw-install-stage-AbC123/node_modules/playwright-core/package.json",
       ]);
     });
   });
@@ -412,37 +412,37 @@ describe("package dist inventory", () => {
   it("matches install-stage paths case-insensitively across path segments", () => {
     expect(
       isLegacyPluginDependencyInstallStagePath(
-        "dist/extensions/brave/.openclaw-install-stage/node_modules/typebox/package.json",
+        "dist/extensions/brave/.merclaw-install-stage/node_modules/typebox/package.json",
       ),
     ).toBe(true);
     expect(
       isLegacyPluginDependencyInstallStagePath(
-        "dist/Extensions/browser/.OPENCLAW-INSTALL-STAGE-AbC123/node_modules/playwright-core/package.json",
+        "dist/Extensions/browser/.MERCLAW-INSTALL-STAGE-AbC123/node_modules/playwright-core/package.json",
       ),
     ).toBe(true);
     expect(
       isLegacyPluginDependencyInstallStagePath(
-        "Dist/Extensions/browser/.OpenClaw-Install-Stage/package.json",
+        "Dist/Extensions/browser/.MerClaw-Install-Stage/package.json",
       ),
     ).toBe(true);
     expect(
       isLegacyPluginDependencyInstallStagePath(
-        "dist/extensions/browser/.openclaw-runtime-deps-copy-AbC123/package.json",
+        "dist/extensions/browser/.merclaw-runtime-deps-copy-AbC123/package.json",
       ),
     ).toBe(false);
     expect(
-      isLegacyPluginDependencyInstallStagePath("dist/extensions/.openclaw-install-stage"),
+      isLegacyPluginDependencyInstallStagePath("dist/extensions/.merclaw-install-stage"),
     ).toBe(false);
   });
 
   it("rejects pre-populated install-stage debris at publish time", async () => {
-    await withTempDir({ prefix: "openclaw-dist-inventory-stage-publish-" }, async (packageRoot) => {
+    await withTempDir({ prefix: "merclaw-dist-inventory-stage-publish-" }, async (packageRoot) => {
       const seededStagePackageJson = path.join(
         packageRoot,
         "dist",
         "extensions",
         "evil",
-        ".openclaw-install-stage",
+        ".merclaw-install-stage",
         "package.json",
       );
       const suffixedSeed = path.join(
@@ -450,7 +450,7 @@ describe("package dist inventory", () => {
         "dist",
         "extensions",
         "browser",
-        ".openclaw-install-stage-AbC123",
+        ".merclaw-install-stage-AbC123",
         "node_modules",
         "playwright-core",
         "package.json",
@@ -461,8 +461,8 @@ describe("package dist inventory", () => {
       await fs.writeFile(suffixedSeed, "{}", "utf8");
 
       await expect(collectLegacyPluginDependencyStagingDebrisPaths(packageRoot)).resolves.toEqual([
-        "dist/extensions/browser/.openclaw-install-stage-AbC123",
-        "dist/extensions/evil/.openclaw-install-stage",
+        "dist/extensions/browser/.merclaw-install-stage-AbC123",
+        "dist/extensions/evil/.merclaw-install-stage",
       ]);
       await expect(assertNoLegacyPluginDependencyStagingDebris(packageRoot)).rejects.toThrow(
         /unexpected legacy plugin dependency staging debris/,
@@ -475,21 +475,21 @@ describe("package dist inventory", () => {
 
   it("rejects mixed-case install-stage debris on case-sensitive release builders", async () => {
     await withTempDir(
-      { prefix: "openclaw-dist-inventory-stage-extensions-case-" },
+      { prefix: "merclaw-dist-inventory-stage-extensions-case-" },
       async (packageRoot) => {
         const mixedCaseStage = path.join(
           packageRoot,
           "dist",
           "Extensions",
           "evil",
-          ".OpenClaw-Install-Stage",
+          ".MerClaw-Install-Stage",
           "package.json",
         );
         await fs.mkdir(path.dirname(mixedCaseStage), { recursive: true });
         await fs.writeFile(mixedCaseStage, "{}", "utf8");
 
         await expect(collectLegacyPluginDependencyStagingDebrisPaths(packageRoot)).resolves.toEqual(
-          ["dist/Extensions/evil/.OpenClaw-Install-Stage"],
+          ["dist/Extensions/evil/.MerClaw-Install-Stage"],
         );
         await expect(writePackageDistInventory(packageRoot)).rejects.toThrow(
           /unexpected legacy plugin dependency staging debris/,
@@ -498,21 +498,21 @@ describe("package dist inventory", () => {
     );
 
     await withTempDir(
-      { prefix: "openclaw-dist-inventory-stage-root-case-" },
+      { prefix: "merclaw-dist-inventory-stage-root-case-" },
       async (packageRoot) => {
         const mixedCaseStage = path.join(
           packageRoot,
           "Dist",
           "Extensions",
           "browser",
-          ".OPENCLAW-INSTALL-STAGE-AbC123",
+          ".MERCLAW-INSTALL-STAGE-AbC123",
           "package.json",
         );
         await fs.mkdir(path.dirname(mixedCaseStage), { recursive: true });
         await fs.writeFile(mixedCaseStage, "{}", "utf8");
 
         await expect(collectLegacyPluginDependencyStagingDebrisPaths(packageRoot)).resolves.toEqual(
-          ["Dist/Extensions/browser/.OPENCLAW-INSTALL-STAGE-AbC123"],
+          ["Dist/Extensions/browser/.MERCLAW-INSTALL-STAGE-AbC123"],
         );
         await expect(writePackageDistInventory(packageRoot)).rejects.toThrow(
           /unexpected legacy plugin dependency staging debris/,
@@ -522,7 +522,7 @@ describe("package dist inventory", () => {
   });
 
   it("treats a missing dist/extensions tree as no staging debris", async () => {
-    await withTempDir({ prefix: "openclaw-dist-inventory-no-extensions-" }, async (packageRoot) => {
+    await withTempDir({ prefix: "merclaw-dist-inventory-no-extensions-" }, async (packageRoot) => {
       await fs.mkdir(path.join(packageRoot, "dist"), { recursive: true });
       await expect(collectLegacyPluginDependencyStagingDebrisPaths(packageRoot)).resolves.toEqual(
         [],
@@ -534,7 +534,7 @@ describe("package dist inventory", () => {
   });
 
   it("fails closed when the inventory is missing", async () => {
-    await withTempDir({ prefix: "openclaw-dist-inventory-missing-" }, async (packageRoot) => {
+    await withTempDir({ prefix: "merclaw-dist-inventory-missing-" }, async (packageRoot) => {
       await fs.mkdir(path.join(packageRoot, "dist"), { recursive: true });
       await expect(collectPackageDistInventoryErrors(packageRoot)).resolves.toEqual([
         `missing package dist inventory ${PACKAGE_DIST_INVENTORY_RELATIVE_PATH}`,
@@ -543,7 +543,7 @@ describe("package dist inventory", () => {
   });
 
   it("rejects symlinked dist entries", async () => {
-    await withTempDir({ prefix: "openclaw-dist-inventory-symlink-" }, async (packageRoot) => {
+    await withTempDir({ prefix: "merclaw-dist-inventory-symlink-" }, async (packageRoot) => {
       const distDir = path.join(packageRoot, "dist");
       await fs.mkdir(distDir, { recursive: true });
       await fs.writeFile(path.join(packageRoot, "escape.js"), "export {};\n", "utf8");

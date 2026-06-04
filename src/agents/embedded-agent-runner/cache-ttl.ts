@@ -1,7 +1,7 @@
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalLowercaseString,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/normalization-core/string-coerce";
 import {
   isAnthropicFamilyCacheTtlEligible,
   isAnthropicModelRef,
@@ -11,7 +11,7 @@ import { isGooglePromptCacheEligible } from "./prompt-cache-retention.js";
 
 type CustomEntryLike = { type?: unknown; customType?: unknown; data?: unknown };
 
-const CACHE_TTL_CUSTOM_TYPE = "openclaw.cache-ttl";
+const CACHE_TTL_CUSTOM_TYPE = "merclaw.cache-ttl";
 
 export type CacheTtlEntryData = {
   timestamp: number;

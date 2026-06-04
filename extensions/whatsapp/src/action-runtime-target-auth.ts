@@ -1,10 +1,10 @@
-import { ToolAuthorizationError } from "openclaw/plugin-sdk/channel-actions";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import { ToolAuthorizationError } from "merclaw/plugin-sdk/channel-actions";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
 import { resolveWhatsAppAccount } from "./accounts.js";
 import { resolveWhatsAppOutboundTarget } from "./resolve-outbound-target.js";
 
 export function resolveAuthorizedWhatsAppOutboundTarget(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   chatJid: string;
   accountId?: string;
   actionLabel: string;

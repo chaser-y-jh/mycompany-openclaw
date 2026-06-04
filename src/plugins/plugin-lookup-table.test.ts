@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { resolveInstalledPluginIndexPolicyHash } from "./installed-plugin-index-policy.js";
 import type { PluginManifestRecord, PluginManifestRegistry } from "./manifest-registry.js";
 import { clearLoadPluginMetadataSnapshotMemo } from "./plugin-metadata-snapshot.js";
@@ -18,11 +18,11 @@ vi.mock("../channels/config-presence.js", () => ({
       Object.keys(value).some((key) => key !== "enabled"),
     ),
   listPotentialConfiguredChannelIds: (
-    config: OpenClawConfig,
+    config: MerClawConfig,
     env: NodeJS.ProcessEnv,
     options?: { includePersistedAuthState?: boolean },
   ) => listPotentialConfiguredChannelIds(config, env, options),
-  listExplicitlyDisabledChannelIdsForConfig: (config: OpenClawConfig) =>
+  listExplicitlyDisabledChannelIdsForConfig: (config: MerClawConfig) =>
     listExplicitlyDisabledChannelIdsForConfig(config),
 }));
 
@@ -47,7 +47,7 @@ function createManifestRecord(
     hooks: [],
     rootDir: `/plugins/${plugin.id}`,
     source: `/plugins/${plugin.id}/index.js`,
-    manifestPath: `/plugins/${plugin.id}/openclaw.plugin.json`,
+    manifestPath: `/plugins/${plugin.id}/merclaw.plugin.json`,
     ...plugin,
   };
 }
@@ -91,18 +91,18 @@ function createIndex(
 
 const indexDiagnostic = {
   level: "warn",
-  source: "/plugins/demo/openclaw.plugin.json",
+  source: "/plugins/demo/merclaw.plugin.json",
   message: "indexed warning",
 } as const;
 
 const manifestDiagnostic = {
   level: "warn",
-  source: "/plugins/demo/openclaw.plugin.json",
+  source: "/plugins/demo/merclaw.plugin.json",
   message: "manifest warning",
 } as const;
 
 async function expectStaleMetadataSnapshotRebuild(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   snapshotPlugins: readonly PluginManifestRecord[];
   requestedPlugins?: readonly PluginManifestRecord[];
   snapshotEnv?: NodeJS.ProcessEnv;
@@ -162,7 +162,7 @@ describe("loadPluginLookUpTable", () => {
     clearLoadPluginMetadataSnapshotMemo();
     listPotentialConfiguredChannelIds
       .mockReset()
-      .mockImplementation((config: OpenClawConfig) => Object.keys(config.channels ?? {}));
+      .mockImplementation((config: MerClawConfig) => Object.keys(config.channels ?? {}));
     listExplicitlyDisabledChannelIdsForConfig.mockReset().mockReturnValue([]);
     loadPluginManifestRegistryForInstalledIndex.mockReset();
   });
@@ -227,7 +227,7 @@ describe("loadPluginLookUpTable", () => {
         plugins: {
           slots: { memory: "none" },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       env: {},
       index,
     });
@@ -303,7 +303,7 @@ describe("loadPluginLookUpTable", () => {
           allow: ["openai"],
           slots: { memory: "none" },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       env: {},
       index,
     });
@@ -374,7 +374,7 @@ describe("loadPluginLookUpTable", () => {
           allow: ["openai"],
           slots: { memory: "none" },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       env: {},
       index,
     });
@@ -424,7 +424,7 @@ describe("loadPluginLookUpTable", () => {
         allow: ["openai"],
         slots: { memory: "none" },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const index = createIndex(plugins, {
       policyHash: resolveInstalledPluginIndexPolicyHash(config),
     });
@@ -504,7 +504,7 @@ describe("loadPluginLookUpTable", () => {
         },
         slots: { memory: "none" },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const index = createIndex(plugins, {
       policyHash: resolveInstalledPluginIndexPolicyHash(config),
     });
@@ -560,7 +560,7 @@ describe("loadPluginLookUpTable", () => {
       plugins: {
         enabled: false,
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const index = createIndex(plugins, {
       policyHash: resolveInstalledPluginIndexPolicyHash(config),
     });
@@ -612,7 +612,7 @@ describe("loadPluginLookUpTable", () => {
       channels: {
         telegram: { token: "configured" },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const compatibleIndex = {
       ...index,
       policyHash: resolveInstalledPluginIndexPolicyHash(config),
@@ -660,7 +660,7 @@ describe("loadPluginLookUpTable", () => {
       channels: {
         telegram: { token: "configured" },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const index = {
       ...createIndex(plugins),
       policyHash: resolveInstalledPluginIndexPolicyHash(config),
@@ -712,12 +712,12 @@ describe("loadPluginLookUpTable", () => {
       plugins: {
         allow: ["telegram"],
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const requestedConfig = {
       plugins: {
         allow: ["other-plugin"],
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const snapshotIndex = createIndex(plugins, {
       policyHash: resolveInstalledPluginIndexPolicyHash(snapshotConfig),
     });
@@ -772,12 +772,12 @@ describe("loadPluginLookUpTable", () => {
       plugins: {
         load: { paths: ["/plugins/one"] },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const requestedConfig = {
       plugins: {
         load: { paths: ["/plugins/two"] },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const policyHash = resolveInstalledPluginIndexPolicyHash(snapshotConfig);
     const index = createIndex(plugins, { policyHash });
     const manifestRegistry: PluginManifestRegistry = {
@@ -828,14 +828,14 @@ describe("loadPluginLookUpTable", () => {
       plugins: {
         load: { paths: ["~/plugins"] },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const snapshotEnv = {
       HOME: "/home/snapshot",
-      OPENCLAW_HOME: undefined,
+      MERCLAW_HOME: undefined,
     } as NodeJS.ProcessEnv;
     const requestedEnv = {
       HOME: "/home/requested",
-      OPENCLAW_HOME: undefined,
+      MERCLAW_HOME: undefined,
     } as NodeJS.ProcessEnv;
     await expectStaleMetadataSnapshotRebuild({
       config,
@@ -853,14 +853,14 @@ describe("loadPluginLookUpTable", () => {
         channels: ["telegram"],
       }),
     ];
-    const config = {} as OpenClawConfig;
+    const config = {} as MerClawConfig;
     const snapshotEnv = {
       HOME: "/home/snapshot",
-      OPENCLAW_HOME: undefined,
+      MERCLAW_HOME: undefined,
     } as NodeJS.ProcessEnv;
     const requestedEnv = {
       HOME: "/home/requested",
-      OPENCLAW_HOME: undefined,
+      MERCLAW_HOME: undefined,
     } as NodeJS.ProcessEnv;
     await expectStaleMetadataSnapshotRebuild({
       config,
@@ -894,7 +894,7 @@ describe("loadPluginLookUpTable", () => {
       channels: {
         telegram: { token: "configured" },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const { table, requestedRegistry } = await expectStaleMetadataSnapshotRebuild({
       config,
       snapshotPlugins,
@@ -919,14 +919,14 @@ describe("loadPluginLookUpTable", () => {
         channels: ["telegram"],
         rootDir: "/plugins-moved/telegram",
         source: "/plugins-moved/telegram/index.js",
-        manifestPath: "/plugins-moved/telegram/openclaw.plugin.json",
+        manifestPath: "/plugins-moved/telegram/merclaw.plugin.json",
       }),
     ];
     const config = {
       channels: {
         telegram: { token: "configured" },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const { table, requestedRegistry } = await expectStaleMetadataSnapshotRebuild({
       config,
       snapshotPlugins,

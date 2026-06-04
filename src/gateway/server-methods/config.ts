@@ -2,9 +2,9 @@ import { execFile } from "node:child_process";
 import {
   asDateTimestampMs,
   resolveExpiresAtMsFromDurationMs,
-} from "@openclaw/normalization-core/number-coercion";
-import { isRecord } from "@openclaw/normalization-core/record-coerce";
-import { normalizeStringEntries } from "@openclaw/normalization-core/string-normalization";
+} from "@merclaw/normalization-core/number-coercion";
+import { isRecord } from "@merclaw/normalization-core/record-coerce";
+import { normalizeStringEntries } from "@merclaw/normalization-core/string-normalization";
 import {
   ErrorCodes,
   errorShape,
@@ -36,7 +36,7 @@ import {
 } from "../../config/redact-snapshot.js";
 import { loadGatewayRuntimeConfigSchema } from "../../config/runtime-schema.js";
 import { lookupConfigSchema, type ConfigSchemaResponse } from "../../config/schema.js";
-import type { ConfigValidationIssue, OpenClawConfig } from "../../config/types.openclaw.js";
+import type { ConfigValidationIssue, MerClawConfig } from "../../config/types.merclaw.js";
 import { isBuiltInModelProviderOverlayId } from "../../config/zod-schema.core.js";
 import { formatErrorMessage } from "../../infra/errors.js";
 import {
@@ -258,7 +258,7 @@ function parseValidateConfigFromRawOrRespond(
   requestName: string,
   snapshot: Awaited<ReturnType<typeof readConfigFileSnapshot>>,
   respond: RespondFn,
-): { config: OpenClawConfig; writeConfig: OpenClawConfig; schema: ConfigSchemaResponse } | null {
+): { config: MerClawConfig; writeConfig: MerClawConfig; schema: ConfigSchemaResponse } | null {
   const rawValue = parseRawConfigOrRespond(params, requestName, respond);
   if (!rawValue) {
     return null;
@@ -317,7 +317,7 @@ function parseValidateConfigFromRawOrRespond(
   }
   return {
     config: validated.config,
-    writeConfig: validationCandidate as OpenClawConfig,
+    writeConfig: validationCandidate as MerClawConfig,
     schema,
   };
 }
@@ -337,7 +337,7 @@ function summarizeConfigValidationIssues(issues: ReadonlyArray<ConfigValidationI
 }
 
 async function ensureResolvableSecretRefsOrRespond(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   respond: RespondFn;
 }): Promise<PreparedSecretsRuntimeSnapshot | null> {
   try {

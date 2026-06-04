@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 import {
   registerProviderPlugin,
   requireRegisteredProvider,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
+} from "merclaw/plugin-sdk/plugin-test-runtime";
 import { describe, expect, it } from "vitest";
 import stepfunPlugin from "./index.js";
 
@@ -23,7 +23,7 @@ type StepFunManifest = {
 };
 
 function readManifest(): StepFunManifest {
-  return JSON.parse(readFileSync(resolve(import.meta.dirname, "openclaw.plugin.json"), "utf-8"));
+  return JSON.parse(readFileSync(resolve(import.meta.dirname, "merclaw.plugin.json"), "utf-8"));
 }
 
 describe("stepfun provider registration", () => {

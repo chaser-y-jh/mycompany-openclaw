@@ -1,8 +1,8 @@
 import {
   asDateTimestampMs,
   resolveExpiresAtMsFromDurationMs,
-} from "openclaw/plugin-sdk/number-runtime";
-import { isPrivateNetworkOptInEnabled } from "openclaw/plugin-sdk/ssrf-runtime";
+} from "merclaw/plugin-sdk/number-runtime";
+import { isPrivateNetworkOptInEnabled } from "merclaw/plugin-sdk/ssrf-runtime";
 import { resolveMattermostAccount } from "./accounts.js";
 import {
   createMattermostClient,
@@ -10,11 +10,11 @@ import {
   type MattermostClient,
   type MattermostFetch,
 } from "./client.js";
-import type { OpenClawConfig } from "./runtime-api.js";
+import type { MerClawConfig } from "./runtime-api.js";
 
 type Result = { ok: true } | { ok: false; error: string };
 type ReactionParams = {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   postId: string;
   emojiName: string;
   accountId?: string | null;
@@ -52,7 +52,7 @@ async function resolveBotUserId(
 }
 
 export async function addMattermostReaction(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   postId: string;
   emojiName: string;
   accountId?: string | null;
@@ -65,7 +65,7 @@ export async function addMattermostReaction(params: {
 }
 
 export async function removeMattermostReaction(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   postId: string;
   emojiName: string;
   accountId?: string | null;

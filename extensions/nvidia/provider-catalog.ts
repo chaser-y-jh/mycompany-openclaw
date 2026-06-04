@@ -2,18 +2,18 @@ import { lookup as dnsLookup } from "node:dns/promises";
 import {
   isFutureDateTimestampMs,
   resolveExpiresAtMsFromDurationMs,
-} from "openclaw/plugin-sdk/number-runtime";
-import { buildManifestModelProviderConfig } from "openclaw/plugin-sdk/provider-catalog-shared";
+} from "merclaw/plugin-sdk/number-runtime";
+import { buildManifestModelProviderConfig } from "merclaw/plugin-sdk/provider-catalog-shared";
 import type {
   ModelDefinitionConfig,
   ModelProviderConfig,
-} from "openclaw/plugin-sdk/provider-model-shared";
+} from "merclaw/plugin-sdk/provider-model-shared";
 import {
   fetchWithSsrFGuard,
   type LookupFn,
   ssrfPolicyFromHttpBaseUrlAllowedHostname,
-} from "openclaw/plugin-sdk/ssrf-runtime";
-import manifest from "./openclaw.plugin.json" with { type: "json" };
+} from "merclaw/plugin-sdk/ssrf-runtime";
+import manifest from "./merclaw.plugin.json" with { type: "json" };
 
 export const NVIDIA_DEFAULT_MODEL_ID = "nvidia/nemotron-3-super-120b-a12b";
 export const NVIDIA_FEATURED_MODELS_URL =

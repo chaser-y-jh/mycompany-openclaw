@@ -7,19 +7,19 @@ import {
   DEFAULT_ACCOUNT_ID,
   listCombinedAccountIds,
   resolveMergedAccountConfig,
-  type OpenClawConfig,
-} from "openclaw/plugin-sdk/account-resolution";
-import { resolveDangerousNameMatchingEnabled } from "openclaw/plugin-sdk/dangerous-name-runtime";
-import { parseStrictInteger } from "openclaw/plugin-sdk/number-runtime";
-import { normalizeStringEntries } from "openclaw/plugin-sdk/string-coerce-runtime";
+  type MerClawConfig,
+} from "merclaw/plugin-sdk/account-resolution";
+import { resolveDangerousNameMatchingEnabled } from "merclaw/plugin-sdk/dangerous-name-runtime";
+import { parseStrictInteger } from "merclaw/plugin-sdk/number-runtime";
+import { normalizeStringEntries } from "merclaw/plugin-sdk/string-coerce-runtime";
 import type {
   SynologyChatChannelConfig,
   ResolvedSynologyChatAccount,
   SynologyWebhookPathSource,
 } from "./types.js";
 
-/** Extract the channel config from the full OpenClaw config object. */
-function getChannelConfig(cfg: OpenClawConfig): SynologyChatChannelConfig | undefined {
+/** Extract the channel config from the full MerClaw config object. */
+function getChannelConfig(cfg: MerClawConfig): SynologyChatChannelConfig | undefined {
   return cfg?.channels?.["synology-chat"] as SynologyChatChannelConfig | undefined;
 }
 
@@ -89,7 +89,7 @@ function parseRateLimitPerMinute(raw: string | undefined): number {
  * List all configured account IDs for this channel.
  * Returns ["default"] if there's a base config, plus any named accounts.
  */
-export function listAccountIds(cfg: OpenClawConfig): string[] {
+export function listAccountIds(cfg: MerClawConfig): string[] {
   const channelCfg = getChannelConfig(cfg);
   if (!channelCfg) {
     return [];
@@ -106,7 +106,7 @@ export function listAccountIds(cfg: OpenClawConfig): string[] {
  * Falls back to env vars for the "default" account.
  */
 export function resolveAccount(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   accountId?: string | null,
 ): ResolvedSynologyChatAccount {
   const channelCfg = getChannelConfig(cfg) ?? {};
@@ -128,7 +128,7 @@ export function resolveAccount(
   const envNasHost = process.env.SYNOLOGY_NAS_HOST ?? "localhost";
   const envAllowedUserIds = process.env.SYNOLOGY_ALLOWED_USER_IDS ?? "";
   const envRateLimitValue = parseRateLimitPerMinute(process.env.SYNOLOGY_RATE_LIMIT);
-  const envBotName = process.env.OPENCLAW_BOT_NAME ?? "OpenClaw";
+  const envBotName = process.env.MERCLAW_BOT_NAME ?? "MerClaw";
   const webhookPathSource = resolveWebhookPathSource({ accountId: id, channelCfg, rawAccount });
   const dangerouslyAllowInheritedWebhookPath =
     rawAccount.dangerouslyAllowInheritedWebhookPath ??

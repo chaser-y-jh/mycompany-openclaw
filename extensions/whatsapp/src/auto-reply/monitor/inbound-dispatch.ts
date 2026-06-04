@@ -1,17 +1,17 @@
 import {
   DEFAULT_TIMING,
   type StatusReactionController,
-} from "openclaw/plugin-sdk/channel-feedback";
+} from "merclaw/plugin-sdk/channel-feedback";
 import {
   buildChannelInboundEventContext,
   type CommandTurnContext,
   toInboundMediaFacts,
-} from "openclaw/plugin-sdk/channel-inbound";
-import { hasVisibleInboundReplyDispatch } from "openclaw/plugin-sdk/channel-inbound";
-import { deliverInboundReplyWithMessageSendContext } from "openclaw/plugin-sdk/channel-outbound";
-import { buildInboundHistoryFromEntries } from "openclaw/plugin-sdk/reply-history";
-import type { FinalizedMsgContext } from "openclaw/plugin-sdk/reply-runtime";
-import { normalizeStringEntries } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/channel-inbound";
+import { hasVisibleInboundReplyDispatch } from "merclaw/plugin-sdk/channel-inbound";
+import { deliverInboundReplyWithMessageSendContext } from "merclaw/plugin-sdk/channel-outbound";
+import { buildInboundHistoryFromEntries } from "merclaw/plugin-sdk/reply-history";
+import type { FinalizedMsgContext } from "merclaw/plugin-sdk/reply-runtime";
+import { normalizeStringEntries } from "merclaw/plugin-sdk/string-coerce-runtime";
 import {
   type DeliverableWhatsAppOutboundPayload,
   normalizeWhatsAppOutboundPayload,

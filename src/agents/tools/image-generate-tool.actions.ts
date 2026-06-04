@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { listRuntimeImageGenerationProviders } from "../../image-generation/runtime.js";
 import type { ImageGenerationProvider } from "../../image-generation/types.js";
 import type { AuthProfileStore } from "../auth-profiles/types.js";
@@ -63,7 +63,7 @@ export function summarizeImageGenerationCapabilities(provider: ImageGenerationPr
 }
 
 export function createImageGenerateListActionResult(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   workspaceDir?: string;
   agentDir?: string;
   authStore?: AuthProfileStore;

@@ -1,10 +1,10 @@
-import { createReplyToFanout, type ReplyToResolution } from "openclaw/plugin-sdk/channel-outbound";
+import { createReplyToFanout, type ReplyToResolution } from "merclaw/plugin-sdk/channel-outbound";
 import {
   resolveOutboundSendDep,
   type OutboundSendDeps,
-} from "openclaw/plugin-sdk/channel-outbound";
-import type { OpenClawConfig, ReplyToMode } from "openclaw/plugin-sdk/config-contracts";
-import { normalizeOptionalStringifiedId } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/channel-outbound";
+import type { MerClawConfig, ReplyToMode } from "merclaw/plugin-sdk/config-contracts";
+import { normalizeOptionalStringifiedId } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { withDiscordDeliveryRetry } from "./delivery-retry.js";
 
 type DiscordSendRuntime = typeof import("./send.js");
@@ -52,7 +52,7 @@ export function resolveDiscordFormattingOptions(ctx: {
 }
 
 export async function createDiscordPayloadSendContext(ctx: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   to: string;
   accountId?: string | null;
   deps?: OutboundSendDeps;

@@ -11,9 +11,9 @@ describe("scripts/test-live-codex-harness-docker.sh", () => {
   it("mounts cache and npm tool dirs outside the bind-mounted Docker home", () => {
     const script = fs.readFileSync(SCRIPT_PATH, "utf8");
 
-    expect(script).toContain('DOCKER_CACHE_CONTAINER_DIR="/tmp/openclaw-cache"');
-    expect(script).toContain('DOCKER_CLI_TOOLS_CONTAINER_DIR="/tmp/openclaw-npm-global"');
-    expect(script).toContain("openclaw_live_codex_harness_is_ci()");
+    expect(script).toContain('DOCKER_CACHE_CONTAINER_DIR="/tmp/merclaw-cache"');
+    expect(script).toContain('DOCKER_CLI_TOOLS_CONTAINER_DIR="/tmp/merclaw-npm-global"');
+    expect(script).toContain("merclaw_live_codex_harness_is_ci()");
     expect(script).toContain('[[ -n "${CI:-}" && "${CI:-}" != "false" ]]');
     expect(script).toContain('-e XDG_CACHE_HOME="$DOCKER_CACHE_CONTAINER_DIR"');
     expect(script).toContain('-e NPM_CONFIG_PREFIX="$DOCKER_CLI_TOOLS_CONTAINER_DIR"');
@@ -28,13 +28,13 @@ describe("scripts/test-live-codex-harness-docker.sh", () => {
     const script = fs.readFileSync(SCRIPT_PATH, "utf8");
 
     expect(script).toContain(
-      "OPENCLAW_LIVE_CODEX_HARNESS_AUTH=codex-auth requires ~/.codex/auth.json before building the live Docker image",
+      "MERCLAW_LIVE_CODEX_HARNESS_AUTH=codex-auth requires ~/.codex/auth.json before building the live Docker image",
     );
     expect(script).toContain(
-      "If this is a Testbox/API-key run, set OPENCLAW_LIVE_CODEX_HARNESS_AUTH=api-key and run through openclaw-testbox-env.",
+      "If this is a Testbox/API-key run, set MERCLAW_LIVE_CODEX_HARNESS_AUTH=api-key and run through merclaw-testbox-env.",
     );
     expect(script.indexOf("requires ~/.codex/auth.json before building")).toBeLessThan(
-      script.indexOf('OPENCLAW_LIVE_DOCKER_REPO_ROOT="$ROOT_DIR"'),
+      script.indexOf('MERCLAW_LIVE_DOCKER_REPO_ROOT="$ROOT_DIR"'),
     );
   });
 
@@ -54,13 +54,13 @@ describe("scripts/test-live-codex-harness-docker.sh", () => {
     expect(script).toContain('if [[ -z "${DOCKER_HOME_DIR:-}" ]]; then');
     expect(script).not.toContain('DOCKER_USER="0:0"');
     expect(script).toContain(
-      'DOCKER_HOME_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/openclaw-docker-home.XXXXXX")"',
+      'DOCKER_HOME_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/merclaw-docker-home.XXXXXX")"',
     );
     expect(script).toContain(
-      'CONFIG_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/openclaw-docker-config.XXXXXX")"',
+      'CONFIG_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/merclaw-docker-config.XXXXXX")"',
     );
     expect(script).toContain(
-      'WORKSPACE_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/openclaw-docker-workspace.XXXXXX")"',
+      'WORKSPACE_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/merclaw-docker-workspace.XXXXXX")"',
     );
     expect(script).toContain('DOCKER_CACHE_CONTAINER_DIR="/home/node/.cache"');
     expect(script).toContain('DOCKER_CLI_TOOLS_CONTAINER_DIR="/home/node/.npm-global"');
@@ -70,7 +70,7 @@ describe("scripts/test-live-codex-harness-docker.sh", () => {
     );
     expect(script).toContain('if [[ "$CODEX_HARNESS_AUTH_MODE" != "api-key" ]]; then');
     expect(script.indexOf('PROFILE_STATUS="api-key-env"')).toBeLessThan(
-      script.indexOf("openclaw_live_append_array DOCKER_RUN_ARGS PROFILE_MOUNT"),
+      script.indexOf("merclaw_live_append_array DOCKER_RUN_ARGS PROFILE_MOUNT"),
     );
     expect(script).toContain("cleanup_codex_live_mounts() {");
     expect(script).toContain(
@@ -86,7 +86,7 @@ describe("scripts/test-live-codex-harness-docker.sh", () => {
     const script = fs.readFileSync(SCRIPT_PATH, "utf8");
 
     expect(script).toContain(
-      '-e OPENCLAW_LIVE_CODEX_BIND_PROVIDER="${OPENCLAW_LIVE_CODEX_BIND_PROVIDER:-}"',
+      '-e MERCLAW_LIVE_CODEX_BIND_PROVIDER="${MERCLAW_LIVE_CODEX_BIND_PROVIDER:-}"',
     );
   });
 
@@ -95,9 +95,9 @@ describe("scripts/test-live-codex-harness-docker.sh", () => {
 
     expect(script).toContain('"$ROOT_DIR/extensions/codex/package.json"');
     expect(script).toContain("process.stdout.write(`@openai/codex@${version}`);");
-    expect(script).toContain('-e OPENCLAW_LIVE_CODEX_CLI_PACKAGE_SPEC="$CODEX_CLI_PACKAGE_SPEC"');
+    expect(script).toContain('-e MERCLAW_LIVE_CODEX_CLI_PACKAGE_SPEC="$CODEX_CLI_PACKAGE_SPEC"');
     expect(script).toContain(
-      'run_setup_command npm install -g "$OPENCLAW_LIVE_CODEX_CLI_PACKAGE_SPEC"',
+      'run_setup_command npm install -g "$MERCLAW_LIVE_CODEX_CLI_PACKAGE_SPEC"',
     );
     expect(script).not.toContain("run_setup_command npm install -g @openai/codex");
   });
@@ -107,7 +107,7 @@ describe("scripts/test-live-codex-harness-docker.sh", () => {
 
     expect(script).toContain("Failed to extract accountId from token");
     expect(script).toContain(
-      "ERROR: Codex auth cannot extract accountId from the available token; refresh OPENCLAW_CODEX_AUTH_JSON or use OPENCLAW_LIVE_CODEX_HARNESS_AUTH=api-key.",
+      "ERROR: Codex auth cannot extract accountId from the available token; refresh MERCLAW_CODEX_AUTH_JSON or use MERCLAW_LIVE_CODEX_HARNESS_AUTH=api-key.",
     );
     expect(script).not.toContain(
       "SKIP: Codex auth cannot extract accountId from the available token; skipping live Codex harness lane.",

@@ -1,8 +1,8 @@
-import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { normalizeOptionalLowercaseString } from "@merclaw/normalization-core/string-coerce";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import type { PluginManifestRecord } from "./manifest-registry.js";
 
-type PluginEntriesConfig = NonNullable<NonNullable<OpenClawConfig["plugins"]>["entries"]>;
+type PluginEntriesConfig = NonNullable<NonNullable<MerClawConfig["plugins"]>["entries"]>;
 
 export function normalizePluginConfigId(id: unknown): string {
   return normalizeOptionalLowercaseString(id) ?? "";
@@ -31,7 +31,7 @@ function findPluginConfigEntry(
 }
 
 export function isWorkspacePluginAllowedByConfig(params: {
-  config: OpenClawConfig | undefined;
+  config: MerClawConfig | undefined;
   isImplicitlyAllowed?: (pluginId: string) => boolean;
   plugin: PluginManifestRecord;
 }): boolean {

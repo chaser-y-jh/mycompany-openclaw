@@ -436,7 +436,7 @@ export const pt_BR: TranslationMap = {
     skills: "Habilidades e chaves API.",
     nodes: "Dispositivos e comandos.",
     chat: "Chat do gateway para intervenções rápidas.",
-    config: "Editar openclaw.json.",
+    config: "Editar merclaw.json.",
     communications: "Configurações de canais, mensagens e áudio.",
     appearance: "Configurações de tema, UI e assistente de configuração.",
     automation: "Configurações de comandos, hooks, cron e plugins.",
@@ -676,7 +676,7 @@ export const pt_BR: TranslationMap = {
       metadataUpgradeSummary:
         "Este dispositivo já está pareado, mas a alteração de metadados está aguardando aprovação.",
       mobileHint:
-        "No celular? Copie a URL completa (incluindo #token=...) executando openclaw dashboard --no-open no desktop.",
+        "No celular? Copie a URL completa (incluindo #token=...) executando merclaw dashboard --no-open no desktop.",
       docsTitle: "Documentação de pareamento de dispositivo (abre em nova aba)",
       docsLink: "Docs: Pareamento de dispositivo",
     },
@@ -714,7 +714,7 @@ export const pt_BR: TranslationMap = {
       modelAuthExpiresIn: "expira {when}",
       modelAuthAttentionExpiredTitle: "Autenticação de modelo expirada",
       modelAuthAttentionExpiringTitle: "Autenticação de modelo expirando em breve",
-      modelAuthAttentionExpiredDesc: "{providers} — autentique novamente com openclaw models auth",
+      modelAuthAttentionExpiredDesc: "{providers} — autentique novamente com merclaw models auth",
       modelAuthAttentionExpiringEntry: "{provider} ({when})",
     },
     attention: {
@@ -1141,16 +1141,16 @@ export const pt_BR: TranslationMap = {
         title: "Autenticação requerida",
         summary:
           "O Gateway está acessível, mas precisa de um token ou senha correspondente antes que este navegador possa se conectar.",
-        stepPaste: "Cole o token de openclaw dashboard --no-open ou informe a senha configurada.",
+        stepPaste: "Cole o token de merclaw dashboard --no-open ou informe a senha configurada.",
         stepGenerate:
-          "Se nenhum token estiver configurado, execute openclaw doctor --generate-gateway-token no host do Gateway.",
+          "Se nenhum token estiver configurado, execute merclaw doctor --generate-gateway-token no host do Gateway.",
         stepConnect: "Clique em Connect novamente depois de atualizar a credencial.",
       },
       authFailed: {
         title: "A autenticação não corresponde",
         summary:
           "A credencial fornecida foi rejeitada. A causa mais comum é um token antigo ou copiado de outro URL de Gateway.",
-        stepDashboard: "Execute openclaw dashboard --no-open e abra o novo URL ou cole seu token.",
+        stepDashboard: "Execute merclaw dashboard --no-open e abra o novo URL ou cole seu token.",
         stepReplace:
           "Substitua valores antigos de token/senha; não reutilize um token de outro URL de Gateway.",
         stepMode:
@@ -1175,8 +1175,8 @@ export const pt_BR: TranslationMap = {
           "Este navegador precisa de uma aprovação única do host do Gateway antes de poder usar o Control UI.",
         upgradeSummary:
           "Este navegador já é conhecido, mas o acesso solicitado mudou e precisa de uma nova aprovação.",
-        stepList: "Execute openclaw devices list no host do Gateway.",
-        stepApproveId: "Aprove esta solicitação: openclaw devices approve {requestId}.",
+        stepList: "Execute merclaw devices list no host do Gateway.",
+        stepApproveId: "Aprove esta solicitação: merclaw devices approve {requestId}.",
         stepApprove: "Aprove a solicitação pendente de navegador/dispositivo nessa lista.",
         stepReconnect: "Reconecte depois que a aprovação for concluída.",
       },
@@ -1202,22 +1202,22 @@ export const pt_BR: TranslationMap = {
         summary:
           "O Control UI servido e o Gateway em execução não concordam sobre o protocolo de conexão compatível.",
         stepDashboard:
-          "Reabra o dashboard servido com openclaw dashboard para que UI e Gateway venham da mesma instalação.",
+          "Reabra o dashboard servido com merclaw dashboard para que UI e Gateway venham da mesma instalação.",
         stepDevUi:
           "Se estiver usando pnpm ui:dev, reconstrua ou reinicie a UI de desenvolvimento com o checkout atual.",
         stepRestart:
-          "Reinicie o Gateway depois de atualizar o OpenClaw para que ele sirva o protocolo atual.",
+          "Reinicie o Gateway depois de atualizar o MerClaw para que ele sirva o protocolo atual.",
       },
       network: {
         title: "Não foi possível conectar",
         summary:
           "O navegador não conseguiu concluir a conexão ao Gateway. Verifique o destino e o transporte antes de tentar credenciais novamente.",
         stepGateway:
-          "Confirme que o Gateway está em execução com openclaw status ou openclaw gateway run.",
+          "Confirme que o Gateway está em execução com merclaw status ou merclaw gateway run.",
         stepUrl:
           "Verifique o URL de WebSocket e use wss:// quando o Gateway estiver atrás de HTTPS/Tailscale Serve.",
         stepDashboard:
-          "Reabra o dashboard com openclaw dashboard --no-open para copiar novamente o URL atual e os detalhes de auth.",
+          "Reabra o dashboard com merclaw dashboard --no-open para copiar novamente o URL atual e os detalhes de auth.",
       },
     },
   },

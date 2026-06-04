@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.js";
+import type { MerClawConfig } from "../config/types.js";
 import { getDefaultMediaLocalRoots } from "./local-roots.js";
 import { resolveAgentScopedOutboundMediaAccess } from "./read-capability.js";
 
@@ -14,7 +14,7 @@ describe("resolveAgentScopedOutboundMediaAccess", () => {
 
   it("preserves caller-provided workspaceDir from mediaAccess", () => {
     const result = resolveAgentScopedOutboundMediaAccess({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as MerClawConfig,
       mediaAccess: { workspaceDir: "/tmp/media-workspace" },
     });
 
@@ -29,7 +29,7 @@ describe("resolveAgentScopedOutboundMediaAccess", () => {
 
   it("prefers explicit workspaceDir over mediaAccess.workspaceDir", () => {
     const result = resolveAgentScopedOutboundMediaAccess({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as MerClawConfig,
       workspaceDir: "/tmp/explicit-workspace",
       mediaAccess: { workspaceDir: "/tmp/media-workspace" },
     });
@@ -44,13 +44,13 @@ describe("resolveAgentScopedOutboundMediaAccess", () => {
   });
 
   it("keeps explicit workspaceDir in localRoots when agent id is unavailable", () => {
-    const workspaceDir = "/tmp/openclaw-home/workspace-xiaoqian";
+    const workspaceDir = "/tmp/merclaw-home/workspace-xiaoqian";
     const result = resolveAgentScopedOutboundMediaAccess({
       cfg: {
         tools: {
           fs: { workspaceOnly: true },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       workspaceDir,
       mediaSources: [`${workspaceDir}/report.html`],
     });
@@ -60,7 +60,7 @@ describe("resolveAgentScopedOutboundMediaAccess", () => {
   });
 
   it("does not enable host reads when sender group policy denies read", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: MerClawConfig = {
       tools: {
         allow: ["read"],
       },
@@ -93,7 +93,7 @@ describe("resolveAgentScopedOutboundMediaAccess", () => {
   });
 
   it("keeps host reads enabled when sender group policy allows read", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: MerClawConfig = {
       tools: {
         allow: ["read"],
       },
@@ -129,7 +129,7 @@ describe("resolveAgentScopedOutboundMediaAccess", () => {
         tools: {
           allow: ["read"],
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       messageProvider: "requestchat",
       requesterSenderId: "trusted-user",
     });
@@ -156,7 +156,7 @@ describe("resolveAgentScopedOutboundMediaAccess", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       messageProvider: "requestchat",
       requesterSenderId: "dm-sender",
     });

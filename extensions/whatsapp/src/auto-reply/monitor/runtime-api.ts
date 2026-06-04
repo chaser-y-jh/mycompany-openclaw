@@ -1,23 +1,23 @@
-export { resolveIdentityNamePrefix } from "openclaw/plugin-sdk/agent-runtime";
-export { formatInboundEnvelope } from "openclaw/plugin-sdk/channel-inbound";
-export { resolveInboundSessionEnvelopeContext } from "openclaw/plugin-sdk/channel-inbound";
-export { toLocationContext } from "openclaw/plugin-sdk/channel-inbound";
+export { resolveIdentityNamePrefix } from "merclaw/plugin-sdk/agent-runtime";
+export { formatInboundEnvelope } from "merclaw/plugin-sdk/channel-inbound";
+export { resolveInboundSessionEnvelopeContext } from "merclaw/plugin-sdk/channel-inbound";
+export { toLocationContext } from "merclaw/plugin-sdk/channel-inbound";
 export {
   createChannelMessageReplyPipeline,
   resolveChannelMessageSourceReplyDeliveryMode,
-} from "openclaw/plugin-sdk/channel-outbound";
+} from "merclaw/plugin-sdk/channel-outbound";
 export {
   isControlCommandMessage,
   shouldComputeCommandAuthorized,
-} from "openclaw/plugin-sdk/command-detection";
+} from "merclaw/plugin-sdk/command-detection";
 export { resolveChannelContextVisibilityMode } from "../config.runtime.js";
-export { getAgentScopedMediaLocalRoots } from "openclaw/plugin-sdk/media-runtime";
+export { getAgentScopedMediaLocalRoots } from "merclaw/plugin-sdk/media-runtime";
 export type LoadConfigFn = typeof import("../config.runtime.js").getRuntimeConfig;
 export {
   buildHistoryContextFromEntries,
   type HistoryEntry,
-} from "openclaw/plugin-sdk/reply-history";
-export { resolveSendableOutboundReplyParts } from "openclaw/plugin-sdk/reply-payload";
+} from "merclaw/plugin-sdk/reply-history";
+export { resolveSendableOutboundReplyParts } from "merclaw/plugin-sdk/reply-payload";
 export {
   dispatchReplyWithBufferedBlockDispatcher,
   finalizeInboundContext,
@@ -25,12 +25,12 @@ export {
   resolveTextChunkLimit,
   type getReplyFromConfig,
   type ReplyPayload,
-} from "openclaw/plugin-sdk/reply-runtime";
+} from "merclaw/plugin-sdk/reply-runtime";
 export {
   resolveInboundLastRouteSessionKey,
   type resolveAgentRoute,
-} from "openclaw/plugin-sdk/routing";
-export { logVerbose, shouldLogVerbose, type getChildLogger } from "openclaw/plugin-sdk/runtime-env";
-export { resolvePinnedMainDmOwnerFromAllowlist } from "openclaw/plugin-sdk/security-runtime";
-export { resolveMarkdownTableMode } from "openclaw/plugin-sdk/markdown-table-runtime";
+} from "merclaw/plugin-sdk/routing";
+export { logVerbose, shouldLogVerbose, type getChildLogger } from "merclaw/plugin-sdk/runtime-env";
+export { resolvePinnedMainDmOwnerFromAllowlist } from "merclaw/plugin-sdk/security-runtime";
+export { resolveMarkdownTableMode } from "merclaw/plugin-sdk/markdown-table-runtime";
 export { jidToE164, normalizeE164 } from "../../text-runtime.js";

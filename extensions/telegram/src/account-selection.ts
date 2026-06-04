@@ -1,13 +1,13 @@
 import {
   listCombinedAccountIds,
   resolveListedDefaultAccountId,
-} from "openclaw/plugin-sdk/account-core";
+} from "merclaw/plugin-sdk/account-core";
 import {
   DEFAULT_ACCOUNT_ID,
   normalizeAccountId,
   normalizeOptionalAccountId,
-} from "openclaw/plugin-sdk/account-id";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+} from "merclaw/plugin-sdk/account-id";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
 
 const DEFAULT_AGENT_ID = "main";
 
@@ -25,13 +25,13 @@ function normalizeChannelId(value: unknown): string {
   return typeof value === "string" ? value.trim().toLowerCase() : "";
 }
 
-function resolveDefaultAgentId(cfg: OpenClawConfig): string {
+function resolveDefaultAgentId(cfg: MerClawConfig): string {
   const agents = Array.isArray(cfg.agents?.list) ? cfg.agents.list : [];
   const chosen = (agents.find((agent) => agent?.default) ?? agents[0])?.id;
   return normalizeAgentId(chosen);
 }
 
-function listConfiguredAccountIds(cfg: OpenClawConfig): string[] {
+function listConfiguredAccountIds(cfg: MerClawConfig): string[] {
   const ids = new Set<string>();
   for (const key of Object.keys(cfg.channels?.telegram?.accounts ?? {})) {
     if (key) {
@@ -65,7 +65,7 @@ function resolveBindingAccount(params: {
   };
 }
 
-function listBoundAccountIds(cfg: OpenClawConfig, channelId: string): string[] {
+function listBoundAccountIds(cfg: MerClawConfig, channelId: string): string[] {
   const ids = new Set<string>();
   for (const binding of cfg.bindings ?? []) {
     const resolved = resolveBindingAccount({ binding, channelId });
@@ -76,7 +76,7 @@ function listBoundAccountIds(cfg: OpenClawConfig, channelId: string): string[] {
   return [...ids].toSorted((left, right) => left.localeCompare(right));
 }
 
-function resolveDefaultAgentBoundAccountId(cfg: OpenClawConfig, channelId: string): string | null {
+function resolveDefaultAgentBoundAccountId(cfg: MerClawConfig, channelId: string): string | null {
   const defaultAgentId = resolveDefaultAgentId(cfg);
   for (const binding of cfg.bindings ?? []) {
     const resolved = resolveBindingAccount({ binding, channelId });
@@ -94,7 +94,7 @@ function hasConfiguredDefaultAccountValue(value: unknown): boolean {
   return value !== undefined && value !== null;
 }
 
-function hasImplicitDefaultTelegramAccount(cfg: OpenClawConfig): boolean {
+function hasImplicitDefaultTelegramAccount(cfg: MerClawConfig): boolean {
   const telegram = cfg.channels?.telegram;
   if (!telegram) {
     return false;
@@ -106,7 +106,7 @@ function hasImplicitDefaultTelegramAccount(cfg: OpenClawConfig): boolean {
   );
 }
 
-export function listTelegramAccountIds(cfg: OpenClawConfig): string[] {
+export function listTelegramAccountIds(cfg: MerClawConfig): string[] {
   return listCombinedAccountIds({
     configuredAccountIds: listConfiguredAccountIds(cfg),
     additionalAccountIds: listBoundAccountIds(cfg, "telegram"),
@@ -115,7 +115,7 @@ export function listTelegramAccountIds(cfg: OpenClawConfig): string[] {
   });
 }
 
-export function resolveDefaultTelegramAccountSelection(cfg: OpenClawConfig): {
+export function resolveDefaultTelegramAccountSelection(cfg: MerClawConfig): {
   accountId: string;
   accountIds: string[];
   shouldWarnMissingDefault: boolean;
@@ -149,6 +149,6 @@ export function resolveDefaultTelegramAccountSelection(cfg: OpenClawConfig): {
   };
 }
 
-export function resolveDefaultTelegramAccountId(cfg: OpenClawConfig): string {
+export function resolveDefaultTelegramAccountId(cfg: MerClawConfig): string {
   return resolveDefaultTelegramAccountSelection(cfg).accountId;
 }

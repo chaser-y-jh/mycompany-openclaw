@@ -263,13 +263,13 @@ describe("scripts/e2e/openwebui-probe.mjs", () => {
 
       expect(result.error).toBeUndefined();
       expect(result.status).not.toBe(0);
-      expect(result.stderr).toContain("openclaw model missing from Open WebUI model list");
+      expect(result.stderr).toContain("merclaw model missing from Open WebUI model list");
     } finally {
       server.close();
     }
   });
 
-  it("passes in models mode when Open WebUI exposes the OpenClaw model", async () => {
+  it("passes in models mode when Open WebUI exposes the MerClaw model", async () => {
     const server = createServer((request, response) => {
       if (request.url === "/api/v1/auths/signin") {
         response.writeHead(200, {
@@ -283,7 +283,7 @@ describe("scripts/e2e/openwebui-probe.mjs", () => {
         expect(request.headers.authorization).toBe("Bearer test-token");
         expect(request.headers.cookie).toContain("openwebui-session=test");
         response.writeHead(200, { "content-type": "application/json" });
-        response.end(JSON.stringify({ data: [{ id: "openclaw/default" }] }));
+        response.end(JSON.stringify({ data: [{ id: "merclaw/default" }] }));
         return;
       }
       response.writeHead(404).end();
@@ -295,7 +295,7 @@ describe("scripts/e2e/openwebui-probe.mjs", () => {
       expect(result.status).toBe(0);
       expect(JSON.parse(result.stdout)).toMatchObject({
         mode: "models",
-        model: "openclaw/default",
+        model: "merclaw/default",
         ok: true,
       });
     } finally {

@@ -1,5 +1,5 @@
 import Foundation
-import OpenClawKit
+import MerClawKit
 import Testing
 
 @Suite struct ShareToAgentDeepLinkTests {
@@ -28,7 +28,7 @@ import Testing
         let url = ShareToAgentDeepLink.buildURL(from: payload)
         let parsed = url.flatMap { DeepLinkParser.parse($0) }
         guard case let .agent(agent)? = parsed else {
-            Issue.record("Expected openclaw://agent deep link")
+            Issue.record("Expected merclaw://agent deep link")
             return
         }
 

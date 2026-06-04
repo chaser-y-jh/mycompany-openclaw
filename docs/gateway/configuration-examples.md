@@ -1,9 +1,9 @@
 ---
-summary: "Schema-accurate configuration examples for common OpenClaw setups"
+summary: "Schema-accurate configuration examples for common MerClaw setups"
 read_when:
-  - Learning how to configure OpenClaw
+  - Learning how to configure MerClaw
   - Looking for configuration examples
-  - Setting up OpenClaw for the first time
+  - Setting up MerClaw for the first time
 title: "Configuration examples"
 ---
 
@@ -15,12 +15,12 @@ Examples below are aligned with the current config schema. For the exhaustive re
 
 ```json5
 {
-  agents: { defaults: { workspace: "~/.openclaw/workspace" } },
+  agents: { defaults: { workspace: "~/.merclaw/workspace" } },
   channels: { whatsapp: { allowFrom: ["+15555550123"] } },
 }
 ```
 
-Save to `~/.openclaw/openclaw.json` and you can DM the bot from that number.
+Save to `~/.merclaw/merclaw.json` and you can DM the bot from that number.
 
 ### Recommended starter
 
@@ -28,7 +28,7 @@ Save to `~/.openclaw/openclaw.json` and you can DM the bot from that number.
 {
   agents: {
     defaults: {
-      workspace: "~/.openclaw/workspace",
+      workspace: "~/.merclaw/workspace",
       model: { primary: "anthropic/claude-sonnet-4-6" },
     },
     list: [
@@ -95,7 +95,7 @@ Save to `~/.openclaw/openclaw.json` and you can DM the bot from that number.
   // Logging
   logging: {
     level: "info",
-    file: "/tmp/openclaw/openclaw.log",
+    file: "/tmp/merclaw/merclaw.log",
     consoleLevel: "info",
     consoleStyle: "pretty",
     redactSensitive: "tools",
@@ -103,7 +103,7 @@ Save to `~/.openclaw/openclaw.json` and you can DM the bot from that number.
 
   // Message formatting
   messages: {
-    messagePrefix: "[openclaw]",
+    messagePrefix: "[merclaw]",
     visibleReplies: "automatic",
     responsePrefix: ">",
     ackReaction: "👀",
@@ -164,7 +164,7 @@ Save to `~/.openclaw/openclaw.json` and you can DM the bot from that number.
       discord: { mode: "idle", idleMinutes: 10080 },
     },
     resetTriggers: ["/new", "/reset"],
-    store: "~/.openclaw/agents/default/sessions/sessions.json",
+    store: "~/.merclaw/agents/default/sessions/sessions.json",
     maintenance: {
       mode: "warn",
       pruneAfter: "30d",
@@ -205,7 +205,7 @@ Save to `~/.openclaw/openclaw.json` and you can DM the bot from that number.
       dm: { enabled: true, allowFrom: ["123456789012345678"] },
       guilds: {
         "123456789012345678": {
-          slug: "friends-of-openclaw",
+          slug: "friends-of-merclaw",
           requireMention: false,
           channels: {
             general: { allow: true },
@@ -225,7 +225,7 @@ Save to `~/.openclaw/openclaw.json` and you can DM the bot from that number.
       dm: { enabled: true, allowFrom: ["U123"] },
       slashCommand: {
         enabled: true,
-        name: "openclaw",
+        name: "merclaw",
         sessionPrefix: "slack:slash",
         ephemeral: true,
       },
@@ -235,7 +235,7 @@ Save to `~/.openclaw/openclaw.json` and you can DM the bot from that number.
   // Agent runtime
   agents: {
     defaults: {
-      workspace: "~/.openclaw/workspace",
+      workspace: "~/.merclaw/workspace",
       userTimezone: "America/Chicago",
       model: {
         primary: "anthropic/claude-sonnet-4-6",
@@ -292,9 +292,9 @@ Save to `~/.openclaw/openclaw.json` and you can DM the bot from that number.
       sandbox: {
         mode: "non-main",
         scope: "session", // preferred over legacy perSession: true
-        workspaceRoot: "~/.openclaw/sandboxes",
+        workspaceRoot: "~/.merclaw/sandboxes",
         docker: {
-          image: "openclaw-sandbox:bookworm-slim",
+          image: "merclaw-sandbox:bookworm-slim",
           workdir: "/workspace",
           readOnlyRoot: true,
           tmpfs: ["/tmp", "/var/tmp", "/run"],
@@ -317,7 +317,7 @@ Save to `~/.openclaw/openclaw.json` and you can DM the bot from that number.
         },
         // inherits defaults.skills -> github, weather
         groupChat: {
-          mentionPatterns: ["@openclaw", "openclaw"],
+          mentionPatterns: ["@merclaw", "merclaw"],
         },
         thinkingDefault: "high", // per-agent thinking override
         reasoningDefault: "on", // per-agent reasoning visibility
@@ -383,7 +383,7 @@ Save to `~/.openclaw/openclaw.json` and you can DM the bot from that number.
   // Cron jobs
   cron: {
     enabled: true,
-    store: "~/.openclaw/cron/cron.json",
+    store: "~/.merclaw/cron/cron.json",
     maxConcurrentRuns: 8, // default; cron dispatch + isolated cron agent-turn execution
     sessionRetention: "24h",
     runLog: {
@@ -398,7 +398,7 @@ Save to `~/.openclaw/openclaw.json` and you can DM the bot from that number.
     path: "/hooks",
     token: "shared-secret",
     presets: ["gmail"],
-    transformsDir: "~/.openclaw/hooks/transforms",
+    transformsDir: "~/.merclaw/hooks/transforms",
     mappings: [
       {
         id: "gmail-hook",
@@ -421,7 +421,7 @@ Save to `~/.openclaw/openclaw.json` and you can DM the bot from that number.
       },
     ],
     gmail: {
-      account: "openclaw@gmail.com",
+      account: "merclaw@gmail.com",
       label: "INBOX",
       topic: "projects/<project-id>/topics/gog-gmail-watch",
       subscription: "gog-gmail-watch-push",
@@ -440,7 +440,7 @@ Save to `~/.openclaw/openclaw.json` and you can DM the bot from that number.
     mode: "local",
     port: 18789,
     bind: "loopback",
-    controlUi: { enabled: true, basePath: "/openclaw" },
+    controlUi: { enabled: true, basePath: "/merclaw" },
     auth: {
       mode: "token",
       token: "gateway-token",
@@ -502,12 +502,12 @@ example `~/.agents/skills/manager -> ~/Projects/manager/skills`.
 {
   agents: {
     defaults: {
-      workspace: "~/.openclaw/workspace",
+      workspace: "~/.merclaw/workspace",
       skills: ["github", "weather"],
     },
     list: [
       { id: "main", default: true },
-      { id: "docs", workspace: "~/.openclaw/workspace-docs", skills: ["docs-search"] },
+      { id: "docs", workspace: "~/.merclaw/workspace-docs", skills: ["docs-search"] },
     ],
   },
 }
@@ -521,7 +521,7 @@ example `~/.agents/skills/manager -> ~/Projects/manager/skills`.
 
 ```json5
 {
-  agents: { defaults: { workspace: "~/.openclaw/workspace" } },
+  agents: { defaults: { workspace: "~/.merclaw/workspace" } },
   channels: {
     whatsapp: { allowFrom: ["+15555550123"] },
     telegram: {
@@ -615,7 +615,7 @@ Only enable direct mutable name/email/nick matching with each channel's `dangero
   },
   agents: {
     defaults: {
-      workspace: "~/.openclaw/workspace",
+      workspace: "~/.merclaw/workspace",
       model: {
         primary: "anthropic/claude-opus-4-6",
         fallbacks: ["minimax/MiniMax-M2.7"],
@@ -631,7 +631,7 @@ Only enable direct mutable name/email/nick matching with each channel's `dangero
 {
   agents: {
     defaults: {
-      workspace: "~/work-openclaw",
+      workspace: "~/work-merclaw",
       elevatedDefault: "off",
     },
     list: [
@@ -663,7 +663,7 @@ Only enable direct mutable name/email/nick matching with each channel's `dangero
 {
   agents: {
     defaults: {
-      workspace: "~/.openclaw/workspace",
+      workspace: "~/.merclaw/workspace",
       model: { primary: "lmstudio/my-local-model" },
     },
   },

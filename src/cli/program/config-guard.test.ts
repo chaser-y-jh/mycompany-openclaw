@@ -33,7 +33,7 @@ function makeSnapshot() {
     issues: [] as ConfigIssue[],
     warnings: [] as ConfigIssue[],
     legacyIssues: [] as ConfigIssue[],
-    path: "/tmp/openclaw.json",
+    path: "/tmp/merclaw.json",
   };
 }
 
@@ -72,8 +72,8 @@ async function withCapturedStdout(run: () => Promise<void>): Promise<string> {
 describe("ensureConfigReady", () => {
   const resetConfigGuardStateForTests = testApi.resetConfigGuardStateForTests;
   const originalHome = process.env.HOME;
-  const originalOpenClawHome = process.env.OPENCLAW_HOME;
-  const originalOpenClawStateDir = process.env.OPENCLAW_STATE_DIR;
+  const originalMerClawHome = process.env.MERCLAW_HOME;
+  const originalMerClawStateDir = process.env.MERCLAW_STATE_DIR;
   const tempRoots: string[] = [];
 
   async function runEnsureConfigReady(commandPath: string[], suppressDoctorStdout = false) {
@@ -97,22 +97,22 @@ describe("ensureConfigReady", () => {
     });
   }
 
-  function useTempOpenClawHome(): string {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-config-guard-"));
+  function useTempMerClawHome(): string {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-config-guard-"));
     tempRoots.push(root);
-    process.env.OPENCLAW_HOME = root;
-    delete process.env.OPENCLAW_STATE_DIR;
+    process.env.MERCLAW_HOME = root;
+    delete process.env.MERCLAW_STATE_DIR;
     return root;
   }
 
   function writeLegacyTaskSidecarMarker(root: string): void {
-    const markerPath = path.join(root, ".openclaw", "tasks", "runs.sqlite");
+    const markerPath = path.join(root, ".merclaw", "tasks", "runs.sqlite");
     fs.mkdirSync(path.dirname(markerPath), { recursive: true });
     fs.writeFileSync(markerPath, "");
   }
 
   function writeStateMarker(root: string, relativePath: string): void {
-    const markerPath = path.join(root, ".openclaw", relativePath);
+    const markerPath = path.join(root, ".merclaw", relativePath);
     fs.mkdirSync(path.dirname(markerPath), { recursive: true });
     fs.writeFileSync(markerPath, "{}");
   }
@@ -128,7 +128,7 @@ describe("ensureConfigReady", () => {
     for (const root of tempRoots.splice(0)) {
       fs.rmSync(root, { recursive: true, force: true });
     }
-    useTempOpenClawHome();
+    useTempMerClawHome();
     readConfigFileSnapshotMock.mockResolvedValue(makeSnapshot());
     loadAndMaybeMigrateDoctorConfigMock.mockImplementation(async () => ({
       snapshot: makeSnapshot(),
@@ -142,15 +142,15 @@ describe("ensureConfigReady", () => {
     } else {
       process.env.HOME = originalHome;
     }
-    if (originalOpenClawHome === undefined) {
-      delete process.env.OPENCLAW_HOME;
+    if (originalMerClawHome === undefined) {
+      delete process.env.MERCLAW_HOME;
     } else {
-      process.env.OPENCLAW_HOME = originalOpenClawHome;
+      process.env.MERCLAW_HOME = originalMerClawHome;
     }
-    if (originalOpenClawStateDir === undefined) {
-      delete process.env.OPENCLAW_STATE_DIR;
+    if (originalMerClawStateDir === undefined) {
+      delete process.env.MERCLAW_STATE_DIR;
     } else {
-      process.env.OPENCLAW_STATE_DIR = originalOpenClawStateDir;
+      process.env.MERCLAW_STATE_DIR = originalMerClawStateDir;
     }
     for (const root of tempRoots.splice(0)) {
       fs.rmSync(root, { recursive: true, force: true });
@@ -186,7 +186,7 @@ describe("ensureConfigReady", () => {
   });
 
   it("runs doctor flow when lightweight startup detection finds legacy state", async () => {
-    const root = useTempOpenClawHome();
+    const root = useTempMerClawHome();
     writeLegacyTaskSidecarMarker(root);
 
     await runEnsureConfigReady(["status"]);
@@ -199,8 +199,8 @@ describe("ensureConfigReady", () => {
   });
 
   it("runs doctor flow for legacy sessions without task sidecars", async () => {
-    const root = useTempOpenClawHome();
-    fs.mkdirSync(path.join(root, ".openclaw", "sessions"), { recursive: true });
+    const root = useTempMerClawHome();
+    fs.mkdirSync(path.join(root, ".merclaw", "sessions"), { recursive: true });
 
     await runEnsureConfigReady(["status"]);
 
@@ -217,7 +217,7 @@ describe("ensureConfigReady", () => {
     ["Telegram pairing allowFrom", "credentials/telegram-allowFrom.json"],
     ["WhatsApp root auth", "credentials/creds.json"],
   ])("runs doctor flow for bundled channel legacy state: %s", async (_label, relativePath) => {
-    const root = useTempOpenClawHome();
+    const root = useTempMerClawHome();
     writeStateMarker(root, relativePath);
 
     await runEnsureConfigReady(["status"]);
@@ -225,12 +225,12 @@ describe("ensureConfigReady", () => {
     expect(loadAndMaybeMigrateDoctorConfigMock).toHaveBeenCalledOnce();
   });
 
-  it("uses shared tilde expansion for OPENCLAW_HOME in the startup detector", async () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-config-guard-home-"));
+  it("uses shared tilde expansion for MERCLAW_HOME in the startup detector", async () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-config-guard-home-"));
     tempRoots.push(root);
     process.env.HOME = root;
-    process.env.OPENCLAW_HOME = "~/svc";
-    delete process.env.OPENCLAW_STATE_DIR;
+    process.env.MERCLAW_HOME = "~/svc";
+    delete process.env.MERCLAW_STATE_DIR;
     writeLegacyTaskSidecarMarker(path.join(root, "svc"));
 
     await runEnsureConfigReady(["status"]);
@@ -239,7 +239,7 @@ describe("ensureConfigReady", () => {
   });
 
   it("runs doctor flow for read-only commands with configured custom session stores", async () => {
-    const root = useTempOpenClawHome();
+    const root = useTempMerClawHome();
     const customStore = path.join(root, "sessions", "sessions.json");
     const snapshot = {
       ...makeSnapshot(),
@@ -304,13 +304,13 @@ describe("ensureConfigReady", () => {
     const runtime = await runEnsureConfigReady(["message"]);
 
     expect(plainErrorCalls(runtime)).toEqual([
-      "OpenClaw config is invalid",
-      "File: /tmp/openclaw.json",
+      "MerClaw config is invalid",
+      "File: /tmp/merclaw.json",
       "Problem:",
       "  - channels.quietchat: invalid",
       "",
-      `Fix: ${formatCliCommand("openclaw doctor --fix")}`,
-      `Inspect: ${formatCliCommand("openclaw config validate")}`,
+      `Fix: ${formatCliCommand("merclaw doctor --fix")}`,
+      `Inspect: ${formatCliCommand("merclaw config validate")}`,
       "Status, health, logs, tasks list/audit, and doctor commands still run with invalid config.",
     ]);
     expect(runtime.exit).toHaveBeenCalledWith(1);
@@ -336,7 +336,7 @@ describe("ensureConfigReady", () => {
     const calls = plainErrorCalls(runtime);
 
     expect(calls).toContain(`Fix: ${pluginPackagingRecoveryHint}`);
-    expect(calls).not.toContain(`Fix: ${formatCliCommand("openclaw doctor --fix")}`);
+    expect(calls).not.toContain(`Fix: ${formatCliCommand("merclaw doctor --fix")}`);
     expect(runtime.exit).toHaveBeenCalledWith(1);
   });
 
@@ -385,7 +385,7 @@ describe("ensureConfigReady", () => {
   });
 
   it("runs doctor migration flow only once per module instance", async () => {
-    writeLegacyTaskSidecarMarker(useTempOpenClawHome());
+    writeLegacyTaskSidecarMarker(useTempMerClawHome());
     const runtimeA = makeRuntime();
     const runtimeB = makeRuntime();
 
@@ -395,13 +395,13 @@ describe("ensureConfigReady", () => {
   });
 
   it("still runs doctor flow when stdout suppression is enabled", async () => {
-    writeLegacyTaskSidecarMarker(useTempOpenClawHome());
+    writeLegacyTaskSidecarMarker(useTempMerClawHome());
     await runEnsureConfigReady(["message"], true);
     expect(loadAndMaybeMigrateDoctorConfigMock).toHaveBeenCalledTimes(1);
   });
 
   it("prevents preflight note noise when suppression is enabled", async () => {
-    writeLegacyTaskSidecarMarker(useTempOpenClawHome());
+    writeLegacyTaskSidecarMarker(useTempMerClawHome());
     loadAndMaybeMigrateDoctorConfigMock.mockImplementation(async () => {
       note("Doctor warnings", "Config warnings");
       return {
@@ -416,7 +416,7 @@ describe("ensureConfigReady", () => {
   });
 
   it("allows preflight note noise when suppression is not enabled", async () => {
-    writeLegacyTaskSidecarMarker(useTempOpenClawHome());
+    writeLegacyTaskSidecarMarker(useTempMerClawHome());
     loadAndMaybeMigrateDoctorConfigMock.mockImplementation(async () => {
       note("Doctor warnings", "Config warnings");
       return {
@@ -431,7 +431,7 @@ describe("ensureConfigReady", () => {
   });
 
   it("does not suppress unrelated concurrent stdout writes while suppressing preflight notes", async () => {
-    writeLegacyTaskSidecarMarker(useTempOpenClawHome());
+    writeLegacyTaskSidecarMarker(useTempMerClawHome());
     let releasePreflight: (() => void) | undefined;
     let preflightStarted: (() => void) | undefined;
     const preflightStartedPromise = new Promise<void>((resolve) => {

@@ -1,4 +1,4 @@
-import { createCapturedPluginRegistration } from "openclaw/plugin-sdk/plugin-test-runtime";
+import { createCapturedPluginRegistration } from "merclaw/plugin-sdk/plugin-test-runtime";
 import { describe, expect, it } from "vitest";
 import entry from "./index.js";
 

@@ -21,7 +21,7 @@ type PluginListEntry = {
 };
 
 function makePackageRoot(): string {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-bundled-probe-"));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-bundled-probe-"));
   tempDirs.push(root);
   fs.writeFileSync(path.join(root, "package.json"), '{"type":"module"}\n', "utf8");
   fs.mkdirSync(path.join(root, "dist"), { recursive: true });
@@ -48,7 +48,7 @@ function writePluginManifest(root: string, pluginRoot: string, manifest: Record<
   const dir = path.join(root, pluginRoot);
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(
-    path.join(dir, "openclaw.plugin.json"),
+    path.join(dir, "merclaw.plugin.json"),
     `${JSON.stringify(manifest, null, 2)}\n`,
     "utf8",
   );
@@ -61,7 +61,7 @@ function runProbe(root: string, env: Record<string, string | undefined> = {}) {
       delete childEnv[key];
     }
   }
-  childEnv.OPENCLAW_ENTRY = path.join(root, "dist", "index.js");
+  childEnv.MERCLAW_ENTRY = path.join(root, "dist", "index.js");
   return spawnSync(process.execPath, [probePath, "select"], {
     cwd: root,
     encoding: "utf8",
@@ -76,7 +76,7 @@ function runProbeCommand(root: string, args: string[], env: Record<string, strin
       delete childEnv[key];
     }
   }
-  childEnv.OPENCLAW_ENTRY = path.join(root, "dist", "index.js");
+  childEnv.MERCLAW_ENTRY = path.join(root, "dist", "index.js");
   return spawnSync(process.execPath, [probePath, ...args], {
     cwd: root,
     encoding: "utf8",
@@ -90,7 +90,7 @@ function runRuntimeSmoke(root: string, args: string[]) {
     encoding: "utf8",
     env: {
       ...process.env,
-      OPENCLAW_ENTRY: path.join(root, "dist", "index.js"),
+      MERCLAW_ENTRY: path.join(root, "dist", "index.js"),
     },
   });
 }
@@ -190,7 +190,7 @@ describe("bundled plugin install/uninstall probe", () => {
 
   it("rejects loose runtime output limit env values instead of parsing prefixes", async () => {
     const runtimeSmoke = await importRuntimeSmokeWithEnv({
-      OPENCLAW_BUNDLED_PLUGIN_RUNTIME_OUTPUT_CHARS: "5chars",
+      MERCLAW_BUNDLED_PLUGIN_RUNTIME_OUTPUT_CHARS: "5chars",
     });
 
     expect(runtimeSmoke.appendBoundedOutput({ text: "", truncatedChars: 0 }, "abcdef")).toEqual({
@@ -215,7 +215,7 @@ describe("bundled plugin install/uninstall probe", () => {
 
   it("rejects loose runtime log scan byte env values instead of parsing prefixes", async () => {
     const runtimeSmoke = await importRuntimeSmokeWithEnv({
-      OPENCLAW_BUNDLED_PLUGIN_RUNTIME_LOG_SCAN_BYTES: "64bytes",
+      MERCLAW_BUNDLED_PLUGIN_RUNTIME_LOG_SCAN_BYTES: "64bytes",
     });
     const root = makePackageRoot();
     const logPath = path.join(root, "gateway.log");
@@ -370,8 +370,8 @@ describe("bundled plugin install/uninstall probe", () => {
 
   it("keeps stalled runtime readiness probes inside the ready deadline", async () => {
     const runtimeSmoke = await importRuntimeSmokeWithEnv({
-      OPENCLAW_BUNDLED_PLUGIN_RUNTIME_HTTP_MS: "1000",
-      OPENCLAW_BUNDLED_PLUGIN_RUNTIME_READY_MS: "50",
+      MERCLAW_BUNDLED_PLUGIN_RUNTIME_HTTP_MS: "1000",
+      MERCLAW_BUNDLED_PLUGIN_RUNTIME_READY_MS: "50",
     });
     const sockets = new Set<Socket>();
     const server = createNetServer((socket) => {
@@ -405,22 +405,22 @@ describe("bundled plugin install/uninstall probe", () => {
     }
   });
 
-  it("creates runtime smoke state with OPENCLAW_HOME at the test home", async () => {
+  it("creates runtime smoke state with MERCLAW_HOME at the test home", async () => {
     const runtimeSmoke = await import(pathToFileURL(runtimeSmokePath).href);
     const env = runtimeSmoke.createIsolatedStateEnv("runtime-env");
     tempDirs.push(path.dirname(env.HOME));
 
     expect(env.USERPROFILE).toBe(env.HOME);
-    expect(env.OPENCLAW_HOME).toBe(env.HOME);
-    expect(env.OPENCLAW_STATE_DIR).toBe(path.join(env.HOME, ".openclaw"));
-    expect(env.OPENCLAW_CONFIG_PATH).toBe(path.join(env.OPENCLAW_STATE_DIR, "openclaw.json"));
+    expect(env.MERCLAW_HOME).toBe(env.HOME);
+    expect(env.MERCLAW_STATE_DIR).toBe(path.join(env.HOME, ".merclaw"));
+    expect(env.MERCLAW_CONFIG_PATH).toBe(path.join(env.MERCLAW_STATE_DIR, "merclaw.json"));
   });
 
   it("selects packaged installable bundled sources instead of raw dist extension dirs", () => {
     const root = makePackageRoot();
     fs.mkdirSync(path.join(root, "dist", "extensions", "qa-channel"), { recursive: true });
     fs.writeFileSync(
-      path.join(root, "dist", "extensions", "qa-channel", "openclaw.plugin.json"),
+      path.join(root, "dist", "extensions", "qa-channel", "merclaw.plugin.json"),
       '{"id":"qa-channel"}\n',
       "utf8",
     );
@@ -437,7 +437,7 @@ describe("bundled plugin install/uninstall probe", () => {
     ]);
 
     const result = runProbe(root, {
-      OPENCLAW_BUNDLED_PLUGIN_SWEEP_IDS: undefined,
+      MERCLAW_BUNDLED_PLUGIN_SWEEP_IDS: undefined,
     });
 
     expect(result.status).toBe(0);
@@ -468,12 +468,12 @@ describe("bundled plugin install/uninstall probe", () => {
     ]);
 
     const result = runProbe(root, {
-      OPENCLAW_BUNDLED_PLUGIN_SWEEP_IDS: "qa-channel",
+      MERCLAW_BUNDLED_PLUGIN_SWEEP_IDS: "qa-channel",
     });
 
     expect(result.status).toBe(1);
     expect(result.stderr).toContain(
-      "OPENCLAW_BUNDLED_PLUGIN_SWEEP_IDS entry is not an installable bundled plugin in this package: qa-channel",
+      "MERCLAW_BUNDLED_PLUGIN_SWEEP_IDS entry is not an installable bundled plugin in this package: qa-channel",
     );
     expect(result.stderr).toContain("Available: clickclack");
   });
@@ -492,12 +492,12 @@ describe("bundled plugin install/uninstall probe", () => {
     ]);
 
     const result = runProbe(root, {
-      OPENCLAW_BUNDLED_PLUGIN_SWEEP_IDS: "qa-channel",
+      MERCLAW_BUNDLED_PLUGIN_SWEEP_IDS: "qa-channel",
     });
 
     expect(result.status).toBe(1);
     expect(result.stderr).toContain(
-      "OPENCLAW_BUNDLED_PLUGIN_SWEEP_IDS entry is not an installable bundled plugin in this package: qa-channel",
+      "MERCLAW_BUNDLED_PLUGIN_SWEEP_IDS entry is not an installable bundled plugin in this package: qa-channel",
     );
     expect(result.stderr).toContain("Available: admin-http-rpc");
   });
@@ -506,17 +506,17 @@ describe("bundled plugin install/uninstall probe", () => {
     const root = makePackageRoot();
 
     const timeout = runProbe(root, {
-      OPENCLAW_BUNDLED_PLUGIN_LIST_TIMEOUT_MS: "100ms",
+      MERCLAW_BUNDLED_PLUGIN_LIST_TIMEOUT_MS: "100ms",
     });
     expect(timeout.status).toBe(1);
-    expect(timeout.stderr).toContain("invalid OPENCLAW_BUNDLED_PLUGIN_LIST_TIMEOUT_MS: 100ms");
+    expect(timeout.stderr).toContain("invalid MERCLAW_BUNDLED_PLUGIN_LIST_TIMEOUT_MS: 100ms");
 
     const maxBuffer = runProbe(root, {
-      OPENCLAW_BUNDLED_PLUGIN_LIST_MAX_BUFFER_BYTES: "64bytes",
+      MERCLAW_BUNDLED_PLUGIN_LIST_MAX_BUFFER_BYTES: "64bytes",
     });
     expect(maxBuffer.status).toBe(1);
     expect(maxBuffer.stderr).toContain(
-      "invalid OPENCLAW_BUNDLED_PLUGIN_LIST_MAX_BUFFER_BYTES: 64bytes",
+      "invalid MERCLAW_BUNDLED_PLUGIN_LIST_MAX_BUFFER_BYTES: 64bytes",
     );
   });
 
@@ -534,16 +534,16 @@ describe("bundled plugin install/uninstall probe", () => {
     ]);
 
     const total = runProbe(root, {
-      OPENCLAW_BUNDLED_PLUGIN_SWEEP_TOTAL: "2shards",
+      MERCLAW_BUNDLED_PLUGIN_SWEEP_TOTAL: "2shards",
     });
     expect(total.status).toBe(1);
-    expect(total.stderr).toContain("invalid OPENCLAW_BUNDLED_PLUGIN_SWEEP_TOTAL: 2shards");
+    expect(total.stderr).toContain("invalid MERCLAW_BUNDLED_PLUGIN_SWEEP_TOTAL: 2shards");
 
     const index = runProbe(root, {
-      OPENCLAW_BUNDLED_PLUGIN_SWEEP_INDEX: "0of2",
+      MERCLAW_BUNDLED_PLUGIN_SWEEP_INDEX: "0of2",
     });
     expect(index.status).toBe(1);
-    expect(index.stderr).toContain("invalid OPENCLAW_BUNDLED_PLUGIN_SWEEP_INDEX: 0of2");
+    expect(index.stderr).toContain("invalid MERCLAW_BUNDLED_PLUGIN_SWEEP_INDEX: 0of2");
   });
 
   it("bounds plugin list selection when the CLI hangs", () => {
@@ -556,7 +556,7 @@ describe("bundled plugin install/uninstall probe", () => {
 
     const startedAt = Date.now();
     const result = runProbe(root, {
-      OPENCLAW_BUNDLED_PLUGIN_LIST_TIMEOUT_MS: "100",
+      MERCLAW_BUNDLED_PLUGIN_LIST_TIMEOUT_MS: "100",
     });
 
     expect(Date.now() - startedAt).toBeLessThan(2_500);
@@ -574,7 +574,7 @@ describe("bundled plugin install/uninstall probe", () => {
       recursive: true,
     });
     fs.writeFileSync(
-      path.join(root, "dist-runtime", "extensions", "runtime-only", "openclaw.plugin.json"),
+      path.join(root, "dist-runtime", "extensions", "runtime-only", "merclaw.plugin.json"),
       '{"id":"runtime-only"}\n',
       "utf8",
     );
@@ -601,7 +601,7 @@ describe("bundled plugin install/uninstall probe", () => {
     const windowsSourcePath = "C:\\crabbox\\qa-windows\\dist\\extensions\\nostr";
     fs.mkdirSync(path.join(stateDir, "plugins"), { recursive: true });
     fs.writeFileSync(
-      path.join(stateDir, "openclaw.json"),
+      path.join(stateDir, "merclaw.json"),
       JSON.stringify({ plugins: { entries: { nostr: { enabled: true } } } }),
       "utf8",
     );
@@ -622,7 +622,7 @@ describe("bundled plugin install/uninstall probe", () => {
 
     const result = runProbeCommand(root, ["assert-installed", "nostr", "nostr", "0"], {
       HOME: undefined,
-      OPENCLAW_STATE_DIR: stateDir,
+      MERCLAW_STATE_DIR: stateDir,
     });
 
     expect(result.status).toBe(0);
@@ -633,7 +633,7 @@ describe("bundled plugin install/uninstall probe", () => {
     const stateDir = path.join(root, "state");
     fs.mkdirSync(path.join(stateDir, "plugins"), { recursive: true });
     fs.writeFileSync(
-      path.join(stateDir, "openclaw.json"),
+      path.join(stateDir, "merclaw.json"),
       JSON.stringify({
         plugins: { load: { paths: ["C:\\crabbox\\qa-windows\\dist\\extensions\\nostr"] } },
       }),
@@ -648,7 +648,7 @@ describe("bundled plugin install/uninstall probe", () => {
 
     const result = runProbeCommand(root, ["assert-uninstalled", "nostr", "nostr"], {
       HOME: undefined,
-      OPENCLAW_STATE_DIR: stateDir,
+      MERCLAW_STATE_DIR: stateDir,
     });
 
     expect(result.status).toBe(1);

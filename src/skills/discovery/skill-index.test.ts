@@ -107,10 +107,10 @@ describe("skill index", () => {
   });
 
   it("records source, bundled state, skill key, and agent filter state", () => {
-    const bundled = createFixtureSkillEntry("bundle", { source: "openclaw-bundled" });
+    const bundled = createFixtureSkillEntry("bundle", { source: "merclaw-bundled" });
     const unknownBundled = createFixtureSkillEntry("unknown-bundle", { source: "unknown" });
     const workspace = createFixtureSkillEntry("workspace", {
-      source: "openclaw-workspace",
+      source: "merclaw-workspace",
       skillKey: "workspace-key",
     });
 
@@ -120,7 +120,7 @@ describe("skill index", () => {
     });
 
     expect(index.byName.get("bundle")).toMatchObject({
-      source: "openclaw-bundled",
+      source: "merclaw-bundled",
       bundled: true,
       agentAllowed: false,
     });
@@ -130,7 +130,7 @@ describe("skill index", () => {
       agentAllowed: false,
     });
     expect(index.byName.get("workspace")).toMatchObject({
-      source: "openclaw-workspace",
+      source: "merclaw-workspace",
       bundled: false,
       skillKey: "workspace-key",
       agentAllowed: true,

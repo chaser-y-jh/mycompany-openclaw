@@ -4,7 +4,7 @@ import { note } from "../../packages/terminal-core/src/note.js";
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../agents/agent-scope.js";
 import { resolveWorkspaceTemplateDir } from "../agents/workspace-templates.js";
 import { DEFAULT_HEARTBEAT_FILENAME } from "../agents/workspace.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import { writeTextAtomic } from "../infra/json-files.js";
 import { shortenHomePath } from "../utils.js";
@@ -40,7 +40,7 @@ const LEGACY_HEARTBEAT_FENCED_RELATED_TEMPLATE = [
 
 const DOCS_HEARTBEAT_TEMPLATE_PAGE_AS_TEMPLATE = [
   "# HEARTBEAT.md template",
-  "`HEARTBEAT.md` lives in the agent workspace. Keep the file empty, or with only Markdown comments and headings, when you want OpenClaw to skip heartbeat model calls.",
+  "`HEARTBEAT.md` lives in the agent workspace. Keep the file empty, or with only Markdown comments and headings, when you want MerClaw to skip heartbeat model calls.",
   "The default runtime template is:",
   "```markdown",
   "# Keep this file empty (or with only comments) to skip heartbeat API calls.",
@@ -68,7 +68,7 @@ const KNOWN_DIRTY_HEARTBEAT_TEMPLATE_LINES = new Set([
   "```",
   "# HEARTBEAT.md Template",
   "# HEARTBEAT.md template",
-  "`HEARTBEAT.md` lives in the agent workspace. Keep the file empty, or with only Markdown comments and headings, when you want OpenClaw to skip heartbeat model calls.",
+  "`HEARTBEAT.md` lives in the agent workspace. Keep the file empty, or with only Markdown comments and headings, when you want MerClaw to skip heartbeat model calls.",
   "The default runtime template is:",
   "Add short tasks below the comments only when you want the agent to check something periodically. Keep heartbeat instructions small because they are read during recurring wakes.",
   ...LEGACY_HEARTBEAT_PROSE_TEMPLATE,
@@ -125,7 +125,7 @@ async function readCleanHeartbeatTemplate(): Promise<string> {
 }
 
 export async function maybeRepairHeartbeatTemplate(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   shouldRepair: boolean;
 }): Promise<void> {
   const workspaceDir = resolveAgentWorkspaceDir(params.cfg, resolveDefaultAgentId(params.cfg));
@@ -162,7 +162,7 @@ export async function maybeRepairHeartbeatTemplate(params: {
     note(
       [
         `${shortenHomePath(heartbeatPath)} contains an older heartbeat documentation template.`,
-        'Run "openclaw doctor --fix" to replace it with the clean heartbeat template.',
+        'Run "merclaw doctor --fix" to replace it with the clean heartbeat template.',
       ].join("\n"),
       "Heartbeat template",
     );

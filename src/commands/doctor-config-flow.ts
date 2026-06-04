@@ -2,7 +2,7 @@ import path from "node:path";
 import { note } from "../../packages/terminal-core/src/note.js";
 import { formatCliCommand } from "../cli/command-format.js";
 import { CONFIG_PATH } from "../config/paths.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import type { RuntimeEnv } from "../runtime.js";
 import {
   noteImplicitFallbackClobberWarnings,
@@ -30,7 +30,7 @@ function hasLegacyInternalHookHandlers(raw: unknown): boolean {
 }
 
 function collectInvalidHookTransformsDirWarnings(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   configPath: string,
 ): string[] {
   const transformsDir = cfg.hooks?.transformsDir?.trim();
@@ -53,7 +53,7 @@ function collectInvalidHookTransformsDirWarnings(
   ];
 }
 
-function collectConfiguredChannelIds(cfg: OpenClawConfig): string[] {
+function collectConfiguredChannelIds(cfg: MerClawConfig): string[] {
   const channels =
     cfg.channels && typeof cfg.channels === "object" && !Array.isArray(cfg.channels)
       ? cfg.channels
@@ -93,11 +93,11 @@ export async function loadAndMaybeMigrateDoctorConfig(params: {
   });
   const snapshot = preflight.snapshot;
   const baseCfg = preflight.baseConfig;
-  let cfg: OpenClawConfig = baseCfg;
+  let cfg: MerClawConfig = baseCfg;
   let candidate = structuredClone(baseCfg);
   let pendingChanges = false;
   let fixHints: string[] = [];
-  const doctorFixCommand = formatCliCommand("openclaw doctor --fix");
+  const doctorFixCommand = formatCliCommand("merclaw doctor --fix");
   const sourceMeta = (snapshot.sourceConfig as { meta?: { lastTouchedVersion?: unknown } })?.meta;
   const sourceLastTouchedVersion =
     typeof sourceMeta?.lastTouchedVersion === "string" ? sourceMeta.lastTouchedVersion : undefined;
@@ -148,7 +148,7 @@ export async function loadAndMaybeMigrateDoctorConfig(params: {
       [
         "- hooks.internal.handlers: legacy inline hook modules are no longer part of the public config surface.",
         "- Migrate each entry to a managed or workspace hook directory with HOOK.md + handler.js, then enable it through hooks.internal.entries.<hookKey> as needed.",
-        "- openclaw doctor --fix does not rewrite this shape automatically.",
+        "- merclaw doctor --fix does not rewrite this shape automatically.",
       ].join("\n"),
       "Legacy config keys detected",
     );

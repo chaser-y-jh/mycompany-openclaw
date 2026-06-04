@@ -1,22 +1,22 @@
 {
-  "name": "@openclaw/diffs-language-pack",
+  "name": "@merclaw/diffs-language-pack",
   "version": "2026.5.31",
-  "description": "OpenClaw diffs viewer syntax highlighting language pack",
+  "description": "MerClaw diffs viewer syntax highlighting language pack",
   "repository": {
     "type": "git",
-    "url": "https://github.com/openclaw/openclaw"
+    "url": "https://github.com/merclaw/merclaw"
   },
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@merclaw/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ],
     "install": {
-      "npmSpec": "@openclaw/diffs-language-pack",
-      "clawhubSpec": "clawhub:@openclaw/diffs-language-pack",
+      "npmSpec": "@merclaw/diffs-language-pack",
+      "clawhubSpec": "clawhub:@merclaw/diffs-language-pack",
       "localPath": "extensions/diffs-language-pack",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.5.27"
@@ -28,7 +28,7 @@
       "build": "node ../../scripts/build-diffs-viewer-runtime.mjs full"
     },
     "build": {
-      "openclawVersion": "2026.5.31",
+      "merclawVersion": "2026.5.31",
       "staticAssets": [
         {
           "source": "./assets/viewer-runtime.js",

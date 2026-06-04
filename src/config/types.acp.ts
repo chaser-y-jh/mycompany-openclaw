@@ -1,4 +1,4 @@
-import type { AcpSessionUpdateTag } from "@openclaw/acp-core/runtime/types";
+import type { AcpSessionUpdateTag } from "@merclaw/acp-core/runtime/types";
 
 export type AcpDispatchConfig = {
   /** Master switch for ACP turn dispatch in the reply pipeline. */
@@ -22,7 +22,7 @@ export type AcpStreamConfig = {
   maxSessionUpdateChars?: number;
   /**
    * Per-sessionUpdate visibility overrides.
-   * Keys not listed here fall back to OpenClaw defaults.
+   * Keys not listed here fall back to MerClaw defaults.
    */
   tagVisibility?: Partial<Record<AcpSessionUpdateTag, boolean>>;
 };

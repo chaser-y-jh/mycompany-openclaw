@@ -4,7 +4,7 @@ import {
   resolveSessionStoreEntry,
   resolveStorePath,
 } from "../../config/sessions.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import type { TtsAutoMode } from "../../config/types.tts.js";
 import { shouldAttemptTtsPayload } from "../../tts/tts-config.js";
 
@@ -16,7 +16,7 @@ function loadMessageActionTtsRuntime() {
 }
 
 export function resolveMessageActionSessionTtsAuto(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   sessionKey?: string;
   agentId?: string;
 }): TtsAutoMode | undefined {
@@ -35,7 +35,7 @@ export function resolveMessageActionSessionTtsAuto(params: {
 
 export async function maybeApplyTtsToMessageActionSendPayload(params: {
   payload: ReplyPayload;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channel: string;
   accountId?: string | null;
   agentId?: string;

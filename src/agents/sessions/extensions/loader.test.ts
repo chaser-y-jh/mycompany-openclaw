@@ -12,14 +12,14 @@ afterEach(async () => {
 
 describe("loadExtensions", () => {
   it("resolves plugin SDK subpaths in jiti-loaded extensions", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "openclaw-extension-sdk-"));
+    const dir = await mkdtemp(join(tmpdir(), "merclaw-extension-sdk-"));
     tempDirs.push(dir);
     const extensionPath = join(dir, "extension.ts");
     await writeFile(
       extensionPath,
       `
-import { createAssistantMessageEventStream } from "openclaw/plugin-sdk/llm";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { createAssistantMessageEventStream } from "merclaw/plugin-sdk/llm";
+import { normalizeLowercaseStringOrEmpty } from "merclaw/plugin-sdk/string-coerce-runtime";
 
 export default async function(api) {
   const stream = createAssistantMessageEventStream();

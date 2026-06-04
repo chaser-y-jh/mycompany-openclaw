@@ -370,7 +370,7 @@ function resolveInfraShardName(file) {
     name.startsWith("json") ||
     name.startsWith("path") ||
     name.startsWith("shell") ||
-    name.startsWith("tmp-openclaw-dir")
+    name.startsWith("tmp-merclaw-dir")
   ) {
     return "core-runtime-infra-files-commands";
   }
@@ -413,7 +413,7 @@ function resolveInfraShardName(file) {
     name.startsWith("google-api") ||
     name.startsWith("home-dir") ||
     name.startsWith("host-env") ||
-    name.startsWith("openclaw-exec-env") ||
+    name.startsWith("merclaw-exec-env") ||
     name.startsWith("secret") ||
     name.startsWith("secure-random")
   ) {
@@ -425,7 +425,7 @@ function resolveInfraShardName(file) {
     name.startsWith("clawhub") ||
     name.startsWith("detect-package-manager") ||
     name.startsWith("git-") ||
-    name.startsWith("openclaw-root") ||
+    name.startsWith("merclaw-root") ||
     name.startsWith("tsdown") ||
     name.startsWith("vitest")
   ) {

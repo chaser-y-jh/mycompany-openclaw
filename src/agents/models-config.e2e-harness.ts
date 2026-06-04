@@ -1,6 +1,6 @@
 import { afterEach, beforeEach } from "vitest";
 import { clearConfigCache, clearRuntimeConfigSnapshot } from "../config/config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { withTempHome as withTempHomeBase } from "../plugin-sdk/test-helpers/temp-home.js";
 import { resetPluginLoaderTestStateForTest } from "../plugins/loader.test-fixtures.js";
 import { resetModelsJsonReadyCacheForTest } from "./models-config-state.js";
@@ -9,7 +9,7 @@ export function withModelsTempHome<T>(fn: (home: string) => Promise<T>): Promise
   // Models-config tests do not exercise session persistence; skip draining
   // unrelated session lock state during temp-home teardown.
   return withTempHomeBase(fn, {
-    prefix: "openclaw-models-",
+    prefix: "merclaw-models-",
     skipSessionCleanup: true,
   });
 }
@@ -19,14 +19,14 @@ export function installModelsConfigTestHooks(opts?: {
   resetPluginLoaderState?: boolean;
 }) {
   let previousHome: string | undefined;
-  let previousOpenClawAgentDir: string | undefined;
+  let previousMerClawAgentDir: string | undefined;
   const originalFetch = globalThis.fetch;
   const shouldResetPluginLoaderState = opts?.resetPluginLoaderState !== false;
 
   beforeEach(() => {
     previousHome = process.env.HOME;
-    previousOpenClawAgentDir = process.env.OPENCLAW_AGENT_DIR;
-    delete process.env.OPENCLAW_AGENT_DIR;
+    previousMerClawAgentDir = process.env.MERCLAW_AGENT_DIR;
+    delete process.env.MERCLAW_AGENT_DIR;
     clearRuntimeConfigSnapshot();
     clearConfigCache();
     if (shouldResetPluginLoaderState) {
@@ -37,10 +37,10 @@ export function installModelsConfigTestHooks(opts?: {
 
   afterEach(() => {
     process.env.HOME = previousHome;
-    if (previousOpenClawAgentDir === undefined) {
-      delete process.env.OPENCLAW_AGENT_DIR;
+    if (previousMerClawAgentDir === undefined) {
+      delete process.env.MERCLAW_AGENT_DIR;
     } else {
-      process.env.OPENCLAW_AGENT_DIR = previousOpenClawAgentDir;
+      process.env.MERCLAW_AGENT_DIR = previousMerClawAgentDir;
     }
     clearRuntimeConfigSnapshot();
     clearConfigCache();
@@ -81,7 +81,7 @@ export function unsetEnv(vars: string[]) {
 }
 
 export const MODELS_CONFIG_IMPLICIT_ENV_VARS = [
-  "OPENCLAW_TEST_ONLY_PROVIDER_PLUGIN_IDS",
+  "MERCLAW_TEST_ONLY_PROVIDER_PLUGIN_IDS",
   "VITEST",
   "NODE_ENV",
   "AI_GATEWAY_API_KEY",
@@ -97,10 +97,10 @@ export const MODELS_CONFIG_IMPLICIT_ENV_VARS = [
   "MOONSHOT_API_KEY",
   "NVIDIA_API_KEY",
   "OLLAMA_API_KEY",
-  "OPENCLAW_AGENT_DIR",
+  "MERCLAW_AGENT_DIR",
   "OPENAI_API_KEY",
   "OPENROUTER_API_KEY",
-  "OPENCLAW_AGENT_DIR",
+  "MERCLAW_AGENT_DIR",
   "QIANFAN_API_KEY",
   "QWEN_API_KEY",
   "MODELSTUDIO_API_KEY",
@@ -115,7 +115,7 @@ export const MODELS_CONFIG_IMPLICIT_ENV_VARS = [
   "KIMI_API_KEY",
   "KIMICODE_API_KEY",
   "GEMINI_API_KEY",
-  "OPENCLAW_BUNDLED_PLUGINS_DIR",
+  "MERCLAW_BUNDLED_PLUGINS_DIR",
   "GOOGLE_APPLICATION_CREDENTIALS",
   "GOOGLE_CLOUD_LOCATION",
   "GOOGLE_CLOUD_PROJECT",
@@ -138,7 +138,7 @@ export const MODELS_CONFIG_IMPLICIT_ENV_VARS = [
   "AWS_SHARED_CREDENTIALS_FILE",
 ];
 
-export const CUSTOM_PROXY_MODELS_CONFIG: OpenClawConfig = {
+export const CUSTOM_PROXY_MODELS_CONFIG: MerClawConfig = {
   models: {
     providers: {
       "custom-proxy": {

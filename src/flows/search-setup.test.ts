@@ -17,7 +17,7 @@ const mockGrokProvider = vi.hoisted(() => ({
   pluginId: "xai",
   label: "Grok",
   hint: "Search with xAI",
-  docsUrl: "https://docs.openclaw.ai/tools/web",
+  docsUrl: "https://docs.merclaw.ai/tools/web",
   requiresCredential: true,
   credentialLabel: "xAI API key",
   placeholder: "xai-...",
@@ -125,7 +125,7 @@ const ensureOnboardingPluginInstalled = vi.hoisted(() =>
             [entry.pluginId]: {
               source: "npm",
               spec: entry.install.npmSpec,
-              installPath: `/tmp/openclaw-plugins/${entry.pluginId}`,
+              installPath: `/tmp/merclaw-plugins/${entry.pluginId}`,
             },
           },
         },
@@ -172,8 +172,8 @@ describe("runSearchSetupFlow", () => {
   });
 
   it("localizes setup copy for web search provider selection", async () => {
-    const previousLocale = process.env.OPENCLAW_LOCALE;
-    process.env.OPENCLAW_LOCALE = "zh-CN";
+    const previousLocale = process.env.MERCLAW_LOCALE;
+    process.env.MERCLAW_LOCALE = "zh-CN";
     const note = vi.fn(async () => {});
     const select = vi.fn().mockResolvedValueOnce("__skip__");
     const prompter = createWizardPrompter({
@@ -189,9 +189,9 @@ describe("runSearchSetupFlow", () => {
       );
     } finally {
       if (previousLocale === undefined) {
-        delete process.env.OPENCLAW_LOCALE;
+        delete process.env.MERCLAW_LOCALE;
       } else {
-        process.env.OPENCLAW_LOCALE = previousLocale;
+        process.env.MERCLAW_LOCALE = previousLocale;
       }
     }
 
@@ -202,7 +202,7 @@ describe("runSearchSetupFlow", () => {
         options: expect.arrayContaining([
           expect.objectContaining({
             label: "暂时跳过",
-            hint: "稍后可用 openclaw configure --section web 配置",
+            hint: "稍后可用 merclaw configure --section web 配置",
           }),
         ]),
       }),
@@ -315,10 +315,10 @@ describe("runSearchSetupFlow", () => {
     expect(note).toHaveBeenNthCalledWith(
       3,
       [
-        "Secret references enabled — OpenClaw will store a reference instead of the API key.",
+        "Secret references enabled — MerClaw will store a reference instead of the API key.",
         "Env var: XAI_API_KEY.",
         "Set XAI_API_KEY in the Gateway environment.",
-        "Docs: https://docs.openclaw.ai/tools/web",
+        "Docs: https://docs.merclaw.ai/tools/web",
       ].join("\n"),
       "Web search",
     );
@@ -418,7 +418,7 @@ describe("runSearchSetupFlow", () => {
     expect(installRequest.entry?.pluginId).toBe("brave");
     expect(installRequest.entry?.label).toBe("Brave");
     expect(installRequest.entry?.trustedSourceLinkedOfficialInstall).toBe(true);
-    expect(installRequest.entry?.install?.npmSpec).toBe("@openclaw/brave-plugin");
+    expect(installRequest.entry?.install?.npmSpec).toBe("@merclaw/brave-plugin");
     expect(installRequest.autoConfirmSingleSource).toBe(true);
     expect(next.tools?.web?.search?.provider).toBe("brave");
     expect(next.tools?.web?.search?.enabled).toBe(true);
@@ -427,7 +427,7 @@ describe("runSearchSetupFlow", () => {
       | undefined;
     expect(braveConfig?.webSearch?.apiKey).toBe("brave-test-key");
     expect(next.plugins?.installs?.brave?.source).toBe("npm");
-    expect(next.plugins?.installs?.brave?.spec).toBe("@openclaw/brave-plugin");
+    expect(next.plugins?.installs?.brave?.spec).toBe("@merclaw/brave-plugin");
   });
 
   it("installs an external catalog search provider when web search stays disabled", async () => {
@@ -458,7 +458,7 @@ describe("runSearchSetupFlow", () => {
     expect(installRequest.entry?.pluginId).toBe("brave");
     expect(installRequest.entry?.label).toBe("Brave");
     expect(installRequest.entry?.trustedSourceLinkedOfficialInstall).toBe(true);
-    expect(installRequest.entry?.install?.npmSpec).toBe("@openclaw/brave-plugin");
+    expect(installRequest.entry?.install?.npmSpec).toBe("@merclaw/brave-plugin");
     expect(installRequest.autoConfirmSingleSource).toBe(true);
     expect(next.tools?.web?.search?.provider).toBe("brave");
     expect(next.tools?.web?.search?.enabled).toBe(false);
@@ -468,6 +468,6 @@ describe("runSearchSetupFlow", () => {
     expect(braveConfig?.webSearch?.apiKey).toBe("brave-disabled-key");
     expect(next.plugins?.entries?.brave?.enabled).toBeUndefined();
     expect(next.plugins?.installs?.brave?.source).toBe("npm");
-    expect(next.plugins?.installs?.brave?.spec).toBe("@openclaw/brave-plugin");
+    expect(next.plugins?.installs?.brave?.spec).toBe("@merclaw/brave-plugin");
   });
 });

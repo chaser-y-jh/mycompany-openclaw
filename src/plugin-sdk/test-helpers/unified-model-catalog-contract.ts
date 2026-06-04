@@ -1,6 +1,6 @@
 import { expect } from "vitest";
 import type {
-  OpenClawPluginApi,
+  MerClawPluginApi,
   UnifiedModelCatalogEntry,
   UnifiedModelCatalogKind,
   UnifiedModelCatalogProviderPlugin,
@@ -8,7 +8,7 @@ import type {
 import { createCapturedPluginRegistration } from "../plugin-test-runtime.js";
 
 type RegistrablePlugin = {
-  register(api: OpenClawPluginApi): void;
+  register(api: MerClawPluginApi): void;
 };
 
 export function expectUnifiedModelCatalogEntries(

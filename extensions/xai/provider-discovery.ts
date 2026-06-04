@@ -1,5 +1,5 @@
-import type { ProviderPlugin } from "openclaw/plugin-sdk/provider-model-shared";
-import { readProviderEnvValue } from "openclaw/plugin-sdk/provider-web-search";
+import type { ProviderPlugin } from "merclaw/plugin-sdk/provider-model-shared";
+import { readProviderEnvValue } from "merclaw/plugin-sdk/provider-web-search";
 import { resolveFallbackXaiAuth } from "./src/tool-auth-shared.js";
 
 const PROVIDER_ID = "xai";

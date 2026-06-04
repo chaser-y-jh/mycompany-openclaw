@@ -1,9 +1,9 @@
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import type { MentionPatternsMode, MentionPatternsPolicyConfig } from "../config/types.messages.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 
 export type ResolveMentionPatternPolicyParams = {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   provider?: string;
   conversationId?: string | null;
   providerPolicy?: MentionPatternsPolicyConfig;
@@ -37,7 +37,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function resolveProviderMentionPatternsPolicy(
-  cfg: OpenClawConfig | undefined,
+  cfg: MerClawConfig | undefined,
   provider: string | undefined,
 ): MentionPatternsPolicyConfig | undefined {
   if (!cfg || !provider) {

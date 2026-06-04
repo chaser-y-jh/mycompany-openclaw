@@ -75,8 +75,8 @@ type CliOptions = {
 const DEFAULT_RUNS = 5;
 const DEFAULT_WARMUP = 1;
 const DEFAULT_TIMEOUT_MS = 30_000;
-const DEFAULT_ENTRY = "openclaw.mjs";
-const MAX_RSS_MARKER = "__OPENCLAW_MAX_RSS_KB__=";
+const DEFAULT_ENTRY = "merclaw.mjs";
+const MAX_RSS_MARKER = "__MERCLAW_MAX_RSS_KB__=";
 
 const COMMAND_CASES: readonly CommandCase[] = [
   {
@@ -436,7 +436,7 @@ function parseGatewayPortEnv(raw: string | undefined): number {
   }
   const bracketHostMatch = /^\[[^\]]+\]:(\d+)$/u.exec(value);
   if (bracketHostMatch) {
-    return parsePositiveInt(bracketHostMatch[1], 32123, "OPENCLAW_GATEWAY_PORT");
+    return parsePositiveInt(bracketHostMatch[1], 32123, "MERCLAW_GATEWAY_PORT");
   }
   if (value.startsWith("[") && value.endsWith("]")) {
     return 32123;
@@ -446,7 +446,7 @@ function parseGatewayPortEnv(raw: string | undefined): number {
     return 32123;
   }
   const portRaw = colonCount === 1 ? value.split(":")[1] : value;
-  return parsePositiveInt(portRaw, 32123, "OPENCLAW_GATEWAY_PORT");
+  return parsePositiveInt(portRaw, 32123, "MERCLAW_GATEWAY_PORT");
 }
 
 function parsePresets(raw: string | undefined): string[] {
@@ -555,7 +555,7 @@ function buildConfigFixture(commandCase: CommandCase): Record<string, unknown> |
   if (commandCase.id !== "configGetGatewayPort" && commandCase.id !== "gatewayHealthJson") {
     return null;
   }
-  const port = parseGatewayPortEnv(process.env.OPENCLAW_GATEWAY_PORT);
+  const port = parseGatewayPortEnv(process.env.MERCLAW_GATEWAY_PORT);
   return {
     gateway: {
       auth: { mode: "none" },
@@ -615,9 +615,9 @@ async function runSample(params: {
   heapProfDir?: string;
   rssHookPath: string;
 }): Promise<Sample> {
-  const runRoot = mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-bench-home-"));
-  const stateDir = path.join(runRoot, ".openclaw");
-  const configPath = path.join(stateDir, "openclaw.json");
+  const runRoot = mkdtempSync(path.join(os.tmpdir(), "merclaw-cli-bench-home-"));
+  const stateDir = path.join(runRoot, ".merclaw");
+  const configPath = path.join(stateDir, "merclaw.json");
   const configFixture = buildConfigFixture(params.commandCase);
   if (configFixture) {
     mkdirSync(stateDir, { recursive: true });
@@ -648,10 +648,10 @@ async function runSample(params: {
           ...process.env,
           HOME: runRoot,
           USERPROFILE: runRoot,
-          OPENCLAW_HOME: runRoot,
-          OPENCLAW_STATE_DIR: stateDir,
-          OPENCLAW_CONFIG_PATH: configPath,
-          OPENCLAW_HIDE_BANNER: "1",
+          MERCLAW_HOME: runRoot,
+          MERCLAW_STATE_DIR: stateDir,
+          MERCLAW_CONFIG_PATH: configPath,
+          MERCLAW_HIDE_BANNER: "1",
           NO_COLOR: "1",
           FORCE_COLOR: "0",
         },
@@ -909,7 +909,7 @@ function parseOptions(): CliOptions {
 }
 
 function printUsage(): void {
-  console.log(`OpenClaw CLI benchmark
+  console.log(`MerClaw CLI benchmark
 
 Usage:
   pnpm tsx scripts/bench-cli-startup.ts [options]
@@ -918,7 +918,7 @@ Options:
   --preset <startup|real|response|all>
                                Command preset to run (default: startup)
   --case <id>                  Specific case id to run; repeatable
-  --entry <path>               Primary entry file (default: openclaw.mjs)
+  --entry <path>               Primary entry file (default: merclaw.mjs)
   --entry-secondary <path>     Secondary entry file for avg delta comparison
   --runs <n>                   Measured runs per case (default: ${DEFAULT_RUNS})
   --warmup <n>                 Warmup runs per case (default: ${DEFAULT_WARMUP})
@@ -941,7 +941,7 @@ async function main(): Promise<void> {
   }
 
   const options = parseOptions();
-  const tmpDir = mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-bench-"));
+  const tmpDir = mkdtempSync(path.join(os.tmpdir(), "merclaw-cli-bench-"));
   const rssHookPath = buildRssHook(tmpDir);
   try {
     const primary = await buildSuiteResult({

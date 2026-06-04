@@ -2,8 +2,8 @@ import { randomUUID } from "node:crypto";
 import {
   resolveAcpSessionCwd,
   resolveAcpThreadSessionDetailLines,
-} from "@openclaw/acp-core/runtime/session-identifiers";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/acp-core/runtime/session-identifiers";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import { getAcpSessionManager } from "../../../acp/control-plane/manager.js";
 import { resolveAcpSessionResolutionError } from "../../../acp/control-plane/manager.utils.js";
 import {
@@ -37,7 +37,7 @@ import {
 } from "../../../channels/thread-bindings-policy.js";
 import { updateSessionStore } from "../../../config/sessions.js";
 import type { SessionAcpMeta } from "../../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../../config/types.merclaw.js";
 import { formatErrorMessage } from "../../../infra/errors.js";
 import { normalizeConversationRef } from "../../../infra/outbound/session-binding-normalization.js";
 import {
@@ -103,7 +103,7 @@ async function resolveBoundReplyPayload(params: {
 }
 
 function buildSpawnedAcpBindingMetadata(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channel: string;
   accountId: string;
   sessionKey: string;
@@ -147,7 +147,7 @@ async function bindSpawnedAcpSession(params: {
   sessionKey: string;
   conversationRef: ConversationRef;
   placement: SessionBindingPlacement;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channel: string;
   accountId: string;
   agentId: string;
@@ -435,7 +435,7 @@ async function bindSpawnedAcpSessionToThread(params: {
 }
 
 async function cleanupFailedSpawn(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   sessionKey: string;
   shouldDeleteSession: boolean;
   initializedRuntime?: AcpSpawnRuntimeCloseHandle;
@@ -675,7 +675,7 @@ export async function handleAcpSpawnAction(
 
 function resolveAcpSessionForCommandOrStop(params: {
   acpManager: ReturnType<typeof getAcpSessionManager>;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   sessionKey: string;
 }): CommandHandlerResult | null {
   const resolved = params.acpManager.resolveSession({
@@ -763,7 +763,7 @@ export async function handleAcpCancelAction(
 }
 
 async function runAcpSteer(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   sessionKey: string;
   instruction: string;
   requestId: string;

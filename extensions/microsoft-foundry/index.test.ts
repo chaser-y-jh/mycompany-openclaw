@@ -1,5 +1,5 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { createTestPluginApi } from "openclaw/plugin-sdk/plugin-test-api";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { createTestPluginApi } from "merclaw/plugin-sdk/plugin-test-api";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getAccessTokenResultAsync } from "./cli.js";
 import plugin from "./index.js";
@@ -30,9 +30,9 @@ vi.mock("node:child_process", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/provider-auth", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/provider-auth")>(
-    "openclaw/plugin-sdk/provider-auth",
+vi.mock("merclaw/plugin-sdk/provider-auth", async () => {
+  const actual = await vi.importActual<typeof import("merclaw/plugin-sdk/provider-auth")>(
+    "merclaw/plugin-sdk/provider-auth",
   );
   return {
     ...actual,
@@ -157,7 +157,7 @@ function buildFoundryConfig(params?: {
         },
       },
     },
-  } satisfies OpenClawConfig;
+  } satisfies MerClawConfig;
 }
 
 function buildEntraProfileStore(
@@ -337,7 +337,7 @@ describe("microsoft-foundry plugin", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     await provider.onModelSelected?.({
       config,
@@ -533,7 +533,7 @@ describe("microsoft-foundry plugin", () => {
 
   it("keeps other configured Foundry models when switching the selected model", async () => {
     const provider = registerProvider();
-    const config: OpenClawConfig = {
+    const config: MerClawConfig = {
       auth: {
         profiles: {
           "microsoft-foundry:default": {
@@ -714,7 +714,7 @@ describe("microsoft-foundry plugin", () => {
 
   it("keeps persisted response-mode routing for custom deployment aliases", async () => {
     const provider = registerProvider();
-    const config: OpenClawConfig = {
+    const config: MerClawConfig = {
       auth: {
         profiles: {
           "microsoft-foundry:entra": {
@@ -859,7 +859,7 @@ describe("microsoft-foundry plugin", () => {
 
   it("keeps Foundry profile selection compatible with unrelated AWS SDK profile modes", async () => {
     const provider = registerProvider();
-    const config: OpenClawConfig = {
+    const config: MerClawConfig = {
       ...buildFoundryConfig({
         profileIds: ["microsoft-foundry:entra"],
         orderedProfileIds: ["microsoft-foundry:entra"],

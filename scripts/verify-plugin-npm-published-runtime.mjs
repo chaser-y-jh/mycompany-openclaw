@@ -96,23 +96,23 @@ export function collectPluginNpmPublishedRuntimeErrors(params) {
   const errors = [];
   const extensionsResult = readPackageStringList(
     packageLabel,
-    "openclaw.extensions",
-    packageJson.openclaw?.extensions,
+    "merclaw.extensions",
+    packageJson.merclaw?.extensions,
   );
   const runtimeExtensionsResult = readPackageStringList(
     packageLabel,
-    "openclaw.runtimeExtensions",
-    packageJson.openclaw?.runtimeExtensions,
+    "merclaw.runtimeExtensions",
+    packageJson.merclaw?.runtimeExtensions,
   );
   const setupEntryResult = readOptionalPackageString(
     packageLabel,
-    "openclaw.setupEntry",
-    packageJson.openclaw?.setupEntry,
+    "merclaw.setupEntry",
+    packageJson.merclaw?.setupEntry,
   );
   const runtimeSetupEntryResult = readOptionalPackageString(
     packageLabel,
-    "openclaw.runtimeSetupEntry",
-    packageJson.openclaw?.runtimeSetupEntry,
+    "merclaw.runtimeSetupEntry",
+    packageJson.merclaw?.runtimeSetupEntry,
   );
   errors.push(
     ...extensionsResult.errors,
@@ -130,7 +130,7 @@ export function collectPluginNpmPublishedRuntimeErrors(params) {
 
   if (runtimeExtensions.length > 0 && runtimeExtensions.length !== extensions.length) {
     errors.push(
-      `${packageLabel} package.json openclaw.runtimeExtensions length (${runtimeExtensions.length}) must match openclaw.extensions length (${extensions.length})`,
+      `${packageLabel} package.json merclaw.runtimeExtensions length (${runtimeExtensions.length}) must match merclaw.extensions length (${extensions.length})`,
     );
     return errors;
   }
@@ -158,7 +158,7 @@ export function collectPluginNpmPublishedRuntimeErrors(params) {
 
   if (runtimeSetupEntry && !setupEntry) {
     errors.push(
-      `${packageLabel} package.json openclaw.runtimeSetupEntry requires openclaw.setupEntry`,
+      `${packageLabel} package.json merclaw.runtimeSetupEntry requires merclaw.setupEntry`,
     );
     return errors;
   }
@@ -246,8 +246,8 @@ export function readPositiveIntEnv(name, fallback, env = process.env) {
 }
 
 async function packPublishedPackage(spec, destinationDir) {
-  const attempts = readPositiveIntEnv("OPENCLAW_PLUGIN_NPM_VERIFY_ATTEMPTS", 90);
-  const delayMs = readPositiveIntEnv("OPENCLAW_PLUGIN_NPM_VERIFY_DELAY_MS", 10000);
+  const attempts = readPositiveIntEnv("MERCLAW_PLUGIN_NPM_VERIFY_ATTEMPTS", 90);
+  const delayMs = readPositiveIntEnv("MERCLAW_PLUGIN_NPM_VERIFY_DELAY_MS", 10000);
   let lastError;
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
     try {
@@ -266,8 +266,8 @@ async function packPublishedPackage(spec, destinationDir) {
 }
 
 async function verifyPublishedPackageReadme(spec) {
-  const attempts = readPositiveIntEnv("OPENCLAW_PLUGIN_NPM_README_VERIFY_ATTEMPTS", 6);
-  const delayMs = readPositiveIntEnv("OPENCLAW_PLUGIN_NPM_README_VERIFY_DELAY_MS", 10000);
+  const attempts = readPositiveIntEnv("MERCLAW_PLUGIN_NPM_README_VERIFY_ATTEMPTS", 6);
+  const delayMs = readPositiveIntEnv("MERCLAW_PLUGIN_NPM_README_VERIFY_DELAY_MS", 10000);
   let lastError;
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
     try {
@@ -327,7 +327,7 @@ function readPackedPackageReadme(packageDir, files) {
 }
 
 export async function verifyPublishedPluginRuntime(spec) {
-  const workingDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-plugin-npm-runtime."));
+  const workingDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-plugin-npm-runtime."));
   try {
     const tarballPath = await packPublishedPackage(spec, workingDir);
     const extractDir = path.join(workingDir, "extract");

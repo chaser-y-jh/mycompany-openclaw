@@ -1,12 +1,12 @@
 {
-  "name": "@openclaw/irc",
+  "name": "@merclaw/irc",
   "version": "2026.5.31",
-  "description": "OpenClaw IRC channel plugin",
+  "description": "MerClaw IRC channel plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@merclaw/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ],

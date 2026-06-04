@@ -10,13 +10,13 @@ const harnessPath = path.resolve("test/scripts/fixtures/secret-provider-integrat
 const proofScriptPath = path.resolve("scripts/e2e/secret-provider-integrations.mjs");
 
 function makeTempDir(): string {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-secret-provider-proof-"));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-secret-provider-proof-"));
   tempDirs.push(root);
   return root;
 }
 
-function writeStallingOpenClaw(root: string): string {
-  const scriptPath = path.join(root, "fake-openclaw.mjs");
+function writeStallingMerClaw(root: string): string {
+  const scriptPath = path.join(root, "fake-merclaw.mjs");
   fs.writeFileSync(
     scriptPath,
     [
@@ -33,7 +33,7 @@ function writeStallingOpenClaw(root: string): string {
       "  await delay(60_000);",
       "  process.exit(0);",
       "}",
-      "console.error(`unexpected fake openclaw args: ${args.join(' ')}`);",
+      "console.error(`unexpected fake merclaw args: ${args.join(' ')}`);",
       "process.exit(2);",
       "",
     ].join("\n"),
@@ -42,15 +42,15 @@ function writeStallingOpenClaw(root: string): string {
   return scriptPath;
 }
 
-function runProofHarness(root: string, fakeOpenClaw: string, mode: "start" | "status") {
+function runProofHarness(root: string, fakeMerClaw: string, mode: "start" | "status") {
   return spawnSync(process.execPath, [harnessPath, proofScriptPath, root, mode], {
     cwd: process.cwd(),
     encoding: "utf8",
     env: {
       ...process.env,
-      OPENCLAW_ENTRY: fakeOpenClaw,
-      OPENCLAW_SECRET_PROOF_READY_MS: "60",
-      OPENCLAW_SECRET_PROOF_RPC_MS: "1000",
+      MERCLAW_ENTRY: fakeMerClaw,
+      MERCLAW_SECRET_PROOF_READY_MS: "60",
+      MERCLAW_SECRET_PROOF_RPC_MS: "1000",
     },
     timeout: 5_000,
   });
@@ -63,32 +63,32 @@ afterEach(() => {
 });
 
 describe("secret provider integration proof harness", () => {
-  it("runs pnpm-backed OpenClaw commands through the repo pnpm runner", async () => {
+  it("runs pnpm-backed MerClaw commands through the repo pnpm runner", async () => {
     const root = makeTempDir();
     const fakePnpm = path.join(root, "pnpm.cjs");
     fs.writeFileSync(fakePnpm, "#!/usr/bin/env node\n", { mode: 0o755 });
     const proof = await import(`${pathToFileURL(proofScriptPath).href}?case=${Date.now()}`);
 
-    const command = await proof.resolveOpenClawCommand(
+    const command = await proof.resolveMerClawCommand(
       ["gateway", "status"],
-      { ...process.env, OPENCLAW_SECRET_PROOF_SENTINEL: "1" },
+      { ...process.env, MERCLAW_SECRET_PROOF_SENTINEL: "1" },
       {
         nodeExecPath: "/opt/node/bin/node",
         npmExecPath: fakePnpm,
-        runner: { pnpm: true, baseArgs: ["openclaw"], label: "pnpm openclaw" },
+        runner: { pnpm: true, baseArgs: ["merclaw"], label: "pnpm merclaw" },
       },
     );
 
     expect(command.command).toBe("/opt/node/bin/node");
-    expect(command.args).toEqual([fakePnpm, "openclaw", "gateway", "status"]);
-    expect(command.options.env.OPENCLAW_SECRET_PROOF_SENTINEL).toBe("1");
+    expect(command.args).toEqual([fakePnpm, "merclaw", "gateway", "status"]);
+    expect(command.options.env.MERCLAW_SECRET_PROOF_SENTINEL).toBe("1");
     expect(command.options.shell).toBe(false);
   });
 
   it("keeps stalled startup health probes inside the ready deadline", async () => {
     const root = makeTempDir();
-    const fakeOpenClaw = writeStallingOpenClaw(root);
-    const result = runProofHarness(root, fakeOpenClaw, "start");
+    const fakeMerClaw = writeStallingMerClaw(root);
+    const result = runProofHarness(root, fakeMerClaw, "start");
 
     expect(result.error).toBeUndefined();
     expect(result.status).toBe(0);
@@ -99,8 +99,8 @@ describe("secret provider integration proof harness", () => {
 
   it("keeps stalled managed status probes inside the ready deadline", async () => {
     const root = makeTempDir();
-    const fakeOpenClaw = writeStallingOpenClaw(root);
-    const result = runProofHarness(root, fakeOpenClaw, "status");
+    const fakeMerClaw = writeStallingMerClaw(root);
+    const result = runProofHarness(root, fakeMerClaw, "status");
 
     expect(result.error).toBeUndefined();
     expect(result.status).toBe(0);

@@ -13,7 +13,7 @@ import type { CrestodianOverview } from "./overview.js";
 function overview(overrides: Partial<CrestodianOverview["tools"]> = {}): CrestodianOverview {
   return {
     config: {
-      path: "/tmp/openclaw.json",
+      path: "/tmp/merclaw.json",
       exists: false,
       valid: false,
       issues: [],
@@ -33,8 +33,8 @@ function overview(overrides: Partial<CrestodianOverview["tools"]> = {}): Crestod
       reachable: false,
     },
     references: {
-      docsUrl: "https://docs.openclaw.ai",
-      sourceUrl: "https://github.com/openclaw/openclaw",
+      docsUrl: "https://docs.merclaw.ai",
+      sourceUrl: "https://github.com/merclaw/merclaw",
     },
   };
 }
@@ -80,7 +80,7 @@ describe("Crestodian assistant", () => {
           apiKeys: { openai: true, anthropic: false },
         }),
         config: {
-          path: "/tmp/openclaw.json",
+          path: "/tmp/merclaw.json",
           exists: true,
           valid: true,
           issues: [],
@@ -98,10 +98,10 @@ describe("Crestodian assistant", () => {
         defaultAgentId: "main",
         defaultModel: "openai/gpt-5.5",
         references: {
-          docsPath: "/tmp/openclaw/docs",
-          docsUrl: "https://docs.openclaw.ai",
-          sourcePath: "/tmp/openclaw",
-          sourceUrl: "https://github.com/openclaw/openclaw",
+          docsPath: "/tmp/merclaw/docs",
+          docsUrl: "https://docs.merclaw.ai",
+          sourcePath: "/tmp/merclaw",
+          sourceUrl: "https://github.com/merclaw/merclaw",
         },
       },
     });
@@ -110,8 +110,8 @@ describe("Crestodian assistant", () => {
     expect(prompt).toContain("Default model: openai/gpt-5.5");
     expect(prompt).toContain("id=main, name=Main, workspace=/tmp/main");
     expect(prompt).toContain("OpenAI API key: found");
-    expect(prompt).toContain("OpenClaw docs: /tmp/openclaw/docs");
-    expect(prompt).toContain("OpenClaw source: /tmp/openclaw");
+    expect(prompt).toContain("MerClaw docs: /tmp/merclaw/docs");
+    expect(prompt).toContain("MerClaw source: /tmp/merclaw");
   });
 
   it("uses Claude CLI first for configless planning", async () => {

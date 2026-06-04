@@ -1,10 +1,10 @@
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { ConfigFileSnapshot, ModelDefinitionConfig, OpenClawConfig } from "../config/types.js";
+import type { ConfigFileSnapshot, ModelDefinitionConfig, MerClawConfig } from "../config/types.js";
 import type { PluginMetadataSnapshot } from "../plugins/plugin-metadata-snapshot.js";
 import { buildTestConfigSnapshot } from "./test-helpers.config-snapshots.js";
 
 const applyPluginAutoEnable = vi.hoisted(() =>
-  vi.fn((params: { config: OpenClawConfig }) => ({
+  vi.fn((params: { config: MerClawConfig }) => ({
     config: params.config,
     changes: [] as string[],
     autoEnabledReasons: {} as Record<string, string[]>,
@@ -66,11 +66,11 @@ vi.mock("../config/paths.js", () => ({
   get isNixMode() {
     return configMocks.isNixMode.value;
   },
-  resolveStateDir: vi.fn(() => "/tmp/openclaw-state"),
+  resolveStateDir: vi.fn(() => "/tmp/merclaw-state"),
 }));
 
 vi.mock("../config/runtime-overrides.js", () => ({
-  applyConfigOverrides: vi.fn((config: OpenClawConfig) => config),
+  applyConfigOverrides: vi.fn((config: MerClawConfig) => config),
 }));
 
 vi.mock("../config/mutate.js", () => ({
@@ -78,19 +78,19 @@ vi.mock("../config/mutate.js", () => ({
 }));
 
 vi.mock("../config/plugin-auto-enable.js", () => ({
-  applyPluginAutoEnable: (params: { config: OpenClawConfig }) => applyPluginAutoEnable(params),
+  applyPluginAutoEnable: (params: { config: MerClawConfig }) => applyPluginAutoEnable(params),
 }));
 
 let loadGatewayStartupConfigSnapshot: typeof import("./server-startup-config.js").loadGatewayStartupConfigSnapshot;
 let configIo: typeof import("../config/io.js");
 let configMutate: typeof import("../config/mutate.js");
 
-const configPath = "/tmp/openclaw-startup-recovery.json";
+const configPath = "/tmp/merclaw-startup-recovery.json";
 const validConfig = {
   gateway: {
     mode: "local",
   },
-} as OpenClawConfig;
+} as MerClawConfig;
 
 function testModel(id: string, name: string): ModelDefinitionConfig {
   return {
@@ -112,7 +112,7 @@ function testModel(id: string, name: string): ModelDefinitionConfig {
 function buildSnapshot(params: {
   valid: boolean;
   raw: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
 }): ConfigFileSnapshot {
   return buildTestConfigSnapshot({
     path: configPath,
@@ -120,7 +120,7 @@ function buildSnapshot(params: {
     raw: params.raw,
     parsed: params.config ?? null,
     valid: params.valid,
-    config: params.config ?? ({} as OpenClawConfig),
+    config: params.config ?? ({} as MerClawConfig),
     issues: params.valid ? [] : [{ path: "gateway.mode", message: "Expected 'local' or 'remote'" }],
     legacyIssues: [],
   });
@@ -186,7 +186,7 @@ describe("gateway startup config validation", () => {
           browser: { enabled: false },
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const runtimeConfig = {
       ...sourceConfig,
       plugins: {
@@ -202,7 +202,7 @@ describe("gateway startup config validation", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     const snapshot = {
       ...buildTestConfigSnapshot({
         path: configPath,
@@ -305,13 +305,13 @@ describe("gateway startup config validation", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
     const autoEnabledConfig = {
       ...sourceConfig,
       channels: {
         telegram: { enabled: true },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
     const initialSnapshot = {
       ...buildTestConfigSnapshot({
         path: configPath,
@@ -387,13 +387,13 @@ describe("gateway startup config validation", () => {
         },
       },
       gateway: { mode: "local" },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
     const autoEnabledConfig = {
       ...sourceConfig,
       plugins: {
         allow: ["telegram"],
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
     const snapshot = {
       ...buildTestConfigSnapshot({
         path: configPath,
@@ -455,7 +455,7 @@ describe("gateway startup config validation", () => {
         log: { info: vi.fn(), warn: vi.fn() },
       }),
     ).rejects.toThrow(
-      `Invalid config at ${configPath}.\ngateway.mode: Expected 'local' or 'remote'\nRun "openclaw doctor --fix" to repair, then retry.\nIf startup is still blocked, inspect the adjacent .bak backup before restoring it manually.`,
+      `Invalid config at ${configPath}.\ngateway.mode: Expected 'local' or 'remote'\nRun "merclaw doctor --fix" to repair, then retry.\nIf startup is still blocked, inspect the adjacent .bak backup before restoring it manually.`,
     );
   });
 
@@ -475,7 +475,7 @@ describe("gateway startup config validation", () => {
       config: {
         gateway: { mode: "local" },
         plugins: { slots: { memory: "source-only-pack" } },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       issues: [
         {
           path: "plugins.slots.memory",
@@ -501,7 +501,7 @@ describe("gateway startup config validation", () => {
       `Invalid config at ${configPath}.\nplugins.slots.memory: plugin not found: source-only-pack\nThis is a plugin packaging issue, not a local config problem.\nUpdate or reinstall the plugin after the publisher ships compiled JavaScript, or disable/uninstall the plugin until then.`,
     );
     await start.catch((error: unknown) => {
-      expect(String(error)).not.toContain("openclaw doctor --fix");
+      expect(String(error)).not.toContain("merclaw doctor --fix");
     });
   });
 
@@ -521,7 +521,7 @@ describe("gateway startup config validation", () => {
       config: {
         gateway: { mode: "invalid" },
         plugins: { slots: { memory: "source-only-pack" } },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       issues: [
         {
           path: "plugins.slots.memory",
@@ -548,7 +548,7 @@ describe("gateway startup config validation", () => {
         minimalTestGateway: true,
         log: { info: vi.fn(), warn: vi.fn() },
       }),
-    ).rejects.toThrow('Run "openclaw doctor --fix" to repair, then retry.');
+    ).rejects.toThrow('Run "merclaw doctor --fix" to repair, then retry.');
   });
 
   it("rejects legacy config entries in Nix mode", async () => {
@@ -562,7 +562,7 @@ describe("gateway startup config validation", () => {
         heartbeat: { model: "anthropic/claude-3-5-haiku-20241022", every: "30m" },
       },
       valid: false,
-      config: {} as OpenClawConfig,
+      config: {} as MerClawConfig,
       issues: [
         {
           path: "heartbeat",
@@ -622,12 +622,12 @@ describe("gateway startup config validation", () => {
             feishu: { enabled: true },
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       issues: [
         {
           path: "plugins.entries.feishu",
           message:
-            "plugin feishu: plugin requires OpenClaw >=2026.4.23, but this host is 2026.4.22; skipping load",
+            "plugin feishu: plugin requires MerClaw >=2026.4.23, but this host is 2026.4.22; skipping load",
         },
       ],
       legacyIssues: [],
@@ -669,7 +669,7 @@ describe("gateway startup config validation", () => {
             feishu: { enabled: true },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       issues: [
         {
           path: "gateway.mode",
@@ -720,7 +720,7 @@ describe("gateway startup config validation", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
     const invalidSnapshot = buildTestConfigSnapshot({
       path: configPath,
       exists: true,

@@ -1,4 +1,4 @@
-import type { AcpRuntime } from "@openclaw/acp-core/runtime/types";
+import type { AcpRuntime } from "@merclaw/acp-core/runtime/types";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { AcpRuntimeError } from "./errors.js";
 import {

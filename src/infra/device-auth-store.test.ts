@@ -10,8 +10,8 @@ import {
 
 function createEnv(stateDir: string): NodeJS.ProcessEnv {
   return {
-    OPENCLAW_STATE_DIR: stateDir,
-    OPENCLAW_TEST_FAST: "1",
+    MERCLAW_STATE_DIR: stateDir,
+    MERCLAW_TEST_FAST: "1",
   };
 }
 
@@ -21,7 +21,7 @@ function deviceAuthFile(stateDir: string): string {
 
 describe("infra/device-auth-store", () => {
   it("stores and loads device auth tokens under the configured state dir", async () => {
-    await withTempDir("openclaw-device-auth-", async (stateDir) => {
+    await withTempDir("merclaw-device-auth-", async (stateDir) => {
       vi.spyOn(Date, "now").mockReturnValue(1234);
 
       const entry = storeDeviceAuthToken({
@@ -59,7 +59,7 @@ describe("infra/device-auth-store", () => {
   });
 
   it("returns null for missing, invalid, or mismatched stores", async () => {
-    await withTempDir("openclaw-device-auth-", async (stateDir) => {
+    await withTempDir("merclaw-device-auth-", async (stateDir) => {
       const env = createEnv(stateDir);
 
       expect(loadDeviceAuthToken({ deviceId: "device-1", role: "operator", env })).toBeNull();
@@ -78,7 +78,7 @@ describe("infra/device-auth-store", () => {
   });
 
   it("normalizes raw persisted token metadata while reading from disk", async () => {
-    await withTempDir("openclaw-device-auth-", async (stateDir) => {
+    await withTempDir("merclaw-device-auth-", async (stateDir) => {
       const env = createEnv(stateDir);
       await fs.mkdir(path.dirname(deviceAuthFile(stateDir)), { recursive: true });
       await fs.writeFile(
@@ -108,7 +108,7 @@ describe("infra/device-auth-store", () => {
   });
 
   it("loads valid roles when another persisted token entry is malformed", async () => {
-    await withTempDir("openclaw-device-auth-", async (stateDir) => {
+    await withTempDir("merclaw-device-auth-", async (stateDir) => {
       const env = createEnv(stateDir);
       await fs.mkdir(path.dirname(deviceAuthFile(stateDir)), { recursive: true });
       await fs.writeFile(
@@ -132,7 +132,7 @@ describe("infra/device-auth-store", () => {
   });
 
   it("clears only the requested role and leaves unrelated tokens intact", async () => {
-    await withTempDir("openclaw-device-auth-", async (stateDir) => {
+    await withTempDir("merclaw-device-auth-", async (stateDir) => {
       const env = createEnv(stateDir);
 
       storeDeviceAuthToken({

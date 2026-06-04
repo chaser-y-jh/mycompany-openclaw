@@ -1,5 +1,5 @@
 import type { ChannelDirectoryEntryKind, ChannelId } from "../../channels/plugins/types.public.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { maybeResolvePluginMessagingTarget } from "./target-normalization.js";
 
 export type ResolvedIdLikeTarget = {
@@ -11,7 +11,7 @@ export type ResolvedIdLikeTarget = {
 };
 
 export async function maybeResolveIdLikeTarget(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channel: ChannelId;
   input: string;
   accountId?: string | null;

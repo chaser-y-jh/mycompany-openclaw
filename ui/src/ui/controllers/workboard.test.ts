@@ -456,7 +456,7 @@ describe("workboard controller", () => {
       "sessions.create",
       expect.objectContaining({
         label: "Build board (card-1)",
-        message: expect.stringContaining("Work on this OpenClaw Workboard card: Build board"),
+        message: expect.stringContaining("Work on this MerClaw Workboard card: Build board"),
       }),
     );
     expect(client.request.mock.calls[1]?.[1]).not.toHaveProperty("model");
@@ -811,7 +811,7 @@ describe("workboard controller", () => {
       "sessions.create",
       expect.objectContaining({
         model: "openai/gpt-5.5",
-        message: expect.stringContaining("Work on this OpenClaw Workboard card: Build board"),
+        message: expect.stringContaining("Work on this MerClaw Workboard card: Build board"),
       }),
     );
     expect(client.request).toHaveBeenNthCalledWith(

@@ -17,12 +17,12 @@ export type {
   AcpRuntimeTurnResult,
   AcpRuntimeTurnResultError,
   AcpSessionUpdateTag,
-} from "@openclaw/acp-core/runtime/types";
+} from "@merclaw/acp-core/runtime/types";
 export type {
-  OpenClawPluginApi,
-  OpenClawPluginConfigSchema,
-  OpenClawPluginService,
-  OpenClawPluginServiceContext,
+  MerClawPluginApi,
+  MerClawPluginConfigSchema,
+  MerClawPluginService,
+  MerClawPluginServiceContext,
   PluginLogger,
 } from "../plugins/types.js";
 export type {

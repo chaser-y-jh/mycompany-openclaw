@@ -8,7 +8,7 @@ import { testing } from "../../scripts/check-cli-startup-memory.mjs";
 const tempRoots: string[] = [];
 
 function makeTempRoot(): string {
-  const root = mkdtempSync(path.join(tmpdir(), "openclaw-startup-memory-test-"));
+  const root = mkdtempSync(path.join(tmpdir(), "merclaw-startup-memory-test-"));
   tempRoots.push(root);
   return root;
 }
@@ -27,36 +27,36 @@ describe("check-cli-startup-memory", () => {
 
   it("keeps invalid startup memory env values from bypassing budgets", () => {
     expect(
-      testing.readPositiveNumberEnv("OPENCLAW_STARTUP_MEMORY_HELP_MB", 100, {
-        OPENCLAW_STARTUP_MEMORY_HELP_MB: "abc",
+      testing.readPositiveNumberEnv("MERCLAW_STARTUP_MEMORY_HELP_MB", 100, {
+        MERCLAW_STARTUP_MEMORY_HELP_MB: "abc",
       }),
     ).toBe(100);
     expect(
-      testing.readPositiveNumberEnv("OPENCLAW_STARTUP_MEMORY_HELP_MB", 100, {
-        OPENCLAW_STARTUP_MEMORY_HELP_MB: "1e3",
+      testing.readPositiveNumberEnv("MERCLAW_STARTUP_MEMORY_HELP_MB", 100, {
+        MERCLAW_STARTUP_MEMORY_HELP_MB: "1e3",
       }),
     ).toBe(100);
     expect(
-      testing.readPositiveNumberEnv("OPENCLAW_STARTUP_MEMORY_HELP_MB", 100, {
-        OPENCLAW_STARTUP_MEMORY_HELP_MB: "0x10",
+      testing.readPositiveNumberEnv("MERCLAW_STARTUP_MEMORY_HELP_MB", 100, {
+        MERCLAW_STARTUP_MEMORY_HELP_MB: "0x10",
       }),
     ).toBe(100);
     expect(
-      testing.readPositiveNumberEnv("OPENCLAW_STARTUP_MEMORY_HELP_MB", 100, {
-        OPENCLAW_STARTUP_MEMORY_HELP_MB: "125.5",
+      testing.readPositiveNumberEnv("MERCLAW_STARTUP_MEMORY_HELP_MB", 100, {
+        MERCLAW_STARTUP_MEMORY_HELP_MB: "125.5",
       }),
     ).toBe(125.5);
   });
 
   it("keeps invalid startup memory timeout env values from parsing loosely", () => {
     expect(
-      testing.readPositiveIntEnv("OPENCLAW_STARTUP_MEMORY_TIMEOUT_MS", 60_000, {
-        OPENCLAW_STARTUP_MEMORY_TIMEOUT_MS: "1e3",
+      testing.readPositiveIntEnv("MERCLAW_STARTUP_MEMORY_TIMEOUT_MS", 60_000, {
+        MERCLAW_STARTUP_MEMORY_TIMEOUT_MS: "1e3",
       }),
     ).toBe(60_000);
     expect(
-      testing.readPositiveIntEnv("OPENCLAW_STARTUP_MEMORY_TIMEOUT_MS", 60_000, {
-        OPENCLAW_STARTUP_MEMORY_TIMEOUT_MS: "1000",
+      testing.readPositiveIntEnv("MERCLAW_STARTUP_MEMORY_TIMEOUT_MS", 60_000, {
+        MERCLAW_STARTUP_MEMORY_TIMEOUT_MS: "1000",
       }),
     ).toBe(1000);
   });

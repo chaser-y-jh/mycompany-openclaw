@@ -1,11 +1,11 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import type { MigrationProviderContext } from "openclaw/plugin-sdk/plugin-entry";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/provider-auth";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+import type { MigrationProviderContext } from "merclaw/plugin-sdk/plugin-entry";
+import type { MerClawConfig } from "merclaw/plugin-sdk/provider-auth";
+import { resolvePreferredMerClawTmpDir } from "merclaw/plugin-sdk/temp-path";
 
 const tempRoots = new Set<string>();
-const TEMP_ROOT_PREFIX = "openclaw-migrate-hermes-";
+const TEMP_ROOT_PREFIX = "merclaw-migrate-hermes-";
 
 function noop() {}
 
@@ -17,7 +17,7 @@ const logger: MigrationProviderContext["logger"] = {
 };
 
 export async function makeTempRoot() {
-  const root = await fs.mkdtemp(path.join(resolvePreferredOpenClawTmpDir(), TEMP_ROOT_PREFIX));
+  const root = await fs.mkdtemp(path.join(resolvePreferredMerClawTmpDir(), TEMP_ROOT_PREFIX));
   tempRoots.add(root);
   return root;
 }
@@ -33,11 +33,11 @@ export async function writeFile(filePath: string, content: string) {
 }
 
 export function makeConfigRuntime(
-  config: OpenClawConfig,
-  onWrite?: (next: OpenClawConfig) => void,
+  config: MerClawConfig,
+  onWrite?: (next: MerClawConfig) => void,
 ): NonNullable<MigrationProviderContext["runtime"]> {
-  const commitConfig = (next: OpenClawConfig) => {
-    (Object.keys(config) as Array<keyof OpenClawConfig>).forEach((key) => delete config[key]);
+  const commitConfig = (next: MerClawConfig) => {
+    (Object.keys(config) as Array<keyof MerClawConfig>).forEach((key) => delete config[key]);
     Object.assign(config, next);
     onWrite?.(next);
   };
@@ -50,7 +50,7 @@ export function makeConfigRuntime(
         mutate,
       }: {
         afterWrite?: unknown;
-        mutate: (draft: OpenClawConfig, context: unknown) => Promise<unknown> | void;
+        mutate: (draft: MerClawConfig, context: unknown) => Promise<unknown> | void;
       }) => {
         const next = structuredClone(config);
         const result = await mutate(next, {
@@ -71,7 +71,7 @@ export function makeConfigRuntime(
         nextConfig,
       }: {
         afterWrite?: unknown;
-        nextConfig: OpenClawConfig;
+        nextConfig: MerClawConfig;
       }) => {
         commitConfig(nextConfig);
         return { afterWrite, followUp: { mode: "auto", requiresRestart: false }, nextConfig };
@@ -84,10 +84,10 @@ export function makeContext(params: {
   source: string;
   stateDir: string;
   workspaceDir: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   includeSecrets?: boolean;
   overwrite?: boolean;
-  model?: NonNullable<NonNullable<OpenClawConfig["agents"]>["defaults"]>["model"];
+  model?: NonNullable<NonNullable<MerClawConfig["agents"]>["defaults"]>["model"];
   reportDir?: string;
   runtime?: MigrationProviderContext["runtime"];
 }): MigrationProviderContext {
@@ -100,7 +100,7 @@ export function makeContext(params: {
           ...(params.model !== undefined ? { model: params.model } : {}),
         },
       },
-    } as OpenClawConfig);
+    } as MerClawConfig);
   return {
     config,
     stateDir: params.stateDir,

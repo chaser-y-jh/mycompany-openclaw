@@ -1,13 +1,13 @@
-# @openclaw/acpx
+# @merclaw/acpx
 
-Official ACP runtime backend for OpenClaw.
+Official ACP runtime backend for MerClaw.
 
-ACPx lets OpenClaw run external coding harnesses through the Agent Client Protocol while OpenClaw still owns sessions, channels, delivery, permissions, and Gateway state.
+ACPx lets MerClaw run external coding harnesses through the Agent Client Protocol while MerClaw still owns sessions, channels, delivery, permissions, and Gateway state.
 
 ## Install
 
 ```bash
-openclaw plugins install @openclaw/acpx
+merclaw plugins install @merclaw/acpx
 ```
 
 Restart the Gateway after installing or updating the plugin.
@@ -16,18 +16,18 @@ Restart the Gateway after installing or updating the plugin.
 
 - ACP-backed agent runtime sessions.
 - Plugin-owned session and transport management.
-- MCP bridge helpers for OpenClaw tools and plugin tools.
+- MCP bridge helpers for MerClaw tools and plugin tools.
 - Static runtime assets used by the ACP process bridge.
 
 ## Configure
 
 Use the ACP docs for harness-specific setup, permission modes, and model/runtime selection:
 
-- https://docs.openclaw.ai/tools/acp-agents-setup
-- https://docs.openclaw.ai/tools/acp-agents
+- https://docs.merclaw.ai/tools/acp-agents-setup
+- https://docs.merclaw.ai/tools/acp-agents
 
 ## Package
 
 - Plugin id: `acpx`
-- Package: `@openclaw/acpx`
-- Minimum OpenClaw host: `2026.4.25`
+- Package: `@merclaw/acpx`
+- Minimum MerClaw host: `2026.4.25`

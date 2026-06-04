@@ -1,19 +1,19 @@
 import type {
   ExecApprovalRequest,
   PluginApprovalRequest,
-} from "openclaw/plugin-sdk/approval-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+} from "merclaw/plugin-sdk/approval-runtime";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
 import { describe, expect, it } from "vitest";
 import { whatsappApprovalCapability, whatsappNativeApprovalAdapter } from "./approval-native.js";
 
-type WhatsAppConfig = NonNullable<NonNullable<OpenClawConfig["channels"]>["whatsapp"]>;
+type WhatsAppConfig = NonNullable<NonNullable<MerClawConfig["channels"]>["whatsapp"]>;
 
 function buildConfig(
   params: {
     whatsapp?: Partial<WhatsAppConfig>;
-    approvals?: OpenClawConfig["approvals"];
+    approvals?: MerClawConfig["approvals"];
   } = {},
-): OpenClawConfig {
+): MerClawConfig {
   return {
     channels: {
       whatsapp: {
@@ -22,7 +22,7 @@ function buildConfig(
       },
     },
     approvals: params.approvals,
-  } as OpenClawConfig;
+  } as MerClawConfig;
 }
 
 function buildExecRequest(
@@ -67,7 +67,7 @@ function buildPluginRequest(
 }
 
 function nativeShouldHandle(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   request: ExecApprovalRequest | PluginApprovalRequest;
   accountId?: string | null;
 }) {

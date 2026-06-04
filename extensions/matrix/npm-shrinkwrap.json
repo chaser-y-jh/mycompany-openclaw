@@ -1,11 +1,11 @@
 {
-  "name": "@openclaw/matrix",
+  "name": "@merclaw/matrix",
   "version": "2026.5.31",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
-      "name": "@openclaw/matrix",
+      "name": "@merclaw/matrix",
       "version": "2026.5.31",
       "dependencies": {
         "@matrix-org/matrix-sdk-crypto-nodejs": "0.6.0",
@@ -18,10 +18,10 @@
         "zod": "4.4.3"
       },
       "peerDependencies": {
-        "openclaw": ">=2026.5.31"
+        "merclaw": ">=2026.5.31"
       },
       "peerDependenciesMeta": {
-        "openclaw": {
+        "merclaw": {
           "optional": true
         }
       }

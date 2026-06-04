@@ -1,12 +1,12 @@
 import { randomUUID } from "node:crypto";
 import http from "node:http";
 import type { Duplex } from "node:stream";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { formatErrorMessage } from "merclaw/plugin-sdk/error-runtime";
 import {
   isFutureDateTimestampMs,
   resolveExpiresAtMsFromDurationMs,
-} from "openclaw/plugin-sdk/number-runtime";
+} from "merclaw/plugin-sdk/number-runtime";
 import {
   buildRealtimeVoiceAgentConsultWorkingResponse,
   createRealtimeVoiceForcedConsultCoordinator,
@@ -24,8 +24,8 @@ import {
   type TalkEvent,
   type TalkEventInput,
   type TalkSessionController,
-} from "openclaw/plugin-sdk/realtime-voice";
-import { createSubsystemLogger } from "openclaw/plugin-sdk/runtime-env";
+} from "merclaw/plugin-sdk/realtime-voice";
+import { createSubsystemLogger } from "merclaw/plugin-sdk/runtime-env";
 import WebSocket, { WebSocketServer } from "ws";
 import type { VoiceCallRealtimeConfig } from "../config.js";
 import type { CallManager } from "../manager.js";
@@ -55,7 +55,7 @@ const MAX_REALTIME_WS_BUFFERED_BYTES = 1024 * 1024;
 const FORCED_CONSULT_FALLBACK_DELAY_MS = 200;
 const FORCED_CONSULT_NATIVE_DEDUPE_MS = 2_000;
 const FORCED_CONSULT_RESULT_MAX_CHARS = 1800;
-const FORCED_CONSULT_REASON = "provider_final_transcript_without_openclaw_agent_consult";
+const FORCED_CONSULT_REASON = "provider_final_transcript_without_merclaw_agent_consult";
 const CONSULT_TRANSCRIPT_SETTLE_MS = 350;
 const CONSULT_TRANSCRIPT_SETTLE_MAX_MS = 1_000;
 const MAX_PARTIAL_USER_TRANSCRIPT_CHARS = 1_200;
@@ -204,7 +204,7 @@ function buildForcedConsultSpeechPrompt(result: string): string {
       ? trimmed
       : `${trimmed.slice(0, FORCED_CONSULT_RESULT_MAX_CHARS - 16).trimEnd()} [truncated]`;
   return [
-    "Internal OpenClaw consult result is ready.",
+    "Internal MerClaw consult result is ready.",
     "Do not call tools for this internal result.",
     "Speak the following answer to the caller now, briefly and naturally:",
     bounded,
@@ -320,7 +320,7 @@ export class RealtimeCallHandler {
     private readonly realtimeProvider: RealtimeVoiceProviderPlugin,
     private readonly providerConfig: RealtimeVoiceProviderConfig,
     private readonly servePath: string,
-    private readonly coreConfig?: OpenClawConfig,
+    private readonly coreConfig?: MerClawConfig,
   ) {}
 
   setPublicUrl(url: string): void {
@@ -1294,7 +1294,7 @@ export class RealtimeCallHandler {
         if (forcedConsult.completedAt || forcedMatch.kind === "already_delivered") {
           submitFinalToolResult({
             status: "already_delivered",
-            message: "OpenClaw already delivered this consult result internally. Do not repeat it.",
+            message: "MerClaw already delivered this consult result internally. Do not repeat it.",
           });
           return;
         }

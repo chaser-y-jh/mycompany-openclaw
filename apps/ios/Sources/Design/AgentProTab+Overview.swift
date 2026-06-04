@@ -1,5 +1,5 @@
-import OpenClawKit
-import OpenClawProtocol
+import MerClawKit
+import MerClawProtocol
 import SwiftUI
 
 extension AgentProTab {
@@ -52,7 +52,7 @@ extension AgentProTab {
                     .transition(.move(edge: .top).combined(with: .opacity))
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
         .padding(.top, 6)
     }
 
@@ -95,7 +95,7 @@ extension AgentProTab {
                         .frame(width: AgentLayout.filterHeight, height: AgentLayout.filterHeight)
                 }
             }
-            .padding(.horizontal, OpenClawProMetric.pagePadding)
+            .padding(.horizontal, MerClawProMetric.pagePadding)
         }
     }
 
@@ -120,7 +120,7 @@ extension AgentProTab {
                 }
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     var operationsSection: some View {
@@ -132,7 +132,7 @@ extension AgentProTab {
                     title: "Skills",
                     value: self.skillsValue,
                     detail: self.skillsDetail,
-                    color: self.gatewayConnected ? OpenClawBrand.accent : .secondary,
+                    color: self.gatewayConnected ? MerClawBrand.accent : .secondary,
                     route: .skills)
                 self.metricTile(
                     icon: "externaldrive.connected.to.line.below",
@@ -153,16 +153,16 @@ extension AgentProTab {
                     title: "Usage",
                     value: self.usageValue,
                     detail: self.usageDetail,
-                    color: self.gatewayConnected ? OpenClawBrand.accent : .secondary,
+                    color: self.gatewayConnected ? MerClawBrand.accent : .secondary,
                     route: .usage)
             }
-            .padding(.horizontal, OpenClawProMetric.pagePadding)
+            .padding(.horizontal, MerClawProMetric.pagePadding)
 
             if let overviewErrorText {
                 Text(overviewErrorText)
                     .font(.caption)
-                    .foregroundStyle(OpenClawBrand.warn)
-                    .padding(.horizontal, OpenClawProMetric.pagePadding)
+                    .foregroundStyle(MerClawBrand.warn)
+                    .padding(.horizontal, MerClawProMetric.pagePadding)
             }
         }
     }
@@ -182,7 +182,7 @@ extension AgentProTab {
                 }
                 .buttonStyle(.plain)
             }
-            .padding(.horizontal, OpenClawProMetric.pagePadding)
+            .padding(.horizontal, MerClawProMetric.pagePadding)
         }
     }
 
@@ -211,7 +211,7 @@ extension AgentProTab {
                     }
                 }
             }
-            .padding(.horizontal, OpenClawProMetric.pagePadding)
+            .padding(.horizontal, MerClawProMetric.pagePadding)
         }
     }
 
@@ -276,7 +276,7 @@ extension AgentProTab {
                     .font(.caption.weight(.bold))
             }
             .buttonStyle(.plain)
-            .foregroundStyle(isActive ? OpenClawBrand.accent : .primary)
+            .foregroundStyle(isActive ? MerClawBrand.accent : .primary)
             .frame(width: AgentLayout.actionButtonSize, height: AgentLayout.actionButtonSize)
             .background {
                 Circle()
@@ -477,7 +477,7 @@ extension AgentProTab {
         HStack(spacing: 12) {
             ProIconBadge(
                 systemName: job.enabled ? "clock.arrow.circlepath" : "pause.circle",
-                color: job.enabled ? OpenClawBrand.accent : .secondary)
+                color: job.enabled ? MerClawBrand.accent : .secondary)
             VStack(alignment: .leading, spacing: 3) {
                 Text(job.name)
                     .font(.subheadline.weight(.semibold))
@@ -490,7 +490,7 @@ extension AgentProTab {
             Spacer(minLength: 8)
             Text(self.cronJobState(job))
                 .font(.caption2.weight(.semibold))
-                .foregroundStyle(job.enabled ? OpenClawBrand.accent : .secondary)
+                .foregroundStyle(job.enabled ? MerClawBrand.accent : .secondary)
                 .lineLimit(1)
         }
         .padding(.vertical, 10)
@@ -630,7 +630,7 @@ extension AgentProTab {
 
     var instancesColor: Color {
         guard self.gatewayConnected else { return .secondary }
-        return (self.overview?.presence.isEmpty == false) ? OpenClawBrand.accent : .secondary
+        return (self.overview?.presence.isEmpty == false) ? MerClawBrand.accent : .secondary
     }
 
     var cronValue: String {
@@ -654,7 +654,7 @@ extension AgentProTab {
 
     var cronColor: Color {
         guard self.gatewayConnected else { return .secondary }
-        return self.overview?.cronStatus?.enabled == true ? OpenClawBrand.accent : .secondary
+        return self.overview?.cronStatus?.enabled == true ? MerClawBrand.accent : .secondary
     }
 
     var usageValue: String {
@@ -703,7 +703,7 @@ extension AgentProTab {
 
     var dreamingColor: Color {
         guard self.gatewayConnected else { return .secondary }
-        return self.overview?.dreaming?.enabled == true ? OpenClawBrand.accent : .secondary
+        return self.overview?.dreaming?.enabled == true ? MerClawBrand.accent : .secondary
     }
 
     var recentCronJobs: [CronJob] {

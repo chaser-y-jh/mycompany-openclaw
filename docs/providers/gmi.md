@@ -1,13 +1,13 @@
 ---
-summary: "Use GMI Cloud's OpenAI-compatible API with OpenClaw"
+summary: "Use GMI Cloud's OpenAI-compatible API with MerClaw"
 read_when:
-  - You want to run OpenClaw with GMI Cloud models
+  - You want to run MerClaw with GMI Cloud models
   - You need the GMI provider id, key, or endpoint
 title: "GMI Cloud"
 ---
 
 GMI Cloud is a hosted inference platform for frontier and open-weight models
-behind an OpenAI-compatible API. In OpenClaw it is a bundled model provider,
+behind an OpenAI-compatible API. In MerClaw it is a bundled model provider,
 which means you can select it with the provider id `gmi`, store credentials
 through normal model auth, and use model refs like
 `gmi/google/gemini-3.1-flash-lite`.
@@ -18,7 +18,7 @@ catalog. It is useful as a secondary provider for model fallback, for comparing
 hosted routes across vendors, or when GMI has a model available before your
 primary provider does.
 
-This provider uses OpenAI-compatible chat semantics. OpenClaw owns the provider
+This provider uses OpenAI-compatible chat semantics. MerClaw owns the provider
 id, auth profile, aliases, model catalog seed, and base URL; GMI owns the live
 model availability, billing, rate limits, and any provider-side routing policy.
 
@@ -27,7 +27,7 @@ model availability, billing, rate limits, and any provider-side routing policy.
 Create an API key in GMI Cloud, then run:
 
 ```bash
-openclaw onboard --auth-choice gmi-api-key
+merclaw onboard --auth-choice gmi-api-key
 ```
 
 Or set:
@@ -70,19 +70,19 @@ The bundled catalog seeds commonly available GMI Cloud route ids, including:
 - `gmi/openai/gpt-5.4`
 
 The catalog is a seed, not a promise that every account can call every model at
-all times. Use OpenClaw's model listing command to see what the configured
+all times. Use MerClaw's model listing command to see what the configured
 provider reports in your environment:
 
 ```bash
-openclaw models list --provider gmi
+merclaw models list --provider gmi
 ```
 
 ## Troubleshooting
 
 - `401` or `403`: check that `GMI_API_KEY` is set for the process running
-  OpenClaw, or re-run onboarding to store the key in the provider auth profile.
+  MerClaw, or re-run onboarding to store the key in the provider auth profile.
 - Unknown model errors: confirm the model exists in your GMI account and use the
-  full `gmi/<route-id>` ref shown by `openclaw models list --provider gmi`.
+  full `gmi/<route-id>` ref shown by `merclaw models list --provider gmi`.
 - Intermittent provider errors: try a different GMI route or configure GMI as a
   fallback rather than the only primary model provider.
 

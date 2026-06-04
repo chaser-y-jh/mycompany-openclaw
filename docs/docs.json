@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "name": "OpenClaw",
+  "name": "MerClaw",
   "description": "Self-hosted gateway that connects Discord, Google Chat, iMessage, Matrix, Microsoft Teams, Signal, Slack, Telegram, WhatsApp, Zalo, and more to AI coding agents. Run one Gateway process on your own machine and message your AI assistant from anywhere.",
   "theme": "mint",
   "icons": {
@@ -36,12 +36,12 @@
     "links": [
       {
         "label": "GitHub",
-        "href": "https://github.com/openclaw/openclaw",
+        "href": "https://github.com/merclaw/merclaw",
         "icon": "github"
       },
       {
         "label": "Releases",
-        "href": "https://github.com/openclaw/openclaw/releases",
+        "href": "https://github.com/merclaw/merclaw/releases",
         "icon": "package"
       },
       {
@@ -86,7 +86,7 @@
     },
     {
       "source": "/pi-dev",
-      "destination": "/openclaw-agent-runtime"
+      "destination": "/merclaw-agent-runtime"
     },
     {
       "source": "/providers/modelstudio",
@@ -402,15 +402,15 @@
     },
     {
       "source": "/clawd",
-      "destination": "/start/openclaw"
+      "destination": "/start/merclaw"
     },
     {
       "source": "/start/clawd",
-      "destination": "/start/openclaw"
+      "destination": "/start/merclaw"
     },
     {
       "source": "/start/clawd/",
-      "destination": "/start/openclaw"
+      "destination": "/start/merclaw"
     },
     {
       "source": "/start/pairing",
@@ -509,7 +509,7 @@
       "destination": "/channels/telegram"
     },
     {
-      "source": "/channels/openclaw-weixin",
+      "source": "/channels/merclaw-weixin",
       "destination": "/channels/wechat"
     },
     {
@@ -1009,7 +1009,7 @@
               {
                 "group": "Guides",
                 "pages": [
-                  "start/openclaw",
+                  "start/merclaw",
                   "start/wizard-cli-reference",
                   "start/wizard-cli-automation"
                 ]
@@ -1074,7 +1074,7 @@
               },
               {
                 "group": "Advanced setup",
-                "pages": ["start/setup", "openclaw-agent-runtime"]
+                "pages": ["start/setup", "merclaw-agent-runtime"]
               }
             ]
           },
@@ -1740,8 +1740,8 @@
                 "group": "RPC and API",
                 "pages": [
                   "reference/rpc",
-                  "concepts/openclaw-sdk",
-                  "reference/openclaw-sdk-api-design",
+                  "concepts/merclaw-sdk",
+                  "reference/merclaw-sdk-api-design",
                   "reference/code-mode",
                   "reference/device-models"
                 ]

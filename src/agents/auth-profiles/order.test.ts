@@ -491,7 +491,7 @@ describe("resolveAuthProfileOrder", () => {
   });
 
   it("marks profile success with one canonical last-good and usage update", async () => {
-    const agentDir = await mkdtemp(path.join(os.tmpdir(), "openclaw-auth-profile-success-"));
+    const agentDir = await mkdtemp(path.join(os.tmpdir(), "merclaw-auth-profile-success-"));
     try {
       const store: AuthProfileStore = {
         version: 1,

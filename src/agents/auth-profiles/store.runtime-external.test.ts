@@ -14,7 +14,7 @@ import {
 import type { AuthProfileStore, OAuthCredential } from "./types.js";
 
 const envBackup: Record<string, string | undefined> = {};
-const envKeys = ["OPENCLAW_STATE_DIR"];
+const envKeys = ["MERCLAW_STATE_DIR"];
 const tempDirs: string[] = [];
 
 function createRuntimeExternalCredential(): OAuthCredential {
@@ -50,9 +50,9 @@ afterEach(async () => {
 
 describe("auth profile store runtime external snapshots", () => {
   it("keeps runtime-only external oauth profiles in active snapshots after save", async () => {
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-runtime-external-save-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-runtime-external-save-"));
     tempDirs.push(stateDir);
-    process.env.OPENCLAW_STATE_DIR = stateDir;
+    process.env.MERCLAW_STATE_DIR = stateDir;
     const agentDir = path.join(stateDir, "agents", "main", "agent");
     await fs.mkdir(agentDir, { recursive: true });
 

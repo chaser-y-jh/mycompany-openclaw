@@ -1,8 +1,8 @@
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
-import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
-import { uniqueStrings } from "@openclaw/normalization-core/string-normalization";
+import { normalizeProviderId } from "@merclaw/model-catalog-core/provider-id";
+import { normalizeOptionalLowercaseString } from "@merclaw/normalization-core/string-coerce";
+import { uniqueStrings } from "@merclaw/normalization-core/string-normalization";
 import type { CliBackendConfig } from "../config/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import type { ContextEngineHostCapability } from "../context-engine/types.js";
 import { resolveRuntimeCliBackends } from "../plugins/cli-backends.runtime.js";
 import {
@@ -183,7 +183,7 @@ function addCliRuntimeModelBinding(
 
 export function listCliRuntimeModelBackendBindings(
   params: {
-    config?: OpenClawConfig;
+    config?: MerClawConfig;
     env?: NodeJS.ProcessEnv;
     includeSetupRegistry?: boolean;
   } = {},
@@ -215,7 +215,7 @@ export function listCliRuntimeModelBackendBindings(
 
 export function listCliRuntimeProviderIds(
   params: {
-    config?: OpenClawConfig;
+    config?: MerClawConfig;
     env?: NodeJS.ProcessEnv;
     includeSetupRegistry?: boolean;
   } = {},
@@ -234,7 +234,7 @@ export function listCliRuntimeProviderIds(
 
 export function resolveCliRuntimeCanonicalProvider(params: {
   runtime: string | undefined;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   env?: NodeJS.ProcessEnv;
   includeSetupRegistry?: boolean;
 }): string | undefined {
@@ -262,7 +262,7 @@ export function resolveCliRuntimeCanonicalProvider(params: {
 export function resolveCliRuntimeModelBackendBinding(params: {
   provider: string | undefined;
   runtime: string | undefined;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   env?: NodeJS.ProcessEnv;
 }): CliRuntimeModelBackendBinding | undefined {
   const provider = normalizeProviderId(params.provider ?? "");
@@ -301,7 +301,7 @@ export function resolveCliRuntimeModelBackendBinding(params: {
 export function isCliRuntimeModelBackendForProvider(params: {
   provider: string | undefined;
   runtime: string | undefined;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   env?: NodeJS.ProcessEnv;
 }): boolean {
   return resolveCliRuntimeModelBackendBinding(params) !== undefined;
@@ -372,7 +372,7 @@ export function resolveCliBackendLiveTest(provider: string): ResolvedCliBackendL
 
 export function resolveCliBackendConfig(
   provider: string,
-  cfg?: OpenClawConfig,
+  cfg?: MerClawConfig,
   options: { agentId?: string } = {},
 ): ResolvedCliBackend | null {
   const normalized = normalizeBackendKey(provider);

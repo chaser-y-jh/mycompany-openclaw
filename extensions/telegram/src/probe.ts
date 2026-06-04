@@ -1,7 +1,7 @@
-import type { BaseProbeResult } from "openclaw/plugin-sdk/channel-contract";
-import type { TelegramNetworkConfig } from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { fetchWithTimeout } from "openclaw/plugin-sdk/text-utility-runtime";
+import type { BaseProbeResult } from "merclaw/plugin-sdk/channel-contract";
+import type { TelegramNetworkConfig } from "merclaw/plugin-sdk/config-contracts";
+import { formatErrorMessage } from "merclaw/plugin-sdk/error-runtime";
+import { fetchWithTimeout } from "merclaw/plugin-sdk/text-utility-runtime";
 import { normalizeTelegramBotInfo, type TelegramBotInfo } from "./bot-info.js";
 import {
   resolveTelegramApiBase,

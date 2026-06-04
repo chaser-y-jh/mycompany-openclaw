@@ -1,0 +1,4 @@
+interface:
+  display_name: "MerClaw Testing"
+  short_description: "Choose cheap, targeted MerClaw validation"
+  default_prompt: "Use $merclaw-testing to choose the cheapest safe test or CI verification path, inspect failures, and rerun only the relevant MerClaw lane."

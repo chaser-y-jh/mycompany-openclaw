@@ -3,7 +3,7 @@ export type {
   MemoryEmbeddingProbeResult,
   MemorySearchManager,
   MemorySearchResult,
-} from "openclaw/plugin-sdk/memory-core-host-engine-storage";
+} from "merclaw/plugin-sdk/memory-core-host-engine-storage";
 export {
   closeAllMemorySearchManagers,
   closeMemorySearchManager,

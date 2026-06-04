@@ -4,7 +4,7 @@ import { parse } from "yaml";
 import { createReleaseWorkflowMatrixPlan } from "../../scripts/plan-release-workflow-matrix.mjs";
 
 function workflow() {
-  return parse(readFileSync(".github/workflows/openclaw-live-and-e2e-checks-reusable.yml", "utf8"));
+  return parse(readFileSync(".github/workflows/merclaw-live-and-e2e-checks-reusable.yml", "utf8"));
 }
 
 const PROFILE_GATED_STATIC_MATRIX_ALLOWLIST = [

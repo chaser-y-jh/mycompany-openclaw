@@ -1,8 +1,8 @@
 import crypto from "node:crypto";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { parseMediaContentLength } from "openclaw/plugin-sdk/media-runtime";
-import { readResponseWithLimit } from "openclaw/plugin-sdk/response-limit-runtime";
-import { fetchWithSsrFGuard } from "openclaw/plugin-sdk/ssrf-runtime";
+import { formatErrorMessage } from "merclaw/plugin-sdk/error-runtime";
+import { parseMediaContentLength } from "merclaw/plugin-sdk/media-runtime";
+import { readResponseWithLimit } from "merclaw/plugin-sdk/response-limit-runtime";
+import { fetchWithSsrFGuard } from "merclaw/plugin-sdk/ssrf-runtime";
 import type { ResolvedGoogleChatAccount } from "./accounts.js";
 import { getGoogleChatAccessToken } from "./auth.js";
 import type { GoogleChatReaction } from "./types.js";
@@ -199,7 +199,7 @@ export async function uploadGoogleChatAttachment(params: {
   contentType?: string;
 }): Promise<{ attachmentUploadToken?: string }> {
   const { account, space, filename, buffer, contentType } = params;
-  const boundary = `openclaw-${crypto.randomUUID()}`;
+  const boundary = `merclaw-${crypto.randomUUID()}`;
   const metadata = JSON.stringify({ filename });
   const header = `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${metadata}\r\n`;
   const mediaHeader = `--${boundary}\r\nContent-Type: ${contentType ?? "application/octet-stream"}\r\n\r\n`;

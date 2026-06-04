@@ -1,4 +1,4 @@
-import type { AgentMessage } from "openclaw/plugin-sdk/agent-core";
+import type { AgentMessage } from "merclaw/plugin-sdk/agent-core";
 import { describe, expect, it } from "vitest";
 import {
   projectContextEngineAssemblyForCodex,
@@ -210,7 +210,7 @@ describe("projectContextEngineAssemblyForCodex", () => {
     );
   });
 
-  it("maps OpenClaw compaction reserve config onto Codex projection reserves", () => {
+  it("maps MerClaw compaction reserve config onto Codex projection reserves", () => {
     expect(
       resolveCodexContextEngineProjectionReserveTokens({
         config: { agents: { defaults: { compaction: { reserveTokens: 12_000 } } } },

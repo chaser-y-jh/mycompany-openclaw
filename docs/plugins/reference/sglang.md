@@ -1,5 +1,5 @@
 ---
-summary: "Adds SGLang model provider support to OpenClaw."
+summary: "Adds SGLang model provider support to MerClaw."
 read_when:
   - You are installing, configuring, or auditing the sglang plugin
 title: "SGLang plugin"
@@ -7,12 +7,12 @@ title: "SGLang plugin"
 
 # SGLang plugin
 
-Adds SGLang model provider support to OpenClaw.
+Adds SGLang model provider support to MerClaw.
 
 ## Distribution
 
-- Package: `@openclaw/sglang-provider`
-- Install route: included in OpenClaw
+- Package: `@merclaw/sglang-provider`
+- Install route: included in MerClaw
 
 ## Surface
 

@@ -26,7 +26,7 @@ describe("buildEmbeddedSystemPrompt", () => {
 
   it("forwards provider prompt contributions into the embedded prompt", () => {
     const prompt = buildEmbeddedSystemPrompt({
-      workspaceDir: "/tmp/openclaw",
+      workspaceDir: "/tmp/merclaw",
       reasoningTagHint: false,
       runtimeInfo: {
         host: "local",
@@ -59,7 +59,7 @@ describe("buildEmbeddedSystemPrompt", () => {
         },
       },
       agentId: "main",
-      workspaceDir: "/tmp/openclaw",
+      workspaceDir: "/tmp/merclaw",
       reasoningTagHint: false,
       runtimeInfo: {
         agentId: "main",
@@ -87,7 +87,7 @@ describe("buildEmbeddedSystemPrompt", () => {
           },
         },
       },
-      workspaceDir: "/tmp/openclaw",
+      workspaceDir: "/tmp/merclaw",
       reasoningTagHint: false,
       runtimeInfo: {
         host: "local",
@@ -103,7 +103,7 @@ describe("buildEmbeddedSystemPrompt", () => {
     });
 
     expect(prompt).toContain("tools.fs.workspaceOnly is enabled");
-    expect(prompt).toContain("`.openclaw/tmp/`");
+    expect(prompt).toContain("`.merclaw/tmp/`");
     expect(prompt).toContain("Do not write files to `/tmp/...`");
   });
 
@@ -116,7 +116,7 @@ describe("buildEmbeddedSystemPrompt", () => {
           },
         },
       },
-      workspaceDir: "/tmp/openclaw",
+      workspaceDir: "/tmp/merclaw",
       reasoningTagHint: false,
       runtimeInfo: {
         host: "local",
@@ -137,7 +137,7 @@ describe("buildEmbeddedSystemPrompt", () => {
 
   it("forwards the subagent prompt surface to embedded prompt rendering", () => {
     const prompt = buildEmbeddedSystemPrompt({
-      workspaceDir: "/tmp/openclaw",
+      workspaceDir: "/tmp/merclaw",
       reasoningTagHint: false,
       promptSurface: "subagent",
       runtimeInfo: {
@@ -155,7 +155,7 @@ describe("buildEmbeddedSystemPrompt", () => {
     });
 
     expect(prompt).toContain("- sessions_spawn");
-    expect(prompt).not.toContain("OpenClaw lists the standard tools above");
+    expect(prompt).not.toContain("MerClaw lists the standard tools above");
     expect(prompt).not.toContain("For long waits, avoid rapid poll loops");
     expect(prompt).not.toContain("Larger work: use `sessions_spawn`");
     expect(prompt).not.toContain("Do not poll `subagents list` / `sessions_list` in a loop");
@@ -166,7 +166,7 @@ describe("buildEmbeddedSystemPrompt", () => {
     registerMemoryPromptSection(() => ["## Memory Recall", "Use memory carefully.", ""]);
 
     const prompt = buildEmbeddedSystemPrompt({
-      workspaceDir: "/tmp/openclaw",
+      workspaceDir: "/tmp/merclaw",
       reasoningTagHint: false,
       runtimeInfo: {
         host: "local",
@@ -187,7 +187,7 @@ describe("buildEmbeddedSystemPrompt", () => {
 
   it("includes active background process references in the embedded prompt", () => {
     const prompt = buildEmbeddedSystemPrompt({
-      workspaceDir: "/tmp/openclaw",
+      workspaceDir: "/tmp/merclaw",
       reasoningTagHint: false,
       runtimeInfo: {
         host: "local",

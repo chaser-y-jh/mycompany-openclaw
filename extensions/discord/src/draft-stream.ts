@@ -1,5 +1,5 @@
-import { createFinalizableDraftLifecycle } from "openclaw/plugin-sdk/channel-outbound";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import { createFinalizableDraftLifecycle } from "merclaw/plugin-sdk/channel-outbound";
+import { formatErrorMessage } from "merclaw/plugin-sdk/error-runtime";
 import {
   createChannelMessage,
   deleteChannelMessage,

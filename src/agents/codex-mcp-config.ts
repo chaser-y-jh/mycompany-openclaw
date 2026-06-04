@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalLowercaseString } from "@merclaw/normalization-core/string-coerce";
 import {
   loadEnabledBundleMcpConfig,
   type BundleMcpConfig,
@@ -24,9 +24,9 @@ export type {
   LoadCodexBundleMcpThreadConfigParams,
 } from "./codex-mcp-config.types.js";
 
-function isOpenClawLoopbackMcpServer(name: string, server: BundleMcpServerConfig): boolean {
+function isMerClawLoopbackMcpServer(name: string, server: BundleMcpServerConfig): boolean {
   return (
-    name === "openclaw" &&
+    name === "merclaw" &&
     typeof server.url === "string" &&
     /^https?:\/\/(?:127\.0\.0\.1|localhost):\d+\/mcp(?:[?#].*)?$/.test(server.url)
   );
@@ -70,7 +70,7 @@ export function normalizeCodexMcpServerConfig(
   const defaultToolsApprovalMode = resolveCodexDefaultToolsApprovalMode(server);
   if (defaultToolsApprovalMode) {
     next.default_tools_approval_mode = defaultToolsApprovalMode;
-  } else if (isOpenClawLoopbackMcpServer(name, server)) {
+  } else if (isMerClawLoopbackMcpServer(name, server)) {
     next.default_tools_approval_mode = "approve";
   }
   const httpHeaders = normalizeStringRecord(server.headers);

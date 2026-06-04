@@ -1,6 +1,6 @@
-import type { OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
-import { createProviderApiKeyAuthMethod } from "openclaw/plugin-sdk/provider-auth-api-key";
-import type { ProviderPlugin } from "openclaw/plugin-sdk/provider-model-shared";
+import type { MerClawPluginApi } from "merclaw/plugin-sdk/plugin-entry";
+import { createProviderApiKeyAuthMethod } from "merclaw/plugin-sdk/provider-auth-api-key";
+import type { ProviderPlugin } from "merclaw/plugin-sdk/provider-model-shared";
 import { normalizeGoogleModelId } from "./model-id.js";
 import { GOOGLE_GEMINI_DEFAULT_MODEL, applyGoogleGeminiModelDefault } from "./onboard.js";
 import { buildGoogleStaticCatalogProvider } from "./provider-catalog.js";
@@ -71,6 +71,6 @@ export function buildGoogleProvider(): ProviderPlugin {
   };
 }
 
-export function registerGoogleProvider(api: OpenClawPluginApi) {
+export function registerGoogleProvider(api: MerClawPluginApi) {
   api.registerProvider(buildGoogleProvider());
 }

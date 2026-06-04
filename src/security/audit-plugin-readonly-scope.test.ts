@@ -38,8 +38,8 @@ function createAuditContext(params: {
     includeChannelSecurity: true,
     deep: false,
     deepTimeoutMs: 5000,
-    stateDir: "/tmp/openclaw-test-state",
-    configPath: "/tmp/openclaw-test-config.json",
+    stateDir: "/tmp/merclaw-test-state",
+    configPath: "/tmp/merclaw-test-config.json",
     plugins: params.plugins,
     loadPluginSecurityCollectors: true,
     configSnapshot: null,
@@ -187,8 +187,8 @@ describe("security audit read-only plugin scope", () => {
       env: {},
       includeFilesystem: false,
       includeChannelSecurity: false,
-      stateDir: "/tmp/openclaw-test-state",
-      configPath: "/tmp/openclaw-test-config.json",
+      stateDir: "/tmp/merclaw-test-state",
+      configPath: "/tmp/merclaw-test-config.json",
     });
 
     expect(getActivePluginRegistryMock).not.toHaveBeenCalled();

@@ -1,4 +1,4 @@
-import { importFreshModule } from "openclaw/plugin-sdk/test-fixtures";
+import { importFreshModule } from "merclaw/plugin-sdk/test-fixtures";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { CommandLane } from "./lanes.js";
 
@@ -753,7 +753,7 @@ describe("command queue", () => {
     // the `activeTaskWaiters` field.  The schema migration in getQueueState()
     // must patch the missing field so resetAllLanes() and
     // notifyActiveTaskWaiters() do not throw.
-    const key = Symbol.for("openclaw.commandQueueState");
+    const key = Symbol.for("merclaw.commandQueueState");
     const globalStore = globalThis as Record<PropertyKey, unknown>;
     const original = globalStore[key];
 
@@ -784,7 +784,7 @@ describe("command queue", () => {
   });
 
   it("migrates legacy queued entries missing priority and wait diagnostics", async () => {
-    const key = Symbol.for("openclaw.commandQueueState");
+    const key = Symbol.for("merclaw.commandQueueState");
     const globalStore = globalThis as Record<PropertyKey, unknown>;
     const original = globalStore[key];
     let queuedAhead: number | null = null;

@@ -46,7 +46,7 @@ import {
   type Tool,
   type ToolCall,
   type ToolResultMessage,
-} from "openclaw/plugin-sdk/llm";
+} from "merclaw/plugin-sdk/llm";
 import { supportsBedrockPromptCaching, type BedrockOptions } from "./bedrock-options.js";
 
 type Block = (TextContent | ThinkingContent | ToolCall) & { index?: number; partialJson?: string };
@@ -516,13 +516,13 @@ function mapThinkingLevelToEffort(
 
 /**
  * Resolve cache retention preference.
- * Defaults to "short" and uses OPENCLAW_CACHE_RETENTION for backward compatibility.
+ * Defaults to "short" and uses MERCLAW_CACHE_RETENTION for backward compatibility.
  */
 function resolveCacheRetention(cacheRetention?: CacheRetention): CacheRetention {
   if (cacheRetention) {
     return cacheRetention;
   }
-  if (typeof process !== "undefined" && process.env.OPENCLAW_CACHE_RETENTION === "long") {
+  if (typeof process !== "undefined" && process.env.MERCLAW_CACHE_RETENTION === "long") {
     return "long";
   }
   return "short";

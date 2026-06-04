@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import {
   providerSupportsNativePdfDocument,
   resolveAutoMediaKeyProviders,
@@ -33,7 +33,7 @@ function localModelIdForProvider(providerId: string, modelId: string): string {
 }
 
 function resolveConfiguredTextModelFromConfig(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   providerId: string;
 }): string | undefined {
   const providers = params.cfg?.models?.providers;
@@ -51,7 +51,7 @@ function resolveConfiguredTextModelFromConfig(params: {
 }
 
 function resolveImageCandidateRefs(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   agentDir: string;
   workspaceDir?: string;
   authStore?: AuthProfileStore;
@@ -101,7 +101,7 @@ function resolveImageCandidateRefs(params: {
 }
 
 function resolveTextExtractionCandidateRefs(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   primary: { provider: string; model: string };
   agentDir: string;
   workspaceDir?: string;
@@ -186,7 +186,7 @@ function resolveTextExtractionCandidateRefs(params: {
 }
 
 export function resolvePdfModelConfigForTool(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   agentDir: string;
   workspaceDir?: string;
   authStore?: AuthProfileStore;

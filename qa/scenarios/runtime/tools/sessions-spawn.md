@@ -8,7 +8,7 @@ runtimeParityTier: standard
 coverage:
   primary:
     - tools.sessions-spawn
-objective: Verify sessions_spawn preserves arguments and result shape across OpenClaw and Codex.
+objective: Verify sessions_spawn preserves arguments and result shape across MerClaw and Codex.
 successCriteria:
   - Effective tools expose sessions_spawn.
   - The mock provider plans exactly one happy-path sessions_spawn call.
@@ -27,14 +27,14 @@ execution:
     toolCoverage:
       family: sessions_spawn
       actualTool: sessions_spawn
-      bucket: openclaw-dynamic-integration
-      expectedLayer: openclaw-dynamic
-      capabilityLayer: openclaw-dynamic-direct
+      bucket: merclaw-dynamic-integration
+      expectedLayer: merclaw-dynamic
+      capabilityLayer: merclaw-dynamic-direct
       required: true
       codexDefaultImpact: P4
       qaImpact: P1
       action: hard gate in the standard direct-loading tier
-      reason: sessions_spawn is an OpenClaw integration tool and must stay visible and callable under OpenClaw and Codex direct runtime parity.
+      reason: sessions_spawn is an MerClaw integration tool and must stay visible and callable under MerClaw and Codex direct runtime parity.
     promptSnippet: "target=sessions_spawn"
     failurePromptSnippet: "failure target=sessions_spawn"
 ```

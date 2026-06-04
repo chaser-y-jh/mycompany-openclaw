@@ -1,5 +1,5 @@
-import type { NormalizedModelCatalogRow } from "@openclaw/model-catalog-core/model-catalog-types";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NormalizedModelCatalogRow } from "@merclaw/model-catalog-core/model-catalog-types";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import type { PluginMetadataSnapshot } from "../../plugins/plugin-metadata-snapshot.types.js";
 import { createLazyImportLoader } from "../../shared/lazy-promise.js";
 
@@ -54,7 +54,7 @@ export async function planAllModelListSources(params: {
   all?: boolean;
   enableCascade?: boolean;
   providerFilter?: string;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   metadataSnapshot?: PluginMetadataSnapshot;
 }): Promise<ModelListSourcePlan> {
   const enableCascade = params.enableCascade ?? params.all;

@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { createFixedWindowRateLimiter } from "openclaw/plugin-sdk/webhook-ingress";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { createFixedWindowRateLimiter } from "merclaw/plugin-sdk/webhook-ingress";
 import { dispatchSmsInboundEvent, type SmsChannelRuntime } from "./inbound.js";
 import {
   buildTwilioInboundMessage,
@@ -27,7 +27,7 @@ type SmsWebhookLog = {
 };
 
 export type SmsWebhookHandlerParams = {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   account: ResolvedSmsAccount;
   channelRuntime: SmsChannelRuntime;
   log?: SmsWebhookLog;

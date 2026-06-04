@@ -1,4 +1,4 @@
-import type { OpenClawConfig, SecretInput } from "../engine-foundation.js";
+import type { MerClawConfig, SecretInput } from "../engine-foundation.js";
 import type { EmbeddingInput } from "./embedding-inputs.js";
 
 export type EmbeddingProvider = {
@@ -32,7 +32,7 @@ export type GeminiTaskType =
   | "FACT_VERIFICATION";
 
 export type EmbeddingProviderOptions = {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   agentDir?: string;
   provider?: EmbeddingProviderRequest;
   remote?: {

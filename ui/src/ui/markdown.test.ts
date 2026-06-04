@@ -200,9 +200,9 @@ describe("toSanitizedMarkdownHtml", () => {
     });
 
     it("links http:// URLs", () => {
-      const html = toSanitizedMarkdownHtml("Visit http://github.com/openclaw");
+      const html = toSanitizedMarkdownHtml("Visit http://github.com/merclaw");
       expect(html).toBe(
-        '<p>Visit <a href="http://github.com/openclaw" rel="noreferrer noopener" target="_blank">http://github.com/openclaw</a></p>\n',
+        '<p>Visit <a href="http://github.com/merclaw" rel="noreferrer noopener" target="_blank">http://github.com/merclaw</a></p>\n',
       );
     });
 
@@ -247,9 +247,9 @@ describe("toSanitizedMarkdownHtml", () => {
     });
 
     it("does NOT rewrite explicit markdown links with CJK display text", () => {
-      const html = toSanitizedMarkdownHtml("[OpenClaw中文](https://docs.openclaw.ai)");
+      const html = toSanitizedMarkdownHtml("[MerClaw中文](https://docs.merclaw.ai)");
       expect(html).toBe(
-        '<p><a href="https://docs.openclaw.ai" rel="noreferrer noopener" target="_blank">OpenClaw中文</a></p>\n',
+        '<p><a href="https://docs.merclaw.ai" rel="noreferrer noopener" target="_blank">MerClaw中文</a></p>\n',
       );
     });
 
@@ -572,7 +572,7 @@ PY
 
     it("strips href from host-local absolute file paths", () => {
       const html = toSanitizedMarkdownHtml(
-        "[report.docx](/Users/test/.openclaw/data/skills/output/report.docx)",
+        "[report.docx](/Users/test/.merclaw/data/skills/output/report.docx)",
       );
       expect(html).toBe("<p><a>report.docx</a></p>\n");
     });

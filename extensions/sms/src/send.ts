@@ -1,4 +1,4 @@
-import { chunkTextForOutbound, stripMarkdown } from "openclaw/plugin-sdk/text-chunking";
+import { chunkTextForOutbound, stripMarkdown } from "merclaw/plugin-sdk/text-chunking";
 import { sendSmsViaTwilio } from "./twilio.js";
 import type { ResolvedSmsAccount, SmsSendResult } from "./types.js";
 

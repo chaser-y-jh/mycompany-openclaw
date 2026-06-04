@@ -1,7 +1,7 @@
 import path from "node:path";
-import { resolveThreadSessionKeys } from "openclaw/plugin-sdk/routing";
-import { appendRegularFile } from "openclaw/plugin-sdk/security-runtime";
-import { normalizeOptionalLowercaseString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { resolveThreadSessionKeys } from "merclaw/plugin-sdk/routing";
+import { appendRegularFile } from "merclaw/plugin-sdk/security-runtime";
+import { normalizeOptionalLowercaseString } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { formatUnknownError } from "./errors.js";
 import { buildFeedbackEvent, runFeedbackReflection } from "./feedback-reflection.js";
 import { extractMSTeamsConversationMessageId, normalizeMSTeamsConversationId } from "./inbound.js";

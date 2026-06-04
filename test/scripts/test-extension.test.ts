@@ -1,6 +1,6 @@
 import { execFileSync, spawnSync } from "node:child_process";
 import path from "node:path";
-import { bundledPluginFile, bundledPluginRoot } from "openclaw/plugin-sdk/test-fixtures";
+import { bundledPluginFile, bundledPluginRoot } from "merclaw/plugin-sdk/test-fixtures";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import {
   detectChangedExtensionIds,
@@ -298,7 +298,7 @@ describe("scripts/test-extension.mjs", () => {
 
   it("can fail safe to all extensions when the base revision is unavailable", () => {
     const extensionIds = listChangedExtensionIds({
-      base: "refs/heads/openclaw-test-missing-base",
+      base: "refs/heads/merclaw-test-missing-base",
       unavailableBaseBehavior: "all",
     });
 
@@ -573,7 +573,7 @@ describe("scripts/test-extension.mjs", () => {
         testFileCount: 6,
       },
       {
-        env: { OPENCLAW_EXTENSION_BATCH_PARALLEL: "2" },
+        env: { MERCLAW_EXTENSION_BATCH_PARALLEL: "2" },
         runGroup,
         vitestArgs: ["--reporter=dot"],
       },
@@ -594,8 +594,8 @@ describe("scripts/test-extension.mjs", () => {
       args: ["--reporter=dot"],
       config: "heavy",
       env: {
-        OPENCLAW_EXTENSION_BATCH_PARALLEL: "2",
-        OPENCLAW_VITEST_FS_MODULE_CACHE_PATH: path.join(
+        MERCLAW_EXTENSION_BATCH_PARALLEL: "2",
+        MERCLAW_VITEST_FS_MODULE_CACHE_PATH: path.join(
           process.cwd(),
           "node_modules",
           ".experimental-vitest-cache",
@@ -608,9 +608,9 @@ describe("scripts/test-extension.mjs", () => {
   });
 
   it("keeps extension batch parallelism bounded by group count", () => {
-    expect(resolveExtensionBatchParallelism(3, { OPENCLAW_EXTENSION_BATCH_PARALLEL: "2" })).toBe(2);
-    expect(resolveExtensionBatchParallelism(1, { OPENCLAW_EXTENSION_BATCH_PARALLEL: "4" })).toBe(1);
-    expect(resolveExtensionBatchParallelism(3, { OPENCLAW_EXTENSION_BATCH_PARALLEL: "nope" })).toBe(
+    expect(resolveExtensionBatchParallelism(3, { MERCLAW_EXTENSION_BATCH_PARALLEL: "2" })).toBe(2);
+    expect(resolveExtensionBatchParallelism(1, { MERCLAW_EXTENSION_BATCH_PARALLEL: "4" })).toBe(1);
+    expect(resolveExtensionBatchParallelism(3, { MERCLAW_EXTENSION_BATCH_PARALLEL: "nope" })).toBe(
       1,
     );
   });

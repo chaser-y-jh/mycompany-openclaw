@@ -1,7 +1,7 @@
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeStringifiedOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/normalization-core/string-coerce";
 import { z } from "zod";
 import { parseByteSize } from "../cli/parse-bytes.js";
 import { parseDurationMs } from "../cli/parse-duration.js";
@@ -444,7 +444,7 @@ const CommitmentsSchema = z
   .strict()
   .optional();
 
-export const OpenClawSchema = z
+export const MerClawSchema = z
   .object({
     $schema: z.string().optional(),
     meta: z
@@ -631,7 +631,7 @@ export const OpenClawSchema = z
                 mcpCommand: z.string().optional(),
                 mcpArgs: z.array(z.string()).optional(),
                 driver: z
-                  .union([z.literal("openclaw"), z.literal("clawd"), z.literal("existing-session")])
+                  .union([z.literal("merclaw"), z.literal("clawd"), z.literal("existing-session")])
                   .optional(),
                 headless: z.boolean().optional(),
                 executablePath: z.string().optional(),

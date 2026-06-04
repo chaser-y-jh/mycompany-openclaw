@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   clearRuntimeConfigSnapshot,
   setRuntimeConfigSnapshot,
-  type OpenClawConfig,
+  type MerClawConfig,
 } from "../../config/config.js";
 import * as skillsWorkspaceModule from "../loading/workspace.js";
 import type { SkillSnapshot } from "../types.js";
@@ -18,7 +18,7 @@ describe("resolveEmbeddedRunSkillEntries", () => {
   });
 
   it("loads skill entries with config when no resolved snapshot skills exist", () => {
-    const config: OpenClawConfig = {
+    const config: MerClawConfig = {
       plugins: {
         entries: {
           diffs: { enabled: true },
@@ -58,7 +58,7 @@ describe("resolveEmbeddedRunSkillEntries", () => {
   });
 
   it("prefers the active runtime snapshot when caller config still contains SecretRefs", () => {
-    const sourceConfig: OpenClawConfig = {
+    const sourceConfig: MerClawConfig = {
       skills: {
         entries: {
           diffs: {
@@ -71,7 +71,7 @@ describe("resolveEmbeddedRunSkillEntries", () => {
         },
       },
     };
-    const runtimeConfig: OpenClawConfig = {
+    const runtimeConfig: MerClawConfig = {
       skills: {
         entries: {
           diffs: {
@@ -97,7 +97,7 @@ describe("resolveEmbeddedRunSkillEntries", () => {
   });
 
   it("prefers caller config when the active runtime snapshot still contains raw skill SecretRefs", () => {
-    const sourceConfig: OpenClawConfig = {
+    const sourceConfig: MerClawConfig = {
       skills: {
         entries: {
           diffs: {
@@ -110,8 +110,8 @@ describe("resolveEmbeddedRunSkillEntries", () => {
         },
       },
     };
-    const runtimeConfig: OpenClawConfig = structuredClone(sourceConfig);
-    const callerConfig: OpenClawConfig = {
+    const runtimeConfig: MerClawConfig = structuredClone(sourceConfig);
+    const callerConfig: MerClawConfig = {
       skills: {
         entries: {
           diffs: {

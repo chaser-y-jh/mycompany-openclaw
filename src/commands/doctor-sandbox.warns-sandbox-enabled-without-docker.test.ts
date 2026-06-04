@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { MerClawConfig } from "../config/config.js";
 import type { RuntimeEnv } from "../runtime.js";
 import type { DoctorPrompter } from "./doctor-prompter.js";
 import type { DoctorRepairMode } from "./doctor-repair-mode.js";
@@ -57,7 +57,7 @@ describe("maybeRepairSandboxImages", () => {
     migrateLegacySandboxRegistryFiles.mockResolvedValue([]);
   });
 
-  function createSandboxConfig(mode: "off" | "all" | "non-main"): OpenClawConfig {
+  function createSandboxConfig(mode: "off" | "all" | "non-main"): MerClawConfig {
     return {
       agents: {
         defaults: {
@@ -69,7 +69,7 @@ describe("maybeRepairSandboxImages", () => {
     };
   }
 
-  function createSandboxConfigWithDockerNetwork(network: string): OpenClawConfig {
+  function createSandboxConfigWithDockerNetwork(network: string): MerClawConfig {
     return {
       agents: {
         defaults: {
@@ -255,8 +255,8 @@ describe("maybeRepairSandboxRegistryFiles", () => {
     inspectLegacySandboxRegistryFiles.mockResolvedValue([
       {
         kind: "containers",
-        registryPath: "/tmp/openclaw/sandbox/containers.json",
-        shardedDir: "/tmp/openclaw/sandbox/containers",
+        registryPath: "/tmp/merclaw/sandbox/containers.json",
+        shardedDir: "/tmp/merclaw/sandbox/containers",
         exists: true,
         valid: true,
         entries: 2,
@@ -269,8 +269,8 @@ describe("maybeRepairSandboxRegistryFiles", () => {
     expect(note).toHaveBeenCalledWith(
       [
         "Legacy sandbox registry files detected.",
-        "- containers: /tmp/openclaw/sandbox/containers.json (2 entries)",
-        "Run openclaw doctor --fix to migrate them to sharded registry files.",
+        "- containers: /tmp/merclaw/sandbox/containers.json (2 entries)",
+        "Run merclaw doctor --fix to migrate them to sharded registry files.",
       ].join("\n"),
       "Sandbox",
     );
@@ -280,8 +280,8 @@ describe("maybeRepairSandboxRegistryFiles", () => {
     inspectLegacySandboxRegistryFiles.mockResolvedValue([
       {
         kind: "containers",
-        registryPath: "/tmp/openclaw/sandbox/containers.json",
-        shardedDir: "/tmp/openclaw/sandbox/containers",
+        registryPath: "/tmp/merclaw/sandbox/containers.json",
+        shardedDir: "/tmp/merclaw/sandbox/containers",
         exists: true,
         valid: true,
         entries: 2,
@@ -290,8 +290,8 @@ describe("maybeRepairSandboxRegistryFiles", () => {
     migrateLegacySandboxRegistryFiles.mockResolvedValue([
       {
         kind: "containers",
-        registryPath: "/tmp/openclaw/sandbox/containers.json",
-        shardedDir: "/tmp/openclaw/sandbox/containers",
+        registryPath: "/tmp/merclaw/sandbox/containers.json",
+        shardedDir: "/tmp/merclaw/sandbox/containers",
         status: "migrated",
         entries: 2,
       },
@@ -304,7 +304,7 @@ describe("maybeRepairSandboxRegistryFiles", () => {
 
     expect(migrateLegacySandboxRegistryFiles).toHaveBeenCalledTimes(1);
     expect(note).toHaveBeenCalledWith(
-      "- Migrated containers registry from /tmp/openclaw/sandbox/containers.json into 2 shards.",
+      "- Migrated containers registry from /tmp/merclaw/sandbox/containers.json into 2 shards.",
       "Doctor changes",
     );
   });

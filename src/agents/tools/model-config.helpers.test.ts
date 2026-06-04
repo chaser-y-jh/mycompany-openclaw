@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { MerClawConfig } from "../../config/config.js";
 import { hasProviderAuthForTool } from "./model-config.helpers.js";
 
 describe("hasProviderAuthForTool", () => {
@@ -18,7 +18,7 @@ describe("hasProviderAuthForTool", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
 
     expect(hasProviderAuthForTool({ provider: "hatchery", cfg })).toBe(true);
   });

@@ -2,15 +2,15 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { MerClawConfig } from "../../config/config.js";
 
-const getRuntimeConfig = vi.hoisted(() => vi.fn(() => ({}) as OpenClawConfig));
+const getRuntimeConfig = vi.hoisted(() => vi.fn(() => ({}) as MerClawConfig));
 const resolveDefaultAgentId = vi.hoisted(() => vi.fn(() => "main"));
 const resolveAgentWorkspaceDir = vi.hoisted(() =>
-  vi.fn((_cfg: OpenClawConfig, _agentId: string) => "/tmp/openclaw"),
+  vi.fn((_cfg: MerClawConfig, _agentId: string) => "/tmp/merclaw"),
 );
 const resolveMemorySearchConfig = vi.hoisted(() =>
-  vi.fn<(_cfg: OpenClawConfig, _agentId: string) => { enabled: boolean } | null>(() => ({
+  vi.fn<(_cfg: MerClawConfig, _agentId: string) => { enabled: boolean } | null>(() => ({
     enabled: true,
   })),
 );
@@ -210,7 +210,7 @@ describe("doctor.memory.status", () => {
   beforeEach(() => {
     getRuntimeConfig.mockClear();
     resolveDefaultAgentId.mockClear();
-    resolveAgentWorkspaceDir.mockReset().mockReturnValue("/tmp/openclaw");
+    resolveAgentWorkspaceDir.mockReset().mockReturnValue("/tmp/merclaw");
     resolveMemorySearchConfig.mockReset().mockReturnValue({ enabled: true });
     getMemorySearchManager.mockReset();
     previewGroundedRemMarkdown.mockReset();
@@ -542,8 +542,8 @@ describe("doctor.memory.status", () => {
           },
         },
       },
-    } as OpenClawConfig);
-    resolveAgentWorkspaceDir.mockImplementation((cfg: OpenClawConfig, agentId: string) => {
+    } as MerClawConfig);
+    resolveAgentWorkspaceDir.mockImplementation((cfg: MerClawConfig, agentId: string) => {
       if (agentId === "alpha") {
         return alphaWorkspaceDir;
       }
@@ -566,7 +566,7 @@ describe("doctor.memory.status", () => {
         enabled: true,
         payload: {
           kind: "systemEvent",
-          text: "__openclaw_memory_core_short_term_promotion_dream__",
+          text: "__merclaw_memory_core_short_term_promotion_dream__",
         },
         state: { nextRunAtMs: now + 60_000 },
       },
@@ -677,8 +677,8 @@ describe("doctor.memory.status", () => {
           },
         },
       },
-    } as OpenClawConfig);
-    resolveAgentWorkspaceDir.mockImplementation((_cfg: OpenClawConfig, agentId: string) => {
+    } as MerClawConfig);
+    resolveAgentWorkspaceDir.mockImplementation((_cfg: MerClawConfig, agentId: string) => {
       if (agentId === "alpha") {
         return alphaWorkspaceDir;
       }
@@ -747,7 +747,7 @@ describe("doctor.memory.status", () => {
           },
         },
       },
-    } as OpenClawConfig);
+    } as MerClawConfig);
 
     const close = vi.fn().mockResolvedValue(undefined);
     getMemorySearchManager.mockResolvedValue({
@@ -779,10 +779,10 @@ describe("doctor.memory.status", () => {
     getRuntimeConfig.mockReturnValue({
       plugins: {
         slots: {
-          memory: "memos-local-openclaw-plugin",
+          memory: "memos-local-merclaw-plugin",
         },
         entries: {
-          "memos-local-openclaw-plugin": {
+          "memos-local-merclaw-plugin": {
             config: {
               dreaming: {
                 enabled: true,
@@ -799,7 +799,7 @@ describe("doctor.memory.status", () => {
           },
         },
       },
-    } as OpenClawConfig);
+    } as MerClawConfig);
 
     const close = vi.fn().mockResolvedValue(undefined);
     getMemorySearchManager.mockResolvedValue({
@@ -871,8 +871,8 @@ describe("doctor.memory.status", () => {
           },
         },
       },
-    } as OpenClawConfig);
-    resolveAgentWorkspaceDir.mockImplementation((_cfg: OpenClawConfig, agentId: string) =>
+    } as MerClawConfig);
+    resolveAgentWorkspaceDir.mockImplementation((_cfg: MerClawConfig, agentId: string) =>
       agentId === "alpha" ? alphaWorkspaceDir : mainWorkspaceDir,
     );
 
@@ -924,17 +924,17 @@ describe("doctor.memory.status", () => {
 
 describe("doctor.memory dream actions", () => {
   it("clears grounded-only staged short-term entries without touching the diary", async () => {
-    resolveAgentWorkspaceDir.mockReturnValue("/tmp/openclaw");
+    resolveAgentWorkspaceDir.mockReturnValue("/tmp/merclaw");
     removeGroundedShortTermCandidates.mockResolvedValue({
       removed: 3,
-      storePath: "/tmp/openclaw/memory/.dreams/short-term-recall.json",
+      storePath: "/tmp/merclaw/memory/.dreams/short-term-recall.json",
     });
     const respond = vi.fn();
 
     await invokeDoctorMemoryResetGroundedShortTerm(respond);
 
     expect(removeGroundedShortTermCandidates).toHaveBeenCalledWith({
-      workspaceDir: "/tmp/openclaw",
+      workspaceDir: "/tmp/merclaw",
     });
     expect(respond).toHaveBeenCalledWith(
       true,
@@ -948,10 +948,10 @@ describe("doctor.memory dream actions", () => {
   });
 
   it("repairs contaminated dreaming artifacts for control-ui callers", async () => {
-    resolveAgentWorkspaceDir.mockReturnValue("/tmp/openclaw");
+    resolveAgentWorkspaceDir.mockReturnValue("/tmp/merclaw");
     repairDreamingArtifacts.mockResolvedValue({
       changed: true,
-      archiveDir: "/tmp/openclaw/.openclaw-repair/dreaming/2026-04-11T22-00-00-000Z",
+      archiveDir: "/tmp/merclaw/.merclaw-repair/dreaming/2026-04-11T22-00-00-000Z",
       archivedDreamsDiary: false,
       archivedSessionCorpus: true,
       archivedSessionIngestion: true,
@@ -963,7 +963,7 @@ describe("doctor.memory dream actions", () => {
     await invokeDoctorMemoryRepairDreamingArtifacts(respond);
 
     expect(repairDreamingArtifacts).toHaveBeenCalledWith({
-      workspaceDir: "/tmp/openclaw",
+      workspaceDir: "/tmp/merclaw",
     });
     expect(respond).toHaveBeenCalledWith(
       true,
@@ -971,7 +971,7 @@ describe("doctor.memory dream actions", () => {
         agentId: "main",
         action: "repairDreamingArtifacts",
         changed: true,
-        archiveDir: "/tmp/openclaw/.openclaw-repair/dreaming/2026-04-11T22-00-00-000Z",
+        archiveDir: "/tmp/merclaw/.merclaw-repair/dreaming/2026-04-11T22-00-00-000Z",
         archivedDreamsDiary: false,
         archivedSessionCorpus: true,
         archivedSessionIngestion: true,
@@ -982,9 +982,9 @@ describe("doctor.memory dream actions", () => {
   });
 
   it("dedupes exact dream diary duplicates for control-ui callers", async () => {
-    resolveAgentWorkspaceDir.mockReturnValue("/tmp/openclaw");
+    resolveAgentWorkspaceDir.mockReturnValue("/tmp/merclaw");
     dedupeDreamDiaryEntries.mockResolvedValue({
-      dreamsPath: "/tmp/openclaw/DREAMS.md",
+      dreamsPath: "/tmp/merclaw/DREAMS.md",
       removed: 2,
       kept: 7,
     });
@@ -993,7 +993,7 @@ describe("doctor.memory dream actions", () => {
     await invokeDoctorMemoryDedupeDreamDiary(respond);
 
     expect(dedupeDreamDiaryEntries).toHaveBeenCalledWith({
-      workspaceDir: "/tmp/openclaw",
+      workspaceDir: "/tmp/merclaw",
     });
     expect(respond).toHaveBeenCalledWith(
       true,
@@ -1015,7 +1015,7 @@ describe("doctor.memory.dreamDiary", () => {
   beforeEach(() => {
     getRuntimeConfig.mockClear();
     resolveDefaultAgentId.mockClear();
-    resolveAgentWorkspaceDir.mockReset().mockReturnValue("/tmp/openclaw");
+    resolveAgentWorkspaceDir.mockReset().mockReturnValue("/tmp/merclaw");
     previewGroundedRemMarkdown.mockReset();
     writeBackfillDiaryEntries.mockReset();
     removeBackfillDiaryEntries.mockReset();
@@ -1047,7 +1047,7 @@ describe("doctor.memory.dreamDiary", () => {
     const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "doctor-dream-diary-agent-"));
     await fs.writeFile(path.join(workspaceDir, "DREAMS.md"), "## Research Dreams\n", "utf-8");
     resolveAgentWorkspaceDir.mockImplementation((_cfg, agentId) =>
-      agentId === "research-analyst" ? workspaceDir : "/tmp/openclaw",
+      agentId === "research-analyst" ? workspaceDir : "/tmp/merclaw",
     );
     const respond = vi.fn();
 
@@ -1257,7 +1257,7 @@ describe("doctor.memory.remHarness", () => {
       deepConfig: Record<string, unknown>;
     }> = {},
   ) => ({
-    workspaceDir: overrides.workspaceDir ?? "/tmp/openclaw",
+    workspaceDir: overrides.workspaceDir ?? "/tmp/merclaw",
     nowMs: 0,
     remConfig: {
       enabled: true,
@@ -1295,9 +1295,9 @@ describe("doctor.memory.remHarness", () => {
   });
 
   beforeEach(() => {
-    getRuntimeConfig.mockClear().mockReturnValue({} as OpenClawConfig);
+    getRuntimeConfig.mockClear().mockReturnValue({} as MerClawConfig);
     resolveDefaultAgentId.mockClear().mockReturnValue("main");
-    resolveAgentWorkspaceDir.mockReset().mockReturnValue("/tmp/openclaw");
+    resolveAgentWorkspaceDir.mockReset().mockReturnValue("/tmp/merclaw");
     previewRemHarness.mockReset().mockResolvedValue(makeHarnessPreview());
     previewGroundedRemMarkdown.mockReset();
   });
@@ -1308,7 +1308,7 @@ describe("doctor.memory.remHarness", () => {
     await invokeDoctorMemoryRemHarness(respond);
 
     expectRecordFields(mockCallArg(previewRemHarness), {
-      workspaceDir: "/tmp/openclaw",
+      workspaceDir: "/tmp/merclaw",
       grounded: false,
       includePromoted: false,
       candidateLimit: 25,
@@ -1320,7 +1320,7 @@ describe("doctor.memory.remHarness", () => {
     expectRecordFields(payload, {
       ok: true,
       agentId: "main",
-      workspaceDir: "/tmp/openclaw",
+      workspaceDir: "/tmp/merclaw",
       grounded: null,
     });
     expectRecordFields(payload.rem, {
@@ -1453,7 +1453,7 @@ describe("doctor.memory.remHarness", () => {
     expectRecordFields(payload, {
       ok: false,
       agentId: "main",
-      workspaceDir: "/tmp/openclaw",
+      workspaceDir: "/tmp/merclaw",
     });
     expect(String(payload.error)).toContain("disk boom");
   });

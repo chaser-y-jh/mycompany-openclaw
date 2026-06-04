@@ -1,5 +1,5 @@
 import Foundation
-import OpenClawKit
+import MerClawKit
 
 enum GatewayDisplayState: Equatable {
     case connected

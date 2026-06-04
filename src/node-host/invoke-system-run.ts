@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import type { GatewayClient } from "../gateway/client.js";
 import {
   describeInterpreterInlineEval,
@@ -140,7 +140,7 @@ const APPROVAL_SCRIPT_OPERAND_BINDING_DENIED_MESSAGE =
   "SYSTEM_RUN_DENIED: approval missing script operand binding";
 const APPROVAL_SCRIPT_OPERAND_DRIFT_DENIED_MESSAGE =
   "SYSTEM_RUN_DENIED: approval script operand changed before execution";
-type ExecToolConfig = NonNullable<NonNullable<OpenClawConfig["tools"]>["exec"]>;
+type ExecToolConfig = NonNullable<NonNullable<MerClawConfig["tools"]>["exec"]>;
 
 type LayeredExecPolicy = {
   mode?: ExecMode;
@@ -203,7 +203,7 @@ function normalizeDeniedReason(reason: string | null | undefined): SystemRunDeni
 }
 
 function resolveAgentExecConfig(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   agentId: string | undefined,
 ): ExecToolConfig | undefined {
   if (!agentId) {
@@ -220,7 +220,7 @@ function resolveAgentExecConfig(
 }
 
 export function resolveEffectiveSystemRunExecPolicy(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentId: string | undefined;
   defaultSecurity: ExecSecurity;
   defaultAsk: ExecAsk;
@@ -260,7 +260,7 @@ export function resolveEffectiveSystemRunExecPolicy(params: {
 
 async function resolveSystemRunAutoReviewer(params: {
   opts: HandleSystemRunInvokeOptions;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentId: string | undefined;
   agentExec: ExecToolConfig | undefined;
   globalExec: ExecToolConfig | undefined;
@@ -301,11 +301,11 @@ export type HandleSystemRunInvokeOptions = {
   sendInvokeResult: (result: SystemRunInvokeResult) => Promise<void>;
   sendExecFinishedEvent: (params: ExecFinishedEventParams) => Promise<void>;
   preferMacAppExecHost: boolean;
-  getRuntimeConfig?: () => OpenClawConfig;
+  getRuntimeConfig?: () => MerClawConfig;
   autoReviewer?: ExecAutoReviewer;
 };
 
-async function loadSystemRunConfig(opts: HandleSystemRunInvokeOptions): Promise<OpenClawConfig> {
+async function loadSystemRunConfig(opts: HandleSystemRunInvokeOptions): Promise<MerClawConfig> {
   if (opts.getRuntimeConfig) {
     return opts.getRuntimeConfig();
   }

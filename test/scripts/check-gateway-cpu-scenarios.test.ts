@@ -139,11 +139,11 @@ describe("gateway CPU scenario guard", () => {
     expect(result.summary.steps.map((step) => step.name)).toEqual(["private QA build", "qa suite"]);
     expect(calls[0]?.args).toEqual(["scripts/build-all.mjs", "qaRuntime"]);
     expect(calls[0]?.env).toMatchObject({
-      OPENCLAW_BUILD_PRIVATE_QA: "1",
-      OPENCLAW_ENABLE_PRIVATE_QA_CLI: "1",
-      OPENCLAW_RUN_NODE_SKIP_DTS_BUILD: "1",
+      MERCLAW_BUILD_PRIVATE_QA: "1",
+      MERCLAW_ENABLE_PRIVATE_QA_CLI: "1",
+      MERCLAW_RUN_NODE_SKIP_DTS_BUILD: "1",
     });
-    expect(calls[0]?.env?.OPENCLAW_BUNDLED_PLUGIN_BUILD_IDS).toBeUndefined();
+    expect(calls[0]?.env?.MERCLAW_BUNDLED_PLUGIN_BUILD_IDS).toBeUndefined();
   });
 
   it("does not prebuild private QA dist when the required entries already exist", async () => {

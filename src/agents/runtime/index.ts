@@ -6,18 +6,18 @@ import type { AgentCoreRuntimeDeps } from "../../../packages/agent-core/src/runt
 import type { CompleteSimpleFn, StreamFn } from "../../../packages/llm-core/src/index.js";
 import { completeSimple, streamSimple } from "../../plugin-sdk/llm.js";
 
-export const openClawAgentCoreRuntime = {
+export const merClawAgentCoreRuntime = {
   completeSimple: completeSimple as unknown as CompleteSimpleFn,
   streamSimple: streamSimple as unknown as StreamFn,
 } satisfies AgentCoreRuntimeDeps;
 
 export class Agent extends CoreAgent {
   constructor(options: CoreAgentOptions = {}) {
-    super({ runtime: openClawAgentCoreRuntime, ...options });
+    super({ runtime: merClawAgentCoreRuntime, ...options });
   }
 }
 
-// OpenClaw-owned reusable agent core
+// MerClaw-owned reusable agent core
 export * from "../../../packages/agent-core/src/index.js";
 // Proxy utilities
 export * from "./proxy.js";

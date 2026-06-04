@@ -20,7 +20,7 @@ import {
   updateSessionGoalStatus,
   updateSessionStore,
 } from "../config/sessions.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { isChatStopCommandText } from "../gateway/chat-abort.js";
 import {
   projectRecentChatDisplayMessages,
@@ -105,7 +105,7 @@ const silentRuntime = {
   },
 };
 
-function hasProviderWildcardModelAllowlist(cfg: OpenClawConfig) {
+function hasProviderWildcardModelAllowlist(cfg: MerClawConfig) {
   const modelMaps = [
     cfg.agents?.defaults?.models,
     ...(cfg.agents?.list?.map((agent) => agent?.models) ?? []),
@@ -115,7 +115,7 @@ function hasProviderWildcardModelAllowlist(cfg: OpenClawConfig) {
   );
 }
 
-function resolveConfiguredReplaceModeCatalog(cfg: OpenClawConfig) {
+function resolveConfiguredReplaceModeCatalog(cfg: MerClawConfig) {
   if (cfg.models?.mode !== "replace") {
     return undefined;
   }
@@ -125,11 +125,11 @@ function resolveConfiguredReplaceModeCatalog(cfg: OpenClawConfig) {
   return buildConfiguredModelCatalog({ cfg });
 }
 
-function shouldLoadFullGatewayCatalogForReplaceMode(cfg: OpenClawConfig) {
+function shouldLoadFullGatewayCatalogForReplaceMode(cfg: MerClawConfig) {
   return cfg.models?.mode === "replace" && hasProviderWildcardModelAllowlist(cfg);
 }
 
-async function loadEmbeddedTuiModelCatalog(cfg: OpenClawConfig) {
+async function loadEmbeddedTuiModelCatalog(cfg: MerClawConfig) {
   const configuredCatalog = resolveConfiguredReplaceModeCatalog(cfg);
   if (configuredCatalog !== undefined) {
     return configuredCatalog;

@@ -17,7 +17,7 @@ const runCronIsolatedAgentTurn = await loadRunCronIsolatedAgentTurn();
 function getEmbeddedAgentParams(): { authProfileId?: string; authProfileIdSource?: string } {
   const params = runEmbeddedAgentMock.mock.calls[0]?.[0];
   if (!params || typeof params !== "object" || Array.isArray(params)) {
-    throw new Error("Expected embedded OpenClaw agent params to be an object");
+    throw new Error("Expected embedded MerClaw agent params to be an object");
   }
   return params;
 }

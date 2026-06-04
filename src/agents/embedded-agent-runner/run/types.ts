@@ -56,7 +56,7 @@ export type EmbeddedRunAttemptParams = EmbeddedRunAttemptBase & {
   modelId: string;
   /** Session-pinned embedded harness id. Prevents runtime hot-switching. */
   agentHarnessId?: string;
-  /** OpenClaw-owned runtime policy prepared by the orchestrator for this attempt. */
+  /** MerClaw-owned runtime policy prepared by the orchestrator for this attempt. */
   runtimePlan?: AgentRuntimePlan;
   /** Host-issued scope for harnesses that mirror native child runs into task state. */
   agentHarnessTaskRuntimeScope?: AgentHarnessTaskRuntimeScope;
@@ -67,7 +67,7 @@ export type EmbeddedRunAttemptParams = EmbeddedRunAttemptBase & {
   /** Auth profile store already resolved during startup for this attempt. */
   authProfileStore: AuthProfileStore;
   /**
-   * Full auth profile store for OpenClaw tool availability.
+   * Full auth profile store for MerClaw tool availability.
    * Plugin-owned harnesses may scope `authProfileStore` to model transport credentials.
    */
   toolAuthProfileStore?: AuthProfileStore;

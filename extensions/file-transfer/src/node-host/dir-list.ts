@@ -1,6 +1,6 @@
 import path from "node:path";
-import { parseStrictNonNegativeInteger } from "openclaw/plugin-sdk/number-runtime";
-import { root } from "openclaw/plugin-sdk/security-runtime";
+import { parseStrictNonNegativeInteger } from "merclaw/plugin-sdk/number-runtime";
+import { root } from "merclaw/plugin-sdk/security-runtime";
 import { mimeFromExtension } from "../shared/mime.js";
 import {
   classifyFsSafeReadError,

@@ -10,7 +10,7 @@ function usage(): string {
   return [
     "Usage: node --import tsx scripts/test-force.ts",
     "",
-    "Clears the configured OpenClaw gateway port, then runs the local test suite.",
+    "Clears the configured MerClaw gateway port, then runs the local test suite.",
     "",
     "Options:",
     "  -h, --help    Show this help.",
@@ -53,13 +53,13 @@ function killGatewayListeners(port: number): PortProcess[] {
 
 function runTests() {
   const isolatedLock =
-    process.env.OPENCLAW_GATEWAY_LOCK ??
-    path.join(os.tmpdir(), `openclaw-gateway.lock.test.${Date.now()}`);
+    process.env.MERCLAW_GATEWAY_LOCK ??
+    path.join(os.tmpdir(), `merclaw-gateway.lock.test.${Date.now()}`);
   const result = spawnSync(process.execPath, ["scripts/test-projects.mjs"], {
     stdio: "inherit",
     env: {
       ...process.env,
-      OPENCLAW_GATEWAY_LOCK: isolatedLock,
+      MERCLAW_GATEWAY_LOCK: isolatedLock,
     },
   });
   if (result.error) {

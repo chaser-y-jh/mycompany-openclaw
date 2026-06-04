@@ -6,7 +6,7 @@ const { fetchWithSsrFGuardMock } = vi.hoisted(() => ({
   fetchWithSsrFGuardMock: vi.fn(),
 }));
 
-vi.mock("openclaw/plugin-sdk/ssrf-runtime", () => ({
+vi.mock("merclaw/plugin-sdk/ssrf-runtime", () => ({
   fetchWithSsrFGuard: fetchWithSsrFGuardMock,
 }));
 
@@ -191,7 +191,7 @@ describe("Volcengine speech provider", () => {
           "X-Api-App-Key": "aGjiRDfUWi",
         },
         body: JSON.stringify({
-          user: { uid: "openclaw" },
+          user: { uid: "merclaw" },
           req_params: {
             text: "hello",
             speaker: "zh_male_aojiao_mars_bigtts",

@@ -1,12 +1,12 @@
 import { createHash, randomUUID } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import type { PluginStateSyncKeyedStore } from "openclaw/plugin-sdk/plugin-state-runtime";
+import type { PluginStateSyncKeyedStore } from "merclaw/plugin-sdk/plugin-state-runtime";
 import {
   appendRegularFile,
   privateFileStore,
   privateFileStoreSync,
-} from "openclaw/plugin-sdk/security-runtime";
+} from "merclaw/plugin-sdk/security-runtime";
 import { getOptionalVoiceCallStateRuntime } from "../runtime-state.js";
 import { CallRecordSchema, TerminalStates, type CallId, type CallRecord } from "../types.js";
 
@@ -57,7 +57,7 @@ function resolveCallLogPath(storePath: string): string {
 }
 
 function resolvePluginStateEnv(storePath: string): NodeJS.ProcessEnv {
-  return { ...process.env, OPENCLAW_STATE_DIR: storePath };
+  return { ...process.env, MERCLAW_STATE_DIR: storePath };
 }
 
 function createCallRecordStateStores(storePath: string): CallRecordStateStores | null {

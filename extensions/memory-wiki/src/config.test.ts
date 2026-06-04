@@ -3,7 +3,7 @@ import path from "node:path";
 import {
   validateJsonSchemaValue,
   type JsonSchemaObject,
-} from "openclaw/plugin-sdk/json-schema-runtime";
+} from "merclaw/plugin-sdk/json-schema-runtime";
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_WIKI_RENDER_MODE,
@@ -16,7 +16,7 @@ import {
 
 function compileManifestConfigSchema() {
   const manifest = JSON.parse(
-    fs.readFileSync(new URL("../openclaw.plugin.json", import.meta.url), "utf8"),
+    fs.readFileSync(new URL("../merclaw.plugin.json", import.meta.url), "utf8"),
   ) as { configSchema: JsonSchemaObject };
   return (value: unknown) =>
     validateJsonSchemaValue({

@@ -12,7 +12,7 @@ The Workboard plugin adds an optional Kanban-style board to the
 them to agents, and jump from a card into the linked dashboard session.
 
 Workboard is intentionally small. It tracks local operating work for an
-OpenClaw Gateway; it is not a replacement for GitHub Issues, Linear, Jira, or
+MerClaw Gateway; it is not a replacement for GitHub Issues, Linear, Jira, or
 other team project management systems.
 
 ## Default state
@@ -23,14 +23,14 @@ in plugin config.
 Enable it with:
 
 ```bash
-openclaw plugins enable workboard
-openclaw gateway restart
+merclaw plugins enable workboard
+merclaw gateway restart
 ```
 
 Then open the dashboard:
 
 ```bash
-openclaw dashboard
+merclaw dashboard
 ```
 
 The Workboard tab appears in the dashboard navigation. If the tab is visible
@@ -57,7 +57,7 @@ Each card stores:
   or agent-updated changes
 
 Cards are stored in the plugin's Gateway state. They are local to the Gateway
-state directory and move with the rest of that Gateway's OpenClaw state.
+state directory and move with the rest of that Gateway's MerClaw state.
 
 Workboard keeps compact per-card metadata so operators can see how a card moved
 through the board without opening the linked session. Events, attempt summaries,
@@ -141,7 +141,7 @@ has the claim token returned by `workboard_claim`. Dashboard operators still use
 the normal Gateway RPC surface and can recover or reassign cards.
 
 Workboard stores durable board data in a plugin-owned relational SQLite database
-under the OpenClaw state directory. Boards, cards, labels, lifecycle events,
+under the MerClaw state directory. Boards, cards, labels, lifecycle events,
 run attempts, comments, dependency links, proof, artifact references,
 attachment metadata and blobs, diagnostics, notifications, worker logs,
 protocol state, and subscriptions are persisted in Workboard tables instead of
@@ -149,7 +149,7 @@ plugin key-value entries. A card export still preserves the board narrative
 without inlining attachment blob contents.
 
 Installations that used Workboard in the `.28` release can run
-`openclaw doctor --fix` to migrate the shipped legacy plugin-state namespaces
+`merclaw doctor --fix` to migrate the shipped legacy plugin-state namespaces
 (`workboard.cards`, `workboard.boards`, and `workboard.notify`) into the
 relational database. If a legacy `workboard.attachments` namespace is present,
 doctor migrates those attachment blobs too.
@@ -160,7 +160,7 @@ blocked cards that need attention, repeated failures, done cards without proof,
 and running cards that only have a loose session link.
 
 Dispatch is intentionally Gateway-local. It does not spawn arbitrary operating
-system processes; normal OpenClaw subagent sessions still own execution. A
+system processes; normal MerClaw subagent sessions still own execution. A
 dispatch nudge promotes dependency-ready cards, records dispatch metadata on
 ready cards, blocks expired claims or timed-out runs, marks board-configured
 triage cards as orchestration candidates, then claims a small batch of ready
@@ -203,7 +203,7 @@ diagnostics.
 Ready-card worker starts can happen from:
 
 - the dashboard dispatch action
-- `openclaw workboard dispatch`
+- `merclaw workboard dispatch`
 - `/workboard dispatch` on a command-capable channel
 
 All three entry points use the Gateway subagent runtime when the Gateway is
@@ -215,7 +215,7 @@ timed-out runs, but it cannot start workers.
 
 Board metadata can include orchestration settings such as `autoDecompose`,
 `autoDecomposePerDispatch`, `defaultAssignee`, and `orchestratorProfile`.
-OpenClaw records the orchestration intent and exposes it in worker context; the
+MerClaw records the orchestration intent and exposes it in worker context; the
 actual specification and decomposition still happens through the normal
 Workboard tools.
 
@@ -224,13 +224,13 @@ Workboard tools.
 The plugin registers a root CLI command:
 
 ```bash
-openclaw workboard list
-openclaw workboard create "Fix stale card lifecycle" --priority high --labels bug,workboard
-openclaw workboard show <card-id>
-openclaw workboard dispatch
+merclaw workboard list
+merclaw workboard create "Fix stale card lifecycle" --priority high --labels bug,workboard
+merclaw workboard show <card-id>
+merclaw workboard dispatch
 ```
 
-`openclaw workboard dispatch` calls the running Gateway so worker starts use the
+`merclaw workboard dispatch` calls the running Gateway so worker starts use the
 same subagent runtime as the dashboard. If the Gateway is unavailable, it falls
 back to data-only dispatch so dependency promotion, stale-claim cleanup, and
 timeout blocking can still run. Auth, permission, and validation failures still
@@ -336,8 +336,8 @@ standard plugin entry:
 Disable it again with:
 
 ```bash
-openclaw plugins disable workboard
-openclaw gateway restart
+merclaw plugins disable workboard
+merclaw gateway restart
 ```
 
 ## Troubleshooting
@@ -347,7 +347,7 @@ openclaw gateway restart
 Check plugin policy:
 
 ```bash
-openclaw plugins inspect workboard --runtime --json
+merclaw plugins inspect workboard --runtime --json
 ```
 
 If `plugins.allow` is configured, add `workboard` to that allowlist. If
@@ -369,7 +369,7 @@ run state.
 Confirm there is at least one `ready` card without an active claim:
 
 ```bash
-openclaw workboard list --status ready
+merclaw workboard list --status ready
 ```
 
 If the CLI reports data-only dispatch, start or restart the Gateway and retry.

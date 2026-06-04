@@ -1,5 +1,5 @@
 import type { CliBackendConfig } from "../config/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import type { ContextEngineHostCapability } from "../context-engine/types.js";
 
 export type PluginTextReplacement = {
@@ -10,7 +10,7 @@ export type PluginTextReplacement = {
 export type PluginTextTransforms = {
   /** Rewrites applied to outbound prompt text before provider/CLI transport. */
   input?: PluginTextReplacement[];
-  /** Rewrites applied to inbound assistant text before OpenClaw consumes it. */
+  /** Rewrites applied to inbound assistant text before MerClaw consumes it. */
   output?: PluginTextReplacement[];
 };
 
@@ -20,7 +20,7 @@ export type CliBundleMcpMode =
   | "gemini-system-settings";
 
 export type CliBackendPrepareExecutionContext = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   workspaceDir: string;
   agentDir?: string;
   provider: string;
@@ -45,7 +45,7 @@ export type CliBackendThinkingLevel =
   | "max";
 
 export type CliBackendResolveExecutionArgsContext = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   workspaceDir: string;
   provider: string;
   modelId: string;
@@ -64,7 +64,7 @@ export type CliBackendAuthEpochMode = "combined" | "profile-only";
 export type CliBackendNativeToolMode = "none" | "always-on";
 
 export type CliBackendNormalizeConfigContext = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   backendId: string;
   agentId?: string;
 };
@@ -98,9 +98,9 @@ export type CliBackendPlugin = {
     };
   };
   /**
-   * Whether OpenClaw should inject bundle MCP config for this backend.
+   * Whether MerClaw should inject bundle MCP config for this backend.
    *
-   * Keep this opt-in. Only backends that explicitly consume OpenClaw's bundle
+   * Keep this opt-in. Only backends that explicitly consume MerClaw's bundle
    * MCP bridge should enable it.
    */
   bundleMcp?: boolean;
@@ -130,7 +130,7 @@ export type CliBackendPlugin = {
    * the generic CLI runner or prompt builder.
    */
   transformSystemPrompt?: (ctx: {
-    config?: OpenClawConfig;
+    config?: MerClawConfig;
     workspaceDir?: string;
     provider: string;
     modelId: string;
@@ -148,7 +148,7 @@ export type CliBackendPlugin = {
   /**
    * Preferred auth-profile id when the caller did not explicitly lock one.
    *
-   * Use this when the backend should consume a canonical OpenClaw auth profile
+   * Use this when the backend should consume a canonical MerClaw auth profile
    * rather than ambient host auth by default.
    */
   defaultAuthProfileId?: string;
@@ -156,7 +156,7 @@ export type CliBackendPlugin = {
    * Session/auth epoch source policy.
    *
    * `combined` keeps the legacy "host credential + auth profile" fingerprint.
-   * `profile-only` treats the selected OpenClaw auth profile as the sole auth
+   * `profile-only` treats the selected MerClaw auth profile as the sole auth
    * owner for session invalidation when one is present.
    */
   authEpochMode?: CliBackendAuthEpochMode;
@@ -178,12 +178,12 @@ export type CliBackendPlugin = {
    * Backend-owned per-run argv rewrite.
    *
    * Use this for request-scoped CLI dialect flags that should not be modeled
-   * as static config, such as mapping OpenClaw thinking levels to a backend's
+   * as static config, such as mapping MerClaw thinking levels to a backend's
    * native effort flag.
    */
   resolveExecutionArgs?: CliBackendResolveExecutionArgs;
   /**
-   * Whether this CLI backend can expose native tools outside OpenClaw's tool
+   * Whether this CLI backend can expose native tools outside MerClaw's tool
    * catalog. Backends that cannot provide a true no-tools mode must mark
    * themselves as `always-on` so callers that require disabled tools fail
    * closed instead of launching a native harness.

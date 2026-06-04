@@ -1,4 +1,4 @@
-import { normalizeProviderId } from "openclaw/plugin-sdk/provider-model-shared";
+import { normalizeProviderId } from "merclaw/plugin-sdk/provider-model-shared";
 import { resolveBedrockClaudeThinkingProfile } from "./thinking-policy.js";
 
 export function resolveThinkingProfile(params: { provider: string; modelId: string }) {

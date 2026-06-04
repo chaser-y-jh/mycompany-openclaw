@@ -24,7 +24,7 @@ describe("ProxyConfigSchema", () => {
       enabled: true,
       proxyUrl: "http://127.0.0.1:3128",
       tls: {
-        caFile: "/etc/openclaw/proxy-ca.pem",
+        caFile: "/etc/merclaw/proxy-ca.pem",
       },
       loopbackMode: "gateway-only",
     });
@@ -32,7 +32,7 @@ describe("ProxyConfigSchema", () => {
       enabled: true,
       proxyUrl: "http://127.0.0.1:3128",
       tls: {
-        caFile: "/etc/openclaw/proxy-ca.pem",
+        caFile: "/etc/merclaw/proxy-ca.pem",
       },
       loopbackMode: "gateway-only",
     });
@@ -89,7 +89,7 @@ describe("ProxyConfigSchema", () => {
         enabled: true,
         proxyUrl: "https://proxy.example.com:8443",
         tls: {
-          ca: "/etc/openclaw/proxy-ca.pem",
+          ca: "/etc/merclaw/proxy-ca.pem",
         },
       }),
     ).toThrow();

@@ -1,4 +1,4 @@
-import { logError } from "openclaw/plugin-sdk/logging-core";
+import { logError } from "merclaw/plugin-sdk/logging-core";
 import {
   parseDiscordComponentCustomId,
   parseDiscordModalCustomId,

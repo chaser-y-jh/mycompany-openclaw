@@ -94,7 +94,7 @@ function createCatalogEntry(id: string, label: string): ChannelPluginCatalogEntr
   return {
     id,
     label,
-    pluginId: `@openclaw/${id}`,
+    pluginId: `@merclaw/${id}`,
     origin: "official",
     meta: {
       id,
@@ -103,7 +103,7 @@ function createCatalogEntry(id: string, label: string): ChannelPluginCatalogEntr
       docsPath: `/channels/${id}`,
       blurb: label,
     },
-    install: { npmSpec: `@openclaw/${id}` },
+    install: { npmSpec: `@merclaw/${id}` },
   } as unknown as ChannelPluginCatalogEntry;
 }
 
@@ -374,11 +374,11 @@ describe("channels list", () => {
       pluginId: "discord",
       channelId: "discord",
       label: "Discord",
-      installSpec: "@openclaw/discord",
-      installCommand: "openclaw plugins install @openclaw/discord",
-      doctorFixCommand: "openclaw doctor --fix",
+      installSpec: "@merclaw/discord",
+      installCommand: "merclaw plugins install @merclaw/discord",
+      doctorFixCommand: "merclaw doctor --fix",
       repairHint:
-        "Install the official external plugin with: openclaw plugins install @openclaw/discord, or run: openclaw doctor --fix.",
+        "Install the official external plugin with: merclaw plugins install @merclaw/discord, or run: merclaw doctor --fix.",
     });
     mocks.readConfigFileSnapshot.mockResolvedValue({
       ...baseConfigSnapshot,
@@ -406,7 +406,7 @@ describe("channels list", () => {
     expect(output).toContain("configured");
     expect(output).toContain("disabled");
     expect(output).toContain(
-      "run openclaw plugins install @openclaw/discord or openclaw doctor --fix",
+      "run merclaw plugins install @merclaw/discord or merclaw doctor --fix",
     );
     expect(output).not.toContain("no configured chat channels");
   });
@@ -422,11 +422,11 @@ describe("channels list", () => {
       pluginId: "discord",
       channelId: "discord",
       label: "Discord",
-      installSpec: "@openclaw/discord",
-      installCommand: "openclaw plugins install @openclaw/discord",
-      doctorFixCommand: "openclaw doctor --fix",
+      installSpec: "@merclaw/discord",
+      installCommand: "merclaw plugins install @merclaw/discord",
+      doctorFixCommand: "merclaw doctor --fix",
       repairHint:
-        "Install the official external plugin with: openclaw plugins install @openclaw/discord, or run: openclaw doctor --fix.",
+        "Install the official external plugin with: merclaw plugins install @merclaw/discord, or run: merclaw doctor --fix.",
     });
     mocks.readConfigFileSnapshot.mockResolvedValue({
       ...baseConfigSnapshot,

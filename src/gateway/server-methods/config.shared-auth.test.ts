@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import type { RestartSentinelPayload } from "../../infra/restart-sentinel.js";
 import {
   createConfigHandlerHarness,
@@ -9,7 +9,7 @@ import {
 
 const readConfigFileSnapshotForWriteMock = vi.fn();
 const writeConfigFileMock = vi.fn();
-const persistedConfigResultMock = vi.fn((config: OpenClawConfig) => config);
+const persistedConfigResultMock = vi.fn((config: MerClawConfig) => config);
 const validateConfigObjectWithPluginsMock = vi.fn();
 const prepareSecretsRuntimeSnapshotMock = vi.fn();
 const scheduleGatewaySigusr1RestartMock = vi.fn(() => ({
@@ -28,15 +28,15 @@ vi.mock("../../config/config.js", async () => {
     await vi.importActual<typeof import("../../config/config.js")>("../../config/config.js");
   return {
     ...actual,
-    createConfigIO: () => ({ configPath: "/tmp/openclaw.json" }),
+    createConfigIO: () => ({ configPath: "/tmp/merclaw.json" }),
     readConfigFileSnapshotForWrite: readConfigFileSnapshotForWriteMock,
     validateConfigObjectWithPlugins: validateConfigObjectWithPluginsMock,
     writeConfigFile: writeConfigFileMock,
-    replaceConfigFile: async (params: { nextConfig: OpenClawConfig; writeOptions?: unknown }) => {
+    replaceConfigFile: async (params: { nextConfig: MerClawConfig; writeOptions?: unknown }) => {
       await writeConfigFileMock(params.nextConfig, params.writeOptions);
       const persistedConfig = persistedConfigResultMock(params.nextConfig);
       return {
-        path: "/tmp/openclaw.json",
+        path: "/tmp/merclaw.json",
         previousHash: "base-hash",
         snapshot: createConfigWriteSnapshot(params.nextConfig),
         nextConfig: persistedConfig,
@@ -87,32 +87,32 @@ afterEach(() => {
 });
 
 beforeEach(() => {
-  validateConfigObjectWithPluginsMock.mockImplementation((config: OpenClawConfig) => ({
+  validateConfigObjectWithPluginsMock.mockImplementation((config: MerClawConfig) => ({
     ok: true,
     config,
   }));
   prepareSecretsRuntimeSnapshotMock.mockImplementation(
-    async ({ config }: { config: OpenClawConfig }) => ({
+    async ({ config }: { config: MerClawConfig }) => ({
       config,
     }),
   );
   restartSentinelMocks.writeRestartSentinel.mockClear();
-  persistedConfigResultMock.mockImplementation((config: OpenClawConfig) => config);
+  persistedConfigResultMock.mockImplementation((config: MerClawConfig) => config);
 });
 
 describe("config shared auth disconnects", () => {
   it("returns the persisted config from config.set write results", async () => {
-    const prevConfig: OpenClawConfig = {
+    const prevConfig: MerClawConfig = {
       gateway: {
         port: 19000,
       },
     };
-    const submittedConfig: OpenClawConfig = {
+    const submittedConfig: MerClawConfig = {
       gateway: {
         port: 19001,
       },
     };
-    const persistedConfig: OpenClawConfig = {
+    const persistedConfig: MerClawConfig = {
       gateway: {
         port: 19001,
       },
@@ -139,7 +139,7 @@ describe("config shared auth disconnects", () => {
       true,
       {
         ok: true,
-        path: "/tmp/openclaw.json",
+        path: "/tmp/merclaw.json",
         config: persistedConfig,
       },
       undefined,
@@ -147,7 +147,7 @@ describe("config shared auth disconnects", () => {
   });
 
   it("does not disconnect shared-auth clients for config.set auth writes without restart", async () => {
-    const prevConfig: OpenClawConfig = {
+    const prevConfig: MerClawConfig = {
       gateway: {
         auth: {
           mode: "token",
@@ -155,7 +155,7 @@ describe("config shared auth disconnects", () => {
         },
       },
     };
-    const nextConfig: OpenClawConfig = {
+    const nextConfig: MerClawConfig = {
       gateway: {
         auth: {
           mode: "token",
@@ -182,7 +182,7 @@ describe("config shared auth disconnects", () => {
   });
 
   it("lets the config reloader own hybrid-mode auth restarts", async () => {
-    const prevConfig: OpenClawConfig = {
+    const prevConfig: MerClawConfig = {
       gateway: {
         auth: {
           mode: "token",
@@ -209,7 +209,7 @@ describe("config shared auth disconnects", () => {
   });
 
   it("does not disconnect shared-auth clients when config.patch changes only inactive password auth", async () => {
-    const prevConfig: OpenClawConfig = {
+    const prevConfig: MerClawConfig = {
       gateway: {
         auth: {
           mode: "token",
@@ -236,7 +236,7 @@ describe("config shared auth disconnects", () => {
   });
 
   it("disconnects gateway-auth clients when active trusted-proxy policy changes", async () => {
-    const prevConfig: OpenClawConfig = {
+    const prevConfig: MerClawConfig = {
       gateway: {
         auth: {
           mode: "trusted-proxy",
@@ -276,7 +276,7 @@ describe("config shared auth disconnects", () => {
   });
 
   it("disconnects gateway-auth clients when trusted-proxy source list changes", async () => {
-    const prevConfig: OpenClawConfig = {
+    const prevConfig: MerClawConfig = {
       gateway: {
         auth: {
           mode: "trusted-proxy",
@@ -310,7 +310,7 @@ describe("config shared auth disconnects", () => {
   });
 
   it("does not disconnect gateway-auth clients when trusted-proxy lists are reordered", async () => {
-    const prevConfig: OpenClawConfig = {
+    const prevConfig: MerClawConfig = {
       gateway: {
         auth: {
           mode: "trusted-proxy",
@@ -353,7 +353,7 @@ describe("config shared auth disconnects", () => {
   });
 
   it("still schedules a direct restart for hot mode when the reloader cannot apply the change", async () => {
-    const prevConfig: OpenClawConfig = {
+    const prevConfig: MerClawConfig = {
       gateway: {
         reload: {
           mode: "hot",
@@ -378,7 +378,7 @@ describe("config shared auth disconnects", () => {
   });
 
   it("does not add an agent continuation from generic control-plane sessionKey params", async () => {
-    const prevConfig: OpenClawConfig = {
+    const prevConfig: MerClawConfig = {
       gateway: {
         reload: {
           mode: "hot",

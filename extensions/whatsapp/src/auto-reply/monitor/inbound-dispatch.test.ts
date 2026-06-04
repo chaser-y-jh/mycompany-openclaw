@@ -41,8 +41,8 @@ const {
   ),
 }));
 
-vi.mock("openclaw/plugin-sdk/channel-outbound", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("openclaw/plugin-sdk/channel-outbound")>();
+vi.mock("merclaw/plugin-sdk/channel-outbound", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("merclaw/plugin-sdk/channel-outbound")>();
   return {
     ...actual,
     deliverInboundReplyWithMessageSendContext: deliverInboundReplyWithMessageSendContextMock,
@@ -51,8 +51,8 @@ vi.mock("openclaw/plugin-sdk/channel-outbound", async (importOriginal) => {
 
 vi.mock("./runtime-api.js", async () => {
   const { finalizeInboundContext } = await vi.importActual<
-    typeof import("openclaw/plugin-sdk/reply-runtime")
-  >("openclaw/plugin-sdk/reply-runtime");
+    typeof import("merclaw/plugin-sdk/reply-runtime")
+  >("merclaw/plugin-sdk/reply-runtime");
   return {
     dispatchReplyWithBufferedBlockDispatcher: dispatchReplyWithBufferedBlockDispatcherMock,
     finalizeInboundContext,

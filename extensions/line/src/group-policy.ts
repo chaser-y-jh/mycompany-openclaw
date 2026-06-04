@@ -1,8 +1,8 @@
-import { resolveChannelGroupRequireMention } from "openclaw/plugin-sdk/channel-policy";
-import { resolveExactLineGroupConfigKey, type OpenClawConfig } from "./channel-api.js";
+import { resolveChannelGroupRequireMention } from "merclaw/plugin-sdk/channel-policy";
+import { resolveExactLineGroupConfigKey, type MerClawConfig } from "./channel-api.js";
 
 type LineGroupContext = {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   accountId?: string | null;
   groupId?: string | null;
 };

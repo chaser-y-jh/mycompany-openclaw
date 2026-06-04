@@ -136,7 +136,7 @@ beforeEach(() => {
   vi.mocked(enqueueFollowupRun).mockClear();
   vi.mocked(refreshQueuedFollowupSession).mockClear();
   vi.mocked(scheduleFollowupDrain).mockClear();
-  vi.stubEnv("OPENCLAW_TEST_FAST", "1");
+  vi.stubEnv("MERCLAW_TEST_FAST", "1");
 });
 
 function createMinimalRun(params?: {
@@ -192,7 +192,7 @@ function createMinimalRun(params?: {
       },
       timeoutMs: 1_000,
       blockReplyBreak: "message_end",
-      skipProviderRuntimeHints: process.env.OPENCLAW_TEST_FAST === "1",
+      skipProviderRuntimeHints: process.env.MERCLAW_TEST_FAST === "1",
       ...params?.runOverrides,
     },
   } as unknown as FollowupRun;
@@ -425,7 +425,7 @@ describe("runReplyAgent heartbeat followup guard", () => {
 
 describe("runReplyAgent pending final delivery capture", () => {
   async function createSessionStoreFile(entry: SessionEntry) {
-    const dir = await mkdtemp(join(tmpdir(), "openclaw-agent-runner-pending-"));
+    const dir = await mkdtemp(join(tmpdir(), "merclaw-agent-runner-pending-"));
     const storePath = join(dir, "sessions.json");
     await writeFile(storePath, JSON.stringify({ main: entry }), "utf8");
     return storePath;
@@ -664,7 +664,7 @@ describe("runReplyAgent typing (heartbeat)", () => {
   });
 
   it("does not persist heartbeat ack text as pending final delivery", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "openclaw-heartbeat-pending-"));
+    const dir = await mkdtemp(join(tmpdir(), "merclaw-heartbeat-pending-"));
     const storePath = join(dir, "sessions.json");
     await writeFile(
       storePath,
@@ -1157,7 +1157,7 @@ describe("runReplyAgent typing (heartbeat)", () => {
       responseUsage: "tokens",
     };
     const sessionStore = { main: sessionEntry };
-    const storeRoot = await mkdtemp(join(tmpdir(), "openclaw-internal-fallback-"));
+    const storeRoot = await mkdtemp(join(tmpdir(), "merclaw-internal-fallback-"));
     const storePath = join(storeRoot, "sessions.json");
     await writeFile(storePath, JSON.stringify(sessionStore), "utf-8");
     try {
@@ -2199,7 +2199,7 @@ describe("runReplyAgent typing (heartbeat)", () => {
       fallbackNoticeReason: "selected model unavailable",
     };
     const sessionStore = { main: sessionEntry };
-    const dir = await mkdtemp(join(tmpdir(), "openclaw-agent-runner-cli-alias-"));
+    const dir = await mkdtemp(join(tmpdir(), "merclaw-agent-runner-cli-alias-"));
     const storePath = join(dir, "sessions.json");
     await writeFile(storePath, JSON.stringify({ main: sessionEntry }), "utf8");
 

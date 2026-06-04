@@ -79,7 +79,7 @@ describe("parseIMessageNotification", () => {
         attachments: [
           {
             original_path:
-              "/Users/openclaw/Library/Messages/Attachments/AA/BB/link.pluginPayloadAttachment",
+              "/Users/merclaw/Library/Messages/Attachments/AA/BB/link.pluginPayloadAttachment",
             mime_type: null,
             missing: false,
             transfer_name: "link.pluginPayloadAttachment",

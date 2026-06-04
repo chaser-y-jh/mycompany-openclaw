@@ -30,7 +30,7 @@ describe("memory manager atomic reindex", () => {
   let tempIndexPath: string;
 
   beforeAll(async () => {
-    fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-mem-atomic-"));
+    fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-mem-atomic-"));
   });
 
   beforeEach(async () => {

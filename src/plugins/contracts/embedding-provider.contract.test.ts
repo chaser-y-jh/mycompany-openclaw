@@ -1,8 +1,8 @@
-import * as embeddingProviderSdk from "openclaw/plugin-sdk/embedding-providers";
+import * as embeddingProviderSdk from "merclaw/plugin-sdk/embedding-providers";
 import {
   createPluginRegistryFixture,
   registerVirtualTestPlugin,
-} from "openclaw/plugin-sdk/plugin-test-contracts";
+} from "merclaw/plugin-sdk/plugin-test-contracts";
 import { describe, expect, it } from "vitest";
 import { getRegisteredEmbeddingProvider } from "../embedding-providers.js";
 

@@ -1,24 +1,24 @@
 {
-  "name": "@openclaw/openshell-sandbox",
+  "name": "@merclaw/openshell-sandbox",
   "version": "2026.5.31",
-  "description": "OpenClaw sandbox backend for the NVIDIA OpenShell CLI with mirrored local workspaces and SSH command execution.",
+  "description": "MerClaw sandbox backend for the NVIDIA OpenShell CLI with mirrored local workspaces and SSH command execution.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/openclaw/openclaw"
+    "url": "https://github.com/merclaw/merclaw"
   },
   "type": "module",
   "dependencies": {
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@merclaw/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ],
     "install": {
-      "npmSpec": "@openclaw/openshell-sandbox",
+      "npmSpec": "@merclaw/openshell-sandbox",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.5.12-beta.1"
     },
@@ -26,7 +26,7 @@
       "pluginApi": ">=2026.5.31"
     },
     "build": {
-      "openclawVersion": "2026.5.31",
+      "merclawVersion": "2026.5.31",
       "bundledDist": false
     },
     "release": {

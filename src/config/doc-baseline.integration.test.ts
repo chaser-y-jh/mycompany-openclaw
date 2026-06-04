@@ -110,7 +110,7 @@ describe("config doc baseline integration", () => {
     const msteamsEntry = requireEntry(byPath, "channels.msteams");
     expect(msteamsEntry.label).toBe("Microsoft Teams");
     expect(msteamsEntry.help).toBe("Teams SDK; enterprise support.");
-    expect(msteamsEntry.label).not.toContain("@openclaw/");
+    expect(msteamsEntry.label).not.toContain("@merclaw/");
 
     const matrixEntry = requireEntry(byPath, "channels.matrix");
     expect(matrixEntry.label).toBe("Matrix");
@@ -138,7 +138,7 @@ describe("config doc baseline integration", () => {
   });
 
   it("supports check mode for stale hash files", async () => {
-    await withTempDir({ prefix: "openclaw-config-doc-baseline-" }, async (tempRoot) => {
+    await withTempDir({ prefix: "merclaw-config-doc-baseline-" }, async (tempRoot) => {
       const rendered = getSharedRendered();
 
       const initial = await writeConfigDocBaselineArtifacts({

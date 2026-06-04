@@ -45,7 +45,7 @@ const repairableToolCallContentTypes = new Set([
   "tool_use",
 ]);
 
-const invalidJsonlSlotType = "__openclaw_invalid_jsonl_slot";
+const invalidJsonlSlotType = "__merclaw_invalid_jsonl_slot";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
@@ -424,7 +424,7 @@ function fileEntryOrMigrationSlot(value: unknown, index: number): FileEntry {
   }
   return {
     type: invalidJsonlSlotType,
-    id: `__openclaw_invalid_jsonl_slot_${index}`,
+    id: `__merclaw_invalid_jsonl_slot_${index}`,
     parentId: null,
     timestamp: "1970-01-01T00:00:00.000Z",
   } as unknown as FileEntry;

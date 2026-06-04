@@ -8,7 +8,7 @@ title: "Skill Workshop"
 sidebarTitle: "Skill Workshop"
 ---
 
-Skill Workshop is OpenClaw's governed path for creating and updating workspace
+Skill Workshop is MerClaw's governed path for creating and updating workspace
 skills.
 
 Agents and operators do not write active `SKILL.md` files directly through this
@@ -82,7 +82,7 @@ approval prompt before they run. Set `skills.workshop.approvalPolicy` to
 Create a new skill proposal:
 
 ```bash
-openclaw skills workshop propose-create \
+merclaw skills workshop propose-create \
   --name morning-catchup \
   --description "Daily inbox catch-up: triage, archive, surface, draft, plan" \
   --proposal ./PROPOSAL.md
@@ -91,28 +91,28 @@ openclaw skills workshop propose-create \
 Create an update proposal for an existing workspace skill:
 
 ```bash
-openclaw skills workshop propose-update trip-planning --proposal ./PROPOSAL.md
+merclaw skills workshop propose-update trip-planning --proposal ./PROPOSAL.md
 ```
 
 List and inspect:
 
 ```bash
-openclaw skills workshop list
-openclaw skills workshop inspect <proposal-id>
+merclaw skills workshop list
+merclaw skills workshop inspect <proposal-id>
 ```
 
 Revise before approval:
 
 ```bash
-openclaw skills workshop revise <proposal-id> --proposal ./PROPOSAL.md
+merclaw skills workshop revise <proposal-id> --proposal ./PROPOSAL.md
 ```
 
 Close out the proposal:
 
 ```bash
-openclaw skills workshop apply <proposal-id>
-openclaw skills workshop reject <proposal-id> --reason "Duplicate"
-openclaw skills workshop quarantine <proposal-id> --reason "Needs security review"
+merclaw skills workshop apply <proposal-id>
+merclaw skills workshop reject <proposal-id> --reason "Duplicate"
+merclaw skills workshop quarantine <proposal-id> --reason "Needs security review"
 ```
 
 ## Proposal content
@@ -138,7 +138,7 @@ fields: `status`, proposal `version`, and proposal `date`.
 Use `--proposal-dir` when the proposed skill needs files beside `PROPOSAL.md`:
 
 ```bash
-openclaw skills workshop propose-create \
+merclaw skills workshop propose-create \
   --name weekly-update \
   --description "Friday wrap-up: stats, highlights, next week's top three" \
   --proposal-dir ./weekly-update-proposal
@@ -188,7 +188,7 @@ direct filesystem operations.
 }
 ```
 
-- `autonomous.enabled`: allows OpenClaw to create pending proposals from durable
+- `autonomous.enabled`: allows MerClaw to create pending proposals from durable
   conversation signals after successful turns. Default: `false`.
 - `approvalPolicy: "pending"`: requires an approval prompt before
   agent-initiated `apply`, `reject`, or `quarantine`.
@@ -218,7 +218,7 @@ Read-only methods require `operator.read`. Mutating methods require
 ## Storage
 
 ```text
-<OPENCLAW_STATE_DIR>/skill-workshop/
+<MERCLAW_STATE_DIR>/skill-workshop/
   proposals.json
   proposals/<proposal-id>/
     proposal.json
@@ -231,7 +231,7 @@ Read-only methods require `operator.read`. Mutating methods require
     templates/
 ```
 
-Default state directory: `~/.openclaw`.
+Default state directory: `~/.merclaw`.
 
 - `proposal.json`: canonical proposal record.
 - `proposals.json`: fast listing index, rebuildable from proposal folders.
@@ -256,7 +256,7 @@ Default state directory: `~/.openclaw`.
 | `Target skill changed after proposal creation` | Revise the proposal against the current target, or create a new proposal.                    |
 | `Proposal scan failed`                         | Inspect scanner findings, then revise or quarantine the proposal.                            |
 | `Support file paths must be under one of...`   | Move support files under `assets/`, `examples/`, `references/`, `scripts/`, or `templates/`. |
-| Proposal does not show in list                 | Check the selected `--agent` workspace and `OPENCLAW_STATE_DIR`.                             |
+| Proposal does not show in list                 | Check the selected `--agent` workspace and `MERCLAW_STATE_DIR`.                             |
 
 ## Related
 
@@ -264,4 +264,4 @@ Default state directory: `~/.openclaw`.
 - [Creating skills](/tools/creating-skills) for hand-written `SKILL.md`
   basics
 - [Skills config](/tools/skills-config) for the full `skills.workshop` schema
-- [Skills CLI](/cli/skills) for `openclaw skills` commands
+- [Skills CLI](/cli/skills) for `merclaw skills` commands

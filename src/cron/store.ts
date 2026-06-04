@@ -1,13 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
-import { isRecord } from "@openclaw/normalization-core/record-coerce";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { isRecord } from "@merclaw/normalization-core/record-coerce";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import { expandHomePrefix } from "../infra/home-dir.js";
 import { replaceFileAtomic } from "../infra/replace-file.js";
 import {
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
+  openMerClawStateDatabase,
+  runMerClawStateWriteTransaction,
+} from "../state/merclaw-state-db.js";
 import { resolveConfigDir } from "../utils.js";
 import { parseJsonWithJson5Fallback } from "../utils/parse-json-compat.js";
 import { cronStoreKey } from "./store/key.js";
@@ -60,7 +60,7 @@ export function resolveCronJobsStorePath(storePath?: string) {
 export async function loadCronJobsStoreWithConfigJobs(storePath: string): Promise<LoadedCronStore> {
   const resolvedStorePath = path.resolve(storePath);
   const storeKey = cronStoreKey(resolvedStorePath);
-  const database = openOpenClawStateDatabase().db;
+  const database = openMerClawStateDatabase().db;
   const rows = loadCronRows(database, storeKey);
   if (rows.length > 0) {
     return loadedCronStoreFromRows(rows);
@@ -81,7 +81,7 @@ export async function loadCronJobsStore(storePath: string): Promise<CronStoreFil
 export function loadCronJobsStoreSync(storePath: string): CronStoreFile {
   const resolvedStorePath = path.resolve(storePath);
   const storeKey = cronStoreKey(resolvedStorePath);
-  const database = openOpenClawStateDatabase().db;
+  const database = openMerClawStateDatabase().db;
   const rows = loadCronRows(database, storeKey);
   if (rows.length > 0) {
     return loadedCronStoreFromRows(rows).store;
@@ -99,7 +99,7 @@ async function atomicWrite(filePath: string, content: string, dirMode = 0o700): 
     content,
     dirMode,
     mode: 0o600,
-    tempPrefix: ".openclaw-cron",
+    tempPrefix: ".merclaw-cron",
     renameMaxRetries: 3,
     copyFallbackOnPermissionError: true,
   });
@@ -113,13 +113,13 @@ export async function saveCronJobsStore(
   const resolvedStorePath = path.resolve(storePath);
   const storeKey = cronStoreKey(resolvedStorePath);
   if (opts?.stateOnly) {
-    runOpenClawStateWriteTransaction(({ db }) => {
+    runMerClawStateWriteTransaction(({ db }) => {
       updateCronRuntimeRows(db, storeKey, store);
     });
     return;
   }
   assertCronStoreCanPersist(store);
-  runOpenClawStateWriteTransaction(({ db }) => {
+  runMerClawStateWriteTransaction(({ db }) => {
     replaceCronRows(db, storeKey, store);
   });
 }

@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { sanitizeGoogleAssistantFirstOrdering } from "../../shared/google-turn-ordering.js";
 import { truncateUtf16Safe } from "../../utils.js";
 import { resolveAgentConfig } from "../agent-scope.js";
@@ -114,7 +114,7 @@ type PolicyDigest = {
   omittedLines: number;
 };
 
-export function resolveBootstrapMaxChars(cfg?: OpenClawConfig, agentId?: string | null): number {
+export function resolveBootstrapMaxChars(cfg?: MerClawConfig, agentId?: string | null): number {
   const raw =
     cfg && agentId
       ? (resolveAgentConfig(cfg, agentId)?.bootstrapMaxChars ??
@@ -127,7 +127,7 @@ export function resolveBootstrapMaxChars(cfg?: OpenClawConfig, agentId?: string 
 }
 
 export function resolveBootstrapTotalMaxChars(
-  cfg?: OpenClawConfig,
+  cfg?: MerClawConfig,
   agentId?: string | null,
 ): number {
   const raw =
@@ -142,7 +142,7 @@ export function resolveBootstrapTotalMaxChars(
 }
 
 export function resolveBootstrapPromptTruncationWarningMode(
-  cfg?: OpenClawConfig,
+  cfg?: MerClawConfig,
 ): "off" | "once" | "always" {
   const raw = cfg?.agents?.defaults?.bootstrapPromptTruncationWarning;
   if (raw === "off" || raw === "once" || raw === "always") {

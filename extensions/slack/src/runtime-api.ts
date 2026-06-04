@@ -3,22 +3,22 @@ export {
   PAIRING_APPROVED_MESSAGE,
   projectCredentialSnapshotFields,
   resolveConfiguredFromRequiredCredentialStatuses,
-} from "openclaw/plugin-sdk/channel-status";
+} from "merclaw/plugin-sdk/channel-status";
 export { buildChannelConfigSchema, SlackConfigSchema } from "../config-api.js";
-export type { ChannelMessageActionContext } from "openclaw/plugin-sdk/channel-contract";
-export { DEFAULT_ACCOUNT_ID } from "openclaw/plugin-sdk/account-id";
+export type { ChannelMessageActionContext } from "merclaw/plugin-sdk/channel-contract";
+export { DEFAULT_ACCOUNT_ID } from "merclaw/plugin-sdk/account-id";
 export type {
   ChannelPlugin,
-  OpenClawPluginApi,
+  MerClawPluginApi,
   PluginRuntime,
-} from "openclaw/plugin-sdk/channel-plugin-common";
-export type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-export type { SlackAccountConfig } from "openclaw/plugin-sdk/config-contracts";
+} from "merclaw/plugin-sdk/channel-plugin-common";
+export type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+export type { SlackAccountConfig } from "merclaw/plugin-sdk/config-contracts";
 export {
   emptyPluginConfigSchema,
   formatPairingApproveHint,
-} from "openclaw/plugin-sdk/channel-plugin-common";
-export { loadOutboundMediaFromUrl } from "openclaw/plugin-sdk/outbound-media";
+} from "merclaw/plugin-sdk/channel-plugin-common";
+export { loadOutboundMediaFromUrl } from "merclaw/plugin-sdk/outbound-media";
 export { looksLikeSlackTargetId, normalizeSlackMessagingTarget } from "./target-parsing.js";
 export { getChatChannelMeta } from "./channel-api.js";
 export {
@@ -30,4 +30,4 @@ export {
   readReactionParams,
   readStringParam,
   withNormalizedTimestamp,
-} from "openclaw/plugin-sdk/channel-actions";
+} from "merclaw/plugin-sdk/channel-actions";

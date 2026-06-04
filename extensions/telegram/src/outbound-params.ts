@@ -1,7 +1,7 @@
 import {
   parseStrictInteger,
   parseStrictNonNegativeInteger,
-} from "openclaw/plugin-sdk/number-runtime";
+} from "merclaw/plugin-sdk/number-runtime";
 
 function parseIntegerId(value: unknown): number | undefined {
   return parseStrictInteger(value);

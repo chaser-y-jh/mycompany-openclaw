@@ -1,6 +1,6 @@
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { MerClawConfig } from "../config/config.js";
 import { resetLogger, setLoggerOverride } from "../logging/logger.js";
 import { PLUGIN_MODEL_CATALOG_GENERATED_BY } from "./plugin-model-catalog.js";
 
@@ -14,7 +14,7 @@ let loadModelCatalog: typeof import("./model-catalog.js").loadModelCatalog;
 let modelSupportsInput: typeof import("./model-catalog.js").modelSupportsInput;
 let resetModelCatalogCacheForTest: typeof import("./model-catalog.js").resetModelCatalogCacheForTest;
 let augmentCatalogMock: ReturnType<typeof vi.fn>;
-let ensureOpenClawModelsJsonMock: ReturnType<typeof vi.fn>;
+let ensureMerClawModelsJsonMock: ReturnType<typeof vi.fn>;
 let currentPluginMetadataSnapshotMock: ReturnType<typeof vi.fn<(...args: unknown[]) => unknown>>;
 let loadPluginMetadataSnapshotMock: ReturnType<typeof vi.fn<(...args: unknown[]) => unknown>>;
 let readFileMock: ReturnType<typeof vi.fn>;
@@ -235,17 +235,17 @@ describe("loadModelCatalog", () => {
       ...(await importOriginal<typeof import("node:fs/promises")>()),
       readFile: readFileMock,
     }));
-    ensureOpenClawModelsJsonMock = vi.fn().mockResolvedValue({ agentDir: "/tmp", wrote: false });
+    ensureMerClawModelsJsonMock = vi.fn().mockResolvedValue({ agentDir: "/tmp", wrote: false });
     vi.doMock("./models-config.js", () => ({
-      ensureOpenClawModelsJson: ensureOpenClawModelsJsonMock,
+      ensureMerClawModelsJson: ensureMerClawModelsJsonMock,
     }));
     vi.doMock("./agent-scope.js", () => ({
-      resolveAgentWorkspaceDir: (cfg: OpenClawConfig, agentId: string) => {
+      resolveAgentWorkspaceDir: (cfg: MerClawConfig, agentId: string) => {
         const entry = cfg.agents?.list?.find((entry) => entry.id === agentId);
-        return entry?.workspace ?? cfg.agents?.defaults?.workspace ?? "/tmp/openclaw-workspace";
+        return entry?.workspace ?? cfg.agents?.defaults?.workspace ?? "/tmp/merclaw-workspace";
       },
-      resolveDefaultAgentDir: () => "/tmp/openclaw",
-      resolveDefaultAgentId: (cfg: OpenClawConfig) =>
+      resolveDefaultAgentDir: () => "/tmp/merclaw",
+      resolveDefaultAgentId: (cfg: MerClawConfig) =>
         cfg.agents?.list?.find((entry) => entry.default)?.id ?? cfg.agents?.list?.[0]?.id ?? "main",
     }));
     vi.doMock("../plugins/provider-runtime.runtime.js", () => ({
@@ -300,7 +300,7 @@ describe("loadModelCatalog", () => {
     readFileMock.mockRejectedValue(
       Object.assign(new Error("models.json missing"), { code: "ENOENT" }),
     );
-    ensureOpenClawModelsJsonMock.mockClear();
+    ensureMerClawModelsJsonMock.mockClear();
     augmentCatalogMock.mockClear();
     currentPluginMetadataSnapshotMock.mockReset();
     currentPluginMetadataSnapshotMock.mockReturnValue(undefined);
@@ -329,7 +329,7 @@ describe("loadModelCatalog", () => {
     try {
       const getCallCount = mockCatalogImportFailThenRecover();
 
-      const cfg = {} as OpenClawConfig;
+      const cfg = {} as MerClawConfig;
       const first = await loadModelCatalog({ config: cfg });
       expect(first).toStrictEqual([]);
 
@@ -365,13 +365,13 @@ describe("loadModelCatalog", () => {
       agents: {
         list: [{ id: "workspace-agent", default: true, workspace: "/tmp/workspace-agent" }],
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
 
     await loadModelCatalog({ config });
 
     expect(discoverModels).toHaveBeenCalledWith(
       expect.anything(),
-      "/tmp/openclaw",
+      "/tmp/merclaw",
       expect.objectContaining({ workspaceDir: "/tmp/workspace-agent" }),
     );
   });
@@ -380,7 +380,7 @@ describe("loadModelCatalog", () => {
     const models = [{ id: "existing", name: "Existing", provider: "ollama" }];
     mockAgentDiscoveryModels(models);
 
-    const first = await loadModelCatalog({ config: {} as OpenClawConfig });
+    const first = await loadModelCatalog({ config: {} as MerClawConfig });
     expect(first).toStrictEqual([
       {
         id: "existing",
@@ -397,7 +397,7 @@ describe("loadModelCatalog", () => {
     resetModelCatalogCacheForTest();
     mockAgentDiscoveryModels(models);
 
-    const second = await loadModelCatalog({ config: {} as OpenClawConfig });
+    const second = await loadModelCatalog({ config: {} as MerClawConfig });
     expect(second).toStrictEqual([
       {
         id: "existing",
@@ -459,7 +459,7 @@ describe("loadModelCatalog", () => {
           }) as unknown as AgentModelDiscoveryModule,
       );
 
-      const result = await loadModelCatalog({ config: {} as OpenClawConfig });
+      const result = await loadModelCatalog({ config: {} as MerClawConfig });
       expect(result).toEqual([{ id: "gpt-4.1", name: "GPT-4.1", provider: "openai" }]);
     } finally {
       setLoggerOverride(null);
@@ -499,13 +499,13 @@ describe("loadModelCatalog", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       readOnly: true,
     });
 
     const entry = requireCatalogEntry(result, "openai", "gpt-test");
     expect(entry.name).toBe("GPT Test");
-    expect(ensureOpenClawModelsJsonMock).not.toHaveBeenCalled();
+    expect(ensureMerClawModelsJsonMock).not.toHaveBeenCalled();
     expect(importAgentDiscoveryModule).not.toHaveBeenCalled();
     expect(loadPluginMetadataSnapshotMock).not.toHaveBeenCalled();
   });
@@ -536,7 +536,7 @@ describe("loadModelCatalog", () => {
       }),
     );
 
-    const result = await loadModelCatalog({ config: {} as OpenClawConfig, readOnly: true });
+    const result = await loadModelCatalog({ config: {} as MerClawConfig, readOnly: true });
 
     expect(result).toEqual([
       {
@@ -549,13 +549,13 @@ describe("loadModelCatalog", () => {
         compat: undefined,
       },
     ]);
-    expect(ensureOpenClawModelsJsonMock).not.toHaveBeenCalled();
+    expect(ensureMerClawModelsJsonMock).not.toHaveBeenCalled();
     expect(augmentCatalogMock).not.toHaveBeenCalled();
   });
 
   it("loads generated plugin catalog rows in read-only mode", async () => {
-    const catalogPath = "/tmp/openclaw/plugins/read-only-shard/catalog.json";
-    mkdirSync("/tmp/openclaw/plugins/read-only-shard", { recursive: true });
+    const catalogPath = "/tmp/merclaw/plugins/read-only-shard/catalog.json";
+    mkdirSync("/tmp/merclaw/plugins/read-only-shard", { recursive: true });
     writeFileSync(catalogPath, "{}");
     try {
       readFileMock.mockImplementation(async (pathname: string) => {
@@ -601,7 +601,7 @@ describe("loadModelCatalog", () => {
           agents: {
             list: [{ id: "workspace-agent", default: true, workspace: "/tmp/read-only-workspace" }],
           },
-        } as OpenClawConfig,
+        } as MerClawConfig,
         readOnly: true,
       });
 
@@ -622,7 +622,7 @@ describe("loadModelCatalog", () => {
         }),
       ).toBe(true);
     } finally {
-      rmSync("/tmp/openclaw/plugins/read-only-shard", { recursive: true, force: true });
+      rmSync("/tmp/merclaw/plugins/read-only-shard", { recursive: true, force: true });
     }
   });
 
@@ -673,7 +673,7 @@ describe("loadModelCatalog", () => {
       importAgentDiscoveryModule as unknown as () => Promise<AgentModelDiscoveryModule>,
     );
 
-    const result = await loadModelCatalog({ config: {} as OpenClawConfig, readOnly: true });
+    const result = await loadModelCatalog({ config: {} as MerClawConfig, readOnly: true });
 
     expect(result).toEqual([
       {
@@ -684,7 +684,7 @@ describe("loadModelCatalog", () => {
         reasoning: false,
       },
     ]);
-    expect(ensureOpenClawModelsJsonMock).not.toHaveBeenCalled();
+    expect(ensureMerClawModelsJsonMock).not.toHaveBeenCalled();
     expect(importAgentDiscoveryModule).not.toHaveBeenCalled();
   });
 
@@ -699,7 +699,7 @@ describe("loadModelCatalog", () => {
       }),
     );
 
-    const result = await loadModelCatalog({ config: {} as OpenClawConfig, readOnly: true });
+    const result = await loadModelCatalog({ config: {} as MerClawConfig, readOnly: true });
 
     expect(result).toEqual([
       {
@@ -712,7 +712,7 @@ describe("loadModelCatalog", () => {
         compat: undefined,
       },
     ]);
-    expect(ensureOpenClawModelsJsonMock).not.toHaveBeenCalled();
+    expect(ensureMerClawModelsJsonMock).not.toHaveBeenCalled();
     expect(augmentCatalogMock).not.toHaveBeenCalled();
   });
 
@@ -732,7 +732,7 @@ describe("loadModelCatalog", () => {
       }),
     );
 
-    const result = await loadModelCatalog({ config: {} as OpenClawConfig, readOnly: true });
+    const result = await loadModelCatalog({ config: {} as MerClawConfig, readOnly: true });
 
     expect(requireCatalogEntry(result, "custom", "vendor/modern-model").name).toBe("Latest Alias");
     expect(requireCatalogEntry(result, "custom", "vendor/trimmed").name).toBe("vendor/trimmed");
@@ -755,7 +755,7 @@ describe("loadModelCatalog", () => {
     );
 
     const result = await loadModelCatalog({
-      config: {} as OpenClawConfig,
+      config: {} as MerClawConfig,
       readOnly: true,
       metadataSnapshot: modelIdNormalizationSnapshot() as unknown as NonNullable<
         Parameters<typeof loadModelCatalog>[0]
@@ -796,7 +796,7 @@ describe("loadModelCatalog", () => {
     };
 
     const result = await loadModelCatalog({
-      config: {} as OpenClawConfig,
+      config: {} as MerClawConfig,
       readOnly: true,
       metadataSnapshot: metadataSnapshot as unknown as NonNullable<
         Parameters<typeof loadModelCatalog>[0]
@@ -828,7 +828,7 @@ describe("loadModelCatalog", () => {
       }),
     );
 
-    const result = await loadModelCatalog({ config: {} as OpenClawConfig, readOnly: true });
+    const result = await loadModelCatalog({ config: {} as MerClawConfig, readOnly: true });
 
     expect(requireCatalogEntry(result, "custom", "vendor/model-a").id).toBe("vendor/model-a");
     expect(requireCatalogEntry(result, "custom", "vendor/model-d").id).toBe("vendor/model-d");
@@ -856,7 +856,7 @@ describe("loadModelCatalog", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
     });
 
     expect(requireCatalogEntry(result, "custom", "vendor/model-a").id).toBe("vendor/model-a");
@@ -874,7 +874,7 @@ describe("loadModelCatalog", () => {
       { provider: "custom", id: "model-d", name: "Model D" },
     ]);
 
-    const result = await loadModelCatalog({ config: {} as OpenClawConfig, useCache: false });
+    const result = await loadModelCatalog({ config: {} as MerClawConfig, useCache: false });
 
     expect(requireCatalogEntry(result, "custom", "vendor/model-a").name).toBe("Model A");
     expect(requireCatalogEntry(result, "custom", "vendor/model-d").name).toBe("Model D");
@@ -896,7 +896,7 @@ describe("loadModelCatalog", () => {
       }),
     );
 
-    const result = await loadModelCatalog({ config: {} as OpenClawConfig, readOnly: true });
+    const result = await loadModelCatalog({ config: {} as MerClawConfig, readOnly: true });
 
     expect(result).toEqual([
       {
@@ -918,7 +918,7 @@ describe("loadModelCatalog", () => {
         compat: undefined,
       },
     ]);
-    expect(ensureOpenClawModelsJsonMock).not.toHaveBeenCalled();
+    expect(ensureMerClawModelsJsonMock).not.toHaveBeenCalled();
     expect(augmentCatalogMock).not.toHaveBeenCalled();
   });
 
@@ -939,7 +939,7 @@ describe("loadModelCatalog", () => {
       },
     ]);
 
-    const result = await loadModelCatalog({ config: {} as OpenClawConfig });
+    const result = await loadModelCatalog({ config: {} as MerClawConfig });
     expectNoCatalogEntry(result, "openai", "gpt-5.3-codex-spark");
     const entry = requireCatalogEntry(result, "openai", "gpt-5.4");
     expect(entry.name).toBe("GPT-5.3 Codex");
@@ -973,7 +973,7 @@ describe("loadModelCatalog", () => {
       },
     ]);
 
-    const result = await loadModelCatalog({ config: {} as OpenClawConfig });
+    const result = await loadModelCatalog({ config: {} as MerClawConfig });
     expectNoCatalogEntry(result, "openai", "gpt-5.3-codex-spark");
     expectNoCatalogEntry(result, "azure-openai-responses", "gpt-5.3-codex-spark");
     expectNoCatalogEntry(result, "openai", "gpt-5.3-codex-spark");
@@ -1015,7 +1015,7 @@ describe("loadModelCatalog", () => {
       },
     ]);
 
-    const result = await loadModelCatalog({ config: {} as OpenClawConfig });
+    const result = await loadModelCatalog({ config: {} as MerClawConfig });
     expect(requireCatalogEntry(result, "openai", "gpt-5.1-codex-mini").name).toBe(
       "GPT-5.1 Codex Mini",
     );
@@ -1068,7 +1068,7 @@ describe("loadModelCatalog", () => {
       },
     ]);
 
-    const result = await loadModelCatalog({ config: {} as OpenClawConfig });
+    const result = await loadModelCatalog({ config: {} as MerClawConfig });
 
     const entry = requireCatalogEntry(result, "openai", "gpt-5.4");
     expect(entry.name).toBe("GPT-5.3 Codex");
@@ -1090,7 +1090,7 @@ describe("loadModelCatalog", () => {
       },
     ]);
 
-    const result = await loadModelCatalog({ config: {} as OpenClawConfig });
+    const result = await loadModelCatalog({ config: {} as MerClawConfig });
 
     const entry = requireCatalogEntry(result, "kilocode", "google/gemini-3.1-pro-preview");
     expect(entry.name).toBe("Gemini 3 Pro Preview");
@@ -1106,7 +1106,7 @@ describe("loadModelCatalog", () => {
     });
     currentPluginMetadataSnapshotMock.mockReturnValue(snapshot);
 
-    const result = loadManifestModelCatalog({ config: {} as OpenClawConfig });
+    const result = loadManifestModelCatalog({ config: {} as MerClawConfig });
 
     expect(loadPluginMetadataSnapshotMock).not.toHaveBeenCalled();
     expect(augmentCatalogMock).not.toHaveBeenCalled();
@@ -1123,7 +1123,7 @@ describe("loadModelCatalog", () => {
   });
 
   it("reuses planned manifest catalog rows for the same config and metadata snapshot", () => {
-    const config = {} as OpenClawConfig;
+    const config = {} as MerClawConfig;
     const snapshot = manifestModelCatalogSnapshot({ id: "external-fast" });
     currentPluginMetadataSnapshotMock.mockReturnValue(snapshot);
 
@@ -1144,7 +1144,7 @@ describe("loadModelCatalog", () => {
   });
 
   it("refreshes manifest catalog rows when the metadata snapshot changes", () => {
-    const config = {} as OpenClawConfig;
+    const config = {} as MerClawConfig;
     currentPluginMetadataSnapshotMock
       .mockReturnValueOnce(manifestModelCatalogSnapshot({ id: "external-fast" }))
       .mockReturnValue(manifestModelCatalogSnapshot({ id: "external-slow" }));
@@ -1159,7 +1159,7 @@ describe("loadModelCatalog", () => {
 
   it("lets read-only manifest catalog reuse the current workspace-scoped snapshot", () => {
     loadManifestModelCatalog({
-      config: {} as OpenClawConfig,
+      config: {} as MerClawConfig,
       fallbackToMetadataScan: false,
     });
 
@@ -1169,10 +1169,10 @@ describe("loadModelCatalog", () => {
   });
 
   it("passes explicit env when checking current manifest catalog snapshot compatibility", () => {
-    const env = { HOME: "/tmp/openclaw-model-catalog-env" } as NodeJS.ProcessEnv;
+    const env = { HOME: "/tmp/merclaw-model-catalog-env" } as NodeJS.ProcessEnv;
 
     loadManifestModelCatalog({
-      config: {} as OpenClawConfig,
+      config: {} as MerClawConfig,
       env,
       fallbackToMetadataScan: false,
     });
@@ -1201,7 +1201,7 @@ describe("loadModelCatalog", () => {
       },
     ]);
 
-    const result = await loadModelCatalog({ config: {} as OpenClawConfig });
+    const result = await loadModelCatalog({ config: {} as MerClawConfig });
 
     expect(requireCatalogEntry(result, "ollama", "llama3.2").name).toBe("Llama 3.2");
     expect(
@@ -1232,7 +1232,7 @@ describe("loadModelCatalog", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
     });
 
     const entry = requireCatalogEntry(result, "modelscope", "Qwen/Qwen3.5-35B-A3B");
@@ -1270,7 +1270,7 @@ describe("loadModelCatalog", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
     });
 
     const entry = requireCatalogEntry(result, "vllm", "Qwen/Qwen3-8B");
@@ -1320,7 +1320,7 @@ describe("loadModelCatalog", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       readOnly: true,
     });
 
@@ -1365,7 +1365,7 @@ describe("loadModelCatalog", () => {
       ],
     });
 
-    const result = await loadModelCatalog({ config: {} as OpenClawConfig });
+    const result = await loadModelCatalog({ config: {} as MerClawConfig });
 
     const entry = requireCatalogEntry(result, "byteplus", "seed-1-8-251228");
     expect(entry.name).toBe("Doubao Seed 1.8");
@@ -1397,7 +1397,7 @@ describe("loadModelCatalog", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
     });
 
     const entry = requireCatalogEntry(result, "lmstudio", "qwen3.6-27b@iq3_xxs");
@@ -1428,7 +1428,7 @@ describe("loadModelCatalog", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
     });
 
     const matches = result.filter((entry) => findModelInCatalog([entry], "z-ai", "glm-5"));
@@ -1442,7 +1442,7 @@ describe("loadModelCatalog", () => {
   it("does not add unrelated models when provider plugins return nothing", async () => {
     mockSingleOpenAiCatalogModel();
 
-    const result = await loadModelCatalog({ config: {} as OpenClawConfig });
+    const result = await loadModelCatalog({ config: {} as MerClawConfig });
 
     expect(
       result.some((entry) => entry.provider === "qianfan" && entry.id === "deepseek-v3.2"),
@@ -1468,7 +1468,7 @@ describe("loadModelCatalog", () => {
       },
     ]);
 
-    const result = await loadModelCatalog({ config: {} as OpenClawConfig });
+    const result = await loadModelCatalog({ config: {} as MerClawConfig });
 
     const matches = result.filter(
       (entry) => entry.provider === "kilocode" && entry.id === "kilo/auto",

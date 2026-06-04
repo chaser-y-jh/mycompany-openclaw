@@ -526,7 +526,7 @@ describe("before_tool_call loop detection behavior", () => {
   });
 
   it("emits skill usage diagnostics when a run reads a known skill instruction file", async () => {
-    const workspaceDir = path.join("/tmp", "openclaw-skill-usage");
+    const workspaceDir = path.join("/tmp", "merclaw-skill-usage");
     const skillBaseDir = path.join(workspaceDir, ".agents", "skills", "demo-skill");
     const skillFilePath = path.join(skillBaseDir, "SKILL.md");
     const execute = vi.fn().mockResolvedValue({ content: [{ type: "text", text: "skill" }] });
@@ -584,13 +584,13 @@ describe("before_tool_call loop detection behavior", () => {
   });
 
   it("matches home-compacted skill instruction paths from prompts", async () => {
-    const skillBaseDir = path.join(os.homedir(), ".openclaw", "skills", "home-skill");
+    const skillBaseDir = path.join(os.homedir(), ".merclaw", "skills", "home-skill");
     const skillFilePath = path.join(skillBaseDir, "SKILL.md");
     const execute = vi.fn().mockResolvedValue({ content: [{ type: "text", text: "skill" }] });
     const tool = wrapToolWithBeforeToolCallHook({ name: "read", execute } as any, {
       agentId: "main",
       sessionKey: "session-key",
-      workspaceDir: "/tmp/openclaw-workspace",
+      workspaceDir: "/tmp/merclaw-workspace",
       skillsSnapshot: {
         prompt: "",
         skills: [{ name: "home-skill" }],
@@ -600,7 +600,7 @@ describe("before_tool_call loop detection behavior", () => {
             description: "Home skill",
             filePath: skillFilePath,
             baseDir: skillBaseDir,
-            source: "openclaw-managed",
+            source: "merclaw-managed",
           }),
         ],
       },
@@ -610,7 +610,7 @@ describe("before_tool_call loop detection behavior", () => {
     await withDiagnosticEvents(async (emitted, flush) => {
       await tool.execute(
         "tool-call-home-skill",
-        { path: "~/.openclaw/skills/home-skill/SKILL.md" },
+        { path: "~/.merclaw/skills/home-skill/SKILL.md" },
         undefined,
         undefined,
       );
@@ -628,7 +628,7 @@ describe("before_tool_call loop detection behavior", () => {
   });
 
   it("does not count unused read params as skill usage", async () => {
-    const workspaceDir = path.join("/tmp", "openclaw-skill-unused-param");
+    const workspaceDir = path.join("/tmp", "merclaw-skill-unused-param");
     const skillBaseDir = path.join(workspaceDir, ".agents", "skills", "demo-skill");
     const execute = vi.fn().mockResolvedValue({ content: [{ type: "text", text: "readme" }] });
     const tool = wrapToolWithBeforeToolCallHook({ name: "read", execute } as any, {
@@ -923,7 +923,7 @@ describe("before_tool_call requireApproval handling", () => {
     mockGetGlobalHookRunner.mockReturnValue(hookRunner as any);
     // Keep the global singleton aligned as a fallback in case another setup path
     // preloads hook-runner-global before this test's module reset/mocks take effect.
-    const hookRunnerGlobalStateKey = Symbol.for("openclaw.plugins.hook-runner-global-state");
+    const hookRunnerGlobalStateKey = Symbol.for("merclaw.plugins.hook-runner-global-state");
     const hookRunnerGlobalState = globalThis as Record<
       symbol,
       { hookRunner: unknown; registry?: unknown } | undefined
@@ -1032,7 +1032,7 @@ describe("before_tool_call requireApproval handling", () => {
   });
 
   it("passes host-derived apply_patch paths to before_tool_call hooks", async () => {
-    const cwd = path.join("/tmp", "openclaw-hooks");
+    const cwd = path.join("/tmp", "merclaw-hooks");
     const patch = [
       "*** Begin Patch",
       "*** Add File: src/new.ts",
@@ -1169,7 +1169,7 @@ describe("before_tool_call requireApproval handling", () => {
   });
 
   it("recomputes host-derived paths after trusted policy param rewrites", async () => {
-    const cwd = path.join("/tmp", "openclaw-hooks");
+    const cwd = path.join("/tmp", "merclaw-hooks");
     const originalPatch = [
       "*** Begin Patch",
       "*** Add File: src/old.ts",

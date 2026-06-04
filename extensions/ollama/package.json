@@ -1,16 +1,16 @@
 {
-  "name": "@openclaw/ollama-provider",
+  "name": "@merclaw/ollama-provider",
   "version": "2026.5.31",
   "private": true,
-  "description": "OpenClaw Ollama provider plugin",
+  "description": "MerClaw Ollama provider plugin",
   "type": "module",
   "dependencies": {
     "typebox": "1.1.39"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@merclaw/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ]

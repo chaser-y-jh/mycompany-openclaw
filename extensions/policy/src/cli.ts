@@ -10,7 +10,7 @@ import {
   resolveDefaultAgentId,
   type HealthCheckContext,
   type HealthFinding,
-} from "openclaw/plugin-sdk/health";
+} from "merclaw/plugin-sdk/health";
 import { POLICY_CHECK_IDS, evaluatePolicy } from "./doctor/register.js";
 import {
   buildPolicyConformanceReport,

@@ -1,4 +1,4 @@
-# OpenClaw QA Scenario Pack
+# MerClaw QA Scenario Pack
 
 Single source of truth for repo-backed QA suite bootstrap data.
 `qa-lab` should treat this directory as a generic markdown scenario pack:
@@ -19,7 +19,7 @@ Coverage tracking:
 - keep IDs behavior-shaped, broad enough to reuse, lowercase, and dotted or dashed
 - prefer reusing an existing feature ID over minting a scenario-shaped ID
 - avoid copying the scenario title into coverage IDs
-- use `pnpm openclaw qa coverage` to render the current inventory
+- use `pnpm merclaw qa coverage` to render the current inventory
 - use `runtimeParityTier` for runtime-pair gate membership: `standard`,
   `optional`, `live-only`, or `soak`
 - treat the old `coverage: ["id"]` / `coverage: - id` list shape as invalid
@@ -27,13 +27,13 @@ Coverage tracking:
 
 Runtime parity tiers:
 
-- `standard`: required Codex-vs-OpenClaw mock gate coverage for first-hour depth and
-  default runtime-tool fixtures. OpenClaw dynamic integration tools in this
-  tier are hard-gated by `openclaw qa coverage --tools --summary`; Codex-native
+- `standard`: required Codex-vs-MerClaw mock gate coverage for first-hour depth and
+  default runtime-tool fixtures. MerClaw dynamic integration tools in this
+  tier are hard-gated by `merclaw qa coverage --tools --summary`; Codex-native
   workspace rows remain separately tracked until native/live behavior is the
-  asserted surface. Rows that explicitly target searchable/deferred OpenClaw
+  asserted surface. Rows that explicitly target searchable/deferred MerClaw
   dynamic loading stay report-only unless a fixture promotes them to required. Selected with
-  `openclaw qa suite --runtime-pair openclaw,codex --runtime-parity-tier standard`
+  `merclaw qa suite --runtime-pair merclaw,codex --runtime-parity-tier standard`
 - `optional`: profile-, plugin-, or external-service-dependent runtime-tool
   fixtures that stay out of the default release gate
 - `live-only`: scenarios that need real provider/runtime behavior rather than
@@ -64,7 +64,7 @@ agent:
   identityMarkdown: |-
     # Dev C-3PO
 
-    You are the OpenClaw QA operator agent.
+    You are the MerClaw QA operator agent.
 
     Persona:
     - protocol-minded
@@ -80,7 +80,7 @@ agent:
     - end with a concise protocol report
 kickoffTask: |-
   QA mission:
-  Understand this OpenClaw repo from source + docs before acting.
+  Understand this MerClaw repo from source + docs before acting.
   The repo is available in your workspace at `./repo/`.
   Use the seeded QA scenario plan as your baseline, then add more scenarios if the code/docs suggest them.
   Run the scenarios through the real qa-channel surfaces where possible.

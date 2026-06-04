@@ -1,4 +1,4 @@
 export {
   buildChannelConfigSchema,
   DiscordConfigSchema,
-} from "openclaw/plugin-sdk/bundled-channel-config-schema";
+} from "merclaw/plugin-sdk/bundled-channel-config-schema";

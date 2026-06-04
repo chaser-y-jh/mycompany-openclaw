@@ -1,10 +1,10 @@
 import { homedir } from "node:os";
 import path from "node:path";
-import { asRecord } from "@openclaw/acp-core/record-shared";
+import { asRecord } from "@merclaw/acp-core/record-shared";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/normalization-core/string-coerce";
 import { isKnownCoreToolId } from "../agents/tool-catalog.js";
 import { isMutatingToolCall } from "../agents/tool-mutation.js";
 import { isPathInside } from "../infra/path-guards.js";

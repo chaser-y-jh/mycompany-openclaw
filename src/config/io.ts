@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { collectManifestModelIdNormalizationPolicies } from "@openclaw/model-catalog-core/provider-model-id-normalization";
+import { collectManifestModelIdNormalizationPolicies } from "@merclaw/model-catalog-core/provider-model-id-normalization";
 import JSON5 from "json5";
 import { sanitizeTerminalText } from "../../packages/terminal-core/src/safe-text.js";
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../agents/agent-scope-config.js";
@@ -108,7 +108,7 @@ import {
   type RuntimeConfigWriteNotification,
 } from "./runtime-snapshot.js";
 import { resolveShellEnvExpectedKeys } from "./shell-env-expected-keys.js";
-import type { OpenClawConfig, ConfigFileSnapshot, LegacyConfigIssue } from "./types.js";
+import type { MerClawConfig, ConfigFileSnapshot, LegacyConfigIssue } from "./types.js";
 import {
   validateConfigObjectRawWithPlugins,
   validateConfigObjectWithPlugins,
@@ -188,7 +188,7 @@ type ConfigHealthState = {
 };
 
 export type ParseConfigJson5Result = { ok: true; parsed: unknown } | { ok: false; error: string };
-export type ConfigWriteResult = { persistedHash: string; persistedConfig: OpenClawConfig };
+export type ConfigWriteResult = { persistedHash: string; persistedConfig: MerClawConfig };
 const configWritePostCommitRollback = Symbol("configWritePostCommitRollback");
 type InternalConfigWriteResult = ConfigWriteResult & {
   [configWritePostCommitRollback]?: () => void;
@@ -218,7 +218,7 @@ export type ConfigWriteOptions = {
    * Internal companion for explicitSetPaths after a wrapper has projected a
    * runtime-shaped config back onto the authored source shape.
    */
-  explicitSetValueSource?: OpenClawConfig;
+  explicitSetValueSource?: MerClawConfig;
   /**
    * Internal fast path for callers that already hold a fresh config snapshot.
    * Avoids rereading the full config just to prepare an immediate write.
@@ -278,7 +278,7 @@ export type ConfigWriteOptions = {
    * Internal hook used by the exported runtime-aware writer after validation
    * has produced the exact source config that will be committed.
    */
-  preCommitRuntimePreflight?: (sourceConfig: OpenClawConfig) => Promise<unknown>;
+  preCommitRuntimePreflight?: (sourceConfig: MerClawConfig) => Promise<unknown>;
 };
 
 export type ReadConfigFileSnapshotForWriteResult = {
@@ -385,11 +385,11 @@ async function rollbackConfigFileWriteIfUnchanged(params: {
   return true;
 }
 
-function coerceConfig(value: unknown): OpenClawConfig {
+function coerceConfig(value: unknown): MerClawConfig {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     return {};
   }
-  return value as OpenClawConfig;
+  return value as MerClawConfig;
 }
 
 function hasConfigMeta(value: unknown): boolean {
@@ -981,11 +981,11 @@ function warnOnConfigMiskeys(raw: unknown, logger: Pick<typeof console, "warn">)
   }
 }
 
-function stampConfigVersion(cfg: OpenClawConfig, version?: string): OpenClawConfig {
+function stampConfigVersion(cfg: MerClawConfig, version?: string): MerClawConfig {
   return stampConfigWriteMetadata(cfg, new Date().toISOString(), version);
 }
 
-function warnIfConfigFromFuture(cfg: OpenClawConfig, logger: Pick<typeof console, "warn">): void {
+function warnIfConfigFromFuture(cfg: MerClawConfig, logger: Pick<typeof console, "warn">): void {
   const touched = cfg.meta?.lastTouchedVersion;
   if (!touched) {
     return;
@@ -997,9 +997,9 @@ function warnIfConfigFromFuture(cfg: OpenClawConfig, logger: Pick<typeof console
     warnedFutureTouchedVersions.add(touched);
     logger.warn(
       [
-        `Your OpenClaw config was written by version ${touched}, but this command is running ${VERSION}.`,
-        "Check: `openclaw --version`, `which openclaw`, and `openclaw gateway status --deep`.",
-        "If unexpected, update PATH so `openclaw` points to the version you want, or reinstall the Gateway service from that same OpenClaw install.",
+        `Your MerClaw config was written by version ${touched}, but this command is running ${VERSION}.`,
+        "Check: `merclaw --version`, `which merclaw`, and `merclaw gateway status --deep`.",
+        "If unexpected, update PATH so `merclaw` points to the version you want, or reinstall the Gateway service from that same MerClaw install.",
       ].join("\n"),
     );
   }
@@ -1007,8 +1007,8 @@ function warnIfConfigFromFuture(cfg: OpenClawConfig, logger: Pick<typeof console
 
 function shouldSuppressFutureVersionWarningForEnv(env: NodeJS.ProcessEnv): boolean {
   return (
-    isTruthyEnvValue(env.OPENCLAW_UPDATE_IN_PROGRESS) ||
-    isTruthyEnvValue(env.OPENCLAW_UPDATE_POST_CORE)
+    isTruthyEnvValue(env.MERCLAW_UPDATE_IN_PROGRESS) ||
+    isTruthyEnvValue(env.MERCLAW_UPDATE_POST_CORE)
   );
 }
 
@@ -1052,7 +1052,7 @@ export function parseConfigJson5(
     return { ok: true, parsed: JSON.parse(raw) };
   } catch {
     // Keep JSON5 compatibility for authored config, but avoid the slower parser
-    // on the JSON files OpenClaw writes itself.
+    // on the JSON files MerClaw writes itself.
   }
   try {
     return { ok: true, parsed: json5.parse(raw) };
@@ -1247,7 +1247,7 @@ function resolveConfigForRead(
 ): ConfigReadResolution {
   // Apply config.env to process.env BEFORE substitution so ${VAR} can reference config-defined vars.
   if (resolvedIncludes && typeof resolvedIncludes === "object" && "env" in resolvedIncludes) {
-    applyConfigEnvVars(resolvedIncludes as OpenClawConfig, env);
+    applyConfigEnvVars(resolvedIncludes as MerClawConfig, env);
   }
 
   // Collect missing env var references as warnings instead of throwing,
@@ -1302,9 +1302,9 @@ function createConfigFileSnapshot(params: {
   exists: boolean;
   raw: string | null;
   parsed: unknown;
-  sourceConfig: OpenClawConfig;
+  sourceConfig: MerClawConfig;
   valid: boolean;
-  runtimeConfig: OpenClawConfig;
+  runtimeConfig: MerClawConfig;
   hash?: string;
   issues: ConfigFileSnapshot["issues"];
   warnings: ConfigFileSnapshot["warnings"];
@@ -1366,7 +1366,7 @@ export function createConfigIO(
     return snapshot;
   }
 
-  function finalizeLoadedRuntimeConfig(cfg: OpenClawConfig): OpenClawConfig {
+  function finalizeLoadedRuntimeConfig(cfg: MerClawConfig): MerClawConfig {
     const duplicates = findDuplicateAgentDirs(cfg, {
       env: deps.env,
       homedir: deps.homedir,
@@ -1529,9 +1529,9 @@ export function createConfigIO(
   }
 
   function retainRuntimeOnlyShippedPluginInstallConfigRecords(
-    config: OpenClawConfig,
+    config: MerClawConfig,
     sourceRaw: unknown,
-  ): OpenClawConfig {
+  ): MerClawConfig {
     const installRecords = extractShippedPluginInstallConfigRecords(sourceRaw);
     if (Object.keys(installRecords).length === 0) {
       return config;
@@ -1545,7 +1545,7 @@ export function createConfigIO(
     };
   }
 
-  function resolveRuntimePreflightSourceConfig(candidate: OpenClawConfig): OpenClawConfig {
+  function resolveRuntimePreflightSourceConfig(candidate: MerClawConfig): MerClawConfig {
     const env = { ...deps.env } as NodeJS.ProcessEnv;
     const resolvedIncludes = resolveConfigIncludesForRead(candidate, configPath, {
       ...deps,
@@ -1613,7 +1613,7 @@ export function createConfigIO(
       };
     } catch (err) {
       throw new Error(
-        `Config write blocked: shipped plugins.installs records in ${configPath} could not be migrated into the plugin index. Fix state directory permissions or run openclaw plugins registry --refresh, then retry. ${formatErrorMessage(
+        `Config write blocked: shipped plugins.installs records in ${configPath} could not be migrated into the plugin index. Fix state directory permissions or run merclaw plugins registry --refresh, then retry. ${formatErrorMessage(
           err,
         )}`,
         { cause: err },
@@ -1650,7 +1650,7 @@ export function createConfigIO(
     return true;
   }
 
-  function loadConfig(): OpenClawConfig {
+  function loadConfig(): MerClawConfig {
     try {
       maybeLoadDotEnvForConfig(deps.env);
       if (!deps.fs.existsSync(configPath)) {
@@ -1710,7 +1710,7 @@ export function createConfigIO(
         return {};
       }
       const preValidationDuplicates = findDuplicateAgentDirs(
-        validationConfigRaw as OpenClawConfig,
+        validationConfigRaw as MerClawConfig,
         {
           env: deps.env,
           homedir: deps.homedir,
@@ -1720,7 +1720,7 @@ export function createConfigIO(
         throw new DuplicateAgentDirError(preValidationDuplicates);
       }
       let pluginMetadataSnapshot: PluginMetadataSnapshot | undefined;
-      const loadValidationPluginMetadataSnapshot = (config: OpenClawConfig) => {
+      const loadValidationPluginMetadataSnapshot = (config: MerClawConfig) => {
         if (pluginMetadataSnapshot) {
           return pluginMetadataSnapshot;
         }
@@ -1846,7 +1846,7 @@ export function createConfigIO(
 
     let fallbackRaw: string | null = null;
     let fallbackParsed: unknown = {};
-    let fallbackSourceConfig: OpenClawConfig = {};
+    let fallbackSourceConfig: MerClawConfig = {};
     let fallbackHash = hashConfigRaw(null);
 
     try {
@@ -1944,7 +1944,7 @@ export function createConfigIO(
         : hash;
       fallbackSourceConfig = coerceConfig(effectiveConfigRaw);
       let pluginMetadataSnapshot: PluginMetadataSnapshot | undefined;
-      const loadValidationPluginMetadataSnapshot = (config: OpenClawConfig) => {
+      const loadValidationPluginMetadataSnapshot = (config: MerClawConfig) => {
         if (pluginMetadataSnapshot) {
           return pluginMetadataSnapshot;
         }
@@ -2122,7 +2122,7 @@ export function createConfigIO(
     };
   }
 
-  async function readBestEffortConfig(): Promise<OpenClawConfig> {
+  async function readBestEffortConfig(): Promise<MerClawConfig> {
     const result = await readConfigFileSnapshotInternal();
     if (!result.snapshot.valid) {
       return result.snapshot.config;
@@ -2134,7 +2134,7 @@ export function createConfigIO(
     );
   }
 
-  async function readSourceConfigBestEffort(): Promise<OpenClawConfig> {
+  async function readSourceConfigBestEffort(): Promise<MerClawConfig> {
     maybeLoadDotEnvForConfig(deps.env);
     const exists = deps.fs.existsSync(configPath);
     if (!exists) {
@@ -2163,7 +2163,7 @@ export function createConfigIO(
   }
 
   async function writeConfigFile(
-    cfg: OpenClawConfig,
+    cfg: MerClawConfig,
     options: ConfigWriteOptions = {},
   ): Promise<InternalConfigWriteResult> {
     assertConfigWriteAllowedInCurrentMode({ configPath, env: deps.env });
@@ -2221,7 +2221,7 @@ export function createConfigIO(
       }
     }
 
-    persistCandidate = applyUnsetPathsForWrite(persistCandidate as OpenClawConfig, unsetPaths);
+    persistCandidate = applyUnsetPathsForWrite(persistCandidate as MerClawConfig, unsetPaths);
 
     const validated = validateConfigObjectRawWithPlugins(persistCandidate, {
       env: deps.env,
@@ -2254,7 +2254,7 @@ export function createConfigIO(
     // persisted to disk (issue #56772).
     // Apply legacy web-search normalization so that migration results are still
     // persisted even though we bypass validated.config.
-    let cfgToWrite = persistCandidate as OpenClawConfig;
+    let cfgToWrite = persistCandidate as MerClawConfig;
     try {
       if (deps.fs.existsSync(configPath)) {
         const currentRaw = await deps.fs.promises.readFile(configPath, "utf-8");
@@ -2268,7 +2268,7 @@ export function createConfigIO(
             cfgToWrite,
             parsedRes.parsed,
             envForRestore,
-          ) as OpenClawConfig;
+          ) as MerClawConfig;
         }
       }
     } catch {
@@ -2285,14 +2285,14 @@ export function createConfigIO(
     });
     const outputConfigBase =
       envRefMap && changedPaths
-        ? (restoreEnvRefsFromMap(cfgToWrite, "", envRefMap, changedPaths) as OpenClawConfig)
+        ? (restoreEnvRefsFromMap(cfgToWrite, "", envRefMap, changedPaths) as MerClawConfig)
         : cfgToWrite;
     const tildeRestoredOutputConfig = restoreAuthoredTildePathsForWrite(
       outputConfigBase,
       snapshot.parsed,
       undefined,
       deps.homedir(),
-    ) as OpenClawConfig;
+    ) as MerClawConfig;
     const outputConfig = applyUnsetPathsForWrite(tildeRestoredOutputConfig, unsetPaths);
     // Do NOT apply runtime defaults when writing - user config should only contain
     // explicitly set values. Runtime defaults are applied when loading (issue #6070).
@@ -2330,11 +2330,11 @@ export function createConfigIO(
         return;
       }
       const isVitest = deps.env.VITEST === "true";
-      const shouldLogInVitest = deps.env.OPENCLAW_TEST_CONFIG_OVERWRITE_LOG === "1";
+      const shouldLogInVitest = deps.env.MERCLAW_TEST_CONFIG_OVERWRITE_LOG === "1";
       if (isVitest && !shouldLogInVitest) {
         return;
       }
-      if (!isVerbose() && deps.env.OPENCLAW_CONFIG_OVERWRITE_LOG !== "1" && !shouldLogInVitest) {
+      if (!isVerbose() && deps.env.MERCLAW_CONFIG_OVERWRITE_LOG !== "1" && !shouldLogInVitest) {
         return;
       }
       deps.logger.warn(
@@ -2355,12 +2355,12 @@ export function createConfigIO(
       }
       // Tests often write minimal configs (missing meta, etc); keep output quiet unless requested.
       const isVitest = deps.env.VITEST === "true";
-      const shouldLogInVitest = deps.env.OPENCLAW_TEST_CONFIG_WRITE_ANOMALY_LOG === "1";
+      const shouldLogInVitest = deps.env.MERCLAW_TEST_CONFIG_WRITE_ANOMALY_LOG === "1";
       if (isVitest && !shouldLogInVitest) {
         return;
       }
       const shouldLogBenignMissingMeta =
-        isVerbose() || deps.env.OPENCLAW_CONFIG_WRITE_ANOMALY_LOG === "1" || shouldLogInVitest;
+        isVerbose() || deps.env.MERCLAW_CONFIG_WRITE_ANOMALY_LOG === "1" || shouldLogInVitest;
       const visibleReasons = shouldLogBenignMissingMeta
         ? suspiciousReasons
         : suspiciousReasons.filter((reason) => reason !== "missing-meta-before-write");
@@ -2426,7 +2426,7 @@ export function createConfigIO(
 
     const preCommitRuntimePreflight =
       options.preCommitRuntimePreflight ??
-      (async (sourceConfig: OpenClawConfig) => {
+      (async (sourceConfig: MerClawConfig) => {
         await preflightRuntimeSnapshotWrite({
           nextSourceConfig: sourceConfig,
           refreshOptions: options.runtimeRefresh,
@@ -2503,7 +2503,7 @@ export function createConfigIO(
 }
 
 // NOTE: These wrappers intentionally do *not* cache the resolved config path at
-// module scope. `OPENCLAW_CONFIG_PATH` (and friends) are expected to work even
+// module scope. `MERCLAW_CONFIG_PATH` (and friends) are expected to work even
 // when set after the module has been imported (tests, one-off scripts, etc.).
 const AUTO_OWNER_DISPLAY_SECRET_BY_PATH = new Map<string, string>();
 export function clearConfigCache(): void {
@@ -2517,8 +2517,8 @@ export function registerConfigWriteListener(
 }
 
 function isCompatibleTopLevelRuntimeProjectionShape(params: {
-  runtimeSnapshot: OpenClawConfig;
-  candidate: OpenClawConfig;
+  runtimeSnapshot: MerClawConfig;
+  candidate: MerClawConfig;
 }): boolean {
   const runtime = params.runtimeSnapshot as Record<string, unknown>;
   const candidate = params.candidate as Record<string, unknown>;
@@ -2545,7 +2545,7 @@ function isCompatibleTopLevelRuntimeProjectionShape(params: {
   return true;
 }
 
-export function projectConfigOntoRuntimeSourceSnapshot(config: OpenClawConfig): OpenClawConfig {
+export function projectConfigOntoRuntimeSourceSnapshot(config: MerClawConfig): MerClawConfig {
   const runtimeConfigSnapshot = getRuntimeConfigSnapshotState();
   const runtimeConfigSourceSnapshot = getRuntimeConfigSourceSnapshotState();
   if (!runtimeConfigSnapshot || !runtimeConfigSourceSnapshot) {
@@ -2577,7 +2577,7 @@ export function loadConfig(options?: {
   skipPluginValidation?: boolean;
   pin?: boolean;
   skipShellEnvFallback?: boolean;
-}): OpenClawConfig {
+}): MerClawConfig {
   const loadFresh = () =>
     createConfigIO({
       ...(options?.skipPluginValidation ? { pluginValidation: "skip" as const } : {}),
@@ -2588,7 +2588,7 @@ export function loadConfig(options?: {
   }
   // First successful load becomes the process snapshot. Long-lived runtimes
   // should swap this snapshot via explicit reload/watcher paths instead of
-  // reparsing openclaw.json on hot code paths.
+  // reparsing merclaw.json on hot code paths.
   return loadPinnedRuntimeConfig(loadFresh);
 }
 
@@ -2596,19 +2596,19 @@ export function getRuntimeConfig(options?: {
   skipPluginValidation?: boolean;
   pin?: boolean;
   skipShellEnvFallback?: boolean;
-}): OpenClawConfig {
+}): MerClawConfig {
   return loadConfig(options);
 }
 
 export async function readBestEffortConfig(options?: {
   skipPluginValidation?: boolean;
-}): Promise<OpenClawConfig> {
+}): Promise<MerClawConfig> {
   return await createConfigIO(
     options?.skipPluginValidation ? { pluginValidation: "skip" } : {},
   ).readBestEffortConfig();
 }
 
-export async function readSourceConfigBestEffort(): Promise<OpenClawConfig> {
+export async function readSourceConfigBestEffort(): Promise<MerClawConfig> {
   return await createConfigIO().readSourceConfigBestEffort();
 }
 
@@ -2670,7 +2670,7 @@ export async function readSourceConfigSnapshotForWrite(): Promise<ReadConfigFile
 }
 
 export async function writeConfigFile(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   options: ConfigWriteOptions = {},
 ): Promise<ConfigWriteResult> {
   const io = createConfigIO({
@@ -2750,7 +2750,7 @@ export async function writeConfigFile(
   // phantom paths under plugins.entries.* on every save — incorrectly
   // triggering a `plugins`-scoped restart of the gateway for changes that
   // never touched any plugin entry.
-  let canonicalSourceConfig: OpenClawConfig = nextCfg;
+  let canonicalSourceConfig: MerClawConfig = nextCfg;
   const envBeforeCanonicalRead = snapshotEnv(process.env);
   let envAfterCanonicalRead = envBeforeCanonicalRead;
   try {

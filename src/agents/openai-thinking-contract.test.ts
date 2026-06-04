@@ -1,4 +1,4 @@
-import { Agent, type StreamFn } from "openclaw/plugin-sdk/agent-core";
+import { Agent, type StreamFn } from "merclaw/plugin-sdk/agent-core";
 import {
   createAssistantMessageEventStream,
   type AssistantMessage,
@@ -6,7 +6,7 @@ import {
   type Model,
   type SimpleStreamOptions,
   streamSimple,
-} from "openclaw/plugin-sdk/llm";
+} from "merclaw/plugin-sdk/llm";
 import { describe, expect, it } from "vitest";
 
 type ResponsesModel = Model<"openai-responses"> | Model<"openai-chatgpt-responses">;

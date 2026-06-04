@@ -2,8 +2,8 @@
 // understanding contract. No browser-specific model registry lives here.
 
 import { readFile } from "node:fs/promises";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { describeImageFile as DescribeImageFileFn } from "openclaw/plugin-sdk/media-understanding-runtime";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import type { describeImageFile as DescribeImageFileFn } from "merclaw/plugin-sdk/media-understanding-runtime";
 import type { saveMediaBuffer as SaveMediaBufferFn } from "../sdk-setup-tools.js";
 import type { normalizeBrowserScreenshot as NormalizeBrowserScreenshotFn } from "./screenshot.js";
 
@@ -11,7 +11,7 @@ export const DEFAULT_BROWSER_SCREENSHOT_DESCRIPTION_PROMPT =
   "Describe what is visible in this browser screenshot. Capture page layout, headings, primary content blocks, visible text, and notable interactive elements so a text-only assistant can reason about the page.";
 
 export type BrowserScreenshotDescriptionContext = {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   filePath: string;
   agentDir?: string;
   workspaceDir?: string;

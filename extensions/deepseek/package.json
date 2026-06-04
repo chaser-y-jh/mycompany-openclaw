@@ -1,13 +1,13 @@
 {
-  "name": "@openclaw/deepseek-provider",
+  "name": "@merclaw/deepseek-provider",
   "version": "2026.5.31",
   "private": true,
-  "description": "OpenClaw DeepSeek provider plugin",
+  "description": "MerClaw DeepSeek provider plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@merclaw/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ]

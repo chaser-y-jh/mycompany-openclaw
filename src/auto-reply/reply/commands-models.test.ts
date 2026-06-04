@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { testing as cliBackendsTesting } from "../../agents/cli-backends.js";
 import type { ChannelPlugin } from "../../channels/plugins/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { setActivePluginRegistry } from "../../plugins/runtime.js";
 import {
   createChannelTestPluginBase,
@@ -143,7 +143,7 @@ beforeAll(async () => {
   ]);
   await buildModelsProviderData({
     agents: { defaults: { model: { primary: "anthropic/claude-opus-4-5" } } },
-  } as OpenClawConfig);
+  } as MerClawConfig);
 });
 
 beforeEach(() => {
@@ -203,7 +203,7 @@ afterEach(() => {
 
 function buildParams(
   commandBodyNormalized: string,
-  cfgOverrides: Partial<OpenClawConfig> = {},
+  cfgOverrides: Partial<MerClawConfig> = {},
 ): HandleCommandsParams {
   return {
     cfg: {
@@ -216,7 +216,7 @@ function buildParams(
         text: true,
       },
       ...cfgOverrides,
-    } as OpenClawConfig,
+    } as MerClawConfig,
     ctx: {
       Surface: "discord",
     },
@@ -342,7 +342,7 @@ describe("handleModelsCommand", () => {
           },
         },
       },
-    } as OpenClawConfig);
+    } as MerClawConfig);
 
     expect(data.byProvider.get("custom-provider")).toEqual(new Set(["custom-modern-model"]));
     expect(data.modelNames.get("custom-provider/custom-modern-model")).toBe("Custom Modern");
@@ -436,7 +436,7 @@ describe("handleModelsCommand", () => {
           },
         },
       },
-    } as OpenClawConfig);
+    } as MerClawConfig);
 
     expect([...(data.byProvider.get("claude-cli") ?? [])].toSorted()).toEqual([
       "claude-haiku-4-5",
@@ -472,7 +472,7 @@ describe("handleModelsCommand", () => {
           },
         },
       },
-    } as OpenClawConfig);
+    } as MerClawConfig);
     expect([...(minimaxData.byProvider.get("minimax") ?? [])]).toEqual(["abab-7"]);
   });
 
@@ -526,7 +526,7 @@ describe("handleModelsCommand", () => {
           model: { primary: "openai/gpt-5.5" },
         },
       },
-    } as OpenClawConfig);
+    } as MerClawConfig);
 
     expect(data.runtimeChoicesByProvider?.get("openai")?.[0]).toEqual({
       id: "codex",
@@ -534,13 +534,13 @@ describe("handleModelsCommand", () => {
       description: "Use the OpenAI Codex runtime selected by the effective harness policy.",
     });
     expect(data.runtimeChoicesByProvider?.get("openai")?.[1]).toEqual({
-      id: "openclaw",
-      label: "OpenClaw Default",
-      description: "Use the built-in OpenClaw runtime.",
+      id: "merclaw",
+      label: "MerClaw Default",
+      description: "Use the built-in MerClaw runtime.",
     });
   });
 
-  it("keeps custom OpenAI-compatible providers on the OpenClaw default runtime choice", async () => {
+  it("keeps custom OpenAI-compatible providers on the MerClaw default runtime choice", async () => {
     const data = await buildModelsProviderData({
       models: {
         providers: {
@@ -555,12 +555,12 @@ describe("handleModelsCommand", () => {
           model: { primary: "openai/gpt-5.5" },
         },
       },
-    } as OpenClawConfig);
+    } as MerClawConfig);
 
     expect(data.runtimeChoicesByProvider?.get("openai")?.[0]).toEqual({
-      id: "openclaw",
-      label: "OpenClaw Default",
-      description: "Use the built-in OpenClaw runtime.",
+      id: "merclaw",
+      label: "MerClaw Default",
+      description: "Use the built-in MerClaw runtime.",
     });
   });
 
@@ -570,7 +570,7 @@ describe("handleModelsCommand", () => {
         providers: {
           openai: {
             baseUrl: "https://api.openai.com/v1",
-            agentRuntime: { id: "openclaw" },
+            agentRuntime: { id: "merclaw" },
             models: [],
           },
         },
@@ -583,7 +583,7 @@ describe("handleModelsCommand", () => {
           },
         },
       },
-    } as OpenClawConfig);
+    } as MerClawConfig);
 
     expect(data.runtimeChoicesByProvider?.get("openai")?.[0]).toEqual({
       id: "codex",
@@ -591,9 +591,9 @@ describe("handleModelsCommand", () => {
       description: "Use the OpenAI Codex runtime selected by the effective harness policy.",
     });
     expect(data.runtimeChoicesByProvider?.get("openai")?.[1]).toEqual({
-      id: "openclaw",
-      label: "OpenClaw Default",
-      description: "Use the built-in OpenClaw runtime.",
+      id: "merclaw",
+      label: "MerClaw Default",
+      description: "Use the built-in MerClaw runtime.",
     });
   });
 
@@ -613,12 +613,12 @@ describe("handleModelsCommand", () => {
           },
         },
       },
-    } as OpenClawConfig);
+    } as MerClawConfig);
 
     expect(data.runtimeChoicesByProvider?.get("anthropic")?.[0]).toEqual({
-      id: "openclaw",
-      label: "OpenClaw Default",
-      description: "Use the built-in OpenClaw runtime.",
+      id: "merclaw",
+      label: "MerClaw Default",
+      description: "Use the built-in MerClaw runtime.",
     });
   });
 
@@ -638,7 +638,7 @@ describe("handleModelsCommand", () => {
           },
         },
       },
-    } as OpenClawConfig);
+    } as MerClawConfig);
 
     expect(data.runtimeChoicesByProvider?.get("anthropic")?.[0]).toEqual({
       id: "claude-cli",
@@ -646,9 +646,9 @@ describe("handleModelsCommand", () => {
       description: "Use the Claude CLI runtime selected by the effective harness policy.",
     });
     expect(data.runtimeChoicesByProvider?.get("anthropic")?.[1]).toEqual({
-      id: "openclaw",
-      label: "OpenClaw Default",
-      description: "Use the built-in OpenClaw runtime.",
+      id: "merclaw",
+      label: "MerClaw Default",
+      description: "Use the built-in MerClaw runtime.",
     });
   });
 
@@ -760,9 +760,9 @@ describe("handleModelsCommand", () => {
           },
         },
       },
-    } satisfies Partial<OpenClawConfig>;
+    } satisfies Partial<MerClawConfig>;
 
-    const data = await buildModelsProviderData(cfg as OpenClawConfig);
+    const data = await buildModelsProviderData(cfg as MerClawConfig);
 
     expect([...(data.byProvider.get("openai") ?? [])]).toEqual(["gpt-5.4"]);
     expect([...(data.byProvider.get("deepseek") ?? [])].toSorted()).toEqual([

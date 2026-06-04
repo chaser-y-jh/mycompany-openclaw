@@ -1,5 +1,5 @@
-import { isRecord } from "@openclaw/normalization-core/record-coerce";
-import { sortUniqueStrings } from "@openclaw/normalization-core/string-normalization";
+import { isRecord } from "@merclaw/normalization-core/record-coerce";
+import { sortUniqueStrings } from "@merclaw/normalization-core/string-normalization";
 import {
   loadBundledPluginPublicArtifactModuleSync,
   resolveBundledPluginPublicArtifactPath,

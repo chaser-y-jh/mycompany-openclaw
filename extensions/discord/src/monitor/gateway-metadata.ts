@@ -1,9 +1,9 @@
 import type { APIGatewayBotInfo } from "discord-api-types/v10";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { parseStrictPositiveInteger } from "openclaw/plugin-sdk/number-runtime";
-import { captureHttpExchange } from "openclaw/plugin-sdk/proxy-capture";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
-import { fetchWithSsrFGuard } from "openclaw/plugin-sdk/ssrf-runtime";
+import { formatErrorMessage } from "merclaw/plugin-sdk/error-runtime";
+import { parseStrictPositiveInteger } from "merclaw/plugin-sdk/number-runtime";
+import { captureHttpExchange } from "merclaw/plugin-sdk/proxy-capture";
+import type { RuntimeEnv } from "merclaw/plugin-sdk/runtime-env";
+import { fetchWithSsrFGuard } from "merclaw/plugin-sdk/ssrf-runtime";
 import { Type } from "typebox";
 import { Check, Errors } from "typebox/value";
 import { isDiscordRateLimitResponseBody, summarizeDiscordResponseBody } from "../error-body.js";
@@ -14,7 +14,7 @@ const DISCORD_API_HOST = "discord.com";
 const DEFAULT_DISCORD_GATEWAY_URL = "wss://gateway.discord.gg/";
 const DEFAULT_DISCORD_GATEWAY_INFO_TIMEOUT_MS = 30_000;
 const MAX_DISCORD_GATEWAY_INFO_TIMEOUT_MS = 120_000;
-const DISCORD_GATEWAY_INFO_TIMEOUT_ENV = "OPENCLAW_DISCORD_GATEWAY_INFO_TIMEOUT_MS";
+const DISCORD_GATEWAY_INFO_TIMEOUT_ENV = "MERCLAW_DISCORD_GATEWAY_INFO_TIMEOUT_MS";
 const DISCORD_GATEWAY_METADATA_FALLBACK_LOG_INTERVAL_MS = 60_000;
 
 type DiscordGatewayMetadataResponse = Pick<Response, "ok" | "status" | "text">;

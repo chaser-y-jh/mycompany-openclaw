@@ -1,4 +1,4 @@
-import type { AssistantMessage } from "openclaw/plugin-sdk/llm";
+import type { AssistantMessage } from "merclaw/plugin-sdk/llm";
 import { describe, expect, it } from "vitest";
 import { getReplyPayloadMetadata } from "../../../auto-reply/reply-payload.js";
 import { formatBillingErrorMessage } from "../../embedded-agent-helpers.js";
@@ -380,7 +380,7 @@ describe("buildEmbeddedRunPayloads", () => {
             type: "toolCall",
             id: "toolu_01",
             name: "browser",
-            arguments: { action: "search", query: "openclaw docs" },
+            arguments: { action: "search", query: "merclaw docs" },
           },
         ],
       }),
@@ -497,7 +497,7 @@ describe("buildEmbeddedRunPayloads", () => {
         error: "invoke timed out",
         timedOut: true,
         mutatingAction: true,
-        fileTarget: { path: "/tmp/openclaw/output.md" },
+        fileTarget: { path: "/tmp/merclaw/output.md" },
       },
     });
 

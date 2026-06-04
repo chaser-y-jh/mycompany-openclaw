@@ -8,10 +8,10 @@ let monolithicSdk = null;
 let diagnosticEventsModule = null;
 const moduleLoaders = new Map();
 const pluginSdkSubpathsCache = new Map();
-const pluginSdkPackageNames = ["openclaw/plugin-sdk", "@openclaw/plugin-sdk"];
+const pluginSdkPackageNames = ["merclaw/plugin-sdk", "@merclaw/plugin-sdk"];
 const pluginSdkSourceExtensions = [".ts", ".mts", ".js", ".mjs", ".cts", ".cjs"];
 const privateQaExcludedPluginSdkSubpaths = new Set(["ssrf-runtime-internal"]);
-const DIAGNOSTIC_EVENTS_STATE_KEY = Symbol.for("openclaw.diagnosticEvents.state.v1");
+const DIAGNOSTIC_EVENTS_STATE_KEY = Symbol.for("merclaw.diagnosticEvents.state.v1");
 const isDistRootAlias = __filename.includes(
   `${path.sep}dist${path.sep}plugin-sdk${path.sep}root-alias.cjs`,
 );
@@ -22,7 +22,7 @@ const shouldPreferSourceGraph =
   !isDistRootAlias &&
   (process.env.NODE_ENV !== "production" ||
     Boolean(process.env.VITEST) ||
-    process.env.OPENCLAW_PLUGIN_SDK_SOURCE_IN_TESTS === "1");
+    process.env.MERCLAW_PLUGIN_SDK_SOURCE_IN_TESTS === "1");
 
 function emptyPluginConfigSchema() {
   function error(message) {
@@ -235,7 +235,7 @@ function findDistChunkByPrefix(prefix) {
 
 function listPluginSdkExportedSubpaths() {
   const packageRoot = getPackageRoot();
-  const cacheKey = `${packageRoot}::privateQa=${process.env.OPENCLAW_ENABLE_PRIVATE_QA_CLI === "1" ? "1" : "0"}`;
+  const cacheKey = `${packageRoot}::privateQa=${process.env.MERCLAW_ENABLE_PRIVATE_QA_CLI === "1" ? "1" : "0"}`;
   if (pluginSdkSubpathsCache.has(cacheKey)) {
     return pluginSdkSubpathsCache.get(cacheKey);
   }
@@ -258,7 +258,7 @@ function listPluginSdkExportedSubpaths() {
 }
 
 function listPrivateLocalOnlyPluginSdkSubpaths() {
-  if (process.env.OPENCLAW_ENABLE_PRIVATE_QA_CLI !== "1") {
+  if (process.env.MERCLAW_ENABLE_PRIVATE_QA_CLI !== "1") {
     return [];
   }
   try {
@@ -384,7 +384,7 @@ function resolvePluginSdkJitiFsCacheDir() {
   return path.join(
     resolveJitiFsCacheTmpDir(),
     "jiti",
-    "openclaw",
+    "merclaw",
     sanitizeJitiCachePathSegment(version),
     sanitizeJitiCachePathSegment(installMarker),
   );
@@ -405,7 +405,7 @@ function getModuleLoader(tryNative) {
     interopDefault: true,
     fsCache: resolvePluginSdkJitiFsCacheOption(),
     // Prefer Node's native sync ESM loader for built dist/plugin-sdk/*.js files
-    // so local plugins do not create a second transpiled OpenClaw core graph.
+    // so local plugins do not create a second transpiled MerClaw core graph.
     tryNative,
     extensions: [".ts", ".tsx", ".mts", ".cts", ".mtsx", ".ctsx", ".js", ".mjs", ".cjs", ".json"],
   });

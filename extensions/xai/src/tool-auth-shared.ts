@@ -1,17 +1,17 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { canResolveEnvSecretRefInReadOnlyPath } from "openclaw/plugin-sdk/extension-shared";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { canResolveEnvSecretRefInReadOnlyPath } from "merclaw/plugin-sdk/extension-shared";
 import {
   coerceSecretRef,
   resolveNonEnvSecretRefApiKeyMarker,
-} from "openclaw/plugin-sdk/provider-auth";
+} from "merclaw/plugin-sdk/provider-auth";
 import {
   readProviderEnvValue,
   resolveProviderWebSearchPluginConfig,
-} from "openclaw/plugin-sdk/provider-web-search";
+} from "merclaw/plugin-sdk/provider-web-search";
 import {
   normalizeSecretInputString,
   resolveSecretInputString,
-} from "openclaw/plugin-sdk/secret-input";
+} from "merclaw/plugin-sdk/secret-input";
 
 type XaiFallbackAuth = {
   apiKey: string;
@@ -39,7 +39,7 @@ function readConfiguredOrManagedApiKey(value: unknown): string | undefined {
   return ref ? resolveNonEnvSecretRefApiKeyMarker(ref.source) : undefined;
 }
 
-function readLegacyGrokFallbackAuth(cfg?: OpenClawConfig): XaiFallbackAuth | undefined {
+function readLegacyGrokFallbackAuth(cfg?: MerClawConfig): XaiFallbackAuth | undefined {
   const search = cfg?.tools?.web?.search;
   if (!search || typeof search !== "object") {
     return undefined;
@@ -54,7 +54,7 @@ function readLegacyGrokFallbackAuth(cfg?: OpenClawConfig): XaiFallbackAuth | und
 function readConfiguredRuntimeApiKey(
   value: unknown,
   path: string,
-  cfg?: OpenClawConfig,
+  cfg?: MerClawConfig,
 ): ConfiguredRuntimeApiKeyResolution {
   const resolved = resolveSecretInputString({
     value,
@@ -88,7 +88,7 @@ function readConfiguredRuntimeApiKey(
   return envValue ? { status: "available", value: envValue } : { status: "missing" };
 }
 
-function readLegacyGrokApiKeyResult(cfg?: OpenClawConfig): ConfiguredRuntimeApiKeyResolution {
+function readLegacyGrokApiKeyResult(cfg?: MerClawConfig): ConfiguredRuntimeApiKeyResolution {
   const search = cfg?.tools?.web?.search;
   if (!search || typeof search !== "object") {
     return { status: "missing" };
@@ -102,7 +102,7 @@ function readLegacyGrokApiKeyResult(cfg?: OpenClawConfig): ConfiguredRuntimeApiK
 }
 
 function readPluginXaiWebSearchApiKeyResult(
-  cfg?: OpenClawConfig,
+  cfg?: MerClawConfig,
 ): ConfiguredRuntimeApiKeyResolution {
   return readConfiguredRuntimeApiKey(
     resolveProviderWebSearchPluginConfig(cfg as Record<string, unknown> | undefined, "xai")?.apiKey,
@@ -112,8 +112,8 @@ function readPluginXaiWebSearchApiKeyResult(
 }
 
 function resolveConfiguredXaiToolApiKeyResult(params: {
-  runtimeConfig?: OpenClawConfig;
-  sourceConfig?: OpenClawConfig;
+  runtimeConfig?: MerClawConfig;
+  sourceConfig?: MerClawConfig;
 }): ConfiguredRuntimeApiKeyResolution {
   const runtimePlugin = readPluginXaiWebSearchApiKeyResult(params.runtimeConfig);
   if (runtimePlugin.status === "available" || runtimePlugin.status === "blocked") {
@@ -143,7 +143,7 @@ async function resolveXaiAuthProfileApiKey(auth?: XaiToolAuthContext): Promise<s
   return normalizeSecretInputString(value);
 }
 
-export function resolveFallbackXaiAuth(cfg?: OpenClawConfig): XaiFallbackAuth | undefined {
+export function resolveFallbackXaiAuth(cfg?: MerClawConfig): XaiFallbackAuth | undefined {
   const pluginApiKey = readConfiguredOrManagedApiKey(
     resolveProviderWebSearchPluginConfig(cfg as Record<string, unknown> | undefined, "xai")?.apiKey,
   );
@@ -156,7 +156,7 @@ export function resolveFallbackXaiAuth(cfg?: OpenClawConfig): XaiFallbackAuth | 
   return readLegacyGrokFallbackAuth(cfg);
 }
 
-export function resolveFallbackXaiApiKey(cfg?: OpenClawConfig): string | undefined {
+export function resolveFallbackXaiApiKey(cfg?: MerClawConfig): string | undefined {
   const plugin = readPluginXaiWebSearchApiKeyResult(cfg);
   if (plugin.status === "available") {
     return plugin.value;
@@ -169,8 +169,8 @@ export function resolveFallbackXaiApiKey(cfg?: OpenClawConfig): string | undefin
 }
 
 export function resolveXaiToolApiKey(params: {
-  runtimeConfig?: OpenClawConfig;
-  sourceConfig?: OpenClawConfig;
+  runtimeConfig?: MerClawConfig;
+  sourceConfig?: MerClawConfig;
 }): string | undefined {
   const configured = resolveConfiguredXaiToolApiKeyResult(params);
   if (configured.status === "available") {
@@ -183,8 +183,8 @@ export function resolveXaiToolApiKey(params: {
 }
 
 export async function resolveXaiToolApiKeyWithAuth(params: {
-  runtimeConfig?: OpenClawConfig;
-  sourceConfig?: OpenClawConfig;
+  runtimeConfig?: MerClawConfig;
+  sourceConfig?: MerClawConfig;
   auth?: XaiToolAuthContext;
 }): Promise<string | undefined> {
   const configured = resolveConfiguredXaiToolApiKeyResult(params);
@@ -201,8 +201,8 @@ export async function resolveXaiToolApiKeyWithAuth(params: {
 
 export function isXaiToolEnabled(params: {
   enabled?: boolean;
-  runtimeConfig?: OpenClawConfig;
-  sourceConfig?: OpenClawConfig;
+  runtimeConfig?: MerClawConfig;
+  sourceConfig?: MerClawConfig;
   auth?: XaiToolAuthContext;
 }): boolean {
   if (params.enabled === false) {

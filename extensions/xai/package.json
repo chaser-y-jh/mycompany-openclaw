@@ -1,17 +1,17 @@
 {
-  "name": "@openclaw/xai-plugin",
+  "name": "@merclaw/xai-plugin",
   "version": "2026.5.31",
   "private": true,
-  "description": "OpenClaw xAI plugin",
+  "description": "MerClaw xAI plugin",
   "type": "module",
   "dependencies": {
     "typebox": "1.1.39"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*",
+    "@merclaw/plugin-sdk": "workspace:*",
     "ws": "8.21.0"
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ]

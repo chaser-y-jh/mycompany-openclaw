@@ -74,7 +74,7 @@ function unscopedPersistentKeys(entries: Map<string, PersistedCacheValue>): stri
 
 describe("telegram message cache", () => {
   it("hydrates reply chains from persisted cached messages", async () => {
-    const storePath = `/tmp/openclaw-telegram-message-cache-${process.pid}-${Date.now()}.json`;
+    const storePath = `/tmp/merclaw-telegram-message-cache-${process.pid}-${Date.now()}.json`;
     const persistedPath = resolveTelegramMessageCachePath(storePath);
     await rm(persistedPath, { force: true });
     try {
@@ -184,7 +184,7 @@ describe("telegram message cache", () => {
   });
 
   it("records embedded reply targets as normal cached messages", async () => {
-    const storePath = `/tmp/openclaw-telegram-message-cache-reply-target-${process.pid}-${Date.now()}.json`;
+    const storePath = `/tmp/merclaw-telegram-message-cache-reply-target-${process.pid}-${Date.now()}.json`;
     const persistedPath = resolveTelegramMessageCachePath(storePath);
     const chat = { id: 7, type: "group", title: "Ops" } as const;
     await rm(persistedPath, { force: true });
@@ -314,7 +314,7 @@ describe("telegram message cache", () => {
   });
 
   it("shares one persisted bucket across live cache instances", async () => {
-    const storePath = `/tmp/openclaw-telegram-message-cache-shared-${process.pid}-${Date.now()}.json`;
+    const storePath = `/tmp/merclaw-telegram-message-cache-shared-${process.pid}-${Date.now()}.json`;
     const persistedPath = resolveTelegramMessageCachePath(storePath);
     await rm(persistedPath, { force: true });
     try {
@@ -510,7 +510,7 @@ describe("telegram message cache", () => {
   });
 
   it("reads legacy sidecar records as a persistent-store fallback", async () => {
-    const storePath = `/tmp/openclaw-telegram-message-cache-state-migrate-${process.pid}-${Date.now()}.json`;
+    const storePath = `/tmp/merclaw-telegram-message-cache-state-migrate-${process.pid}-${Date.now()}.json`;
     const persistedPath = resolveTelegramMessageCachePath(storePath);
     const { bucketKey, entries, store } = createMemoryPersistentStore();
     await rm(persistedPath, { force: true });
@@ -560,7 +560,7 @@ describe("telegram message cache", () => {
   });
 
   it("keeps plugin state authoritative over legacy sidecar fallback", async () => {
-    const storePath = `/tmp/openclaw-telegram-message-cache-state-authoritative-${process.pid}-${Date.now()}.json`;
+    const storePath = `/tmp/merclaw-telegram-message-cache-state-authoritative-${process.pid}-${Date.now()}.json`;
     const persistedPath = resolveTelegramMessageCachePath(storePath);
     const { bucketKey, entries, store } = createMemoryPersistentStore();
     await rm(persistedPath, { force: true });
@@ -589,7 +589,7 @@ describe("telegram message cache", () => {
           message_id: 9142,
           date: 1736389142,
           text: "bot reply kept only in sqlite",
-          from: { id: 0, is_bot: true, first_name: "OpenClaw" },
+          from: { id: 0, is_bot: true, first_name: "MerClaw" },
         } as Message,
       });
       resetTelegramMessageCacheBucketsForTest();
@@ -641,8 +641,8 @@ describe("telegram message cache", () => {
   });
 
   it("loads a legacy sidecar fallback when another plugin-state scope already has entries", async () => {
-    const firstStorePath = `/tmp/openclaw-telegram-message-cache-state-scope-a-${process.pid}-${Date.now()}.json`;
-    const secondStorePath = `/tmp/openclaw-telegram-message-cache-state-scope-b-${process.pid}-${Date.now()}.json`;
+    const firstStorePath = `/tmp/merclaw-telegram-message-cache-state-scope-a-${process.pid}-${Date.now()}.json`;
+    const secondStorePath = `/tmp/merclaw-telegram-message-cache-state-scope-b-${process.pid}-${Date.now()}.json`;
     const firstPersistedPath = resolveTelegramMessageCachePath(firstStorePath);
     const secondPersistedPath = resolveTelegramMessageCachePath(secondStorePath);
     const { bucketKey, entries, store } = createMemoryPersistentStore();
@@ -694,7 +694,7 @@ describe("telegram message cache", () => {
   });
 
   it("appends cached records between compactions and reloads the bounded cache window", async () => {
-    const storePath = `/tmp/openclaw-telegram-message-cache-append-${process.pid}-${Date.now()}.json`;
+    const storePath = `/tmp/merclaw-telegram-message-cache-append-${process.pid}-${Date.now()}.json`;
     const persistedPath = resolveTelegramMessageCachePath(storePath);
     await rm(persistedPath, { force: true });
     try {
@@ -731,7 +731,7 @@ describe("telegram message cache", () => {
   });
 
   it("keeps the persisted log bounded by compacting cached records", async () => {
-    const storePath = `/tmp/openclaw-telegram-message-cache-compact-${process.pid}-${Date.now()}.json`;
+    const storePath = `/tmp/merclaw-telegram-message-cache-compact-${process.pid}-${Date.now()}.json`;
     const persistedPath = resolveTelegramMessageCachePath(storePath);
     await rm(persistedPath, { force: true });
     try {
@@ -766,7 +766,7 @@ describe("telegram message cache", () => {
   });
 
   it("loads mixed legacy array caches and rewrites them as line-delimited entries", async () => {
-    const storePath = `/tmp/openclaw-telegram-message-cache-legacy-${process.pid}-${Date.now()}.json`;
+    const storePath = `/tmp/merclaw-telegram-message-cache-legacy-${process.pid}-${Date.now()}.json`;
     const persistedPath = resolveTelegramMessageCachePath(storePath);
     await rm(persistedPath, { force: true });
     try {
@@ -975,7 +975,7 @@ describe("telegram message cache", () => {
     const beforeSession = Date.parse("2026-05-10T12:40:00.000Z");
     const sessionStartedAt = Date.parse("2026-05-10T17:30:43.980Z");
     const afterSession = Date.parse("2026-05-11T23:36:00.000Z");
-    const staleInstruction = "okay so we just flip in openclaw? if yes do it up";
+    const staleInstruction = "okay so we just flip in merclaw? if yes do it up";
     const record = (params: {
       id: number;
       text: string;
@@ -1066,7 +1066,7 @@ describe("telegram message cache", () => {
     const beforeSession = Date.parse("2026-05-10T12:40:00.000Z");
     const sessionStartedAt = Date.parse("2026-05-10T17:30:43.127Z");
     const afterSession = Date.parse("2026-05-11T23:36:00.000Z");
-    const staleInstruction = "okay so we just flip in openclaw? if yes do it up";
+    const staleInstruction = "okay so we just flip in merclaw? if yes do it up";
     const record = (params: {
       id: number;
       text: string;

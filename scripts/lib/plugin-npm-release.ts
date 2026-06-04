@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { normalizeOptionalString } from "../../packages/normalization-core/src/string-coerce.js";
 import { validateExternalCodePluginPackageJson } from "../../packages/plugin-package-contract/src/index.ts";
-import { parseReleaseVersion } from "../openclaw-npm-release-check.ts";
+import { parseReleaseVersion } from "../merclaw-npm-release-check.ts";
 import { resolveNpmPublishPlan } from "./npm-publish-plan.mjs";
 
 export type PluginPackageJson = {
@@ -17,7 +17,7 @@ export type PluginPackageJson = {
         type?: string;
         url?: string;
       };
-  openclaw?: {
+  merclaw?: {
     extensions?: string[];
     install?: {
       defaultChoice?: string;
@@ -29,7 +29,7 @@ export type PluginPackageJson = {
       minGatewayVersion?: string;
     };
     build?: {
-      openclawVersion?: string;
+      merclawVersion?: string;
       pluginSdkVersion?: string;
     };
     release?: {
@@ -81,7 +81,7 @@ export type PublishablePluginPackageCandidate<
   packageJson: TPackageJson;
 };
 
-export const OPENCLAW_PLUGIN_NPM_REPOSITORY_URL = "https://github.com/openclaw/openclaw";
+export const MERCLAW_PLUGIN_NPM_REPOSITORY_URL = "https://github.com/merclaw/merclaw";
 
 function readPluginPackageJson(path: string): unknown {
   return JSON.parse(readFileSync(path, "utf8"));
@@ -226,24 +226,24 @@ export function collectPublishablePluginPackageErrors(
   const errors: string[] = [];
   const packageName = packageJson.name?.trim() ?? "";
   const packageVersion = packageJson.version?.trim() ?? "";
-  const installNpmSpec = normalizeOptionalString(packageJson.openclaw?.install?.npmSpec);
+  const installNpmSpec = normalizeOptionalString(packageJson.merclaw?.install?.npmSpec);
   const repositoryUrl =
     typeof packageJson.repository === "string"
       ? packageJson.repository.trim()
       : (packageJson.repository?.url?.trim() ?? "");
-  const extensions = packageJson.openclaw?.extensions ?? [];
+  const extensions = packageJson.merclaw?.extensions ?? [];
 
-  if (!packageName.startsWith("@openclaw/")) {
+  if (!packageName.startsWith("@merclaw/")) {
     errors.push(
-      `package name must start with "@openclaw/"; found "${packageName || "<missing>"}".`,
+      `package name must start with "@merclaw/"; found "${packageName || "<missing>"}".`,
     );
   }
   if (packageJson.private === true) {
     errors.push("package.json private must not be true.");
   }
-  if (repositoryUrl !== OPENCLAW_PLUGIN_NPM_REPOSITORY_URL) {
+  if (repositoryUrl !== MERCLAW_PLUGIN_NPM_REPOSITORY_URL) {
     errors.push(
-      `package.json repository.url must be "${OPENCLAW_PLUGIN_NPM_REPOSITORY_URL}" so npm provenance can validate GitHub trusted publishing; found "${repositoryUrl || "<missing>"}".`,
+      `package.json repository.url must be "${MERCLAW_PLUGIN_NPM_REPOSITORY_URL}" so npm provenance can validate GitHub trusted publishing; found "${repositoryUrl || "<missing>"}".`,
     );
   }
   if (!packageVersion) {
@@ -254,13 +254,13 @@ export function collectPublishablePluginPackageErrors(
     );
   }
   if (!Array.isArray(extensions) || extensions.length === 0) {
-    errors.push("openclaw.extensions must contain at least one entry.");
+    errors.push("merclaw.extensions must contain at least one entry.");
   }
   if (extensions.some((entry) => typeof entry !== "string" || !entry.trim())) {
-    errors.push("openclaw.extensions must contain only non-empty strings.");
+    errors.push("merclaw.extensions must contain only non-empty strings.");
   }
   if (!installNpmSpec) {
-    errors.push("openclaw.install.npmSpec must be a non-empty string for publishable plugins.");
+    errors.push("merclaw.install.npmSpec must be a non-empty string for publishable plugins.");
   }
   errors.push(
     ...validateExternalCodePluginPackageJson(packageJson).issues.map((issue) => issue.message),
@@ -294,7 +294,7 @@ export function collectPublishablePluginPackages(
     if (hasSelectedPackageNames && !selectedPackageNames.has(packageName)) {
       continue;
     }
-    if (packageJson.openclaw?.release?.publishToNpm !== true) {
+    if (packageJson.merclaw?.release?.publishToNpm !== true) {
       continue;
     }
 
@@ -321,7 +321,7 @@ export function collectPublishablePluginPackages(
       version,
       channel: parsedVersion.channel,
       publishTag: resolveNpmPublishPlan(version).publishTag,
-      installNpmSpec: normalizeOptionalString(packageJson.openclaw?.install?.npmSpec),
+      installNpmSpec: normalizeOptionalString(packageJson.merclaw?.install?.npmSpec),
     });
   }
 
@@ -465,7 +465,7 @@ export function resolveChangedPublishablePluginPackages(params: {
 }
 
 function isPluginVersionPublished(packageName: string, version: string): boolean {
-  const tempDir = mkdtempSync(join(tmpdir(), "openclaw-plugin-npm-view-"));
+  const tempDir = mkdtempSync(join(tmpdir(), "merclaw-plugin-npm-view-"));
   const userconfigPath = join(tempDir, "npmrc");
   writeFileSync(userconfigPath, "");
 

@@ -1,6 +1,6 @@
-import { MAX_DATE_TIMESTAMP_MS } from "@openclaw/normalization-core/number-coercion";
+import { MAX_DATE_TIMESTAMP_MS } from "@merclaw/normalization-core/number-coercion";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { MerClawConfig } from "../../config/config.js";
 import type { ProviderPlugin } from "../../plugins/types.js";
 import type { RuntimeEnv } from "../../runtime.js";
 
@@ -81,7 +81,7 @@ vi.mock("../../agents/auth-profiles/usage.js", () => ({
 
 vi.mock("../../plugins/provider-auth-helpers.js", () => ({
   applyAuthProfileConfig: (
-    cfg: OpenClawConfig,
+    cfg: MerClawConfig,
     params: {
       profileId: string;
       provider: string;
@@ -89,7 +89,7 @@ vi.mock("../../plugins/provider-auth-helpers.js", () => ({
       email?: string;
       displayName?: string;
     },
-  ): OpenClawConfig => ({
+  ): MerClawConfig => ({
     ...cfg,
     auth: {
       ...cfg.auth,
@@ -212,7 +212,7 @@ vi.mock("../../plugins/provider-auth-choice-helpers.js", async (importOriginal) 
       );
     }),
     applyProviderAuthConfigPatch: vi.fn(
-      (cfg: OpenClawConfig, patch: unknown, options?: { replaceDefaultModels?: boolean }) => {
+      (cfg: MerClawConfig, patch: unknown, options?: { replaceDefaultModels?: boolean }) => {
         const merged = mergePatch(cfg, patch);
         if (!options?.replaceDefaultModels) {
           return merged;
@@ -233,7 +233,7 @@ vi.mock("../../plugins/provider-auth-choice-helpers.js", async (importOriginal) 
           : merged;
       },
     ),
-    applyDefaultModel: vi.fn((cfg: OpenClawConfig, model: string) => ({
+    applyDefaultModel: vi.fn((cfg: MerClawConfig, model: string) => ({
       ...cfg,
       agents: {
         ...cfg.agents,
@@ -340,8 +340,8 @@ function createProvider(params: {
 
 describe("modelsAuthLoginCommand", () => {
   let restoreStdin: (() => void) | null = null;
-  let currentConfig: OpenClawConfig;
-  let lastUpdatedConfig: OpenClawConfig | null;
+  let currentConfig: MerClawConfig;
+  let lastUpdatedConfig: MerClawConfig | null;
   let runProviderAuth: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
@@ -364,9 +364,9 @@ describe("modelsAuthLoginCommand", () => {
     mocks.promoteAuthProfileInOrder.mockReset();
 
     mocks.resolveDefaultAgentId.mockReturnValue("main");
-    mocks.resolveAgentDir.mockReturnValue("/tmp/openclaw/agents/main");
-    mocks.resolveAgentWorkspaceDir.mockReturnValue("/tmp/openclaw/workspace");
-    mocks.resolveDefaultAgentWorkspaceDir.mockReturnValue("/tmp/openclaw/workspace");
+    mocks.resolveAgentDir.mockReturnValue("/tmp/merclaw/agents/main");
+    mocks.resolveAgentWorkspaceDir.mockReturnValue("/tmp/merclaw/workspace");
+    mocks.resolveDefaultAgentWorkspaceDir.mockReturnValue("/tmp/merclaw/workspace");
     mocks.isRemoteEnvironment.mockReturnValue(false);
     mocks.resolvePluginSetupProvider.mockReturnValue(undefined);
     mocks.resolvePluginSetupRegistry.mockReturnValue({
@@ -378,7 +378,7 @@ describe("modelsAuthLoginCommand", () => {
     });
     mocks.loadValidConfigOrThrow.mockImplementation(async () => currentConfig);
     mocks.updateConfig.mockImplementation(
-      async (mutator: (cfg: OpenClawConfig) => OpenClawConfig) => {
+      async (mutator: (cfg: MerClawConfig) => MerClawConfig) => {
         lastUpdatedConfig = mutator(currentConfig);
         currentConfig = lastUpdatedConfig;
         return lastUpdatedConfig;
@@ -424,15 +424,15 @@ describe("modelsAuthLoginCommand", () => {
   function useCoderAgentConfig() {
     currentConfig = {
       agents: {
-        list: [{ id: "main" }, { id: "coder", workspace: "/tmp/openclaw/workspaces/coder" }],
+        list: [{ id: "main" }, { id: "coder", workspace: "/tmp/merclaw/workspaces/coder" }],
       },
     };
     const originalConfig = currentConfig;
-    mocks.resolveAgentDir.mockImplementation((_cfg: OpenClawConfig, agentId: string) =>
-      agentId === "coder" ? "/tmp/openclaw/agents/coder" : "/tmp/openclaw/agents/main",
+    mocks.resolveAgentDir.mockImplementation((_cfg: MerClawConfig, agentId: string) =>
+      agentId === "coder" ? "/tmp/merclaw/agents/coder" : "/tmp/merclaw/agents/main",
     );
-    mocks.resolveAgentWorkspaceDir.mockImplementation((_cfg: OpenClawConfig, agentId: string) =>
-      agentId === "coder" ? "/tmp/openclaw/workspaces/coder" : "/tmp/openclaw/workspace",
+    mocks.resolveAgentWorkspaceDir.mockImplementation((_cfg: MerClawConfig, agentId: string) =>
+      agentId === "coder" ? "/tmp/merclaw/workspaces/coder" : "/tmp/merclaw/workspace",
     );
     return originalConfig;
   }
@@ -459,7 +459,7 @@ describe("modelsAuthLoginCommand", () => {
 
     await modelsAuthLoginCommand({ provider: "openai" }, runtime);
 
-    expect(mocks.loadAuthProfileStoreForRuntime).toHaveBeenCalledWith("/tmp/openclaw/agents/main", {
+    expect(mocks.loadAuthProfileStoreForRuntime).toHaveBeenCalledWith("/tmp/merclaw/agents/main", {
       externalCli: {
         mode: "scoped",
         allowKeychainPrompt: false,
@@ -469,7 +469,7 @@ describe("modelsAuthLoginCommand", () => {
     expect(mocks.clearAuthProfileCooldown).toHaveBeenCalledWith({
       store: fakeStore,
       profileId: "openai:user@example.com",
-      agentDir: "/tmp/openclaw/agents/main",
+      agentDir: "/tmp/merclaw/agents/main",
     });
     expect(mocks.clearAuthProfileCooldown.mock.invocationCallOrder[0]).toBeLessThan(
       runProviderAuth.mock.invocationCallOrder[0],
@@ -479,9 +479,9 @@ describe("modelsAuthLoginCommand", () => {
     expect(upsertCall.profileId).toBe("openai:user@example.com");
     expect(upsertCall.credential?.type).toBe("oauth");
     expect(upsertCall.credential?.provider).toBe("openai");
-    expect(upsertCall.agentDir).toBe("/tmp/openclaw/agents/main");
+    expect(upsertCall.agentDir).toBe("/tmp/merclaw/agents/main");
     expect(mocks.promoteAuthProfileInOrder).toHaveBeenCalledWith({
-      agentDir: "/tmp/openclaw/agents/main",
+      agentDir: "/tmp/merclaw/agents/main",
       provider: "openai",
       profileId: "openai:user@example.com",
       createIfMissing: false,
@@ -514,7 +514,7 @@ describe("modelsAuthLoginCommand", () => {
 
     expect(mocks.updateConfig).not.toHaveBeenCalled();
     expect(mocks.promoteAuthProfileInOrder).toHaveBeenCalledWith({
-      agentDir: "/tmp/openclaw/agents/main",
+      agentDir: "/tmp/merclaw/agents/main",
       provider: "openai",
       profileId: "openai:user@example.com",
       createIfMissing: true,
@@ -536,7 +536,7 @@ describe("modelsAuthLoginCommand", () => {
 
     expect(mocks.updateConfig).not.toHaveBeenCalled();
     expect(mocks.promoteAuthProfileInOrder).toHaveBeenCalledWith({
-      agentDir: "/tmp/openclaw/agents/main",
+      agentDir: "/tmp/merclaw/agents/main",
       provider: "openai",
       profileId: "openai:user@example.com",
       createIfMissing: true,
@@ -637,7 +637,7 @@ describe("modelsAuthLoginCommand", () => {
     expect(mocks.resolvePluginSetupProvider).toHaveBeenCalledWith({
       provider: "openai",
       config: initialConfig,
-      workspaceDir: "/tmp/openclaw/workspace",
+      workspaceDir: "/tmp/merclaw/workspace",
     });
     expect(runOauthAuth).toHaveBeenCalledOnce();
     expect(runApiKeyAuth).not.toHaveBeenCalled();
@@ -645,7 +645,7 @@ describe("modelsAuthLoginCommand", () => {
     expect(mocks.clearAuthProfileCooldown).toHaveBeenCalledWith({
       store: fakeStore,
       profileId: "openai:api-key-backup",
-      agentDir: "/tmp/openclaw/agents/main",
+      agentDir: "/tmp/merclaw/agents/main",
     });
     expect(mocks.clearAuthProfileCooldown).toHaveBeenCalledOnce();
   });
@@ -802,7 +802,7 @@ describe("modelsAuthLoginCommand", () => {
     expect(mocks.resolveDefaultAgentId).not.toHaveBeenCalled();
     expect(mocks.resolveAgentDir).toHaveBeenCalledWith(originalConfig, "coder");
     expect(mocks.loadAuthProfileStoreForRuntime).toHaveBeenCalledWith(
-      "/tmp/openclaw/agents/coder",
+      "/tmp/merclaw/agents/coder",
       {
         externalCli: {
           mode: "scoped",
@@ -812,11 +812,11 @@ describe("modelsAuthLoginCommand", () => {
       },
     );
     const authRunCall = readMockCallArg(runProviderAuth) as AuthRunCall;
-    expect(authRunCall.agentDir).toBe("/tmp/openclaw/agents/coder");
-    expect(authRunCall.workspaceDir).toBe("/tmp/openclaw/workspaces/coder");
+    expect(authRunCall.agentDir).toBe("/tmp/merclaw/agents/coder");
+    expect(authRunCall.workspaceDir).toBe("/tmp/merclaw/workspaces/coder");
     expect(
       (readMockCallArg(mocks.upsertAuthProfileWithLock) as UpsertAuthProfileCall).agentDir,
-    ).toBe("/tmp/openclaw/agents/coder");
+    ).toBe("/tmp/merclaw/agents/coder");
   });
 
   it("loads the owning plugin for an explicit provider even in a clean config", async () => {
@@ -863,7 +863,7 @@ describe("modelsAuthLoginCommand", () => {
       mocks.resolvePluginProviders,
     ) as ResolvePluginProvidersCall;
     expect(providerResolutionCall.config).toEqual({});
-    expect(providerResolutionCall.workspaceDir).toBe("/tmp/openclaw/workspace");
+    expect(providerResolutionCall.workspaceDir).toBe("/tmp/merclaw/workspace");
     expect(providerResolutionCall.bundledProviderVitestCompat).toBe(true);
     expect(providerResolutionCall.includeUntrustedWorkspacePlugins).toBe(false);
     expect(providerResolutionCall.providerRefs).toEqual(["anthropic"]);
@@ -905,8 +905,8 @@ describe("modelsAuthLoginCommand", () => {
     const runApiKeyAuth = vi.fn();
     const runClaudeCliMigration = vi.fn().mockImplementation(async (ctx) => {
       expect(ctx.config).toEqual(currentConfig);
-      expect(ctx.agentDir).toBe("/tmp/openclaw/agents/main");
-      expect(ctx.workspaceDir).toBe("/tmp/openclaw/workspace");
+      expect(ctx.agentDir).toBe("/tmp/merclaw/agents/main");
+      expect(ctx.workspaceDir).toBe("/tmp/merclaw/workspace");
       expect(ctx.prompter.note).toBe(note);
       expect(ctx.prompter.select).toBe(select);
       expect(ctx.runtime).toBe(runtime);
@@ -994,12 +994,12 @@ describe("modelsAuthLoginCommand", () => {
     expect(mocks.clearAuthProfileCooldown).toHaveBeenNthCalledWith(1, {
       store: fakeStore,
       profileId: "anthropic:claude-cli",
-      agentDir: "/tmp/openclaw/agents/main",
+      agentDir: "/tmp/merclaw/agents/main",
     });
     expect(mocks.clearAuthProfileCooldown).toHaveBeenNthCalledWith(2, {
       store: fakeStore,
       profileId: "anthropic:legacy",
-      agentDir: "/tmp/openclaw/agents/main",
+      agentDir: "/tmp/merclaw/agents/main",
     });
     expect(
       mocks.clearAuthProfileCooldown.mock.invocationCallOrder.every(
@@ -1181,7 +1181,7 @@ describe("modelsAuthLoginCommand", () => {
     const runtime = createRuntime();
 
     await expect(modelsAuthLoginCommand({ provider: "anthropic" }, runtime)).rejects.toThrow(
-      'Unknown provider "anthropic". Loaded providers: openai. Verify plugins via `openclaw plugins list --json`.',
+      'Unknown provider "anthropic". Loaded providers: openai. Verify plugins via `merclaw plugins list --json`.',
     );
   });
 
@@ -1222,16 +1222,16 @@ describe("modelsAuthLoginCommand", () => {
         provider: "anthropic",
         token: `sk-ant-oat01-${"a".repeat(80)}`,
       },
-      agentDir: "/tmp/openclaw/agents/main",
+      agentDir: "/tmp/merclaw/agents/main",
     });
     expect(runtime.log).toHaveBeenCalledWith(
-      "Anthropic setup-token auth is supported in OpenClaw.",
+      "Anthropic setup-token auth is supported in MerClaw.",
     );
     expect(runtime.log).toHaveBeenCalledWith(
-      "OpenClaw prefers Claude CLI reuse when it is available on the host.",
+      "MerClaw prefers Claude CLI reuse when it is available on the host.",
     );
     expect(runtime.log).toHaveBeenCalledWith(
-      "Anthropic staff told us this OpenClaw path is allowed again.",
+      "Anthropic staff told us this MerClaw path is allowed again.",
     );
   });
 
@@ -1250,7 +1250,7 @@ describe("modelsAuthLoginCommand", () => {
         provider: "openai",
         token: "openai-token",
       },
-      agentDir: "/tmp/openclaw/agents/coder",
+      agentDir: "/tmp/merclaw/agents/coder",
     });
   });
 
@@ -1289,7 +1289,7 @@ describe("modelsAuthLoginCommand", () => {
     );
 
     expect(validateMessages).toEqual([
-      "That looks like an OpenAI API key. Use openclaw models auth paste-api-key --provider openai for API-key auth.",
+      "That looks like an OpenAI API key. Use merclaw models auth paste-api-key --provider openai for API-key auth.",
     ]);
     expect(mocks.upsertAuthProfileWithLock).not.toHaveBeenCalled();
     expect(mocks.updateConfig).not.toHaveBeenCalled();
@@ -1338,7 +1338,7 @@ describe("modelsAuthLoginCommand", () => {
         provider: "openai",
         key: "sk-openai-chatgpt-api-key-value",
       },
-      agentDir: "/tmp/openclaw/agents/coder",
+      agentDir: "/tmp/merclaw/agents/coder",
     });
     expect(lastUpdatedConfig?.auth?.profiles?.["openai:manual"]).toEqual({
       provider: "openai",
@@ -1362,7 +1362,7 @@ describe("modelsAuthLoginCommand", () => {
         provider: "openai",
         key: "sk-openai-chatgpt-api-key-value",
       },
-      agentDir: "/tmp/openclaw/agents/main",
+      agentDir: "/tmp/merclaw/agents/main",
     });
     expect(lastUpdatedConfig?.auth?.profiles?.["openai:manual"]).toEqual({
       provider: "openai",
@@ -1385,7 +1385,7 @@ describe("modelsAuthLoginCommand", () => {
         provider: "openai",
         key: "sk-openai-chat-api-key-value",
       },
-      agentDir: "/tmp/openclaw/agents/main",
+      agentDir: "/tmp/merclaw/agents/main",
     });
     expect(lastUpdatedConfig?.auth?.profiles?.["openai:manual"]).toEqual({
       provider: "openai",
@@ -1413,7 +1413,7 @@ describe("modelsAuthLoginCommand", () => {
     );
 
     expect(validateMessages).toEqual([
-      "That looks like token or OAuth material, not an OpenAI API key. Use openclaw models auth paste-token --provider openai for token auth material.",
+      "That looks like token or OAuth material, not an OpenAI API key. Use merclaw models auth paste-token --provider openai for token auth material.",
     ]);
     expect(mocks.upsertAuthProfileWithLock).not.toHaveBeenCalled();
     expect(mocks.updateConfig).not.toHaveBeenCalled();
@@ -1426,7 +1426,7 @@ describe("modelsAuthLoginCommand", () => {
     await expect(
       modelsAuthPasteTokenCommand({ provider: "openai", agent: "missing" }, runtime),
     ).rejects.toThrow(
-      'Unknown agent id "missing". Use "openclaw agents list" to see configured agents.',
+      'Unknown agent id "missing". Use "merclaw agents list" to see configured agents.',
     );
 
     expect(mocks.clackText).not.toHaveBeenCalled();
@@ -1473,7 +1473,7 @@ describe("modelsAuthLoginCommand", () => {
         provider: "moonshot",
         token: "moonshot-token",
       },
-      agentDir: "/tmp/openclaw/agents/main",
+      agentDir: "/tmp/merclaw/agents/main",
     });
   });
 
@@ -1511,11 +1511,11 @@ describe("modelsAuthLoginCommand", () => {
 
     expect(mocks.resolveDefaultAgentId).not.toHaveBeenCalled();
     const tokenAuthCall = readMockCallArg(runTokenAuth) as AuthRunCall;
-    expect(tokenAuthCall.agentDir).toBe("/tmp/openclaw/agents/coder");
-    expect(tokenAuthCall.workspaceDir).toBe("/tmp/openclaw/workspaces/coder");
+    expect(tokenAuthCall.agentDir).toBe("/tmp/merclaw/agents/coder");
+    expect(tokenAuthCall.workspaceDir).toBe("/tmp/merclaw/workspaces/coder");
     expect(
       (readMockCallArg(mocks.upsertAuthProfileWithLock) as UpsertAuthProfileCall).agentDir,
-    ).toBe("/tmp/openclaw/agents/coder");
+    ).toBe("/tmp/merclaw/agents/coder");
   });
 
   it("uses the requested agent store for interactive token auth add", async () => {
@@ -1553,11 +1553,11 @@ describe("modelsAuthLoginCommand", () => {
 
     expect(mocks.resolveDefaultAgentId).not.toHaveBeenCalled();
     const tokenAuthCall = readMockCallArg(runTokenAuth) as AuthRunCall;
-    expect(tokenAuthCall.agentDir).toBe("/tmp/openclaw/agents/coder");
-    expect(tokenAuthCall.workspaceDir).toBe("/tmp/openclaw/workspaces/coder");
+    expect(tokenAuthCall.agentDir).toBe("/tmp/merclaw/agents/coder");
+    expect(tokenAuthCall.workspaceDir).toBe("/tmp/merclaw/workspaces/coder");
     expect(
       (readMockCallArg(mocks.upsertAuthProfileWithLock) as UpsertAuthProfileCall).agentDir,
-    ).toBe("/tmp/openclaw/agents/coder");
+    ).toBe("/tmp/merclaw/agents/coder");
   });
 
   it("keeps the requested agent store when interactive auth add falls back to paste-token", async () => {
@@ -1581,7 +1581,7 @@ describe("modelsAuthLoginCommand", () => {
         provider: "openai",
         token: "openai-token",
       },
-      agentDir: "/tmp/openclaw/agents/coder",
+      agentDir: "/tmp/merclaw/agents/coder",
     });
   });
 });

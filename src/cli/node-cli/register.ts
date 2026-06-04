@@ -1,4 +1,4 @@
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import type { Command } from "commander";
 import { formatDocsLink } from "../../../packages/terminal-core/src/links.js";
 import { theme } from "../../../packages/terminal-core/src/theme.js";
@@ -33,14 +33,14 @@ export function registerNodeCli(program: Command) {
       () =>
         `\n${theme.heading("Examples:")}\n${formatHelpExamples([
           [
-            "openclaw node run --host 127.0.0.1 --port 18789",
+            "merclaw node run --host 127.0.0.1 --port 18789",
             "Run the node host in the foreground.",
           ],
-          ["openclaw node status", "Check node host service status."],
-          ["openclaw node install", "Install the node host service."],
-          ["openclaw node start", "Start the installed node host service."],
-          ["openclaw node restart", "Restart the installed node host service."],
-        ])}\n\n${theme.muted("Docs:")} ${formatDocsLink("/cli/node", "docs.openclaw.ai/cli/node")}\n`,
+          ["merclaw node status", "Check node host service status."],
+          ["merclaw node install", "Install the node host service."],
+          ["merclaw node start", "Start the installed node host service."],
+          ["merclaw node restart", "Restart the installed node host service."],
+        ])}\n\n${theme.muted("Docs:")} ${formatDocsLink("/cli/node", "docs.merclaw.ai/cli/node")}\n`,
     );
 
   node

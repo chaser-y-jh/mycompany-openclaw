@@ -4,7 +4,7 @@ import { delimiter, join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   collectClawHubPublishablePluginPackages,
-  collectClawHubOpenClawOwnerErrors,
+  collectClawHubMerClawOwnerErrors,
   collectClawHubVersionGateErrors,
   collectPluginClawHubReleasePathsFromGitRange,
   collectPluginClawHubReleasePlan,
@@ -14,7 +14,7 @@ import {
 } from "../scripts/lib/plugin-clawhub-release.ts";
 import {
   collectPublishablePluginPackages,
-  OPENCLAW_PLUGIN_NPM_REPOSITORY_URL,
+  MERCLAW_PLUGIN_NPM_REPOSITORY_URL,
 } from "../scripts/lib/plugin-npm-release.ts";
 import { cleanupTempDirs, makeTempRepoRoot } from "./helpers/temp-repo.js";
 
@@ -29,7 +29,7 @@ describe("resolveChangedClawHubPublishablePluginPackages", () => {
     {
       extensionId: "feishu",
       packageDir: "extensions/feishu",
-      packageName: "@openclaw/feishu",
+      packageName: "@merclaw/feishu",
       version: "2026.4.1",
       channel: "stable",
       publishTag: "latest",
@@ -37,7 +37,7 @@ describe("resolveChangedClawHubPublishablePluginPackages", () => {
     {
       extensionId: "zalo",
       packageDir: "extensions/zalo",
-      packageName: "@openclaw/zalo",
+      packageName: "@merclaw/zalo",
       version: "2026.4.1-beta.1",
       channel: "beta",
       publishTag: "beta",
@@ -61,7 +61,7 @@ describe("collectClawHubPublishablePluginPackages", () => {
     });
 
     expect(() => collectClawHubPublishablePluginPackages(repoDir)).toThrow(
-      "openclaw.compat.pluginApi is required for external code plugin packages.",
+      "merclaw.compat.pluginApi is required for external code plugin packages.",
     );
   });
 
@@ -83,9 +83,9 @@ describe("collectClawHubPublishablePluginPackages", () => {
       join(repoDir, "extensions", "broken-plugin", "package.json"),
       JSON.stringify(
         {
-          name: "@openclaw/broken-plugin",
+          name: "@merclaw/broken-plugin",
           version: "2026.4.1",
-          openclaw: {
+          merclaw: {
             extensions: ["./index.ts"],
             release: {
               publishToClawHub: true,
@@ -99,21 +99,21 @@ describe("collectClawHubPublishablePluginPackages", () => {
 
     expect(
       collectClawHubPublishablePluginPackages(repoDir, {
-        packageNames: ["@openclaw/demo-plugin"],
+        packageNames: ["@merclaw/demo-plugin"],
       }).map((plugin) => plugin.packageName),
-    ).toEqual(["@openclaw/demo-plugin"]);
+    ).toEqual(["@merclaw/demo-plugin"]);
   });
 });
 
-describe("OpenClaw dual-published plugin metadata", () => {
+describe("MerClaw dual-published plugin metadata", () => {
   const dualPublishedPlugins = [
     {
       extensionId: "diagnostics-otel",
-      packageName: "@openclaw/diagnostics-otel",
+      packageName: "@merclaw/diagnostics-otel",
     },
     {
       extensionId: "diagnostics-prometheus",
-      packageName: "@openclaw/diagnostics-prometheus",
+      packageName: "@merclaw/diagnostics-prometheus",
     },
   ] as const;
 
@@ -133,7 +133,7 @@ describe("OpenClaw dual-published plugin metadata", () => {
       const packageJson = JSON.parse(
         readFileSync(`extensions/${plugin.extensionId}/package.json`, "utf8"),
       ) as {
-        openclaw?: {
+        merclaw?: {
           install?: {
             clawhubSpec?: string;
             defaultChoice?: string;
@@ -146,13 +146,13 @@ describe("OpenClaw dual-published plugin metadata", () => {
         };
       };
 
-      expect(packageJson.openclaw?.install).toEqual({
+      expect(packageJson.merclaw?.install).toEqual({
         clawhubSpec: `clawhub:${plugin.packageName}`,
         defaultChoice: "npm",
         minHostVersion: ">=2026.4.25",
         npmSpec: plugin.packageName,
       });
-      expect(packageJson.openclaw?.release).toEqual({
+      expect(packageJson.merclaw?.release).toEqual({
         publishToClawHub: true,
         publishToNpm: true,
       });
@@ -188,7 +188,7 @@ describe("collectClawHubVersionGateErrors", () => {
     });
 
     expect(errors).toEqual([
-      "@openclaw/demo-plugin@2026.4.1: changed publishable plugin still has the same version in package.json.",
+      "@merclaw/demo-plugin@2026.4.1: changed publishable plugin still has the same version in package.json.",
     ]);
   });
 
@@ -202,22 +202,22 @@ describe("collectClawHubVersionGateErrors", () => {
       join(repoDir, "extensions", "demo-plugin", "package.json"),
       JSON.stringify(
         {
-          name: "@openclaw/demo-plugin",
+          name: "@merclaw/demo-plugin",
           version: "2026.4.1",
           repository: {
             type: "git",
-            url: OPENCLAW_PLUGIN_NPM_REPOSITORY_URL,
+            url: MERCLAW_PLUGIN_NPM_REPOSITORY_URL,
           },
-          openclaw: {
+          merclaw: {
             extensions: ["./index.ts"],
             compat: {
               pluginApi: ">=2026.4.1",
             },
             install: {
-              npmSpec: "@openclaw/demo-plugin",
+              npmSpec: "@merclaw/demo-plugin",
             },
             build: {
-              openclawVersion: "2026.4.1",
+              merclawVersion: "2026.4.1",
             },
             release: {
               publishToClawHub: true,
@@ -318,7 +318,7 @@ describe("collectPluginClawHubReleasePlan", () => {
 
     const plan = await collectPluginClawHubReleasePlan({
       rootDir: repoDir,
-      selection: ["@openclaw/demo-plugin"],
+      selection: ["@merclaw/demo-plugin"],
       fetchImpl: async () => new Response("{}", { status: 200 }),
       registryBaseUrl: "https://clawhub.ai",
     });
@@ -330,7 +330,7 @@ describe("collectPluginClawHubReleasePlan", () => {
       channel: "stable",
       extensionId: "demo-plugin",
       packageDir: "extensions/demo-plugin",
-      packageName: "@openclaw/demo-plugin",
+      packageName: "@merclaw/demo-plugin",
       publishTag: "latest",
       version: "2026.4.1",
     });
@@ -344,9 +344,9 @@ describe("collectPluginClawHubReleasePlan", () => {
       join(repoDir, "extensions", "broken-plugin", "package.json"),
       JSON.stringify(
         {
-          name: "@openclaw/broken-plugin",
+          name: "@merclaw/broken-plugin",
           version: "2026.4.1",
-          openclaw: {
+          merclaw: {
             extensions: ["./index.ts"],
             release: {
               publishToClawHub: true,
@@ -360,27 +360,27 @@ describe("collectPluginClawHubReleasePlan", () => {
 
     const plan = await collectPluginClawHubReleasePlan({
       rootDir: repoDir,
-      selection: ["@openclaw/demo-plugin"],
+      selection: ["@merclaw/demo-plugin"],
       fetchImpl: async () => new Response("{}", { status: 404 }),
       registryBaseUrl: "https://clawhub.ai",
     });
 
-    expect(plan.candidates.map((plugin) => plugin.packageName)).toEqual(["@openclaw/demo-plugin"]);
+    expect(plan.candidates.map((plugin) => plugin.packageName)).toEqual(["@merclaw/demo-plugin"]);
   });
 });
 
-describe("collectClawHubOpenClawOwnerErrors", () => {
-  it("requires OpenClaw-scoped release candidates to already belong to the OpenClaw publisher", async () => {
-    const errors = await collectClawHubOpenClawOwnerErrors({
+describe("collectClawHubMerClawOwnerErrors", () => {
+  it("requires MerClaw-scoped release candidates to already belong to the MerClaw publisher", async () => {
+    const errors = await collectClawHubMerClawOwnerErrors({
       plugins: [
-        { packageName: "@openclaw/demo-plugin" },
-        { packageName: "@openclaw/missing-plugin" },
+        { packageName: "@merclaw/demo-plugin" },
+        { packageName: "@merclaw/missing-plugin" },
         { packageName: "@other/safe-plugin" },
       ],
       registryBaseUrl: "https://clawhub.ai",
       fetchImpl: async (url) => {
         const pathname = new URL(url instanceof Request ? url.url : url).pathname;
-        if (pathname.includes("%40openclaw%2Fmissing-plugin")) {
+        if (pathname.includes("%40merclaw%2Fmissing-plugin")) {
           return new Response("not found", { status: 404 });
         }
         return new Response(
@@ -393,17 +393,17 @@ describe("collectClawHubOpenClawOwnerErrors", () => {
     });
 
     expect(errors).toEqual([
-      "@openclaw/demo-plugin: ClawHub package owner must be @openclaw; got @steipete.",
-      "@openclaw/missing-plugin: ClawHub package row must already exist under @openclaw before OpenClaw release publish.",
+      "@merclaw/demo-plugin: ClawHub package owner must be @merclaw; got @steipete.",
+      "@merclaw/missing-plugin: ClawHub package row must already exist under @merclaw before MerClaw release publish.",
     ]);
   });
 
-  it("passes when OpenClaw-scoped release candidates belong to the OpenClaw publisher", async () => {
-    const errors = await collectClawHubOpenClawOwnerErrors({
-      plugins: [{ packageName: "@openclaw/demo-plugin" }],
+  it("passes when MerClaw-scoped release candidates belong to the MerClaw publisher", async () => {
+    const errors = await collectClawHubMerClawOwnerErrors({
+      plugins: [{ packageName: "@merclaw/demo-plugin" }],
       registryBaseUrl: "https://clawhub.ai",
       fetchImpl: async () =>
-        new Response(JSON.stringify({ owner: { handle: "openclaw" } }), {
+        new Response(JSON.stringify({ owner: { handle: "merclaw" } }), {
           status: 200,
           headers: { "Content-Type": "application/json" },
         }),
@@ -414,8 +414,8 @@ describe("collectClawHubOpenClawOwnerErrors", () => {
 
   it("bounds ClawHub owner metadata response bodies", async () => {
     await expect(
-      collectClawHubOpenClawOwnerErrors({
-        plugins: [{ packageName: "@openclaw/demo-plugin" }],
+      collectClawHubMerClawOwnerErrors({
+        plugins: [{ packageName: "@merclaw/demo-plugin" }],
         registryBaseUrl: "https://clawhub.ai",
         fetchImpl: async () =>
           new Response("{}", {
@@ -424,19 +424,19 @@ describe("collectClawHubOpenClawOwnerErrors", () => {
           }),
       }),
     ).rejects.toThrow(
-      "ClawHub package owner response for @openclaw/demo-plugin response body exceeded 1048576 bytes.",
+      "ClawHub package owner response for @merclaw/demo-plugin response body exceeded 1048576 bytes.",
     );
   });
 
   it("bounds streamed ClawHub owner metadata bodies", async () => {
     await expect(
-      collectClawHubOpenClawOwnerErrors({
-        plugins: [{ packageName: "@openclaw/demo-plugin" }],
+      collectClawHubMerClawOwnerErrors({
+        plugins: [{ packageName: "@merclaw/demo-plugin" }],
         registryBaseUrl: "https://clawhub.ai",
         fetchImpl: async () => new Response("x".repeat(1024 * 1024 + 1), { status: 200 }),
       }),
     ).rejects.toThrow(
-      "ClawHub package owner response for @openclaw/demo-plugin response body exceeded 1048576 bytes.",
+      "ClawHub package owner response for @merclaw/demo-plugin response body exceeded 1048576 bytes.",
     );
   });
 });
@@ -470,9 +470,9 @@ if [[ "\${1:-}" == "package" && "\${2:-}" == "pack" ]]; then
     esac
   done
   mkdir -p "$pack_destination"
-  pack_path="$pack_destination/openclaw-demo-plugin-2026.4.1.tgz"
+  pack_path="$pack_destination/merclaw-demo-plugin-2026.4.1.tgz"
   printf 'fake tgz\\n' > "$pack_path"
-  printf '{"path":"%s","name":"@openclaw/demo-plugin","version":"2026.4.1"}\\n' "$pack_path"
+  printf '{"path":"%s","name":"@merclaw/demo-plugin","version":"2026.4.1"}\\n' "$pack_path"
 fi
 exit 0
 `,
@@ -491,7 +491,7 @@ exit 0
         encoding: "utf8",
         env: {
           ...process.env,
-          OPENCLAW_PLUGIN_NPM_RUNTIME_BUILD: "0",
+          MERCLAW_PLUGIN_NPM_RUNTIME_BUILD: "0",
           PATH: `${binDir}${delimiter}${process.env.PATH ?? ""}`,
         },
       },
@@ -536,13 +536,13 @@ function createTempPluginRepo(
     includeClawHubContract?: boolean;
   } = {},
 ) {
-  const repoDir = makeTempRepoRoot(tempDirs, "openclaw-clawhub-release-");
+  const repoDir = makeTempRepoRoot(tempDirs, "merclaw-clawhub-release-");
   const extensionId = options.extensionId ?? "demo-plugin";
   const extensionIds = [extensionId, ...(options.extraExtensionIds ?? [])];
 
   writeFileSync(
     join(repoDir, "package.json"),
-    JSON.stringify({ name: "openclaw-test-root" }, null, 2),
+    JSON.stringify({ name: "merclaw-test-root" }, null, 2),
   );
   writeFileSync(join(repoDir, "pnpm-lock.yaml"), "lockfileVersion: '9.0'\n");
   for (const currentExtensionId of extensionIds) {
@@ -551,13 +551,13 @@ function createTempPluginRepo(
       join(repoDir, "extensions", currentExtensionId, "package.json"),
       JSON.stringify(
         {
-          name: `@openclaw/${currentExtensionId}`,
+          name: `@merclaw/${currentExtensionId}`,
           version: "2026.4.1",
           repository: {
             type: "git",
-            url: OPENCLAW_PLUGIN_NPM_REPOSITORY_URL,
+            url: MERCLAW_PLUGIN_NPM_REPOSITORY_URL,
           },
-          openclaw: {
+          merclaw: {
             extensions: ["./index.ts"],
             ...(options.includeClawHubContract === false
               ? {}
@@ -566,11 +566,11 @@ function createTempPluginRepo(
                     pluginApi: ">=2026.4.1",
                   },
                   build: {
-                    openclawVersion: "2026.4.1",
+                    merclawVersion: "2026.4.1",
                   },
                 }),
             install: {
-              npmSpec: `@openclaw/${currentExtensionId}`,
+              npmSpec: `@merclaw/${currentExtensionId}`,
             },
             release: {
               publishToClawHub: options.publishToClawHub ?? true,

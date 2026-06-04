@@ -1,4 +1,4 @@
-# MiniMax (OpenClaw plugin)
+# MiniMax (MerClaw plugin)
 
 Bundled MiniMax plugin for both:
 
@@ -8,13 +8,13 @@ Bundled MiniMax plugin for both:
 ## Enable
 
 ```bash
-openclaw plugins enable minimax
+merclaw plugins enable minimax
 ```
 
 Restart the Gateway after enabling.
 
 ```bash
-openclaw gateway restart
+merclaw gateway restart
 ```
 
 ## Authenticate
@@ -22,13 +22,13 @@ openclaw gateway restart
 OAuth:
 
 ```bash
-openclaw models auth login --provider minimax-portal --set-default
+merclaw models auth login --provider minimax-portal --set-default
 ```
 
 API key:
 
 ```bash
-openclaw setup --wizard --auth-choice minimax-global-api
+merclaw setup --wizard --auth-choice minimax-global-api
 ```
 
 ## Notes

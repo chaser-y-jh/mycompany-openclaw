@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import type { Dirent } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import { satisfiesPluginApiRange } from "../infra/clawhub.js";
 import { packageNameMatchesId } from "../infra/install-safe-path.js";
 import {
@@ -17,8 +17,8 @@ import {
   type ManagedNpmRootPeerDependencySnapshot,
   readManagedNpmRootInstalledDependency,
   readManagedNpmRootPeerDependencySnapshot,
-  readOpenClawManagedNpmRootOverrides,
-  repairManagedNpmRootOpenClawPeer,
+  readMerClawManagedNpmRootOverrides,
+  repairManagedNpmRootMerClawPeer,
   removeManagedNpmRootDependency,
   resolveManagedNpmRootDependencySpec,
   restoreManagedNpmRootPeerDependencySnapshot,
@@ -27,7 +27,7 @@ import {
   type ManagedNpmRootInstalledDependency,
 } from "../infra/npm-managed-root.js";
 import {
-  compareOpenClawReleaseVersions,
+  compareMerClawReleaseVersions,
   formatPrereleaseResolutionError,
   isExactSemverVersion,
   isPrereleaseSemverVersion,
@@ -36,7 +36,7 @@ import {
   validateRegistryNpmSpec,
   type ParsedRegistryNpmSpec,
 } from "../infra/npm-registry-spec.js";
-import { installedPackageNeedsOpenClawPeerLinkRepair } from "../infra/package-update-utils.js";
+import { installedPackageNeedsMerClawPeerLinkRepair } from "../infra/package-update-utils.js";
 import {
   createSafeNpmInstallArgs,
   createSafeNpmInstallEnv,
@@ -58,14 +58,14 @@ import type { InstallSecurityScanResult } from "./install-security-scan.js";
 import type { InstallSafetyOverrides } from "./install-security-scan.js";
 import {
   resolvePackageExtensionEntries,
-  type OpenClawPackageManifest,
+  type MerClawPackageManifest,
   type PackageManifest as PluginPackageManifest,
 } from "./manifest.js";
 import { resolvePackagePluginApiRange } from "./package-compat.js";
 import { validatePackageExtensionEntriesForInstall } from "./package-entry-resolution.js";
 import {
-  linkOpenClawPeerDependencies,
-  relinkOpenClawPeerDependenciesInManagedNpmRoot,
+  linkMerClawPeerDependencies,
+  relinkMerClawPeerDependenciesInManagedNpmRoot,
 } from "./plugin-peer-link.js";
 
 export { resolvePluginInstallDir } from "./install-paths.js";
@@ -88,8 +88,8 @@ type PackageManifest = PluginPackageManifest & {
 };
 type PluginInstallRuntime = Awaited<ReturnType<typeof loadPluginInstallRuntime>>;
 
-function formatUnresolvedOpenClawPeerLinkError(packageName: string): string {
-  return `Installed plugin ${packageName} declares openclaw as a peer dependency, but OpenClaw could not create a plugin-local node_modules/openclaw link. Run from a packaged OpenClaw install or reinstall OpenClaw, then retry.`;
+function formatUnresolvedMerClawPeerLinkError(packageName: string): string {
+  return `Installed plugin ${packageName} declares merclaw as a peer dependency, but MerClaw could not create a plugin-local node_modules/merclaw link. Run from a packaged MerClaw install or reinstall MerClaw, then retry.`;
 }
 
 function isNpmAliasOverrideComparatorError(result: { stdout: string; stderr: string }): boolean {
@@ -97,15 +97,15 @@ function isNpmAliasOverrideComparatorError(result: { stdout: string; stderr: str
 }
 
 const MISSING_EXTENSIONS_ERROR =
-  'package.json missing openclaw.extensions; update the plugin package to include openclaw.extensions (for example ["./dist/index.js"]). See https://docs.openclaw.ai/help/troubleshooting#plugin-install-fails-with-missing-openclaw-extensions';
+  'package.json missing merclaw.extensions; update the plugin package to include merclaw.extensions (for example ["./dist/index.js"]). See https://docs.merclaw.ai/help/troubleshooting#plugin-install-fails-with-missing-merclaw-extensions';
 const PLUGIN_ARCHIVE_ROOT_MARKERS = [
   "package.json",
-  "openclaw.plugin.json",
+  "merclaw.plugin.json",
   ".codex-plugin/plugin.json",
   ".claude-plugin/plugin.json",
   ".cursor-plugin/plugin.json",
 ];
-const MANAGED_NPM_PACK_ARCHIVE_DIR = "_openclaw-pack-archives";
+const MANAGED_NPM_PACK_ARCHIVE_DIR = "_merclaw-pack-archives";
 
 export const PLUGIN_INSTALL_ERROR_CODE = {
   INVALID_NPM_SPEC: "invalid_npm_spec",
@@ -114,10 +114,10 @@ export const PLUGIN_INSTALL_ERROR_CODE = {
   INCOMPATIBLE_HOST_VERSION: "incompatible_host_version",
   INCOMPATIBLE_PLUGIN_API: "incompatible_plugin_api",
   INVALID_PLUGIN_API: "invalid_plugin_api",
-  MISSING_OPENCLAW_EXTENSIONS: "missing_openclaw_extensions",
+  MISSING_MERCLAW_EXTENSIONS: "missing_merclaw_extensions",
   MISSING_PLUGIN_MANIFEST: "missing_plugin_manifest",
-  EMPTY_OPENCLAW_EXTENSIONS: "empty_openclaw_extensions",
-  INVALID_OPENCLAW_EXTENSIONS: "invalid_openclaw_extensions",
+  EMPTY_MERCLAW_EXTENSIONS: "empty_merclaw_extensions",
+  INVALID_MERCLAW_EXTENSIONS: "invalid_merclaw_extensions",
   NPM_PACKAGE_NOT_FOUND: "npm_package_not_found",
   PLUGIN_ID_MISMATCH: "plugin_id_mismatch",
   SECURITY_SCAN_BLOCKED: "security_scan_blocked",
@@ -142,16 +142,16 @@ export type InstallPluginResult =
 
 type PluginInstallFailureResult = Extract<InstallPluginResult, { ok: false }>;
 
-function validateOpenClawPackageCompatibility(params: {
+function validateMerClawPackageCompatibility(params: {
   pluginId: string;
   currentHostVersion: string;
-  packageMetadata?: OpenClawPackageManifest;
+  packageMetadata?: MerClawPackageManifest;
 }): PluginInstallFailureResult | null {
   const pluginApiRangeCheck = resolvePackagePluginApiRange(params.packageMetadata);
   if (!pluginApiRangeCheck.ok) {
     return {
       ok: false,
-      error: `invalid package.json openclaw.compat.pluginApi: ${pluginApiRangeCheck.error}`,
+      error: `invalid package.json merclaw.compat.pluginApi: ${pluginApiRangeCheck.error}`,
       code: PLUGIN_INSTALL_ERROR_CODE.INVALID_PLUGIN_API,
     };
   }
@@ -159,7 +159,7 @@ function validateOpenClawPackageCompatibility(params: {
   if (pluginApiRange && !satisfiesPluginApiRange(params.currentHostVersion, pluginApiRange)) {
     return {
       ok: false,
-      error: `plugin "${params.pluginId}" requires plugin API ${pluginApiRange}, but this OpenClaw runtime exposes ${params.currentHostVersion}. Upgrade OpenClaw or install a compatible plugin version and retry.`,
+      error: `plugin "${params.pluginId}" requires plugin API ${pluginApiRange}, but this MerClaw runtime exposes ${params.currentHostVersion}. Upgrade MerClaw or install a compatible plugin version and retry.`,
       code: PLUGIN_INSTALL_ERROR_CODE.INCOMPATIBLE_PLUGIN_API,
     };
   }
@@ -167,10 +167,10 @@ function validateOpenClawPackageCompatibility(params: {
   return null;
 }
 
-function validateOpenClawPackageInstallCompatibility(params: {
+function validateMerClawPackageInstallCompatibility(params: {
   runtime: PluginInstallRuntime;
   pluginId: string;
-  packageMetadata?: OpenClawPackageManifest;
+  packageMetadata?: MerClawPackageManifest;
 }): PluginInstallFailureResult | null {
   const currentHostVersion = params.runtime.resolveCompatibilityHostVersion();
   const minHostVersionCheck = params.runtime.checkMinHostVersion({
@@ -181,25 +181,25 @@ function validateOpenClawPackageInstallCompatibility(params: {
     if (minHostVersionCheck.kind === "invalid") {
       return {
         ok: false,
-        error: `invalid package.json openclaw.install.minHostVersion: ${minHostVersionCheck.error}`,
+        error: `invalid package.json merclaw.install.minHostVersion: ${minHostVersionCheck.error}`,
         code: PLUGIN_INSTALL_ERROR_CODE.INVALID_MIN_HOST_VERSION,
       };
     }
     if (minHostVersionCheck.kind === "unknown_host_version") {
       return {
         ok: false,
-        error: `plugin "${params.pluginId}" requires OpenClaw >=${minHostVersionCheck.requirement.minimumLabel}, but this host version could not be determined. Re-run from a released build or set OPENCLAW_VERSION and retry.`,
+        error: `plugin "${params.pluginId}" requires MerClaw >=${minHostVersionCheck.requirement.minimumLabel}, but this host version could not be determined. Re-run from a released build or set MERCLAW_VERSION and retry.`,
         code: PLUGIN_INSTALL_ERROR_CODE.UNKNOWN_HOST_VERSION,
       };
     }
     return {
       ok: false,
-      error: `plugin "${params.pluginId}" requires OpenClaw >=${minHostVersionCheck.requirement.minimumLabel}, but this host is ${minHostVersionCheck.currentVersion}. Upgrade OpenClaw and retry.`,
+      error: `plugin "${params.pluginId}" requires MerClaw >=${minHostVersionCheck.requirement.minimumLabel}, but this host is ${minHostVersionCheck.currentVersion}. Upgrade MerClaw and retry.`,
       code: PLUGIN_INSTALL_ERROR_CODE.INCOMPATIBLE_HOST_VERSION,
     };
   }
 
-  return validateOpenClawPackageCompatibility({
+  return validateMerClawPackageCompatibility({
     pluginId: params.pluginId,
     currentHostVersion,
     packageMetadata: params.packageMetadata,
@@ -239,7 +239,7 @@ type PluginInstallPolicyRequest = {
 
 const defaultLogger: PluginInstallLogger = {};
 
-function ensureOpenClawExtensions(params: { manifest: PackageManifest }):
+function ensureMerClawExtensions(params: { manifest: PackageManifest }):
   | {
       ok: true;
       entries: string[];
@@ -254,21 +254,21 @@ function ensureOpenClawExtensions(params: { manifest: PackageManifest }):
     return {
       ok: false,
       error: MISSING_EXTENSIONS_ERROR,
-      code: PLUGIN_INSTALL_ERROR_CODE.MISSING_OPENCLAW_EXTENSIONS,
+      code: PLUGIN_INSTALL_ERROR_CODE.MISSING_MERCLAW_EXTENSIONS,
     };
   }
   if (resolved.status === "empty") {
     return {
       ok: false,
-      error: "package.json openclaw.extensions is empty",
-      code: PLUGIN_INSTALL_ERROR_CODE.EMPTY_OPENCLAW_EXTENSIONS,
+      error: "package.json merclaw.extensions is empty",
+      code: PLUGIN_INSTALL_ERROR_CODE.EMPTY_MERCLAW_EXTENSIONS,
     };
   }
   if (resolved.status === "invalid") {
     return {
       ok: false,
       error: resolved.error,
-      code: PLUGIN_INSTALL_ERROR_CODE.INVALID_OPENCLAW_EXTENSIONS,
+      code: PLUGIN_INSTALL_ERROR_CODE.INVALID_MERCLAW_EXTENSIONS,
     };
   }
   return {
@@ -286,7 +286,7 @@ function isNpmPackageNotFoundMessage(error: string): boolean {
 }
 
 function compareNpmSemver(a: string, b: string): number {
-  const releaseCmp = compareOpenClawReleaseVersions(a, b);
+  const releaseCmp = compareMerClawReleaseVersions(a, b);
   if (releaseCmp !== null) {
     return releaseCmp;
   }
@@ -330,7 +330,7 @@ async function resolveTrustedOfficialPrereleaseResolution(params: {
   timeoutMs: number;
   logger: PluginInstallLogger;
 }): Promise<TrustedOfficialPrereleaseResolution | null> {
-  if (!params.spec.name.startsWith("@openclaw/")) {
+  if (!params.spec.name.startsWith("@merclaw/")) {
     return null;
   }
   const semverVersions = await loadNpmPackageVersions({
@@ -360,12 +360,12 @@ async function resolveTrustedOfficialPrereleaseResolution(params: {
           return null;
         }
         params.logger.warn?.(
-          `Resolved ${params.spec.raw} to prerelease version ${params.resolvedPrereleaseVersion}; using newest prerelease ${prereleaseSpec} because this trusted official OpenClaw package has no stable npm versions yet.`,
+          `Resolved ${params.spec.raw} to prerelease version ${params.resolvedPrereleaseVersion}; using newest prerelease ${prereleaseSpec} because this trusted official MerClaw package has no stable npm versions yet.`,
         );
         return { kind: "prerelease-only", resolution: metadataResult.metadata };
       }
       params.logger.warn?.(
-        `Resolved ${params.spec.raw} to prerelease version ${params.resolvedPrereleaseVersion}; allowing it because this trusted official OpenClaw package has no stable npm versions yet.`,
+        `Resolved ${params.spec.raw} to prerelease version ${params.resolvedPrereleaseVersion}; allowing it because this trusted official MerClaw package has no stable npm versions yet.`,
       );
       return { kind: "allow-prerelease-only" };
     }
@@ -381,7 +381,7 @@ async function resolveTrustedOfficialPrereleaseResolution(params: {
     return null;
   }
   params.logger.warn?.(
-    `Resolved ${params.spec.raw} to prerelease version ${params.resolvedPrereleaseVersion}; falling back to stable ${stableSpec} for this trusted official OpenClaw install.`,
+    `Resolved ${params.spec.raw} to prerelease version ${params.resolvedPrereleaseVersion}; falling back to stable ${stableSpec} for this trusted official MerClaw install.`,
   );
   return { kind: "stable", resolution: metadataResult.metadata };
 }
@@ -406,10 +406,10 @@ function validateNpmResolutionCompatibility(params: {
   expectedPluginId?: string;
   resolution: NpmSpecResolution;
 }): PluginInstallFailureResult | null {
-  return validateOpenClawPackageInstallCompatibility({
+  return validateMerClawPackageInstallCompatibility({
     runtime: params.runtime,
     pluginId: params.expectedPluginId ?? params.resolution.name ?? params.parsedSpec.name,
-    packageMetadata: params.resolution.packageOpenClaw as OpenClawPackageManifest | undefined,
+    packageMetadata: params.resolution.packageMerClaw as MerClawPackageManifest | undefined,
   });
 }
 
@@ -462,7 +462,7 @@ async function resolveLatestCompatibleNpmResolution(params: {
     });
     if (!compatibilityError) {
       params.logger.warn?.(
-        `Resolved ${params.parsedSpec.raw} to ${params.currentResolution.resolvedSpec ?? currentVersion}, but that version is incompatible with this OpenClaw runtime; using newest compatible ${metadataResult.metadata.resolvedSpec ?? spec}.`,
+        `Resolved ${params.parsedSpec.raw} to ${params.currentResolution.resolvedSpec ?? currentVersion}, but that version is incompatible with this MerClaw runtime; using newest compatible ${metadataResult.metadata.resolvedSpec ?? spec}.`,
       );
       return metadataResult.metadata;
     }
@@ -637,21 +637,21 @@ async function rollbackManagedNpmPluginInstall(params: {
       );
     }
   }
-  if (params.packageName !== "openclaw") {
+  if (params.packageName !== "merclaw") {
     try {
-      await repairManagedNpmRootOpenClawPeer({
+      await repairManagedNpmRootMerClawPeer({
         npmRoot: params.npmRoot,
         timeoutMs: params.timeoutMs,
         logger: params.logger,
       });
     } catch (error) {
       params.logger.warn?.(
-        `Failed to repair managed npm openclaw peer after rollback: ${String(error)}`,
+        `Failed to repair managed npm merclaw peer after rollback: ${String(error)}`,
       );
     }
   }
   try {
-    await relinkOpenClawPeerDependenciesInManagedNpmRoot({
+    await relinkMerClawPeerDependenciesInManagedNpmRoot({
       npmRoot: params.npmRoot,
       logger: params.logger,
     });
@@ -693,7 +693,7 @@ async function listManagedNpmRootPackageNames(npmRoot: string): Promise<Set<stri
 
   const packageNames = new Set<string>();
   for (const entry of entries.toSorted((left, right) => left.name.localeCompare(right.name))) {
-    if (entry.name === ".bin" || entry.name === "openclaw") {
+    if (entry.name === ".bin" || entry.name === "merclaw") {
       continue;
     }
     if (entry.name.startsWith("@")) {
@@ -821,18 +821,18 @@ async function installPluginFromManagedNpmRoot(
   }
 
   logger.info?.(`Installing ${params.displaySpec} into ${npmRoot}…`);
-  if (params.packageName !== "openclaw") {
-    const repairedOpenClawPeer = await repairManagedNpmRootOpenClawPeer({
+  if (params.packageName !== "merclaw") {
+    const repairedMerClawPeer = await repairManagedNpmRootMerClawPeer({
       npmRoot,
       timeoutMs,
       logger,
     });
-    if (repairedOpenClawPeer) {
-      logger.info?.(`Repaired stale openclaw peer dependency in ${npmRoot}`);
+    if (repairedMerClawPeer) {
+      logger.info?.(`Repaired stale merclaw peer dependency in ${npmRoot}`);
     }
   }
   const preInstallRootPackageNames = await listManagedNpmRootPackageNames(npmRoot);
-  const managedOverrides = await readOpenClawManagedNpmRootOverrides();
+  const managedOverrides = await readMerClawManagedNpmRootOverrides();
   const rollbackPeerDependencySnapshot = await readManagedNpmRootPeerDependencySnapshot({
     npmRoot,
   });
@@ -987,18 +987,18 @@ async function installPluginFromManagedNpmRoot(
         "npm install could not settle managed peer dependencies after 10 sync passes; refusing to leave a partially reconciled plugin dependency tree.",
     };
   }
-  if (params.packageName !== "openclaw") {
-    const repairedOpenClawPeer = await repairManagedNpmRootOpenClawPeer({
+  if (params.packageName !== "merclaw") {
+    const repairedMerClawPeer = await repairManagedNpmRootMerClawPeer({
       npmRoot,
       timeoutMs,
       logger,
     });
-    if (repairedOpenClawPeer) {
-      logger.info?.(`Repaired stale openclaw peer dependency in ${npmRoot} after npm install`);
+    if (repairedMerClawPeer) {
+      logger.info?.(`Repaired stale merclaw peer dependency in ${npmRoot} after npm install`);
     }
   }
   try {
-    await relinkOpenClawPeerDependenciesInManagedNpmRoot({
+    await relinkMerClawPeerDependenciesInManagedNpmRoot({
       npmRoot,
       logger,
     });
@@ -1013,10 +1013,10 @@ async function installPluginFromManagedNpmRoot(
     });
     return {
       ok: false,
-      error: `Failed to repair openclaw peer links after npm install: ${String(error)}`,
+      error: `Failed to repair merclaw peer links after npm install: ${String(error)}`,
     };
   }
-  if (installedPackageNeedsOpenClawPeerLinkRepair(installRoot)) {
+  if (installedPackageNeedsMerClawPeerLinkRepair(installRoot)) {
     await rollbackManagedNpmPluginInstall({
       npmRoot,
       packageName: params.packageName,
@@ -1027,7 +1027,7 @@ async function installPluginFromManagedNpmRoot(
     });
     return {
       ok: false,
-      error: formatUnresolvedOpenClawPeerLinkError(params.packageName),
+      error: formatUnresolvedMerClawPeerLinkError(params.packageName),
     };
   }
 
@@ -1243,7 +1243,7 @@ async function runInstallSourceScan(params: {
   } catch (err) {
     return {
       ok: false,
-      error: `${params.subject} installation blocked: code safety scan failed (${String(err)}). Run "openclaw security audit --deep" for details.`,
+      error: `${params.subject} installation blocked: code safety scan failed (${String(err)}). Run "merclaw security audit --deep" for details.`,
       code: PLUGIN_INSTALL_ERROR_CODE.SECURITY_SCAN_FAILED,
     };
   }
@@ -1419,7 +1419,7 @@ async function installBundleFromSourceDir(
   const packageMetadata = packageManifestResult.manifest
     ? runtime.getPackageManifestMetadata(packageManifestResult.manifest)
     : undefined;
-  const compatibilityError = validateOpenClawPackageInstallCompatibility({
+  const compatibilityError = validateMerClawPackageInstallCompatibility({
     runtime,
     pluginId,
     packageMetadata,
@@ -1508,7 +1508,7 @@ async function detectNativePackageInstallSource(packageDir: string): Promise<boo
 
   try {
     const manifest = await runtime.readJsonFile<PackageManifest>(manifestPath);
-    return ensureOpenClawExtensions({ manifest }).ok;
+    return ensureMerClawExtensions({ manifest }).ok;
   } catch {
     return false;
   }
@@ -1561,7 +1561,7 @@ async function validatePackagePluginInstallSource(params: {
   if (!ocManifestResult.ok && params.requirePluginManifest) {
     return {
       ok: false,
-      error: `package missing valid openclaw.plugin.json: ${ocManifestResult.error}`,
+      error: `package missing valid merclaw.plugin.json: ${ocManifestResult.error}`,
       code: PLUGIN_INSTALL_ERROR_CODE.MISSING_PLUGIN_MANIFEST,
     };
   }
@@ -1597,7 +1597,7 @@ async function validatePackagePluginInstallSource(params: {
   }
 
   const packageMetadata = params.runtime.getPackageManifestMetadata(manifest);
-  const compatibilityError = validateOpenClawPackageInstallCompatibility({
+  const compatibilityError = validateMerClawPackageInstallCompatibility({
     runtime: params.runtime,
     pluginId,
     packageMetadata,
@@ -1606,7 +1606,7 @@ async function validatePackagePluginInstallSource(params: {
     return compatibilityError;
   }
 
-  const extensionsResult = ensureOpenClawExtensions({
+  const extensionsResult = ensureMerClawExtensions({
     manifest,
   });
   if (!extensionsResult.ok) {
@@ -1628,7 +1628,7 @@ async function validatePackagePluginInstallSource(params: {
     return {
       ok: false,
       error: extensionValidation.error,
-      code: PLUGIN_INSTALL_ERROR_CODE.INVALID_OPENCLAW_EXTENSIONS,
+      code: PLUGIN_INSTALL_ERROR_CODE.INVALID_MERCLAW_EXTENSIONS,
     };
   }
 
@@ -1704,7 +1704,7 @@ async function scanAndLinkInstalledPackage(params: {
   if (scanResult) {
     return scanResult;
   }
-  const peerLinkRepair = await linkOpenClawPeerDependencies({
+  const peerLinkRepair = await linkMerClawPeerDependencies({
     installedDir: params.installedDir,
     peerDependencies: params.peerDependencies,
     logger: params.logger,
@@ -1712,7 +1712,7 @@ async function scanAndLinkInstalledPackage(params: {
   if (peerLinkRepair.skipped > 0) {
     return {
       ok: false,
-      error: formatUnresolvedOpenClawPeerLinkError(params.pluginId),
+      error: formatUnresolvedMerClawPeerLinkError(params.pluginId),
     };
   }
   return null;
@@ -1873,7 +1873,7 @@ export async function installPluginFromArchive(
 
   return await runtime.withExtractedArchiveRoot({
     archivePath,
-    tempDirPrefix: "openclaw-plugin-",
+    tempDirPrefix: "merclaw-plugin-",
     timeoutMs,
     logger,
     rootMarkers: PLUGIN_ARCHIVE_ROOT_MARKERS,

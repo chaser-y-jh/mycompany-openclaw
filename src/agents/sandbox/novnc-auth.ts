@@ -2,10 +2,10 @@ import crypto from "node:crypto";
 import {
   isFutureDateTimestampMs,
   resolveExpiresAtMsFromDurationMs,
-} from "@openclaw/normalization-core/number-coercion";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/normalization-core/number-coercion";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 
-export const NOVNC_PASSWORD_ENV_KEY = "OPENCLAW_BROWSER_NOVNC_PASSWORD"; // pragma: allowlist secret
+export const NOVNC_PASSWORD_ENV_KEY = "MERCLAW_BROWSER_NOVNC_PASSWORD"; // pragma: allowlist secret
 const NOVNC_TOKEN_TTL_MS = 60 * 1000;
 const MAX_NOVNC_TOKEN_TTL_MS = NOVNC_TOKEN_TTL_MS;
 const NOVNC_PASSWORD_LENGTH = 8;

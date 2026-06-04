@@ -4,7 +4,7 @@ import path from "node:path";
 import { discoverStaticExtensionAssets } from "./static-extension-assets.mjs";
 
 function resolvePackageAssetBuildCommand(packageJson) {
-  const command = packageJson.openclaw?.assetScripts?.build;
+  const command = packageJson.merclaw?.assetScripts?.build;
   return typeof command === "string" && command.trim() ? command.trim() : null;
 }
 

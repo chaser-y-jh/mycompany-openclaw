@@ -1,8 +1,8 @@
-import { parseStrictPositiveInteger } from "@openclaw/normalization-core/number-coercion";
+import { parseStrictPositiveInteger } from "@merclaw/normalization-core/number-coercion";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/normalization-core/string-coerce";
 import {
   resolveAgentDir,
   resolveAgentWorkspaceDir,
@@ -32,7 +32,7 @@ import { listOpenAIAuthProfileProvidersForAgentRuntime } from "../../agents/open
 import { resolveDefaultAgentWorkspaceDir } from "../../agents/workspace.js";
 import { getChannelPlugin } from "../../channels/plugins/index.js";
 import type { SessionEntry } from "../../config/sessions.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { resolveAgentRuntimeLabel } from "../../status/agent-runtime-label.js";
 import type { ReplyPayload } from "../types.js";
 import { rejectUnauthorizedCommand } from "./command-gates.js";
@@ -91,13 +91,13 @@ function usesUnfilteredCatalogModels(provider: string): boolean {
 function normalizeRuntimeChoiceId(runtime: string | undefined): string {
   const normalized = normalizeLowercaseStringOrEmpty(runtime);
   if (!normalized || normalized === "auto" || normalized === "default") {
-    return "openclaw";
+    return "merclaw";
   }
   return normalized;
 }
 
 function buildRuntimeChoice(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   provider: string;
   runtime: string;
   cli?: boolean;
@@ -108,8 +108,8 @@ function buildRuntimeChoice(params: {
     id,
     label,
     description:
-      id === "openclaw"
-        ? "Use the built-in OpenClaw runtime."
+      id === "merclaw"
+        ? "Use the built-in MerClaw runtime."
         : params.cli
           ? `Run ${params.provider} models through ${label}.`
           : `Use the ${label} runtime selected by the effective harness policy.`,
@@ -117,7 +117,7 @@ function buildRuntimeChoice(params: {
 }
 
 function buildDefaultRuntimeChoice(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentId?: string;
   provider: string;
   modelId?: string;
@@ -146,7 +146,7 @@ function addRuntimeChoice(
 }
 
 export async function buildModelsProviderData(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   agentId?: string,
   options: { view?: "default" | "all"; workspaceDir?: string } = {},
 ): Promise<ModelsProviderData> {
@@ -314,7 +314,7 @@ export async function buildModelsProviderData(
         modelId: defaultModelId,
       }),
     ];
-    addRuntimeChoice(choices, buildRuntimeChoice({ cfg, provider, runtime: "openclaw" }));
+    addRuntimeChoice(choices, buildRuntimeChoice({ cfg, provider, runtime: "merclaw" }));
     addRuntimeChoice(
       choices,
       buildRuntimeChoice({
@@ -405,7 +405,7 @@ function parseModelsArgs(raw: string): ParsedModelsCommand {
 
 function resolveProviderLabel(params: {
   provider: string;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentId?: string;
   agentDir?: string;
   workspaceDir?: string;
@@ -438,7 +438,7 @@ function resolveProviderLabel(params: {
 export function formatModelsAvailableHeader(params: {
   provider: string;
   total: number;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentId?: string;
   agentDir?: string;
   workspaceDir?: string;
@@ -484,7 +484,7 @@ function buildProviderInfos(params: {
 }
 
 export async function resolveModelsCommandReply(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   commandBodyNormalized: string;
   surface?: string;
   currentModel?: string;

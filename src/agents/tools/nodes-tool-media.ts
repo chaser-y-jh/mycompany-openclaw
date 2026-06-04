@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
-import { imageMimeFromFormat } from "@openclaw/media-core/mime";
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { imageMimeFromFormat } from "@merclaw/media-core/mime";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
 import {
   type CameraFacing,
   cameraTempPath,

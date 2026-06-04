@@ -13,5 +13,5 @@ export {
   safeRealpathSync,
   safeStatSync,
   splitSafeRelativePath,
-} from "@openclaw/fs-safe/path";
-export { formatPosixMode } from "@openclaw/fs-safe/advanced";
+} from "@merclaw/fs-safe/path";
+export { formatPosixMode } from "@merclaw/fs-safe/advanced";

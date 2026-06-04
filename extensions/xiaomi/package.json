@@ -1,13 +1,13 @@
 {
-  "name": "@openclaw/xiaomi-provider",
+  "name": "@merclaw/xiaomi-provider",
   "version": "2026.5.31",
   "private": true,
-  "description": "OpenClaw Xiaomi provider plugin",
+  "description": "MerClaw Xiaomi provider plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@merclaw/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ]

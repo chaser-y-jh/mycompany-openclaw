@@ -342,7 +342,7 @@ describe("probeGateway", () => {
   it("loads probe identity and cached device auth from the provided env", async () => {
     const env = {
       ...process.env,
-      OPENCLAW_STATE_DIR: "/tmp/openclaw-probe-service-state",
+      MERCLAW_STATE_DIR: "/tmp/merclaw-probe-service-state",
     } as NodeJS.ProcessEnv;
 
     await probeGateway({
@@ -353,7 +353,7 @@ describe("probeGateway", () => {
     });
 
     expect(deviceIdentityState.identityPaths).toEqual([
-      "/tmp/openclaw-probe-service-state/identity/device.json",
+      "/tmp/merclaw-probe-service-state/identity/device.json",
     ]);
     expect(deviceIdentityState.tokenParams).toEqual([
       {

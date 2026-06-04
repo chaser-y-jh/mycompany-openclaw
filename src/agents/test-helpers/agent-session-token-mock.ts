@@ -24,9 +24,9 @@ const agentSessionTokenMocks = vi.hoisted(() => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/agent-sessions", async () => {
+vi.mock("merclaw/plugin-sdk/agent-sessions", async () => {
   const actual = await vi.importActual<typeof import("../sessions/index.js")>(
-    "openclaw/plugin-sdk/agent-sessions",
+    "merclaw/plugin-sdk/agent-sessions",
   );
   return {
     ...actual,

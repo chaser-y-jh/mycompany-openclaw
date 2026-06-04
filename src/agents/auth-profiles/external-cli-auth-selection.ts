@@ -1,8 +1,8 @@
 import {
   findNormalizedProviderValue,
   normalizeProviderId,
-} from "@openclaw/model-catalog-core/provider-id";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+} from "@merclaw/model-catalog-core/provider-id";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { resolveCliRuntimeExecutionProvider } from "../model-runtime-aliases.js";
 import { resolveProviderIdForAuth } from "../provider-auth-aliases.js";
 import { CLAUDE_CLI_PROFILE_ID } from "./constants.js";
@@ -12,7 +12,7 @@ const CLAUDE_CLI_PROVIDER_ID = "claude-cli";
 
 export function resolveExternalCliAuthOverlayScopeFromSelection(params: {
   provider: string;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   agentId?: string;
   modelId?: string;
   workspaceDir?: string;
@@ -55,7 +55,7 @@ export function resolveExternalCliAuthOverlayScopeFromSelection(params: {
 
 function resolveExternalCliAuthScopeFromAuthSelection(params: {
   provider: string;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   workspaceDir?: string;
   store?: AuthProfileStore;
   userLockedAuthProfileId?: string;
@@ -131,7 +131,7 @@ function resolveExternalCliAuthScopeFromAuthSelection(params: {
 
 function resolveConfiguredAuthProfileOrder(params: {
   provider: string;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   workspaceDir?: string;
   store?: AuthProfileStore;
 }): string[] {
@@ -175,7 +175,7 @@ function resolveAuthProfileOrderEntries(params: {
 
 function resolveExternalCliProviderIdForCompatibleAuthProfile(params: {
   provider: string;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   workspaceDir?: string;
   store?: AuthProfileStore;
   profileId: string;

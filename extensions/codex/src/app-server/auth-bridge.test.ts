@@ -4,8 +4,8 @@ import path from "node:path";
 import {
   clearRuntimeAuthProfileStoreSnapshots,
   loadAuthProfileStoreForSecretsRuntime,
-} from "openclaw/plugin-sdk/agent-runtime";
-import { upsertAuthProfile } from "openclaw/plugin-sdk/provider-auth";
+} from "merclaw/plugin-sdk/agent-runtime";
+import { upsertAuthProfile } from "merclaw/plugin-sdk/provider-auth";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   applyCodexAppServerAuthProfile,
@@ -40,8 +40,8 @@ const providerRuntimeMocks = vi.hoisted(() => ({
   ),
 }));
 
-vi.mock("openclaw/plugin-sdk/agent-runtime", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("openclaw/plugin-sdk/agent-runtime")>();
+vi.mock("merclaw/plugin-sdk/agent-runtime", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("merclaw/plugin-sdk/agent-runtime")>();
   return {
     ...actual,
     resolveApiKeyForProfile: async (
@@ -77,7 +77,7 @@ vi.mock("openclaw/plugin-sdk/agent-runtime", async (importOriginal) => {
         if (refreshed?.access) {
           oauthCredential = refreshed as typeof oauthCredential;
           params.store.profiles[params.profileId] = oauthCredential;
-          if (params.agentDir || process.env.OPENCLAW_STATE_DIR) {
+          if (params.agentDir || process.env.MERCLAW_STATE_DIR) {
             actual.saveAuthProfileStore(params.store, params.agentDir);
           }
         }
@@ -179,7 +179,7 @@ async function writeCodexCliApiKeyAuthFile(codexHome: string): Promise<void> {
 
 describe("bridgeCodexAppServerStartOptions", () => {
   it("sets agent-owned CODEX_HOME without overriding HOME for local app-server launches", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const startOptions = createStartOptions();
     try {
       const codexHome = resolveCodexAppServerHomeDir(agentDir);
@@ -205,7 +205,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("preserves inherited HOME when clearEnv asks to clear app-server isolation vars", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const startOptions = createStartOptions({
       clearEnv: ["CODEX_HOME", "HOME", "FOO"],
     });
@@ -229,7 +229,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("preserves explicit CODEX_HOME and HOME overrides", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const codexHome = path.join(agentDir, "custom-codex-home");
     const nativeHome = path.join(agentDir, "custom-native-home");
     const startOptions = createStartOptions({
@@ -260,7 +260,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("clears inherited API-key env vars when the default Codex profile is subscription auth", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const startOptions = createStartOptions({
       env: { EXISTING: "1" },
       clearEnv: ["FOO"],
@@ -300,7 +300,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("clears an inherited OpenAI API key for an explicit Codex OAuth profile", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const startOptions = createStartOptions({ clearEnv: ["FOO"] });
     try {
       upsertAuthProfile({
@@ -335,7 +335,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("clears an inherited OpenAI API key for an explicit Codex token profile", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const startOptions = createStartOptions({ clearEnv: ["FOO"] });
     try {
       upsertAuthProfile({
@@ -367,7 +367,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("keeps an inherited OpenAI API key for an explicit Codex api-key profile", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const startOptions = createStartOptions({ clearEnv: ["FOO"] });
     try {
       upsertAuthProfile({
@@ -398,7 +398,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("does not clear process environment for websocket app-server connections", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const startOptions = createStartOptions({
       transport: "websocket",
       url: "ws://127.0.0.1:1455",
@@ -431,7 +431,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("fingerprints resolved API-key auth-profile secrets without exposing them", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     try {
       upsertAuthProfile({
         agentDir,
@@ -472,7 +472,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("fingerprints API-key auth-profile secret refs", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     try {
       upsertAuthProfile({
         agentDir,
@@ -506,7 +506,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("fingerprints token auth-profile secret refs", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     try {
       upsertAuthProfile({
         agentDir,
@@ -541,7 +541,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("applies an OpenAI Codex OAuth profile through app-server login", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     try {
       upsertAuthProfile({
@@ -576,7 +576,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("leaves native app-server auth untouched when auth bridging is disabled", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const request = vi.fn(async () => ({ requiresOpenaiAuth: true }));
     try {
       vi.stubEnv("OPENAI_API_KEY", "env-api-key");
@@ -595,7 +595,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("applies a normal OpenAI API-key profile as a Codex app-server backup", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "apiKey" }));
     try {
       upsertAuthProfile({
@@ -624,7 +624,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("applies the default OpenAI Codex OAuth profile when no profile id is explicit", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     try {
       upsertAuthProfile({
@@ -677,7 +677,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("answers refresh requests from a discovered inline Codex OAuth profile", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     oauthMocks.refreshOpenAICodexToken.mockResolvedValueOnce({
       access: "refreshed-ref-backed-access-token",
       refresh: "refreshed-ref-backed-refresh-token",
@@ -711,8 +711,8 @@ describe("bridgeCodexAppServerStartOptions", () => {
     }
   });
 
-  it("applies native Codex CLI OAuth when no OpenClaw auth profile exists", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+  it("applies native Codex CLI OAuth when no MerClaw auth profile exists", async () => {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const agentDir = path.join(root, "agent");
     const codexHome = path.join(root, "codex-cli");
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
@@ -739,8 +739,8 @@ describe("bridgeCodexAppServerStartOptions", () => {
     }
   });
 
-  it("answers refresh from native Codex CLI OAuth without persisting an OpenClaw profile", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+  it("answers refresh from native Codex CLI OAuth without persisting an MerClaw profile", async () => {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const agentDir = path.join(root, "agent");
     const codexHome = path.join(root, "codex-cli");
     const authProfileStorePath = path.join(agentDir, "auth-profiles.json");
@@ -768,7 +768,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("uses native Codex CLI OAuth when deriving cache keys from a supplied base store", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const agentDir = path.join(root, "agent");
     const codexHome = path.join(root, "codex-cli");
     vi.stubEnv("CODEX_HOME", codexHome);
@@ -787,7 +787,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("honors config auth order when selecting an implicit Codex profile", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     try {
       upsertAuthProfile({
@@ -839,7 +839,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("refreshes an expired OpenAI Codex OAuth profile before app-server login", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     oauthMocks.refreshOpenAICodexToken.mockResolvedValueOnce({
       access: "fresh-access-token",
@@ -881,7 +881,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("applies an OpenAI Codex api-key profile backed by a secret ref", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "apiKey" }));
     vi.stubEnv("OPENAI_CODEX_API_KEY", "ref-backed-api-key");
     try {
@@ -911,7 +911,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("rejects unsupported Codex auth profile credential types before OAuth refresh", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     try {
       upsertAuthProfile({
@@ -940,7 +940,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("falls back to CODEX_API_KEY when no auth profile and no Codex account is available", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const request = vi.fn(async (method: string) => {
       if (method === "account/read") {
         return { account: null, requiresOpenaiAuth: true };
@@ -969,7 +969,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("falls back to OPENAI_API_KEY when CODEX_API_KEY is not set", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const request = vi.fn(async (method: string) => {
       if (method === "account/read") {
         return { account: null, requiresOpenaiAuth: true };
@@ -996,7 +996,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("keeps an existing app-server ChatGPT account over env API-key fallback", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const request = vi.fn(async (method: string) => {
       if (method === "account/read") {
         return {
@@ -1022,7 +1022,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("uses env API-key fallback when app-server has no account", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const request = vi.fn(async (method: string) => {
       if (method === "account/read") {
         return { account: null, requiresOpenaiAuth: false };
@@ -1048,7 +1048,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("uses Codex CLI api-key auth.json when no auth profile or env key exists", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const agentDir = path.join(root, "agent");
     const codexHome = path.join(root, "codex-cli");
     const request = vi.fn(async (method: string) => {
@@ -1082,7 +1082,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("includes Codex CLI api-key auth.json in fallback app-server cache keys", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const codexHome = path.join(root, "codex-cli");
     try {
       await writeCodexCliApiKeyAuthFile(codexHome);
@@ -1114,7 +1114,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("does not include Codex CLI api-key auth.json in websocket fallback cache keys", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const codexHome = path.join(root, "codex-cli");
     try {
       await writeCodexCliApiKeyAuthFile(codexHome);
@@ -1134,7 +1134,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("honors clearEnv before env API-key fallback", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const request = vi.fn(async (method: string) => {
       if (method === "account/read") {
         return { account: null, requiresOpenaiAuth: true };
@@ -1159,7 +1159,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("does not send env API-key fallback to websocket app-server connections", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const request = vi.fn(async (method: string) => {
       if (method === "account/read") {
         return { account: null, requiresOpenaiAuth: true };
@@ -1185,7 +1185,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("applies an OpenAI Codex token profile backed by a secret ref", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     vi.stubEnv("OPENAI_CODEX_TOKEN", "ref-backed-access-token");
     try {
@@ -1218,7 +1218,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("passes OpenAI Codex token profiles through to app-server token login", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     try {
       upsertAuthProfile({
@@ -1251,7 +1251,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("passes OpenAI Codex API-key profiles through to app-server API-key login", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "apiKey" }));
     const tokenLikeKey = "eyJhbGciOiJub25l.eyJzdWIiOiJjb2RleCJ9.signature123456";
     try {
@@ -1283,7 +1283,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("accepts a legacy Codex auth-provider alias for app-server login", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     try {
       upsertAuthProfile({
@@ -1315,7 +1315,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("answers app-server ChatGPT token refresh requests from the bound profile", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     oauthMocks.refreshOpenAICodexToken.mockResolvedValueOnce({
       access: "refreshed-access-token",
       refresh: "refreshed-refresh-token",
@@ -1354,7 +1354,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("does not persist an expired stale credential before forced token refresh succeeds", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const currentExpiry = Date.now() + 60_000;
     oauthMocks.refreshOpenAICodexToken.mockImplementationOnce(async () => {
       const persistedProfile = expectOAuthProfile(
@@ -1408,12 +1408,12 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("refreshes inherited main Codex OAuth without cloning it into the child store", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const stateDir = path.join(root, "state");
     const childAgentDir = path.join(stateDir, "agents", "worker", "agent");
     const childAuthPath = path.join(childAgentDir, "auth-profiles.json");
-    vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
-    vi.stubEnv("OPENCLAW_AGENT_DIR", "");
+    vi.stubEnv("MERCLAW_STATE_DIR", stateDir);
+    vi.stubEnv("MERCLAW_AGENT_DIR", "");
     oauthMocks.refreshOpenAICodexToken.mockResolvedValueOnce({
       access: "main-refreshed-access-token",
       refresh: "main-refreshed-refresh-token",
@@ -1459,12 +1459,12 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("force-refreshes the owner credential instead of a stale child OAuth clone", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const stateDir = path.join(root, "state");
     const childAgentDir = path.join(stateDir, "agents", "worker", "agent");
     const childAuthPath = path.join(childAgentDir, "auth-profiles.json");
-    vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
-    vi.stubEnv("OPENCLAW_AGENT_DIR", "");
+    vi.stubEnv("MERCLAW_STATE_DIR", stateDir);
+    vi.stubEnv("MERCLAW_AGENT_DIR", "");
     oauthMocks.refreshOpenAICodexToken.mockResolvedValueOnce({
       access: "main-refreshed-access-token",
       refresh: "main-refreshed-refresh-token",
@@ -1532,7 +1532,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("accepts a refreshed Codex OAuth credential when the stored provider is a legacy alias", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     oauthMocks.refreshOpenAICodexToken.mockResolvedValueOnce({
       access: "refreshed-alias-access-token",
       refresh: "refreshed-alias-refresh-token",
@@ -1571,7 +1571,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("preserves a stored ChatGPT plan type when building token login params", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     try {
       upsertAuthProfile({

@@ -1,5 +1,5 @@
 import { modelSelectionShouldEnsureCopilotRuntimePlugin } from "../agents/copilot-routing.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import {
   createRuntimePluginModelSelectionHelpers,
   type RuntimePluginInstallResult,
@@ -7,7 +7,7 @@ import {
 
 export const COPILOT_RUNTIME_PLUGIN_ID = "copilot";
 const COPILOT_RUNTIME_PLUGIN_LABEL = "GitHub Copilot agent runtime";
-const COPILOT_RUNTIME_PLUGIN_NPM_SPEC = "@openclaw/copilot";
+const COPILOT_RUNTIME_PLUGIN_NPM_SPEC = "@merclaw/copilot";
 const COPILOT_RUNTIME_PLUGIN_DESCRIPTOR = {
   pluginId: COPILOT_RUNTIME_PLUGIN_ID,
   label: COPILOT_RUNTIME_PLUGIN_LABEL,
@@ -18,7 +18,7 @@ const COPILOT_RUNTIME_PLUGIN_DESCRIPTOR = {
 export type CopilotRuntimePluginInstallResult = RuntimePluginInstallResult;
 
 export function selectedModelShouldEnsureCopilotRuntimePlugin(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   model?: string;
 }): boolean {
   return modelSelectionShouldEnsureCopilotRuntimePlugin({

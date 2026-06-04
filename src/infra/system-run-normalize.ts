@@ -1,5 +1,5 @@
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
-import { mapAllowFromEntries } from "openclaw/plugin-sdk/channel-config-helpers";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
+import { mapAllowFromEntries } from "merclaw/plugin-sdk/channel-config-helpers";
 
 export function normalizeNonEmptyString(value: unknown): string | null {
   return typeof value === "string" ? (normalizeOptionalString(value) ?? null) : null;

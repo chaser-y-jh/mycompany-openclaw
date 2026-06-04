@@ -1,7 +1,7 @@
 import type {
   ModelCatalogSource,
   NormalizedModelCatalogRow,
-} from "@openclaw/model-catalog-core/model-catalog-types";
+} from "@merclaw/model-catalog-core/model-catalog-types";
 
 const MODEL_CATALOG_SOURCE_AUTHORITY: Readonly<Record<ModelCatalogSource, number>> = {
   config: 0,

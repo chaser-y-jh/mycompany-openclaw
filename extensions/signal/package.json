@@ -1,16 +1,16 @@
 {
-  "name": "@openclaw/signal",
+  "name": "@merclaw/signal",
   "version": "2026.5.31",
   "private": true,
-  "description": "OpenClaw Signal channel plugin",
+  "description": "MerClaw Signal channel plugin",
   "type": "module",
   "dependencies": {
     "ws": "8.21.0"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@merclaw/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ],

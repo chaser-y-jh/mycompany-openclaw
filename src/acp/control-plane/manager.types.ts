@@ -6,14 +6,14 @@ import type {
   AcpRuntimePromptMode,
   AcpRuntimeSessionMode,
   AcpRuntimeStatus,
-} from "@openclaw/acp-core/runtime/types";
+} from "@merclaw/acp-core/runtime/types";
 import type {
   SessionAcpIdentity,
   AcpSessionRuntimeOptions,
   SessionAcpMeta,
   SessionEntry,
 } from "../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import type { AcpRuntimeError } from "../runtime/errors.js";
 import { getAcpRuntimeBackend, requireAcpRuntimeBackend } from "../runtime/registry.js";
 import {
@@ -39,7 +39,7 @@ export type AcpSessionResolution =
     };
 
 export type AcpInitializeSessionInput = {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   sessionKey: string;
   agent: string;
   mode: AcpRuntimeSessionMode;
@@ -55,7 +55,7 @@ export type AcpTurnAttachment = {
 };
 
 export type AcpRunTurnInput = {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   sessionKey: string;
   text: string;
   attachments?: AcpTurnAttachment[];
@@ -72,7 +72,7 @@ export type AcpTurnLifecycleEvent = {
 };
 
 export type AcpCloseSessionInput = {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   sessionKey: string;
   reason: string;
   discardPersistentState?: boolean;

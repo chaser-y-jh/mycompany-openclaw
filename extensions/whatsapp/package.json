@@ -1,10 +1,10 @@
 {
-  "name": "@openclaw/whatsapp",
+  "name": "@merclaw/whatsapp",
   "version": "2026.5.31",
-  "description": "OpenClaw WhatsApp channel plugin for WhatsApp Web chats.",
+  "description": "MerClaw WhatsApp channel plugin for WhatsApp Web chats.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/openclaw/openclaw"
+    "url": "https://github.com/merclaw/merclaw"
   },
   "type": "module",
   "dependencies": {
@@ -13,18 +13,18 @@
     "typebox": "1.1.39"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*",
-    "openclaw": "2026.5.28"
+    "@merclaw/plugin-sdk": "workspace:*",
+    "merclaw": "2026.5.28"
   },
   "peerDependencies": {
-    "openclaw": ">=2026.5.31"
+    "merclaw": ">=2026.5.31"
   },
   "peerDependenciesMeta": {
-    "openclaw": {
+    "merclaw": {
       "optional": true
     }
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ],
@@ -54,8 +54,8 @@
       ]
     },
     "install": {
-      "clawhubSpec": "clawhub:@openclaw/whatsapp",
-      "npmSpec": "@openclaw/whatsapp",
+      "clawhubSpec": "clawhub:@merclaw/whatsapp",
+      "npmSpec": "@merclaw/whatsapp",
       "defaultChoice": "clawhub",
       "minHostVersion": ">=2026.4.25"
     },
@@ -63,7 +63,7 @@
       "pluginApi": ">=2026.5.31"
     },
     "build": {
-      "openclawVersion": "2026.5.31"
+      "merclawVersion": "2026.5.31"
     },
     "release": {
       "publishToClawHub": true,

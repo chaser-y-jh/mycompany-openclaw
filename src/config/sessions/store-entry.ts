@@ -1,4 +1,4 @@
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
 import {
   normalizeSessionKeyPreservingOpaquePeerIds,
   parseThreadSessionSuffix,
@@ -154,7 +154,7 @@ export function resolveSessionStoreEntry(params: {
     }
   }
   // An exact (opaque-preserving-normalized) entry always wins over any folded
-  // legacy alias, regardless of freshness (openclaw#75670). Only when no exact
+  // legacy alias, regardless of freshness (merclaw#75670). Only when no exact
   // entry exists do we fall back to a confirmed legacy alias.
   const exactEntry = Object.hasOwn(params.store, normalizedKey)
     ? params.store[normalizedKey]

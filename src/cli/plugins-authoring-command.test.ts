@@ -69,7 +69,7 @@ function writeSourceToolPluginProject(params: {
       {
         name: params.packageName,
         type: "module",
-        openclaw: { extensions: ["./src/index.ts"] },
+        merclaw: { extensions: ["./src/index.ts"] },
       },
       null,
       2,
@@ -78,7 +78,7 @@ function writeSourceToolPluginProject(params: {
   const entryPath = path.join(sourceDir, "index.ts");
   fs.writeFileSync(
     entryPath,
-    `import { defineToolPlugin } from "openclaw/plugin-sdk/tool-plugin";
+    `import { defineToolPlugin } from "merclaw/plugin-sdk/tool-plugin";
 
 export default defineToolPlugin({
   id: ${JSON.stringify(params.pluginId)},
@@ -100,11 +100,11 @@ export default defineToolPlugin({
 
 describe("plugin authoring commands", () => {
   beforeAll(async () => {
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-plugin-source-warm-"));
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-plugin-source-warm-"));
     try {
       const entryPath = writeSourceToolPluginProject({
         tmpDir,
-        packageName: "openclaw-plugin-source-warm",
+        packageName: "merclaw-plugin-source-warm",
         pluginId: "source-warm",
         toolName: "source_warm_echo",
       });
@@ -202,14 +202,14 @@ describe("plugin authoring commands", () => {
         metadata,
         entry: "./src/index.ts",
         manifest,
-        packageManifest: { version: "1.2.3", openclaw: { extensions: ["./src/index.ts"] } },
+        packageManifest: { version: "1.2.3", merclaw: { extensions: ["./src/index.ts"] } },
       }),
     ).toEqual([]);
   });
 
   it("drops stale manifest-owned tool metadata when no generated metadata remains", () => {
     const metadata = createDemoMetadata();
-    const packageManifest = { version: "1.2.3", openclaw: { extensions: ["./src/index.ts"] } };
+    const packageManifest = { version: "1.2.3", merclaw: { extensions: ["./src/index.ts"] } };
     const manifest = buildToolPluginManifest({
       metadata,
       packageManifest,
@@ -238,13 +238,13 @@ describe("plugin authoring commands", () => {
       buildToolPluginPackageManifest({
         packageManifest: {
           name: "demo",
-          openclaw: { setupEntry: "./setup.ts", extensions: ["./src/other.ts"] },
+          merclaw: { setupEntry: "./setup.ts", extensions: ["./src/other.ts"] },
         },
         entry: "./src/index.ts",
       }),
     ).toEqual({
       name: "demo",
-      openclaw: {
+      merclaw: {
         setupEntry: "./setup.ts",
         extensions: ["./src/other.ts", "./src/index.ts"],
       },
@@ -253,7 +253,7 @@ describe("plugin authoring commands", () => {
 
   it("validates manifest tools and package entry metadata", () => {
     const metadata = createDemoMetadata();
-    const packageManifest = { version: "1.2.3", openclaw: { extensions: ["./src/index.ts"] } };
+    const packageManifest = { version: "1.2.3", merclaw: { extensions: ["./src/index.ts"] } };
 
     expect(
       validateToolPluginProject({
@@ -277,28 +277,28 @@ describe("plugin authoring commands", () => {
           configSchema: {},
           contracts: { tools: ["other_tool"] },
         },
-        packageManifest: { openclaw: { extensions: ["./src/index.ts"] } },
+        packageManifest: { merclaw: { extensions: ["./src/index.ts"] } },
       }),
     ).toEqual([
-      "openclaw.plugin.json generated metadata is stale. Run openclaw plugins build.",
-      "openclaw.plugin.json contracts.tools is missing: demo_echo",
-      "openclaw.plugin.json contracts.tools has no matching defineToolPlugin tool: other_tool",
+      "merclaw.plugin.json generated metadata is stale. Run merclaw plugins build.",
+      "merclaw.plugin.json contracts.tools is missing: demo_echo",
+      "merclaw.plugin.json contracts.tools has no matching defineToolPlugin tool: other_tool",
     ]);
   });
 
   it("reports missing entries with an author-facing path", async () => {
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-plugin-missing-"));
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-plugin-missing-"));
 
     await expect(
       loadToolPlugin({ rootDir: tmpDir, entryPath: path.join(tmpDir, "dist/index.js") }),
     ).rejects.toThrow("plugin entry not found: ./dist/index.js");
   });
 
-  it("loads source entries that import the OpenClaw plugin SDK package subpath", async () => {
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-plugin-source-"));
+  it("loads source entries that import the MerClaw plugin SDK package subpath", async () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-plugin-source-"));
     const entryPath = writeSourceToolPluginProject({
       tmpDir,
-      packageName: "openclaw-plugin-source-demo",
+      packageName: "merclaw-plugin-source-demo",
       pluginId: "source-demo",
       toolName: "source_echo",
     });
@@ -313,7 +313,7 @@ describe("plugin authoring commands", () => {
   });
 
   it("scaffolds a dist-entry tool plugin project", async () => {
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-plugin-init-"));
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-plugin-init-"));
     const projectDir = path.join(tmpDir, "stock-quotes");
 
     await runPluginsInitCommand("stock-quotes", {
@@ -331,23 +331,23 @@ describe("plugin authoring commands", () => {
         typebox: "^1.1.38",
       },
       peerDependencies: {
-        openclaw: ">=2026.5.17",
+        merclaw: ">=2026.5.17",
       },
       devDependencies: {
-        openclaw: "latest",
+        merclaw: "latest",
         typescript: "^5.9.0",
         vitest: "^3.2.0",
       },
       scripts: {
-        "plugin:build": "npm run build && openclaw plugins build --entry ./dist/index.js",
-        "plugin:validate": "npm run build && openclaw plugins validate --entry ./dist/index.js",
+        "plugin:build": "npm run build && merclaw plugins build --entry ./dist/index.js",
+        "plugin:validate": "npm run build && merclaw plugins validate --entry ./dist/index.js",
       },
-      openclaw: {
+      merclaw: {
         extensions: ["./dist/index.js"],
       },
     });
     expect(
-      JSON.parse(fs.readFileSync(path.join(projectDir, "openclaw.plugin.json"), "utf8")),
+      JSON.parse(fs.readFileSync(path.join(projectDir, "merclaw.plugin.json"), "utf8")),
     ).toMatchObject({
       id: "stock-quotes",
       name: 'Stock "Quotes"',

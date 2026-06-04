@@ -125,8 +125,8 @@ const HOME_ENV_KEYS = [
   "USERPROFILE",
   "HOMEDRIVE",
   "HOMEPATH",
-  "OPENCLAW_STATE_DIR",
-  "OPENCLAW_AGENT_DIR",
+  "MERCLAW_STATE_DIR",
+  "MERCLAW_AGENT_DIR",
 ] as const;
 
 export function createTempHomeHarness(options: { prefix: string; beforeEachCase?: () => void }) {
@@ -146,12 +146,12 @@ export function createTempHomeHarness(options: { prefix: string; beforeEachCase?
 
   async function withTempHome<T>(fn: (home: string) => Promise<T>): Promise<T> {
     const home = path.join(fixtureRoot, `case-${++caseId}`);
-    await fs.mkdir(path.join(home, ".openclaw", "agents", "main", "sessions"), { recursive: true });
+    await fs.mkdir(path.join(home, ".merclaw", "agents", "main", "sessions"), { recursive: true });
     const envSnapshot = captureEnv([...HOME_ENV_KEYS]);
     process.env.HOME = home;
     process.env.USERPROFILE = home;
-    process.env.OPENCLAW_STATE_DIR = path.join(home, ".openclaw");
-    process.env.OPENCLAW_AGENT_DIR = path.join(home, ".openclaw", "agent");
+    process.env.MERCLAW_STATE_DIR = path.join(home, ".merclaw");
+    process.env.MERCLAW_AGENT_DIR = path.join(home, ".merclaw", "agent");
 
     if (process.platform === "win32") {
       const match = home.match(/^([A-Za-z]:)(.*)$/);
@@ -177,7 +177,7 @@ export function makeReplyConfig(home: string) {
     agents: {
       defaults: {
         model: "anthropic/claude-opus-4-6",
-        workspace: path.join(home, "openclaw"),
+        workspace: path.join(home, "merclaw"),
       },
     },
     channels: {

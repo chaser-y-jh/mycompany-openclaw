@@ -1,4 +1,4 @@
-import { parseBrowserHttpUrl } from "openclaw/plugin-sdk/browser-config";
+import { parseBrowserHttpUrl } from "merclaw/plugin-sdk/browser-config";
 
 /**
  * CDP port allocation for browser profiles.
@@ -77,7 +77,7 @@ export function getUsedPorts(
 }
 
 export const PROFILE_COLORS = [
-  "#FF4500", // Orange-red (openclaw default)
+  "#FF4500", // Orange-red (merclaw default)
   "#0066CC", // Blue
   "#00AA00", // Green
   "#9933FF", // Purple

@@ -1,4 +1,4 @@
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
 
 export function isGemma4ModelId(modelId?: string | null): boolean {
   const normalized = normalizeLowercaseStringOrEmpty(modelId);

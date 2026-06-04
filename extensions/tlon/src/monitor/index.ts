@@ -1,7 +1,7 @@
-import type { ReplyPayload } from "openclaw/plugin-sdk/reply-runtime";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime";
-import { asFiniteNumber } from "openclaw/plugin-sdk/string-coerce-runtime";
-import type { OpenClawConfig } from "../../runtime-api.js";
+import type { ReplyPayload } from "merclaw/plugin-sdk/reply-runtime";
+import type { RuntimeEnv } from "merclaw/plugin-sdk/runtime";
+import { asFiniteNumber } from "merclaw/plugin-sdk/string-coerce-runtime";
+import type { MerClawConfig } from "../../runtime-api.js";
 import { createLoggerBackedRuntime } from "../../runtime-api.js";
 import { getTlonRuntime } from "../runtime.js";
 import { createSettingsManager, type TlonSettingsStore } from "../settings.js";
@@ -59,7 +59,7 @@ function readNumber(record: Record<string, unknown> | null, key: string): number
 
 export async function monitorTlonProvider(opts: MonitorTlonOpts = {}): Promise<void> {
   const core = getTlonRuntime();
-  const cfg = core.config.current() as OpenClawConfig;
+  const cfg = core.config.current() as MerClawConfig;
   if (cfg.channels?.tlon?.enabled === false) {
     return;
   }
@@ -441,7 +441,7 @@ export async function monitorTlonProvider(opts: MonitorTlonOpts = {}): Promise<v
       if (senders.size > 0 && !senders.has(senderShip)) {
         runtime.log?.(
           `[tlon] ⚠️ SECURITY: Multiple users sharing DM session. ` +
-            `Configure "session.dmScope: per-channel-peer" in OpenClaw config.`,
+            `Configure "session.dmScope: per-channel-peer" in MerClaw config.`,
         );
 
         if (!sharedSessionWarningSent && effectiveOwnerShip) {
@@ -449,9 +449,9 @@ export async function monitorTlonProvider(opts: MonitorTlonOpts = {}): Promise<v
           const warningMsg =
             `⚠️ Security Warning: Multiple users are sharing a DM session with this bot. ` +
             `This can leak conversation context between users.\n\n` +
-            `Fix: Add to your OpenClaw config:\n` +
+            `Fix: Add to your MerClaw config:\n` +
             `session:\n  dmScope: "per-channel-peer"\n\n` +
-            `Docs: https://docs.openclaw.ai/concepts/session#secure-dm-mode`;
+            `Docs: https://docs.merclaw.ai/concepts/session#secure-dm-mode`;
 
           sendDm({
             api,

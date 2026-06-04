@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { normalizeNullableString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeNullableString } from "@merclaw/normalization-core/string-coerce";
 import {
   describeInterpreterInlineEval,
   type InterpreterInlineEvalHit,

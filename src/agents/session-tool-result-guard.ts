@@ -1,5 +1,5 @@
-import { resolveIntegerOption } from "@openclaw/normalization-core/number-coercion";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { resolveIntegerOption } from "@merclaw/normalization-core/number-coercion";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import {
   boundedJsonUtf8Bytes,
   firstEnumerableOwnKeys,
@@ -114,7 +114,7 @@ const MAX_PERSISTED_DETAIL_SESSION_COUNT = 10;
 const MAX_PERSISTED_DETAIL_FALLBACK_STRING_CHARS = 200;
 const MAX_PERSISTED_DETAIL_REDACTION_LOOKAHEAD_CHARS = 1_024;
 const MAX_PERSISTED_DETAIL_BOUNDARY_OVERLAP_CHARS = 512;
-const PERSISTED_DETAIL_REDACTION_BOUNDARY = "\u0000OPENCLAW_PERSISTED_DETAIL_BOUNDARY\u0000";
+const PERSISTED_DETAIL_REDACTION_BOUNDARY = "\u0000MERCLAW_PERSISTED_DETAIL_BOUNDARY\u0000";
 const PARTIAL_STRUCTURED_SECRET_VALUE_RE =
   /(?:["']?(?:api[-_]?key|apikey|token|secret|password|passwd|access[-_]?token|accesstoken|refresh[-_]?token|refreshtoken|auth[-_]?token|authtoken|client[-_]?secret|clientsecret|app[-_]?secret|appsecret|card[-_]?number|cardnumber|cvc|cvv)["']?\s*[:=]\s*["']?)(?!\*{3})(?=[^\s"',}\]]{8,})/i;
 const PARTIAL_PRIVATE_KEY_BLOCK_RE =
@@ -145,7 +145,7 @@ function redactPersistedDetailString(
   const redactedPrefix =
     boundaryIndex >= 0
       ? redactedScan.slice(0, boundaryIndex)
-      : "[OpenClaw persisted detail redacted: boundary marker removed]";
+      : "[MerClaw persisted detail redacted: boundary marker removed]";
   const safePrefixChars = Math.max(
     0,
     maxChars - Math.min(maxChars, MAX_PERSISTED_DETAIL_BOUNDARY_OVERLAP_CHARS),
@@ -154,10 +154,10 @@ function redactPersistedDetailString(
   const persistedPrefix =
     PARTIAL_STRUCTURED_SECRET_VALUE_RE.test(initialPersistedPrefix) ||
     PARTIAL_PRIVATE_KEY_BLOCK_RE.test(initialPersistedPrefix)
-      ? "[OpenClaw persisted detail redacted: partial secret span omitted]"
+      ? "[MerClaw persisted detail redacted: partial secret span omitted]"
       : initialPersistedPrefix;
-  const boundaryNotice = "[OpenClaw persisted detail redacted: boundary overlap omitted]";
-  return `${persistedPrefix}${persistedPrefix ? "\n" : ""}${boundaryNotice}\n\n[OpenClaw persisted detail truncated: ${Math.max(
+  const boundaryNotice = "[MerClaw persisted detail redacted: boundary overlap omitted]";
+  return `${persistedPrefix}${persistedPrefix ? "\n" : ""}${boundaryNotice}\n\n[MerClaw persisted detail truncated: ${Math.max(
     0,
     value.length - maxChars,
   )} original chars omitted]`;
@@ -204,7 +204,7 @@ function redactPersistedDetailValue(
     return value;
   }
   if (depth >= 8) {
-    return "[OpenClaw persisted detail redacted: max depth exceeded]";
+    return "[MerClaw persisted detail redacted: max depth exceeded]";
   }
   if (Array.isArray(value)) {
     let changed = false;
@@ -505,13 +505,13 @@ function normalizePersistedToolResultName(
   return toolResult;
 }
 
-function isTranscriptOnlyOpenClawAssistantMessage(message: AgentMessage): boolean {
+function isTranscriptOnlyMerClawAssistantMessage(message: AgentMessage): boolean {
   if (!message || message.role !== "assistant") {
     return false;
   }
   const provider = normalizeOptionalString((message as { provider?: unknown }).provider) ?? "";
   const model = normalizeOptionalString((message as { model?: unknown }).model) ?? "";
-  return provider === "openclaw" && (model === "delivery-mirror" || model === "gateway-injected");
+  return provider === "merclaw" && (model === "delivery-mirror" || model === "gateway-injected");
 }
 
 export { getRawSessionAppendMessage };
@@ -738,7 +738,7 @@ export function installSessionToolResultGuard(
     const transcriptOnlyAssistant =
       nextRole === "assistant" &&
       toolCalls.length === 0 &&
-      isTranscriptOnlyOpenClawAssistantMessage(nextMessage);
+      isTranscriptOnlyMerClawAssistantMessage(nextMessage);
     if (
       !transcriptOnlyAssistant &&
       pendingState.shouldFlushBeforeNonToolResult(nextRole, toolCalls.length)

@@ -33,8 +33,8 @@ const PROXY_KEYS = [
   "http_proxy",
   "NO_PROXY",
   "no_proxy",
-  "OPENCLAW_PROXY_ACTIVE",
-  "OPENCLAW_PROXY_CA_FILE",
+  "MERCLAW_PROXY_ACTIVE",
+  "MERCLAW_PROXY_CA_FILE",
 ] as const;
 const originalEnv = { ...process.env };
 const tempDirs: string[] = [];
@@ -63,7 +63,7 @@ function requireAgent<T extends { agent?: unknown }>(options: T): NonNullable<T[
 }
 
 function writeTempCa(contents: string): string {
-  const dir = mkdtempSync(path.join(os.tmpdir(), "openclaw-slack-proxy-ca-"));
+  const dir = mkdtempSync(path.join(os.tmpdir(), "merclaw-slack-proxy-ca-"));
   tempDirs.push(dir);
   const caFile = path.join(dir, "proxy-ca.pem");
   writeFileSync(caFile, contents, "utf8");
@@ -224,8 +224,8 @@ describe("slack proxy agent", () => {
   it("creates Slack env proxy agents while managed proxy CA trust is active", () => {
     const caFile = writeTempCa("slack-managed-proxy-ca");
     process.env.HTTPS_PROXY = "https://proxy.example.com:8443";
-    process.env.OPENCLAW_PROXY_ACTIVE = "1";
-    process.env.OPENCLAW_PROXY_CA_FILE = caFile;
+    process.env.MERCLAW_PROXY_ACTIVE = "1";
+    process.env.MERCLAW_PROXY_CA_FILE = caFile;
 
     const options = resolveSlackWebClientOptions();
     const agent = requireAgent(options);

@@ -20,7 +20,7 @@ function positiveEnvInt(name, env, fallback) {
 }
 
 export function resolveCliStartupBuildTimeoutMs(env = process.env) {
-  return positiveEnvInt("OPENCLAW_CLI_STARTUP_BUILD_TIMEOUT_MS", env, DEFAULT_BUILD_TIMEOUT_MS);
+  return positiveEnvInt("MERCLAW_CLI_STARTUP_BUILD_TIMEOUT_MS", env, DEFAULT_BUILD_TIMEOUT_MS);
 }
 
 export function hasCliStartupBuild(params = {}) {

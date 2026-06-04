@@ -1,8 +1,8 @@
-import type { NormalizedModelCatalogRow } from "@openclaw/model-catalog-core/model-catalog-types";
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NormalizedModelCatalogRow } from "@merclaw/model-catalog-core/model-catalog-types";
+import { normalizeProviderId } from "@merclaw/model-catalog-core/provider-id";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { planManifestModelCatalogRows } from "../../model-catalog/manifest-planner.js";
-import { listOpenClawPluginManifestMetadata } from "../../plugins/manifest-metadata-scan.js";
+import { listMerClawPluginManifestMetadata } from "../../plugins/manifest-metadata-scan.js";
 import { loadPluginManifestRegistry } from "../../plugins/manifest-registry.js";
 import type { PluginManifestRecord } from "../../plugins/manifest-registry.js";
 import { loadPluginManifest } from "../../plugins/manifest.js";
@@ -69,7 +69,7 @@ type StaticCatalogPlugin = Parameters<
 >[0]["registry"]["plugins"][number];
 
 function listBundledStaticCatalogPlugins(env: NodeJS.ProcessEnv): StaticCatalogPlugin[] {
-  return listOpenClawPluginManifestMetadata(env).flatMap((record): StaticCatalogPlugin[] => {
+  return listMerClawPluginManifestMetadata(env).flatMap((record): StaticCatalogPlugin[] => {
     if (record.origin !== "bundled") {
       return [];
     }
@@ -114,7 +114,7 @@ function resolveManifestModelCatalogProviderAlias(params: {
 
 export function canonicalizeManifestModelCatalogProviderAlias(params: {
   provider: string;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
 }): string {
@@ -161,7 +161,7 @@ export function bundledStaticCatalogProviderUsesRuntimeAugment(params: {
 export function resolveBundledStaticCatalogModel(params: {
   provider: string;
   modelId: string;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   includeRuntimeDiscovery?: boolean;

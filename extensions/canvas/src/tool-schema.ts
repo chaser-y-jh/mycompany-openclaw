@@ -3,7 +3,7 @@ import {
   optionalNonNegativeIntegerSchema,
   optionalPositiveIntegerSchema,
   stringEnum,
-} from "openclaw/plugin-sdk/channel-actions";
+} from "merclaw/plugin-sdk/channel-actions";
 import { Type } from "typebox";
 
 export const CANVAS_ACTIONS = [

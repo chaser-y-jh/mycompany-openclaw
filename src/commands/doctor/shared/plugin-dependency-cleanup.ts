@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { resolveStateDir } from "../../../config/paths.js";
-import { resolveOpenClawPackageRootSync } from "../../../infra/openclaw-root.js";
+import { resolveMerClawPackageRootSync } from "../../../infra/merclaw-root.js";
 import { resolveConfigDir, resolveUserPath } from "../../../utils.js";
 import { removeStalePluginRuntimeSymlinks } from "./plugin-runtime-symlinks.js";
 
@@ -51,21 +51,21 @@ async function pathExists(targetPath: string): Promise<boolean> {
 
 function isRuntimeDependencyMarkerName(name: string): boolean {
   return (
-    name === ".openclaw-runtime-deps.json" ||
-    name === ".openclaw-runtime-deps-stamp.json" ||
-    name.startsWith(".openclaw-runtime-deps-")
+    name === ".merclaw-runtime-deps.json" ||
+    name === ".merclaw-runtime-deps-stamp.json" ||
+    name.startsWith(".merclaw-runtime-deps-")
   );
 }
 
 function isInstallStageDebrisName(name: string): boolean {
-  return /^\.openclaw-install-stage(?:-.+)?$/u.test(name);
+  return /^\.merclaw-install-stage(?:-.+)?$/u.test(name);
 }
 
 function isLegacyDependencyDebrisName(name: string): boolean {
   return (
     isRuntimeDependencyMarkerName(name) ||
-    name === ".openclaw-pnpm-store" ||
-    name === ".openclaw-install-backups" ||
+    name === ".merclaw-pnpm-store" ||
+    name === ".merclaw-install-backups" ||
     isInstallStageDebrisName(name)
   );
 }
@@ -174,16 +174,16 @@ async function collectExistingCleanupRoots(
 }
 
 function collectExplicitStageTargets(env: NodeJS.ProcessEnv): CleanupTarget[] {
-  return splitPathList(env.OPENCLAW_PLUGIN_STAGE_DIR).map((entry) => ({
+  return splitPathList(env.MERCLAW_PLUGIN_STAGE_DIR).map((entry) => ({
     kind: "explicit-stage",
     path: resolveUserPath(entry, env),
     rawPath: entry,
   }));
 }
 
-async function hasOpenClawRenameResidue(root: string): Promise<boolean> {
+async function hasMerClawRenameResidue(root: string): Promise<boolean> {
   const nodeModulesRoot = path.join(root, "node_modules");
-  if (await isFile(path.join(nodeModulesRoot, ".openclaw-rename-tmp"))) {
+  if (await isFile(path.join(nodeModulesRoot, ".merclaw-rename-tmp"))) {
     return true;
   }
   const entries = await fs.readdir(nodeModulesRoot, { withFileTypes: true }).catch(() => []);
@@ -192,7 +192,7 @@ async function hasOpenClawRenameResidue(root: string): Promise<boolean> {
       continue;
     }
     const entryPath = path.join(nodeModulesRoot, entry.name);
-    if (await isFile(path.join(entryPath, ".openclaw-rename-tmp"))) {
+    if (await isFile(path.join(entryPath, ".merclaw-rename-tmp"))) {
       return true;
     }
     if (!entry.name.startsWith("@")) {
@@ -203,7 +203,7 @@ async function hasOpenClawRenameResidue(root: string): Promise<boolean> {
       if (!scopedEntry.isDirectory() || scopedEntry.isSymbolicLink()) {
         continue;
       }
-      if (await isFile(path.join(entryPath, scopedEntry.name, ".openclaw-rename-tmp"))) {
+      if (await isFile(path.join(entryPath, scopedEntry.name, ".merclaw-rename-tmp"))) {
         return true;
       }
     }
@@ -216,7 +216,7 @@ async function hasExplicitStageDebrisProof(root: string): Promise<boolean> {
   if (children.some((childPath) => isRuntimeDependencyMarkerName(path.basename(childPath)))) {
     return true;
   }
-  return await hasOpenClawRenameResidue(root);
+  return await hasMerClawRenameResidue(root);
 }
 
 function filterLegacyStaleRootCandidates(
@@ -248,7 +248,7 @@ function filterLegacyStaleRootCandidates(
     }
     if (!cleanupRootPaths.some((rootPath) => isPathInsideRoot(targetPath, rootPath))) {
       warnings.push(
-        `Skipped legacy plugin dependency state ${targetPath}: outside OpenClaw cleanup roots`,
+        `Skipped legacy plugin dependency state ${targetPath}: outside MerClaw cleanup roots`,
       );
       continue;
     }
@@ -290,7 +290,7 @@ async function resolveSafeRemovalTarget(
   }
   if (!cleanupRoots.some((root) => isPathInsideRoot(realPath, root.realPath))) {
     return {
-      warning: `Skipped legacy plugin dependency state ${targetPath}: resolved outside OpenClaw cleanup roots`,
+      warning: `Skipped legacy plugin dependency state ${targetPath}: resolved outside MerClaw cleanup roots`,
     };
   }
   return { target: targetPath };
@@ -328,7 +328,7 @@ async function collectLegacyPluginDependencyTargetEntries(
 ): Promise<CleanupTarget[]> {
   const packageRoot =
     options.packageRoot ??
-    resolveOpenClawPackageRootSync({
+    resolveMerClawPackageRootSync({
       argv1: process.argv[1],
       moduleUrl: import.meta.url,
       cwd: process.cwd(),
@@ -393,7 +393,7 @@ export async function cleanupLegacyPluginDependencyState(params: {
   const warnings: string[] = [];
   const packageRoot =
     params.packageRoot ??
-    resolveOpenClawPackageRootSync({
+    resolveMerClawPackageRootSync({
       argv1: process.argv[1],
       moduleUrl: import.meta.url,
       cwd: process.cwd(),

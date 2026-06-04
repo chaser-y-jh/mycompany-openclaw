@@ -1,15 +1,15 @@
-import { resolveChannelStreamingPreviewChunk } from "openclaw/plugin-sdk/channel-outbound";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { resolveTextChunkLimit } from "openclaw/plugin-sdk/reply-chunking";
-import { resolveAccountEntry } from "openclaw/plugin-sdk/routing";
-import { normalizeAccountId } from "openclaw/plugin-sdk/routing";
+import { resolveChannelStreamingPreviewChunk } from "merclaw/plugin-sdk/channel-outbound";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { resolveTextChunkLimit } from "merclaw/plugin-sdk/reply-chunking";
+import { resolveAccountEntry } from "merclaw/plugin-sdk/routing";
+import { normalizeAccountId } from "merclaw/plugin-sdk/routing";
 import { DISCORD_TEXT_CHUNK_LIMIT } from "./outbound-adapter.js";
 
 const DEFAULT_DISCORD_DRAFT_STREAM_MIN = 200;
 const DEFAULT_DISCORD_DRAFT_STREAM_MAX = 800;
 
 export function resolveDiscordDraftStreamingChunking(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   accountId?: string | null,
 ): {
   minChars: number;

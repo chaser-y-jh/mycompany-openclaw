@@ -22,7 +22,7 @@ function makeFakeCrabbox(helpText: string): string {
   if (cached) {
     return cached;
   }
-  const binDir = mkdtempSync(path.join(tmpdir(), "openclaw-fake-crabbox-"));
+  const binDir = mkdtempSync(path.join(tmpdir(), "merclaw-fake-crabbox-"));
   tempDirs.push(binDir);
   writeFakeCrabbox(binDir, helpText);
   fakeCrabboxBinDirs.set(helpText, binDir);
@@ -38,7 +38,7 @@ function writeFakeCrabbox(binDir: string, helpText: string): string {
     const script = [
       "#!/bin/sh",
       'if [ "$1" = "--version" ]; then',
-      '  printf "%s\\n" "${OPENCLAW_FAKE_CRABBOX_VERSION:-crabbox 0.22.1}"',
+      '  printf "%s\\n" "${MERCLAW_FAKE_CRABBOX_VERSION:-crabbox 0.22.1}"',
       "  exit 0",
       "fi",
       'if [ "$1" = "run" ] && [ "$2" = "--help" ]; then',
@@ -48,13 +48,13 @@ function writeFakeCrabbox(binDir: string, helpText: string): string {
       'if [ "$1" = "config" ] && [ "$2" = "show" ]; then',
       '  for arg in "$@"; do',
       '    if [ "$arg" = "--json" ]; then',
-      '      status="${OPENCLAW_FAKE_CRABBOX_CONFIG_STATUS:-0}"',
+      '      status="${MERCLAW_FAKE_CRABBOX_CONFIG_STATUS:-0}"',
       '      if [ "$status" != "0" ]; then',
       '        printf "%s\\n" "config unavailable" >&2',
       '        exit "$status"',
       "      fi",
-      '      if [ -n "${OPENCLAW_FAKE_CRABBOX_CONFIG_JSON+x}" ]; then',
-      '        printf "%s" "$OPENCLAW_FAKE_CRABBOX_CONFIG_JSON"',
+      '      if [ -n "${MERCLAW_FAKE_CRABBOX_CONFIG_JSON+x}" ]; then',
+      '        printf "%s" "$MERCLAW_FAKE_CRABBOX_CONFIG_JSON"',
       "      else",
       '        printf "%s" "{\\"coordinator\\":\\"configured-broker\\",\\"brokerAuth\\":\\"configured\\"}"',
       "      fi",
@@ -77,7 +77,7 @@ function writeFakeCrabbox(binDir: string, helpText: string): string {
       "  fi",
       '  previous_arg="$arg"',
       "done",
-      'printf "%s\\0" "__OPENCLAW_FAKE_CRABBOX_V1__"',
+      'printf "%s\\0" "__MERCLAW_FAKE_CRABBOX_V1__"',
       'printf "%s\\0" "$PWD"',
       'printf "%s\\0" "$#"',
       'for arg in "$@"; do',
@@ -95,12 +95,12 @@ function writeFakeCrabbox(binDir: string, helpText: string): string {
   const helperScript = [
     "const args = process.argv.slice(2);",
     'if (args[0] === "config" && args[1] === "show" && args.includes("--json")) {',
-    "  const status = Number.parseInt(process.env.OPENCLAW_FAKE_CRABBOX_CONFIG_STATUS || '0', 10);",
+    "  const status = Number.parseInt(process.env.MERCLAW_FAKE_CRABBOX_CONFIG_STATUS || '0', 10);",
     "  if (status !== 0) {",
     "    process.stderr.write('config unavailable\\n');",
     "    process.exit(status);",
     "  }",
-    '  process.stdout.write(process.env.OPENCLAW_FAKE_CRABBOX_CONFIG_JSON || \'{"coordinator":"configured-broker","brokerAuth":"configured"}\');',
+    '  process.stdout.write(process.env.MERCLAW_FAKE_CRABBOX_CONFIG_JSON || \'{"coordinator":"configured-broker","brokerAuth":"configured"}\');',
     "  process.exit(0);",
     "}",
     "const scriptIndex = args.findIndex((arg) => arg === '--script' || arg === '-script');",
@@ -118,7 +118,7 @@ function writeFakeCrabbox(binDir: string, helpText: string): string {
     "#!/usr/bin/env node",
     "const args = process.argv.slice(2);",
     'if (args[0] === "--version") {',
-    "  console.log(process.env.OPENCLAW_FAKE_CRABBOX_VERSION || 'crabbox 0.22.1');",
+    "  console.log(process.env.MERCLAW_FAKE_CRABBOX_VERSION || 'crabbox 0.22.1');",
     "  process.exit(0);",
     "}",
     'if (args[0] === "run" && args[1] === "--help") {',
@@ -138,7 +138,7 @@ function writeFakeCrabbox(binDir: string, helpText: string): string {
 }
 
 function makeSlowVersionCrabbox(helpText: string): string {
-  const binDir = mkdtempSync(path.join(tmpdir(), "openclaw-slow-crabbox-"));
+  const binDir = mkdtempSync(path.join(tmpdir(), "merclaw-slow-crabbox-"));
   tempDirs.push(binDir);
   const crabboxPath = path.join(binDir, "crabbox");
 
@@ -165,7 +165,7 @@ function shellSingleQuote(value: string): string {
 function makeFakeGit(
   responses: Record<string, { status?: number; stdout?: string; stderr?: string }>,
 ): string {
-  const binDir = mkdtempSync(path.join(tmpdir(), "openclaw-fake-git-"));
+  const binDir = mkdtempSync(path.join(tmpdir(), "merclaw-fake-git-"));
   tempDirs.push(binDir);
   const gitPath = path.join(binDir, "git");
   if (process.platform !== "win32") {
@@ -204,7 +204,7 @@ function makeFakeGit(
   const script = [
     "#!/usr/bin/env node",
     "const fs = require('node:fs');",
-    "const responses = new Map(Object.entries(JSON.parse(process.env.OPENCLAW_FAKE_GIT_RESPONSES || '{}')));",
+    "const responses = new Map(Object.entries(JSON.parse(process.env.MERCLAW_FAKE_GIT_RESPONSES || '{}')));",
     "const args = process.argv.slice(2);",
     "if (args[0] === 'worktree' && args[1] === 'add') { fs.mkdirSync(args[3], { recursive: true }); process.exit(0); }",
     "if (args[0] === '-C' && args[2] === 'sparse-checkout' && args[3] === 'disable') { process.exit(0); }",
@@ -256,15 +256,15 @@ function runWrapper(
         .filter(Boolean)
         .join(path.delimiter),
       CRABBOX_PROVIDER: "",
-      OPENCLAW_CRABBOX_WRAPPER_IGNORE_REPO_BINARY: "1",
+      MERCLAW_CRABBOX_WRAPPER_IGNORE_REPO_BINARY: "1",
       ...(options.configJson
-        ? { OPENCLAW_FAKE_CRABBOX_CONFIG_JSON: JSON.stringify(options.configJson) }
+        ? { MERCLAW_FAKE_CRABBOX_CONFIG_JSON: JSON.stringify(options.configJson) }
         : {}),
       ...(options.configStatus
-        ? { OPENCLAW_FAKE_CRABBOX_CONFIG_STATUS: String(options.configStatus) }
+        ? { MERCLAW_FAKE_CRABBOX_CONFIG_STATUS: String(options.configStatus) }
         : {}),
       ...options.env,
-      OPENCLAW_FAKE_GIT_RESPONSES: JSON.stringify(gitResponses),
+      MERCLAW_FAKE_GIT_RESPONSES: JSON.stringify(gitResponses),
     },
     timeout: 10_000,
   });
@@ -275,7 +275,7 @@ function parseFakeCrabboxOutput(result: ReturnType<typeof runWrapper>): {
   cwd: string;
   scriptContent?: string;
 } {
-  const marker = "__OPENCLAW_FAKE_CRABBOX_V1__\0";
+  const marker = "__MERCLAW_FAKE_CRABBOX_V1__\0";
   if (result.stdout.startsWith(marker)) {
     let offset = marker.length;
     const readField = () => {
@@ -312,7 +312,7 @@ function expectGroupedShellCommand(remoteCommand: string, command: string): void
 }
 
 const remoteChangedGateEnvPrefix =
-  "OPENCLAW_CHECK_CHANGED_REMOTE_CHILD=1 OPENCLAW_CHANGED_LANES_RAW_SYNC=1 CI=1";
+  "MERCLAW_CHECK_CHANGED_REMOTE_CHILD=1 MERCLAW_CHANGED_LANES_RAW_SYNC=1 CI=1";
 const remoteChangedGateExport = `export ${remoteChangedGateEnvPrefix};`;
 
 afterAll(() => {
@@ -367,7 +367,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const result = runWrapper(
       "provider: hetzner, aws, local-container, blacksmith-testbox, or cloudflare\n",
       ["run", "--provider", "blacksmith-testbox", "--", "echo ok"],
-      { env: { OPENCLAW_FAKE_CRABBOX_VERSION: "crabbox 0.21.9" } },
+      { env: { MERCLAW_FAKE_CRABBOX_VERSION: "crabbox 0.21.9" } },
     );
 
     expect(result.status).toBe(2);
@@ -380,7 +380,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const result = runWrapper(
       "provider: hetzner, aws, local-container, blacksmith-testbox, or cloudflare\n",
       ["run", "--provider", "blacksmith", "--", "echo ok"],
-      { env: { OPENCLAW_FAKE_CRABBOX_VERSION: "crabbox 0.21.9" } },
+      { env: { MERCLAW_FAKE_CRABBOX_VERSION: "crabbox 0.21.9" } },
     );
 
     expect(result.status).toBe(2);
@@ -391,7 +391,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const result = runWrapper(
       "provider: hetzner, aws, local-container, blacksmith-testbox, or cloudflare\n",
       ["run", "--provider", "blacksmith-testbox", "--", "echo ok"],
-      { env: { OPENCLAW_FAKE_CRABBOX_VERSION: "crabbox 0.22.0-rc.1" } },
+      { env: { MERCLAW_FAKE_CRABBOX_VERSION: "crabbox 0.22.0-rc.1" } },
     );
 
     expect(result.status).toBe(2);
@@ -402,7 +402,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const result = runWrapper(
       "provider: hetzner, aws, local-container, blacksmith-testbox, or cloudflare\n",
       ["run", "--provider", "blacksmith-testbox", "--", "echo ok"],
-      { env: { OPENCLAW_FAKE_CRABBOX_VERSION: "crabbox 0.22.0-3-gabc1234" } },
+      { env: { MERCLAW_FAKE_CRABBOX_VERSION: "crabbox 0.22.0-3-gabc1234" } },
     );
 
     expect(result.status).toBe(0);
@@ -417,7 +417,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
 
     expect(result.status).toBe(0);
     const expectedMessage =
-      "[crabbox] provider=docker using short host-visible work root for OpenClaw Docker tests";
+      "[crabbox] provider=docker using short host-visible work root for MerClaw Docker tests";
     if (process.platform === "linux") {
       expect(result.stderr).toContain(expectedMessage);
     } else {
@@ -498,7 +498,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
       {
         env: {
           CRABBOX_PROVIDER: "aws",
-          OPENCLAW_CRABBOX_ALLOW_DIRECT_AWS: "1",
+          MERCLAW_CRABBOX_ALLOW_DIRECT_AWS: "1",
         },
       },
     );
@@ -521,7 +521,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
       {
         env: {
           CRABBOX_PROVIDER: "aws",
-          OPENCLAW_CRABBOX_ALLOW_DIRECT_AWS: "1",
+          MERCLAW_CRABBOX_ALLOW_DIRECT_AWS: "1",
         },
       },
     );
@@ -563,7 +563,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     expect(result.stdout).toBe("");
     expect(result.stderr).toContain("provider=aws requires a configured Crabbox broker");
     expect(result.stderr).toContain(
-      "crabbox login --url https://crabbox.openclaw.ai --provider aws",
+      "crabbox login --url https://crabbox.merclaw.ai --provider aws",
     );
   });
 
@@ -573,7 +573,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
       ["run", "--provider", "aws", "--", "echo ok"],
       {
         configJson: { coordinator: "", brokerAuth: "missing" },
-        env: { OPENCLAW_CRABBOX_ALLOW_DIRECT_AWS: "1" },
+        env: { MERCLAW_CRABBOX_ALLOW_DIRECT_AWS: "1" },
       },
     );
 
@@ -664,7 +664,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
     expect(output.args).toContain("--shell");
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expect(remoteCommand).toContain("node-v${node_version}-darwin-${node_arch}.tar.gz");
     expect(remoteCommand).toContain("node --version >&2 || return 1");
     expect(remoteCommand).not.toContain("corepack enable");
@@ -685,7 +685,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     expect(result.stderr).toContain(
       "bootstrapping a pinned user-local Node toolchain before the command",
     );
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expect(remoteCommand).toContain("node-v${node_version}-darwin-${node_arch}.tar.gz");
     expect(remoteCommand).toContain("shasum -a 256 -c -");
     expect(remoteCommand).not.toContain("set -euo pipefail");
@@ -710,7 +710,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
     expect(output.args).toContain("--shell");
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expect(remoteCommand).toContain('corepack enable --install-directory "$PNPM_HOME"');
     expect(remoteCommand).toContain("pnpm --version >&2");
     expectGroupedShellCommand(remoteCommand, "/usr/bin/env pnpm --version");
@@ -737,15 +737,15 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
-    expect(remoteCommand).toContain("openclaw_crabbox_env");
-    expect(remoteCommand).not.toContain("export -f env openclaw_crabbox_env");
-    expect(remoteCommand).not.toContain('env() { openclaw_crabbox_env "$@"; };');
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_env");
+    expect(remoteCommand).not.toContain("export -f env merclaw_crabbox_env");
+    expect(remoteCommand).not.toContain('env() { merclaw_crabbox_env "$@"; };');
     expect(remoteCommand).toContain("PATH=$PATH:${1#PATH=}");
     expect(remoteCommand).toContain("pnpm --version >&2");
     expectGroupedShellCommand(
       remoteCommand,
-      "openclaw_crabbox_env -i PATH=/usr/bin:/bin pnpm --version",
+      "merclaw_crabbox_env -i PATH=/usr/bin:/bin pnpm --version",
     );
   });
 
@@ -772,13 +772,13 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expect(remoteCommand).toContain("-u|--unset|-C|--chdir)");
     expect(remoteCommand).toContain("-i|--ignore-environment)");
     expect(remoteCommand).toContain("pnpm --version >&2");
     expectGroupedShellCommand(
       remoteCommand,
-      "openclaw_crabbox_env -u FOO -i PATH=/usr/bin:/bin pnpm --version",
+      "merclaw_crabbox_env -u FOO -i PATH=/usr/bin:/bin pnpm --version",
     );
   });
 
@@ -803,7 +803,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).not.toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).not.toContain("merclaw_crabbox_bootstrap_macos_js");
     expect(output.args).not.toContain("--shell");
   });
 
@@ -830,7 +830,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
       const output = parseFakeCrabboxOutput(result);
       const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
       expect(result.status).toBe(0);
-      expect(remoteCommand).not.toContain("openclaw_crabbox_bootstrap_macos_js");
+      expect(remoteCommand).not.toContain("merclaw_crabbox_bootstrap_macos_js");
       expect(output.args).not.toContain("--shell");
     }
   });
@@ -856,7 +856,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expect(remoteCommand).toContain("pnpm --version >&2");
     expectGroupedShellCommand(remoteCommand, "command env CI=1 pnpm --version");
   });
@@ -871,9 +871,9 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
-    expect(remoteCommand).toContain("openclaw_crabbox_env");
-    expect(remoteCommand).not.toContain('env() { openclaw_crabbox_env "$@"; };');
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_env");
+    expect(remoteCommand).not.toContain('env() { merclaw_crabbox_env "$@"; };');
     expectGroupedShellCommand(remoteCommand, shellScript);
   });
 
@@ -886,7 +886,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).not.toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).not.toContain("merclaw_crabbox_bootstrap_macos_js");
     expect(output.args).not.toContain("--shell");
   });
 
@@ -909,7 +909,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expect(remoteCommand).toContain("pnpm --version >&2");
     expect(remoteCommand.indexOf("-S|--split-string|-S*|--split-string=*)")).toBeLessThan(
       remoteCommand.indexOf("-[!-]*i*)"),
@@ -931,7 +931,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     expect(remoteCommand).toContain("pnpm --version >&2");
     expectGroupedShellCommand(
       remoteCommand,
-      `openclaw_crabbox_env ${remoteChangedGateEnvPrefix} node scripts/check-changed.mjs`,
+      `merclaw_crabbox_env ${remoteChangedGateEnvPrefix} node scripts/check-changed.mjs`,
     );
   });
 
@@ -945,7 +945,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
     expect(output.args.filter((arg) => arg === "--shell")).toHaveLength(1);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expectGroupedShellCommand(remoteCommand, `${remoteChangedGateExport} pnpm check:changed`);
   });
 
@@ -964,7 +964,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
     expect(output.args.filter((arg) => arg === "--shell")).toHaveLength(1);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expectGroupedShellCommand(remoteCommand, shellScript);
   });
 
@@ -978,7 +978,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expect(remoteCommand).toContain("pnpm --version >&2");
     expectGroupedShellCommand(remoteCommand, shellScript);
   });
@@ -998,9 +998,9 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     expect(result.stderr).toContain(
       "bootstrapping a pinned user-local Node toolchain before the command",
     );
-    expect(output.scriptContent).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(output.scriptContent).toContain("merclaw_crabbox_bootstrap_macos_js");
     expect(output.scriptContent).toContain('if [ ! -d "$TMPDIR" ]; then mkdir -p "$TMPDIR"');
-    expect(output.scriptContent).toContain("openclaw_crabbox_bootstrap_macos_js || exit $?");
+    expect(output.scriptContent).toContain("merclaw_crabbox_bootstrap_macos_js || exit $?");
     expect(output.scriptContent).toContain('corepack enable --install-directory "$PNPM_HOME"');
     expect(output.scriptContent).toContain("pnpm --version >&2");
     expect(output.scriptContent).toContain(`\n${script}`);
@@ -1018,11 +1018,11 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     expect(result.status).toBe(0);
     expect(output.args).not.toContain("--script-stdin");
     expect(output.args).toContain("--script");
-    expect(output.scriptContent).toContain("openclaw_crabbox_bootstrap_macos_js || exit $?");
+    expect(output.scriptContent).toContain("merclaw_crabbox_bootstrap_macos_js || exit $?");
     expect(output.scriptContent).not.toContain("corepack enable");
     expect(output.scriptContent).not.toContain("pnpm --version >&2");
-    expect(output.scriptContent).toContain("cat >\"$tmp_script\" <<'OPENCLAW_CRABBOX_SCRIPT_0'");
-    expect(output.scriptContent).toContain(`\n${script}\nOPENCLAW_CRABBOX_SCRIPT_0\n`);
+    expect(output.scriptContent).toContain("cat >\"$tmp_script\" <<'MERCLAW_CRABBOX_SCRIPT_0'");
+    expect(output.scriptContent).toContain(`\n${script}\nMERCLAW_CRABBOX_SCRIPT_0\n`);
     expect(output.scriptContent).toContain('chmod 700 "$tmp_script" || exit $?');
     expect(output.scriptContent).toContain('"$tmp_script" "$@"');
     expect(output.args.at(-1)).toBe("arg1");
@@ -1063,7 +1063,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expectGroupedShellCommand(remoteCommand, shellScript);
   });
 
@@ -1077,7 +1077,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expectGroupedShellCommand(remoteCommand, shellScript);
   });
 
@@ -1091,7 +1091,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expectGroupedShellCommand(remoteCommand, shellScript);
   });
 
@@ -1105,7 +1105,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expectGroupedShellCommand(remoteCommand, shellScript);
   });
 
@@ -1119,7 +1119,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expectGroupedShellCommand(remoteCommand, shellScript);
   });
 
@@ -1133,7 +1133,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expectGroupedShellCommand(remoteCommand, shellScript);
   });
 
@@ -1147,7 +1147,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expectGroupedShellCommand(remoteCommand, `${remoteChangedGateExport} ${shellScript}`);
   });
 
@@ -1161,7 +1161,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expectGroupedShellCommand(remoteCommand, shellScript);
   });
 
@@ -1175,7 +1175,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expectGroupedShellCommand(remoteCommand, shellScript);
   });
 
@@ -1189,7 +1189,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expectGroupedShellCommand(remoteCommand, shellScript);
   });
 
@@ -1203,7 +1203,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expectGroupedShellCommand(remoteCommand, shellScript);
   });
 
@@ -1217,7 +1217,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expectGroupedShellCommand(remoteCommand, shellScript);
   });
 
@@ -1231,7 +1231,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expectGroupedShellCommand(remoteCommand, shellScript);
   });
 
@@ -1245,7 +1245,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expectGroupedShellCommand(remoteCommand, shellScript);
   });
 
@@ -1259,7 +1259,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expectGroupedShellCommand(remoteCommand, shellScript);
   });
 
@@ -1273,7 +1273,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expectGroupedShellCommand(remoteCommand, shellScript);
   });
 
@@ -1287,7 +1287,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).not.toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).not.toContain("merclaw_crabbox_bootstrap_macos_js");
   });
 
   it("does not bootstrap raw AWS macOS shell scripts that only mention JavaScript tools", () => {
@@ -1309,7 +1309,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
     expect(output.args.filter((arg) => arg === "--shell")).toHaveLength(1);
-    expect(remoteCommand).not.toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).not.toContain("merclaw_crabbox_bootstrap_macos_js");
   });
 
   it("does not bootstrap raw AWS macOS shell scripts for quoted JavaScript tool mentions", () => {
@@ -1330,7 +1330,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).not.toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).not.toContain("merclaw_crabbox_bootstrap_macos_js");
   });
 
   it("does not bootstrap raw AWS macOS shell scripts for inline comment mentions", () => {
@@ -1351,7 +1351,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).not.toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).not.toContain("merclaw_crabbox_bootstrap_macos_js");
   });
 
   it("does not bootstrap raw AWS macOS shell scripts for reserved words in arguments", () => {
@@ -1372,7 +1372,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).not.toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).not.toContain("merclaw_crabbox_bootstrap_macos_js");
   });
 
   it("does not bootstrap raw AWS macOS shell scripts for arithmetic expansion names", () => {
@@ -1393,7 +1393,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).not.toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).not.toContain("merclaw_crabbox_bootstrap_macos_js");
   });
 
   it("does not bootstrap raw AWS macOS shell scripts for quoted assignment mentions", () => {
@@ -1414,7 +1414,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).not.toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).not.toContain("merclaw_crabbox_bootstrap_macos_js");
   });
 
   it("does not bootstrap raw AWS macOS shell scripts for command lookup checks", () => {
@@ -1426,7 +1426,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).not.toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).not.toContain("merclaw_crabbox_bootstrap_macos_js");
   });
 
   it("does not bootstrap raw AWS macOS shell scripts for timed command lookup checks", () => {
@@ -1447,7 +1447,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).not.toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).not.toContain("merclaw_crabbox_bootstrap_macos_js");
   });
 
   it("groups shell commands so fallbacks cannot mask AWS macOS bootstrap failures", () => {
@@ -1468,7 +1468,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expectGroupedShellCommand(
       remoteCommand,
       `${remoteChangedGateExport} pnpm check:changed || true`,
@@ -1500,9 +1500,9 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
   itWithPosixLinkedWorktreeFixture(
     "finds a Crabbox checkout next to the Git common dir in linked worktrees",
     () => {
-      const fakeWorkspaceParent = mkdtempSync(path.join(tmpdir(), "openclaw-linked-worktree-"));
+      const fakeWorkspaceParent = mkdtempSync(path.join(tmpdir(), "merclaw-linked-worktree-"));
       tempDirs.push(fakeWorkspaceParent);
-      const gitCommonDir = path.join(fakeWorkspaceParent, "openclaw", ".git");
+      const gitCommonDir = path.join(fakeWorkspaceParent, "merclaw", ".git");
       const crabboxBinDir = path.join(fakeWorkspaceParent, "crabbox", "bin");
       mkdirSync(gitCommonDir, { recursive: true });
       writeFakeCrabbox(crabboxBinDir, "provider: aws\n");
@@ -1519,8 +1519,8 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
           encoding: "utf8",
           env: {
             ...process.env,
-            OPENCLAW_CRABBOX_WRAPPER_IGNORE_REPO_BINARY: "1",
-            OPENCLAW_FAKE_GIT_RESPONSES: JSON.stringify(gitResponses),
+            MERCLAW_CRABBOX_WRAPPER_IGNORE_REPO_BINARY: "1",
+            MERCLAW_FAKE_GIT_RESPONSES: JSON.stringify(gitResponses),
             PATH: [gitBinDir, path.dirname(process.execPath)].join(path.delimiter),
           },
         },
@@ -1560,7 +1560,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
 
   if (process.platform !== "win32") {
     it("keeps POSIX PATH lookup semantics for non-executable entries", () => {
-      const staleBinDir = mkdtempSync(path.join(tmpdir(), "openclaw-stale-crabbox-"));
+      const staleBinDir = mkdtempSync(path.join(tmpdir(), "merclaw-stale-crabbox-"));
       tempDirs.push(staleBinDir);
       writeFileSync(path.join(staleBinDir, "crabbox"), "not executable\n", "utf8");
       const result = runWrapper("provider: aws\n", ["run", "--provider", "aws", "--", "echo ok"], {
@@ -1679,7 +1679,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     expect(result.status).toBe(0);
     expect(parseFakeCrabboxOutput(result).args).not.toContain("--no-sync");
     expect(result.stderr).toContain("syncing from temporary full checkout");
-    expect(parseFakeCrabboxOutput(result).cwd).toContain("openclaw-crabbox-sync-");
+    expect(parseFakeCrabboxOutput(result).cwd).toContain("merclaw-crabbox-sync-");
   });
 
   it("uses a temporary full checkout for clean sparse AWS syncs", () => {
@@ -1700,7 +1700,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     expect(parseFakeCrabboxOutput(result).args.join(" ")).toContain(
       "if ! git status --short >/dev/null 2>&1; then rm -rf .git;",
     );
-    expect(parseFakeCrabboxOutput(result).cwd).toContain("openclaw-crabbox-sync-");
+    expect(parseFakeCrabboxOutput(result).cwd).toContain("merclaw-crabbox-sync-");
   });
 
   it("uses a temporary full checkout when clean sparse AWS syncs reuse a lease", () => {
@@ -1729,7 +1729,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
 
     expect(result.status).toBe(0);
     expect(result.stderr).toContain("syncing from temporary full checkout");
-    expect(parseFakeCrabboxOutput(result).cwd).toContain("openclaw-crabbox-sync-");
+    expect(parseFakeCrabboxOutput(result).cwd).toContain("merclaw-crabbox-sync-");
   });
 
   it("bootstraps Git metadata for sparse changed gates on remote raw syncs", () => {
@@ -1758,7 +1758,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     expect(remoteCommand).toContain("git diff --cached --quiet");
     expect(remoteCommand).toContain("commit -q --no-gpg-sign -m remote-changed-gate-tree");
     expect(remoteCommand).toMatch(
-      /&& env OPENCLAW_CHECK_CHANGED_REMOTE_CHILD=1 OPENCLAW_CHANGED_LANES_RAW_SYNC=1 CI=1 corepack pnpm check:changed$/u,
+      /&& env MERCLAW_CHECK_CHANGED_REMOTE_CHILD=1 MERCLAW_CHANGED_LANES_RAW_SYNC=1 CI=1 corepack pnpm check:changed$/u,
     );
   });
 
@@ -1771,8 +1771,8 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
         "aws",
         "--",
         "env",
-        "OPENCLAW_CHECK_CHANGED_REMOTE_CHILD=1",
-        "OPENCLAW_CHANGED_LANES_RAW_SYNC=1",
+        "MERCLAW_CHECK_CHANGED_REMOTE_CHILD=1",
+        "MERCLAW_CHANGED_LANES_RAW_SYNC=1",
         "CI=1",
         "corepack",
         "pnpm",
@@ -1795,7 +1795,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
       "git fetch -q --depth=1 origin abc123:refs/remotes/origin/main",
     );
     expect(remoteCommand).toMatch(
-      /&& env OPENCLAW_CHECK_CHANGED_REMOTE_CHILD=1 OPENCLAW_CHANGED_LANES_RAW_SYNC=1 CI=1 corepack pnpm check:changed$/u,
+      /&& env MERCLAW_CHECK_CHANGED_REMOTE_CHILD=1 MERCLAW_CHANGED_LANES_RAW_SYNC=1 CI=1 corepack pnpm check:changed$/u,
     );
   });
 
@@ -1819,10 +1819,10 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     expect(remoteCommand).toContain(
       "git fetch -q --depth=1 origin abc123:refs/remotes/origin/main",
     );
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expectGroupedShellCommand(
       remoteCommand,
-      `openclaw_crabbox_env ${remoteChangedGateEnvPrefix} pnpm check:changed`,
+      `merclaw_crabbox_env ${remoteChangedGateEnvPrefix} pnpm check:changed`,
     );
   });
 
@@ -1845,7 +1845,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     expect(result.status).toBe(0);
     expect(output.args.filter((arg) => arg === "--shell")).toHaveLength(1);
     expect(remoteCommand).toContain("git init -q");
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expectGroupedShellCommand(remoteCommand, `${remoteChangedGateExport} ${shellScript}`);
   });
 
@@ -1867,7 +1867,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
     expect(remoteCommand).toContain("git init -q");
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expectGroupedShellCommand(remoteCommand, `${remoteChangedGateExport} ${shellScript}`);
   });
 
@@ -1936,7 +1936,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
       "git fetch -q --depth=1 origin abc123:refs/remotes/origin/main",
     );
     expect(remoteCommand).toContain(
-      `&& export OPENCLAW_CHECK_CHANGED_REMOTE_CHILD=1 OPENCLAW_CHANGED_LANES_RAW_SYNC=1; ${shellScript}`,
+      `&& export MERCLAW_CHECK_CHANGED_REMOTE_CHILD=1 MERCLAW_CHANGED_LANES_RAW_SYNC=1; ${shellScript}`,
     );
   });
 
@@ -2081,7 +2081,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     expect(output.args).toContain("--shell");
     expect(remoteCommand).toContain("git init -q");
     expect(remoteCommand).toMatch(
-      /&& env OPENCLAW_CHECK_CHANGED_REMOTE_CHILD=1 OPENCLAW_CHANGED_LANES_RAW_SYNC=1 CI=1 timeout 1200s node scripts\/check-changed\.mjs --base origin\/main --head HEAD$/u,
+      /&& env MERCLAW_CHECK_CHANGED_REMOTE_CHILD=1 MERCLAW_CHANGED_LANES_RAW_SYNC=1 CI=1 timeout 1200s node scripts\/check-changed\.mjs --base origin\/main --head HEAD$/u,
     );
   });
 
@@ -2104,7 +2104,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     expect(output.args).toContain("--shell");
     expect(remoteCommand).toContain("git init -q");
     expect(remoteCommand).toMatch(
-      /&& env OPENCLAW_CHECK_CHANGED_REMOTE_CHILD=1 OPENCLAW_CHANGED_LANES_RAW_SYNC=1 CI=1 timeout 1200s bash -lc 'pnpm check:changed'$/u,
+      /&& env MERCLAW_CHECK_CHANGED_REMOTE_CHILD=1 MERCLAW_CHANGED_LANES_RAW_SYNC=1 CI=1 timeout 1200s bash -lc 'pnpm check:changed'$/u,
     );
   });
 
@@ -2196,7 +2196,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expectGroupedShellCommand(remoteCommand, shellScript);
   });
 
@@ -2210,7 +2210,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).toContain("merclaw_crabbox_bootstrap_macos_js");
     expectGroupedShellCommand(remoteCommand, shellScript);
   });
 
@@ -2224,7 +2224,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     const output = parseFakeCrabboxOutput(result);
     const remoteCommand = normalizeShellLineEndings(output.args.at(-1) ?? "");
     expect(result.status).toBe(0);
-    expect(remoteCommand).not.toContain("openclaw_crabbox_bootstrap_macos_js");
+    expect(remoteCommand).not.toContain("merclaw_crabbox_bootstrap_macos_js");
   });
 
   it("preserves existing shell changed-gate commands after remote Git bootstrap", () => {
@@ -2248,7 +2248,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
       "git fetch -q --depth=1 origin abc123:refs/remotes/origin/main",
     );
     expect(remoteCommand).toMatch(
-      /&& export OPENCLAW_CHECK_CHANGED_REMOTE_CHILD=1 OPENCLAW_CHANGED_LANES_RAW_SYNC=1; env CI=1 pnpm check:changed$/u,
+      /&& export MERCLAW_CHECK_CHANGED_REMOTE_CHILD=1 MERCLAW_CHANGED_LANES_RAW_SYNC=1; env CI=1 pnpm check:changed$/u,
     );
   });
 
@@ -2305,7 +2305,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
 
     expect(result.status).toBe(0);
     expect(result.stderr).toContain("syncing from temporary full checkout");
-    expect(parseFakeCrabboxOutput(result).cwd).toContain("openclaw-crabbox-sync-");
+    expect(parseFakeCrabboxOutput(result).cwd).toContain("merclaw-crabbox-sync-");
   });
 
   it("uses a temporary full checkout when existing AWS leases sync clean sparse worktrees", () => {
@@ -2322,7 +2322,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
 
     expect(result.status).toBe(0);
     expect(result.stderr).toContain("syncing from temporary full checkout");
-    expect(parseFakeCrabboxOutput(result).cwd).toContain("openclaw-crabbox-sync-");
+    expect(parseFakeCrabboxOutput(result).cwd).toContain("merclaw-crabbox-sync-");
   });
 
   it("uses a temporary full checkout when clean sparse branches differ from the Blacksmith ref", () => {
@@ -2340,7 +2340,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
     expect(result.status).toBe(0);
     expect(parseFakeCrabboxOutput(result).args).not.toContain("--no-sync");
     expect(result.stderr).toContain("syncing from temporary full checkout");
-    expect(parseFakeCrabboxOutput(result).cwd).toContain("openclaw-crabbox-sync-");
+    expect(parseFakeCrabboxOutput(result).cwd).toContain("merclaw-crabbox-sync-");
   });
 
   it("keeps sparse dirty worktrees on the original checkout", () => {
@@ -2387,7 +2387,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
 
     const output = parseFakeCrabboxOutput(result);
     expect(result.status).toBe(0);
-    expect(output.cwd).toContain("openclaw-crabbox-sync-");
+    expect(output.cwd).toContain("merclaw-crabbox-sync-");
     expect(output.args).toContain(
       `--capture-stdout=${path.join(repoRoot, ".artifacts/stdout.log")}`,
     );
@@ -2422,7 +2422,7 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
 
     const output = parseFakeCrabboxOutput(result);
     expect(result.status).toBe(0);
-    expect(output.cwd).toContain("openclaw-crabbox-sync-");
+    expect(output.cwd).toContain("merclaw-crabbox-sync-");
     expect(result.stderr).toContain("syncing from temporary full checkout");
     expect(result.stderr).toContain("preserved");
     expect(statSync(path.join(preservedDir, "fake-artifacts.tgz")).isFile()).toBe(true);
@@ -2450,6 +2450,6 @@ describe.concurrent("scripts/crabbox-wrapper", () => {
 
     expect(result.status).toBe(0);
     expect(result.stderr).toContain("syncing from temporary full checkout");
-    expect(parseFakeCrabboxOutput(result).cwd).toContain("openclaw-crabbox-sync-");
+    expect(parseFakeCrabboxOutput(result).cwd).toContain("merclaw-crabbox-sync-");
   });
 });

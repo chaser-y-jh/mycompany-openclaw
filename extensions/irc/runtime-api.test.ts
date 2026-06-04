@@ -1,4 +1,4 @@
-import { runDirectImportSmoke } from "openclaw/plugin-sdk/plugin-test-contracts";
+import { runDirectImportSmoke } from "merclaw/plugin-sdk/plugin-test-contracts";
 import { beforeAll, describe, expect, it } from "vitest";
 
 describe("irc bundled api seams", () => {

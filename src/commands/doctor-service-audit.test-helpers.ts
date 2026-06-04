@@ -1,4 +1,4 @@
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import { isEnvironmentFileOnlySource } from "../daemon/service-managed-env.js";
 import type { GatewayServiceEnvironmentValueSource } from "../daemon/service-types.js";
 
@@ -17,7 +17,7 @@ export function readEmbeddedGatewayTokenForTest(
     environmentValueSources?: Record<string, GatewayServiceEnvironmentValueSource>;
   } | null,
 ) {
-  return isEnvironmentFileOnlySource(command?.environmentValueSources?.OPENCLAW_GATEWAY_TOKEN)
+  return isEnvironmentFileOnlySource(command?.environmentValueSources?.MERCLAW_GATEWAY_TOKEN)
     ? undefined
-    : normalizeOptionalString(command?.environment?.OPENCLAW_GATEWAY_TOKEN);
+    : normalizeOptionalString(command?.environment?.MERCLAW_GATEWAY_TOKEN);
 }

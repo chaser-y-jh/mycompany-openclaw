@@ -7,7 +7,7 @@ import {
   isAssistantCommentaryCompletionNotification,
   isNativeToolProgressNotification,
   isNativeResponseStreamDeltaNotification,
-  isPendingOpenClawDynamicToolCompletionNotification,
+  isPendingMerClawDynamicToolCompletionNotification,
   isRawAssistantProgressNotification,
   isRawReasoningCompletionNotification,
   isRawToolOutputCompletionNotification,
@@ -83,7 +83,7 @@ export function applyCodexTurnNotificationState(params: {
   turnWatches: CodexAttemptTurnWatchController;
   activeTurnItemIds: Set<string>;
   activeAppServerTurnRequests: number;
-  pendingOpenClawDynamicToolCompletionIds: Set<string>;
+  pendingMerClawDynamicToolCompletionIds: Set<string>;
   turnCrossedToolHandoff: boolean;
   postToolRawAssistantCompletionIdleTimeoutMs: number;
   onScheduleTerminalDynamicToolReleaseCheck: () => void;
@@ -121,9 +121,9 @@ export function applyCodexTurnNotificationState(params: {
     turnWatches.isAssistantCompletionIdleWatchArmed() &&
     notification.method === "item/completed" &&
     params.activeTurnItemIds.size === 0;
-  const trackedDynamicToolCompletion = isPendingOpenClawDynamicToolCompletionNotification(
+  const trackedDynamicToolCompletion = isPendingMerClawDynamicToolCompletionNotification(
     notification,
-    params.pendingOpenClawDynamicToolCompletionIds,
+    params.pendingMerClawDynamicToolCompletionIds,
   );
   const rawToolOutputCompletion = isRawToolOutputCompletionNotification(notification);
   if (
@@ -251,8 +251,8 @@ export function applyCodexTurnNotificationState(params: {
     !shouldRearmCompletionIdleWatchAfterLastCurrentTurnItem
   ) {
     // The short completion-idle watchdog guards blind gaps after Codex
-    // accepts a turn or after OpenClaw hands a turn-scoped request result
-    // back to Codex. Bookkeeping that closes the just-served OpenClaw
+    // accepts a turn or after MerClaw hands a turn-scoped request result
+    // back to Codex. Bookkeeping that closes the just-served MerClaw
     // dynamic tool item is still part of that handoff, so keep the short
     // watchdog armed for that notification.
     turnWatches.disarmCompletionIdleWatch();
@@ -261,7 +261,7 @@ export function applyCodexTurnNotificationState(params: {
   if (trackedDynamicToolCompletion) {
     const itemId = readNotificationItemId(notification);
     if (itemId) {
-      params.pendingOpenClawDynamicToolCompletionIds.delete(itemId);
+      params.pendingMerClawDynamicToolCompletionIds.delete(itemId);
       params.onScheduleTerminalDynamicToolReleaseCheck();
     }
   }

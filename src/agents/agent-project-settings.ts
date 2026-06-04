@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import type { PluginMetadataSnapshot } from "../plugins/plugin-metadata-snapshot.js";
 import {
   buildEmbeddedAgentSettingsSnapshot,
@@ -11,7 +11,7 @@ import { SettingsManager } from "./sessions/index.js";
 function createEmbeddedAgentSettingsManager(params: {
   cwd: string;
   agentDir: string;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   pluginMetadataSnapshot?: PluginMetadataSnapshot;
 }): SettingsManager {
   const fileSettingsManager = SettingsManager.create(params.cwd, params.agentDir);
@@ -50,7 +50,7 @@ function createRuntimeEmbeddedAgentSettingsManager(
 export function createPreparedEmbeddedAgentSettingsManager(params: {
   cwd: string;
   agentDir: string;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   pluginMetadataSnapshot?: PluginMetadataSnapshot;
   /** Resolved context window budget so reserve-token floor can be capped for small models. */
   contextTokenBudget?: number;
@@ -63,7 +63,7 @@ export function createPreparedEmbeddedAgentSettingsManager(params: {
     cfg: params.cfg,
     contextTokenBudget: params.contextTokenBudget,
   });
-  // Disable the session runtime auto-retry. OpenClaw has its own comprehensive
+  // Disable the session runtime auto-retry. MerClaw has its own comprehensive
   // retry layer (failover rotation, auth profile rotation, empty-error retry,
   // thinking-level fallback) in run.ts. Having both layers active creates a
   // double-retry that can replay failed tool calls in an unbounded loop (#73781).

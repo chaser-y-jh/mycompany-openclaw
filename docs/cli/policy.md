@@ -1,39 +1,39 @@
 ---
-summary: "CLI reference for `openclaw policy` conformance checks"
+summary: "CLI reference for `merclaw policy` conformance checks"
 read_when:
-  - You want to check OpenClaw settings against an authored policy.jsonc
+  - You want to check MerClaw settings against an authored policy.jsonc
   - You want policy findings in doctor lint
   - You need a policy attestation hash for audit evidence
 title: "Policy"
 ---
 
-# `openclaw policy`
+# `merclaw policy`
 
-`openclaw policy` is provided by the bundled Policy plugin. Policy is an
-enterprise conformance layer over existing OpenClaw settings. It does not add a
+`merclaw policy` is provided by the bundled Policy plugin. Policy is an
+enterprise conformance layer over existing MerClaw settings. It does not add a
 second configuration system. `policy.jsonc` defines authored requirements,
-OpenClaw observes the active workspace as evidence, and policy health checks
+MerClaw observes the active workspace as evidence, and policy health checks
 report drift through `doctor --lint`. The final conformance signal is a clean
 `doctor --lint` run; policy contributes findings to that shared lint surface
 instead of creating a separate health gate.
 
 Policy currently manages configured channels, MCP servers, model providers,
 network SSRF posture, ingress/channel access posture, Gateway exposure posture, agent workspace posture,
-OpenClaw config secret provider/auth profile posture, and governed tool
+MerClaw config secret provider/auth profile posture, and governed tool
 declarations. For example, IT or a workspace operator can record that Telegram
 is not an approved channel provider, restrict MCP servers and model refs to
 approved entries, require private-network fetch/browser access to remain
 disabled, require direct-message session isolation and channel ingress posture
 to stay within reviewed bounds, require Gateway bind/auth/HTTP exposure to stay within reviewed
 bounds, require agent workspace access and tool denies to stay in a reviewed
-posture, require OpenClaw config SecretRefs to use managed providers, require
+posture, require MerClaw config SecretRefs to use managed providers, require
 config auth profiles to carry provider/mode metadata, require governed tools to
 carry risk and sensitivity metadata, then use `doctor --lint` as the shared
 conformance gate.
 
 Use policy when a workspace needs a durable statement such as "these channels
 must not be enabled" or "governed tools must declare approval metadata" and a
-repeatable way to prove that OpenClaw still conforms to that statement. Use
+repeatable way to prove that MerClaw still conforms to that statement. Use
 regular config and workspace docs alone when you only need local behavior and
 do not need policy findings or attestation output.
 
@@ -42,7 +42,7 @@ do not need policy findings or attestation output.
 Enable the bundled Policy plugin before first use:
 
 ```bash
-openclaw plugins enable policy
+merclaw plugins enable policy
 ```
 
 When policy is enabled, doctor can load policy health checks without activating
@@ -51,7 +51,7 @@ doctor can report the missing artifact.
 
 Policy is authored, not generated from the user's current settings. A minimal
 policy for channels, MCP servers, model providers, network posture, ingress/channel access, Gateway
-exposure, agent workspace posture, configured sandbox runtime posture, OpenClaw
+exposure, agent workspace posture, configured sandbox runtime posture, MerClaw
 config secret provider/auth profile posture, and tool metadata looks like this:
 
 ```jsonc
@@ -151,11 +151,11 @@ config secret provider/auth profile posture, and tool metadata looks like this:
 ```
 
 The rules are the authority. A category block is only a namespace; checks run
-when a concrete rule is present. OpenClaw reads current `channels.*` settings
+when a concrete rule is present. MerClaw reads current `channels.*` settings
 `mcp.servers.*`, `models.providers.*`, selected agent model refs, network SSRF
 settings, direct-message session scope, channel DM policy, channel group policy,
 channel/group mention gates, Gateway bind/auth/Control UI/Tailscale/remote/HTTP
-posture, OpenClaw config agent sandbox workspace access and tool deny posture, config secret
+posture, MerClaw config agent sandbox workspace access and tool deny posture, config secret
 provider and SecretRef provenance, config auth profile metadata, configured
 global/per-agent tool posture, and `TOOLS.md` declarations as evidence, then
 reports observed state that does not conform. If a policy denies non-loopback
@@ -165,7 +165,7 @@ strict config conformance. For read-only agent posture, configure sandbox mode
 on the applicable defaults or agent and set `workspaceAccess` to `none` or
 `ro`; omitted or `off` sandbox mode does not satisfy a read-only/no-write
 policy. `agents.workspace.denyTools` supports `exec`, `process`, `write`,
-`edit`, and `apply_patch`; OpenClaw config `group:fs` covers file mutation tools
+`edit`, and `apply_patch`; MerClaw config `group:fs` covers file mutation tools
 and `group:runtime` covers shell/process tools. Tool posture policy observes
 `tools.profile`, `tools.allow`, `tools.alsoAllow`, `tools.deny`,
 `tools.fs.workspaceOnly`, `tools.exec.security`, `tools.exec.ask`,
@@ -180,7 +180,7 @@ those stores remain owned by the existing auth and credential flows.
 ### Policy rule reference
 
 Each policy field below is optional. A check runs only when the matching rule is
-present in `policy.jsonc`. The observed state is existing OpenClaw config or
+present in `policy.jsonc`. The observed state is existing MerClaw config or
 workspace metadata; policy reports drift but does not rewrite runtime behavior
 unless a repair path is explicitly available and enabled.
 
@@ -197,7 +197,7 @@ policy than the top-level baseline. Agent-scoped sections use `agentIds`, which
 supports `tools.*`, `agents.workspace.*`, and `sandbox.*`. Channel-scoped
 ingress uses `channelIds`, which supports `ingress.channels.*`. Unsupported
 sections are rejected instead of being ignored. If an `agentIds` entry is not
-present in `agents.list[]`, OpenClaw evaluates the scoped rule against inherited
+present in `agents.list[]`, MerClaw evaluates the scoped rule against inherited
 global/default posture for that runtime agent id.
 
 ```jsonc
@@ -263,7 +263,7 @@ equally or more restrictive according to policy metadata; weaker duplicate
 claims are rejected. Strictness metadata treats allow-lists as subsets,
 deny-lists as supersets, and required booleans as fixed requirements.
 
-Container posture policy is evaluated only against evidence OpenClaw can
+Container posture policy is evaluated only against evidence MerClaw can
 observe for the matched agent. If an enabled `sandbox.containers.*` rule applies
 to an agent whose sandbox backend cannot expose that field, policy reports
 `policy/sandbox-container-posture-unobservable` instead of treating the claim as
@@ -391,24 +391,24 @@ allowlist such as `["all"]`.
 Run policy-only checks during authoring:
 
 ```bash
-openclaw policy check
-openclaw policy check --json
-openclaw policy check --severity-min error
+merclaw policy check
+merclaw policy check --json
+merclaw policy check --severity-min error
 ```
 
 `policy check` runs only the policy check set and emits evidence, findings, and
-attestation hashes. The same findings also appear in `openclaw doctor --lint`
+attestation hashes. The same findings also appear in `merclaw doctor --lint`
 when the Policy plugin is enabled.
 
 Compare an operator policy file to an authored baseline policy file:
 
 ```bash
-openclaw policy compare --baseline official.policy.jsonc
-openclaw policy compare --baseline official.policy.jsonc --policy policy.jsonc --json
+merclaw policy compare --baseline official.policy.jsonc
+merclaw policy compare --baseline official.policy.jsonc --policy policy.jsonc --json
 ```
 
 `policy compare` compares policy file syntax to policy file syntax. It does not
-inspect OpenClaw runtime state, evidence, credentials, or secrets. The command
+inspect MerClaw runtime state, evidence, credentials, or secrets. The command
 uses the same policy rule metadata that governs scoped overlays: allowlists must
 stay equal or narrower, denylists must stay equal or broader, required booleans
 must keep their required value, ordered strings must move only toward the more
@@ -519,7 +519,7 @@ Example JSON output:
       {
         "id": "telegram",
         "provider": "telegram",
-        "source": "oc://openclaw.config/channels/telegram",
+        "source": "oc://merclaw.config/channels/telegram",
         "enabled": false
       }
     ],
@@ -527,14 +527,14 @@ Example JSON output:
       {
         "id": "docs",
         "transport": "stdio",
-        "source": "oc://openclaw.config/mcp/servers/docs",
+        "source": "oc://merclaw.config/mcp/servers/docs",
         "command": "npx"
       }
     ],
     "modelProviders": [
       {
         "id": "openai",
-        "source": "oc://openclaw.config/models/providers/openai"
+        "source": "oc://merclaw.config/models/providers/openai"
       }
     ],
     "modelRefs": [
@@ -542,13 +542,13 @@ Example JSON output:
         "ref": "openai/gpt-5.5",
         "provider": "openai",
         "model": "gpt-5.5",
-        "source": "oc://openclaw.config/agents/defaults/model"
+        "source": "oc://merclaw.config/agents/defaults/model"
       }
     ],
     "network": [
       {
         "id": "browser-private-network",
-        "source": "oc://openclaw.config/browser/ssrfPolicy/dangerouslyAllowPrivateNetwork",
+        "source": "oc://merclaw.config/browser/ssrfPolicy/dangerouslyAllowPrivateNetwork",
         "value": false
       }
     ],
@@ -556,7 +556,7 @@ Example JSON output:
       {
         "id": "gateway-bind",
         "kind": "bind",
-        "source": "oc://openclaw.config/gateway/bind",
+        "source": "oc://merclaw.config/gateway/bind",
         "value": "loopback",
         "nonLoopback": false,
         "explicit": true
@@ -566,18 +566,18 @@ Example JSON output:
       {
         "id": "agents-defaults-workspace-access",
         "kind": "workspaceAccess",
-        "source": "oc://openclaw.config/agents/defaults/sandbox/workspaceAccess",
+        "source": "oc://merclaw.config/agents/defaults/sandbox/workspaceAccess",
         "scope": "defaults",
         "value": "ro",
         "sandboxMode": "all",
-        "sandboxModeSource": "oc://openclaw.config/agents/defaults/sandbox/mode",
+        "sandboxModeSource": "oc://merclaw.config/agents/defaults/sandbox/mode",
         "sandboxEnabled": true,
         "explicit": true
       },
       {
         "id": "agents-defaults-tool-exec",
         "kind": "toolDeny",
-        "source": "oc://openclaw.config/tools/deny",
+        "source": "oc://merclaw.config/tools/deny",
         "scope": "defaults",
         "tool": "exec",
         "denied": true,
@@ -588,13 +588,13 @@ Example JSON output:
       {
         "id": "vault",
         "kind": "provider",
-        "source": "oc://openclaw.config/secrets/providers/vault",
+        "source": "oc://merclaw.config/secrets/providers/vault",
         "providerSource": "env"
       },
       {
-        "id": "oc://openclaw.config/models/providers/openai/apiKey",
+        "id": "oc://merclaw.config/models/providers/openai/apiKey",
         "kind": "input",
-        "source": "oc://openclaw.config/models/providers/openai/apiKey",
+        "source": "oc://merclaw.config/models/providers/openai/apiKey",
         "provenance": "secretRef",
         "refSource": "env",
         "refProvider": "vault"
@@ -603,7 +603,7 @@ Example JSON output:
     "authProfiles": [
       {
         "id": "github",
-        "source": "oc://openclaw.config/auth/profiles/github",
+        "source": "oc://merclaw.config/auth/profiles/github",
         "validMetadata": true,
         "provider": "github",
         "mode": "token"
@@ -627,7 +627,7 @@ Example JSON output:
 ```
 
 The policy hash identifies the authored rule artifact. The evidence block
-records the observed OpenClaw state used by the policy checks. The
+records the observed MerClaw state used by the policy checks. The
 `workspace.hash` value identifies that evidence payload for the checked scope.
 The findings hash identifies the exact finding set returned by the check.
 `checkedAt` records when the evaluation ran. The attestation hash identifies
@@ -644,10 +644,10 @@ stable attestation hash.
 Use this lifecycle when accepting policy state:
 
 1. Author or review `policy.jsonc`.
-2. Run `openclaw policy check --json`.
+2. Run `merclaw policy check --json`.
 3. If the result is clean, record `attestation.policy.hash` as `expectedHash`.
 4. Record `attestation.attestationHash` as `expectedAttestationHash`.
-5. Re-run `openclaw doctor --lint` in CI or release gates.
+5. Re-run `merclaw doctor --lint` in CI or release gates.
 
 If policy rules change intentionally, update both accepted hashes from a clean
 check. If workspace settings change intentionally but policy stays the same,
@@ -659,11 +659,11 @@ evidence and refresh accepted attestation hashes after enabling these rules.
 Enabling or upgrading tool posture rules adds `toolPosture` evidence in the
 same way.
 
-`openclaw policy watch` runs the same check repeatedly and reports when the
+`merclaw policy watch` runs the same check repeatedly and reports when the
 current evidence no longer matches `expectedAttestationHash`:
 
 ```bash
-openclaw policy watch --json
+merclaw policy watch --json
 ```
 
 Use `--once` in CI or scripts that only need one drift evaluation. Without
@@ -746,9 +746,9 @@ Example JSON finding:
   "severity": "error",
   "message": "Channel 'telegram' uses denied provider 'telegram'.",
   "source": "policy",
-  "path": "openclaw config",
-  "ocPath": "oc://openclaw.config/channels/telegram",
-  "target": "oc://openclaw.config/channels/telegram",
+  "path": "merclaw config",
+  "ocPath": "oc://merclaw.config/channels/telegram",
+  "target": "oc://merclaw.config/channels/telegram",
   "requirement": "oc://policy.jsonc/channels/denyRules/#0",
   "fixHint": "Telegram is not approved for this workspace."
 }
@@ -778,9 +778,9 @@ Example MCP finding:
   "severity": "error",
   "message": "MCP server 'remote' is not in the policy allowlist.",
   "source": "policy",
-  "path": "openclaw config",
-  "ocPath": "oc://openclaw.config/mcp/servers/remote",
-  "target": "oc://openclaw.config/mcp/servers/remote",
+  "path": "merclaw config",
+  "ocPath": "oc://merclaw.config/mcp/servers/remote",
+  "target": "oc://merclaw.config/mcp/servers/remote",
   "requirement": "oc://policy.jsonc/mcp/servers/allow"
 }
 ```
@@ -793,9 +793,9 @@ Example model-provider finding:
   "severity": "error",
   "message": "Model ref 'anthropic/claude-sonnet-4.7' uses unapproved provider 'anthropic'.",
   "source": "policy",
-  "path": "openclaw config",
-  "ocPath": "oc://openclaw.config/agents/defaults/model/fallbacks/#0",
-  "target": "oc://openclaw.config/agents/defaults/model/fallbacks/#0",
+  "path": "merclaw config",
+  "ocPath": "oc://merclaw.config/agents/defaults/model/fallbacks/#0",
+  "target": "oc://merclaw.config/agents/defaults/model/fallbacks/#0",
   "requirement": "oc://policy.jsonc/models/providers/allow"
 }
 ```
@@ -808,9 +808,9 @@ Example network finding:
   "severity": "error",
   "message": "Network setting 'browser-private-network' allows private-network access.",
   "source": "policy",
-  "path": "openclaw config",
-  "ocPath": "oc://openclaw.config/browser/ssrfPolicy/dangerouslyAllowPrivateNetwork",
-  "target": "oc://openclaw.config/browser/ssrfPolicy/dangerouslyAllowPrivateNetwork",
+  "path": "merclaw config",
+  "ocPath": "oc://merclaw.config/browser/ssrfPolicy/dangerouslyAllowPrivateNetwork",
+  "target": "oc://merclaw.config/browser/ssrfPolicy/dangerouslyAllowPrivateNetwork",
   "requirement": "oc://policy.jsonc/network/privateNetwork/allow"
 }
 ```
@@ -823,9 +823,9 @@ Example Gateway exposure finding:
   "severity": "error",
   "message": "Gateway bind setting 'gateway-bind' permits non-loopback exposure.",
   "source": "policy",
-  "path": "openclaw config",
-  "ocPath": "oc://openclaw.config/gateway/bind",
-  "target": "oc://openclaw.config/gateway/bind",
+  "path": "merclaw config",
+  "ocPath": "oc://merclaw.config/gateway/bind",
+  "target": "oc://merclaw.config/gateway/bind",
   "requirement": "oc://policy.jsonc/gateway/exposure/allowNonLoopbackBind"
 }
 ```
@@ -838,9 +838,9 @@ Example agent workspace finding:
   "severity": "error",
   "message": "agents.defaults sandbox workspaceAccess 'rw' is not allowed by policy.",
   "source": "policy",
-  "path": "openclaw config",
-  "ocPath": "oc://openclaw.config/agents/defaults/sandbox/workspaceAccess",
-  "target": "oc://openclaw.config/agents/defaults/sandbox/workspaceAccess",
+  "path": "merclaw config",
+  "ocPath": "oc://merclaw.config/agents/defaults/sandbox/workspaceAccess",
+  "target": "oc://merclaw.config/agents/defaults/sandbox/workspaceAccess",
   "requirement": "oc://policy.jsonc/agents/workspace/allowedAccess"
 }
 ```
@@ -853,7 +853,7 @@ Example agent workspace finding:
 `workspaceRepairs` is explicitly enabled. Without that opt-in, policy checks
 report what they would repair and leave settings unchanged.
 
-In this version, repair can disable channels that are enabled in OpenClaw config
+In this version, repair can disable channels that are enabled in MerClaw config
 but denied by `channels.denyRules`. Enable `workspaceRepairs` only after the
 policy file has been reviewed, because a valid deny rule can turn off a
 configured channel:

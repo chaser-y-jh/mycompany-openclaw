@@ -1,7 +1,7 @@
 import Foundation
-import OpenClawKit
+import MerClawKit
 import Testing
-@testable import OpenClaw
+@testable import MerClaw
 
 @Suite struct IOSGatewayChatTransportTests {
     private func object(from json: String) throws -> [String: Any] {

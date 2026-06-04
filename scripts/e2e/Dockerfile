@@ -2,7 +2,7 @@
 #
 # Shared Docker E2E image.
 # `bare` is a clean Node/Git runner for install/update lanes. `functional`
-# installs the prepared OpenClaw npm tarball into /app for built-app lanes.
+# installs the prepared MerClaw npm tarball into /app for built-app lanes.
 
 FROM node:24-bookworm-slim@sha256:e8e2e91b1378f83c5b2dd15f0247f34110e2fe895f6ca7719dbb780f929368eb AS e2e-runner
 
@@ -25,7 +25,7 @@ ENV PATH="/home/appuser/.local/bin:${PATH}"
 ENV NODE_OPTIONS="--disable-warning=ExperimentalWarning"
 # Docker E2E lanes start many loopback gateways concurrently; mDNS advertising
 # is unrelated to those checks and can flap under container CPU/network load.
-ENV OPENCLAW_DISABLE_BONJOUR="1"
+ENV MERCLAW_DISABLE_BONJOUR="1"
 
 USER appuser
 WORKDIR /app
@@ -42,15 +42,15 @@ FROM bare AS functional
 
 # The app under test enters through the named BuildKit context, not by copying
 # checkout sources into the image.
-COPY --from=openclaw_package --chown=appuser:appuser openclaw-current.tgz /tmp/openclaw-current.tgz
-# Preserve package self-reference imports such as openclaw/plugin-sdk/* after
+COPY --from=merclaw_package --chown=appuser:appuser merclaw-current.tgz /tmp/merclaw-current.tgz
+# Preserve package self-reference imports such as merclaw/plugin-sdk/* after
 # copying the installed package out of npm's global node_modules tree.
-RUN npm install -g --prefix /tmp/openclaw-prefix /tmp/openclaw-current.tgz --no-fund --no-audit \
- && cp -a /tmp/openclaw-prefix/lib/node_modules/openclaw/. /app/ \
+RUN npm install -g --prefix /tmp/merclaw-prefix /tmp/merclaw-current.tgz --no-fund --no-audit \
+ && cp -a /tmp/merclaw-prefix/lib/node_modules/merclaw/. /app/ \
  && mkdir -p "$HOME/.local/bin" \
- && ln -sf /app/openclaw.mjs "$HOME/.local/bin/openclaw" \
- && rm -rf /app/node_modules/openclaw \
- && ln -sf /app /app/node_modules/openclaw \
- && rm -rf /tmp/openclaw-prefix /tmp/openclaw-current.tgz
+ && ln -sf /app/merclaw.mjs "$HOME/.local/bin/merclaw" \
+ && rm -rf /app/node_modules/merclaw \
+ && ln -sf /app /app/node_modules/merclaw \
+ && rm -rf /tmp/merclaw-prefix /tmp/merclaw-current.tgz
 
 CMD ["bash"]

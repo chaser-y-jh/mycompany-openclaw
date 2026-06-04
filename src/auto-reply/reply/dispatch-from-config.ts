@@ -1,14 +1,14 @@
 import crypto from "node:crypto";
-import { isParentOwnedBackgroundAcpSession } from "@openclaw/acp-core/session-interaction-mode";
+import { isParentOwnedBackgroundAcpSession } from "@merclaw/acp-core/session-interaction-mode";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalLowercaseString,
   normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/normalization-core/string-coerce";
 import {
   hasOutboundReplyContent,
   resolveSendableOutboundReplyParts,
-} from "openclaw/plugin-sdk/reply-payload";
+} from "merclaw/plugin-sdk/reply-payload";
 import {
   resolveAgentConfig,
   resolveAgentWorkspaceDir,
@@ -44,7 +44,7 @@ import { applyMergePatch } from "../../config/merge-patch.js";
 import { resolveGroupSessionKey } from "../../config/sessions/group.js";
 import { appendAssistantMessageToSessionTranscript } from "../../config/sessions/transcript.js";
 import type { SessionEntry } from "../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { logVerbose } from "../../globals.js";
 import { fireAndForgetHook } from "../../hooks/fire-and-forget.js";
 import {
@@ -374,7 +374,7 @@ const resolveRoutedPolicyConversationType = (
 
 const resolveSessionStoreLookup = (
   ctx: FinalizedMsgContext,
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
 ): {
   sessionKey?: string;
   storePath?: string;
@@ -406,7 +406,7 @@ const resolveSessionStoreLookup = (
 
 const resolveBoundAcpDispatchSessionKey = (params: {
   ctx: FinalizedMsgContext;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
 }): string | undefined => {
   const bindingContext = resolveConversationBindingContextFromMessage({
     cfg: params.cfg,
@@ -526,7 +526,7 @@ function resolveTurnModelOverride(
 
 function resolveChannelModelCandidate(params: {
   aliasIndex: ModelAliasIndex;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   ctx: FinalizedMsgContext;
   defaultProvider: string;
   entry?: SessionEntry;
@@ -599,7 +599,7 @@ function resolveModelOverrideCandidate(params: {
 }
 
 const resolveHarnessSourceVisibleRepliesDefault = (params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   ctx: FinalizedMsgContext;
   entry?: SessionEntry;
   sessionAgentId: string;
@@ -680,7 +680,7 @@ const resolveHarnessSourceVisibleRepliesDefault = (params: {
 
 function shouldBypassPluginOwnedBindingForCommand(
   ctx: FinalizedMsgContext,
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
 ): boolean {
   const commandTurn = resolveCommandTurnContext(ctx);
   if (
@@ -752,7 +752,7 @@ async function clearPendingFinalDeliveryAfterSuccess(params: {
 
 async function mirrorInternalSourceReplyToTranscript(params: {
   metadata?: SourceReplyTranscriptMirror;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
 }): Promise<void> {
   const mirror = params.metadata;
   if (!mirror) {
@@ -826,7 +826,7 @@ async function mirrorInternalSourceReplyAfterDispatcherDelivery(params: {
   dispatcher: ReplyDispatcher;
   before: { cancelled: number; failed: number };
   metadata: () => SourceReplyTranscriptMirror | undefined;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
 }): Promise<void> {
   await params.dispatcher.waitForIdle();
   const after = getDispatcherFinalOutcomeCounts(params.dispatcher);
@@ -2421,7 +2421,7 @@ export async function dispatchReplyFromConfig(
       (await traceReplyPhase("reply.load_reply_resolver", () => loadGetReplyFromConfigRuntime()))
         .getReplyFromConfig;
     const replyConfig = withFullRuntimeReplyConfig(
-      params.configOverride ? (applyMergePatch(cfg, params.configOverride) as OpenClawConfig) : cfg,
+      params.configOverride ? (applyMergePatch(cfg, params.configOverride) as MerClawConfig) : cfg,
     );
     recordAgentDispatchStarted();
     const replyResult = await runWithDispatchAbortSignal(getDispatchAbortSignal(), () =>

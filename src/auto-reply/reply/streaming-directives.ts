@@ -1,4 +1,4 @@
-import { hasOutboundReplyContent } from "openclaw/plugin-sdk/reply-payload";
+import { hasOutboundReplyContent } from "merclaw/plugin-sdk/reply-payload";
 import { parseInlineDirectives } from "../../utils/directive-tags.js";
 import {
   isSilentReplyPrefixText,

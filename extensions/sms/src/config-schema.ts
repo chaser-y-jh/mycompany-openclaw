@@ -3,9 +3,9 @@ import {
   buildChannelConfigSchema,
   DmPolicySchema,
   requireOpenAllowFrom,
-} from "openclaw/plugin-sdk/channel-config-primitives";
-import { requireChannelOpenAllowFrom } from "openclaw/plugin-sdk/extension-shared";
-import { buildSecretInputSchema } from "openclaw/plugin-sdk/secret-input";
+} from "merclaw/plugin-sdk/channel-config-primitives";
+import { requireChannelOpenAllowFrom } from "merclaw/plugin-sdk/extension-shared";
+import { buildSecretInputSchema } from "merclaw/plugin-sdk/secret-input";
 import { z } from "zod";
 
 const SecretInputSchema = buildSecretInputSchema();
@@ -86,7 +86,7 @@ export const SmsChannelConfigSchema = buildChannelConfigSchema(SmsConfigSchema, 
     },
     textChunkLimit: {
       label: "SMS Text Chunk Limit",
-      help: "Maximum characters per outbound SMS chunk before OpenClaw splits long replies.",
+      help: "Maximum characters per outbound SMS chunk before MerClaw splits long replies.",
     },
   },
 });

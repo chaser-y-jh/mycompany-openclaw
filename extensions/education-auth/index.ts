@@ -6,10 +6,10 @@
  * access control, and school-level data isolation.
  */
 
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
-import type { OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
-import { resolvePluginConfigObject } from "openclaw/plugin-sdk/plugin-config-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import { definePluginEntry } from "merclaw/plugin-sdk/plugin-entry";
+import type { MerClawPluginApi } from "merclaw/plugin-sdk/plugin-entry";
+import { resolvePluginConfigObject } from "merclaw/plugin-sdk/plugin-config-runtime";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
 import {
   getEduDb,
   closeEduDb,
@@ -24,7 +24,7 @@ import { createTenantScope } from "./src/tenant-resolver.js";
 import { initSchool } from "./src/user-registry.js";
 import { createEduApiHandler } from "./src/api.js";
 
-/** Plugin-level config shape (matches openclaw.plugin.json configSchema). */
+/** Plugin-level config shape (matches merclaw.plugin.json configSchema). */
 interface EducationAuthConfig {
   enabled?: boolean;
   schoolId?: string;
@@ -34,7 +34,7 @@ interface EducationAuthConfig {
   defaultRole?: "student" | "teacher" | "parent" | "admin";
 }
 
-function resolveConfig(config?: OpenClawConfig): EducationAuthConfig {
+function resolveConfig(config?: MerClawConfig): EducationAuthConfig {
   const pluginConfig = resolvePluginConfigObject(
     config,
     "education-auth",
@@ -47,7 +47,7 @@ export default definePluginEntry({
   name: "Education Auth",
   description:
     "User system, roles (student/teacher/parent/admin), RBAC, and multi-tenant isolation for K12 education.",
-  register(api: OpenClawPluginApi) {
+  register(api: MerClawPluginApi) {
     const cfg = resolveConfig(api.config);
     if (!cfg.enabled) {
       api.logger.info?.("[education-auth] Education mode disabled, skipping init");
@@ -60,8 +60,8 @@ export default definePluginEntry({
     // Initialize the education database
     const stateDir =
       api.runtime?.stateDir ??
-      process.env.OPENCLAW_STATE_DIR ??
-      process.env.HOME + "/.openclaw";
+      process.env.MERCLAW_STATE_DIR ??
+      process.env.HOME + "/.merclaw";
     const db = getEduDb(stateDir);
     const tenant = createTenantScope(db, schoolId);
 

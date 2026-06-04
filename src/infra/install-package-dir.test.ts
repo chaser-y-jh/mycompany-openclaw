@@ -176,7 +176,7 @@ async function createReboundInstallFixture(params: {
 
 describe("installPackageDir", () => {
   const fixtureRootTracker = createSuiteTempRootTracker({
-    prefix: "openclaw-install-package-dir-",
+    prefix: "merclaw-install-package-dir-",
   });
 
   afterEach(async () => {
@@ -213,10 +213,10 @@ describe("installPackageDir", () => {
     });
     await expect(fs.readFile(path.join(targetDir, "marker.txt"), "utf8")).resolves.toBe("old");
     await expect(
-      listMatchingDirs(installBaseDir, ".openclaw-install-stage-"),
+      listMatchingDirs(installBaseDir, ".merclaw-install-stage-"),
     ).resolves.toHaveLength(0);
     await expect(
-      listMatchingDirs(installBaseDir, ".openclaw-install-backups"),
+      listMatchingDirs(installBaseDir, ".merclaw-install-backups"),
     ).resolves.toHaveLength(0);
   });
 
@@ -252,9 +252,9 @@ describe("installPackageDir", () => {
     });
     await expect(fs.readFile(path.join(targetDir, "marker.txt"), "utf8")).resolves.toBe("old");
     await expect(
-      listMatchingDirs(installBaseDir, ".openclaw-install-stage-"),
+      listMatchingDirs(installBaseDir, ".merclaw-install-stage-"),
     ).resolves.toHaveLength(0);
-    const backupRoot = path.join(installBaseDir, ".openclaw-install-backups");
+    const backupRoot = path.join(installBaseDir, ".merclaw-install-backups");
     await expect(fs.readdir(backupRoot)).resolves.toHaveLength(0);
   });
 
@@ -274,7 +274,7 @@ describe("installPackageDir", () => {
       const fromPath = String(from);
       if (
         exdevMoves === 0 &&
-        path.basename(fromPath).startsWith(".openclaw-install-stage-") &&
+        path.basename(fromPath).startsWith(".merclaw-install-stage-") &&
         normalizeComparablePath(String(to)) === normalizeComparablePath(targetDir)
       ) {
         exdevMoves += 1;
@@ -297,7 +297,7 @@ describe("installPackageDir", () => {
     expect(exdevMoves).toBe(1);
     await expect(fs.readFile(path.join(targetDir, "marker.txt"), "utf8")).resolves.toBe("new");
     await expect(
-      listMatchingDirs(installBaseDir, ".openclaw-install-stage-"),
+      listMatchingDirs(installBaseDir, ".merclaw-install-stage-"),
     ).resolves.toHaveLength(0);
   });
 
@@ -529,7 +529,7 @@ describe("installPackageDir", () => {
       "Install base directory changed before backup cleanup; leaving backup in place.",
     );
     await expectMissingPath(path.join(outsideInstallRoot, "demo", "marker.txt"));
-    const backupRoot = path.join(preservedInstallRoot, ".openclaw-install-backups");
+    const backupRoot = path.join(preservedInstallRoot, ".merclaw-install-backups");
     await expect(fs.readdir(backupRoot)).resolves.toHaveLength(1);
   });
 
@@ -578,7 +578,7 @@ describe("installPackageDir", () => {
       "--loglevel=error",
       "--ignore-scripts",
     ]);
-    expect(installOptions.cwd).toContain(".openclaw-install-stage-");
+    expect(installOptions.cwd).toContain(".merclaw-install-stage-");
   });
 
   it("hides the staged project .npmrc while npm install runs and restores it afterward", async () => {
@@ -608,7 +608,7 @@ describe("installPackageDir", () => {
       }
       await expectMissingPath(path.join(cwd, ".npmrc"));
       await expect(
-        listMatchingEntries(cwd, ".openclaw-install-hidden-npmrc-"),
+        listMatchingEntries(cwd, ".merclaw-install-hidden-npmrc-"),
       ).resolves.toHaveLength(1);
       return {
         stdout: "",
@@ -633,7 +633,7 @@ describe("installPackageDir", () => {
     expect(result).toEqual({ ok: true });
     await expect(fs.readFile(path.join(targetDir, ".npmrc"), "utf8")).resolves.toBe(npmrcContent);
     await expect(
-      listMatchingEntries(targetDir, ".openclaw-install-hidden-npmrc-"),
+      listMatchingEntries(targetDir, ".merclaw-install-hidden-npmrc-"),
     ).resolves.toHaveLength(0);
   });
 

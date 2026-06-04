@@ -1,5 +1,5 @@
 import fs from "node:fs/promises";
-import { isRecord } from "@openclaw/normalization-core/record-coerce";
+import { isRecord } from "@merclaw/normalization-core/record-coerce";
 import {
   markUpdateRestartSentinelFailure,
   writeRestartSentinel,
@@ -11,7 +11,7 @@ import {
 } from "./update-restart-sentinel-payload.js";
 import type { UpdateRunResult } from "./update-runner.js";
 
-export const CONTROL_PLANE_UPDATE_SENTINEL_META_ENV = "OPENCLAW_CONTROL_PLANE_UPDATE_SENTINEL_META";
+export const CONTROL_PLANE_UPDATE_SENTINEL_META_ENV = "MERCLAW_CONTROL_PLANE_UPDATE_SENTINEL_META";
 export const CONTROL_PLANE_UPDATE_HANDOFF_STARTED_REASON = "managed-service-handoff-started";
 export const CONTROL_PLANE_UPDATE_RESTART_HEALTH_PENDING_REASON = "restart-health-pending";
 

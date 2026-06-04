@@ -1,5 +1,5 @@
 import type { APIApplicationCommand, APIInteraction } from "discord-api-types/v10";
-import { resolveTimerTimeoutMs } from "openclaw/plugin-sdk/number-runtime";
+import { resolveTimerTimeoutMs } from "merclaw/plugin-sdk/number-runtime";
 import { DiscordCommandDeployer, type DeployCommandOptions } from "./command-deploy.js";
 import type { BaseCommand } from "./commands.js";
 import { BaseMessageInteractiveComponent, parseCustomId, type Modal } from "./components.js";

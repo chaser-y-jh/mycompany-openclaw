@@ -1,16 +1,16 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { MerClawConfig } from "../config/config.js";
 import { createConfigRuntimeEnv } from "../config/env-vars.js";
 import type { PluginMetadataSnapshot } from "../plugins/plugin-metadata-snapshot.js";
 import { unsetEnv, withTempEnv } from "./models-config.e2e-harness.js";
 import {
-  planOpenClawModelsJsonWithDeps,
+  planMerClawModelsJsonWithDeps,
   resolveProvidersForModelsJsonWithDeps,
 } from "./models-config.plan.js";
 import type { ProviderConfig } from "./models-config.providers.secrets.js";
 import { encodePluginModelCatalogRelativePath } from "./plugin-model-catalog.js";
 
-const TEST_ENV_VAR = "OPENCLAW_MODELS_CONFIG_TEST_ENV";
+const TEST_ENV_VAR = "MERCLAW_MODELS_CONFIG_TEST_ENV";
 
 function createImplicitOpenRouterProvider(): ProviderConfig {
   return {
@@ -51,14 +51,14 @@ function createImplicitOpenAiProvider(overrides: Partial<ProviderConfig> = {}): 
 }
 
 async function resolveProvidersForConfigEnvTest(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   onResolveImplicitProviders: (env: NodeJS.ProcessEnv) => void;
 }) {
   const env = createConfigRuntimeEnv(params.cfg);
   return await resolveProvidersForModelsJsonWithDeps(
     {
       cfg: params.cfg,
-      agentDir: "/tmp/openclaw-models-config-env-vars-test",
+      agentDir: "/tmp/merclaw-models-config-env-vars-test",
       env,
     },
     {
@@ -72,7 +72,7 @@ async function resolveProvidersForConfigEnvTest(params: {
   );
 }
 
-function createConfigEnvVarsConfig(): OpenClawConfig {
+function createConfigEnvVarsConfig(): MerClawConfig {
   return {
     models: { providers: {} },
     env: {
@@ -84,7 +84,7 @@ function createConfigEnvVarsConfig(): OpenClawConfig {
   };
 }
 
-async function resolveProvidersAndCaptureDiscoveryEnv(cfg: OpenClawConfig) {
+async function resolveProvidersAndCaptureDiscoveryEnv(cfg: MerClawConfig) {
   let discoveryEnv: NodeJS.ProcessEnv | undefined;
   const providers = await resolveProvidersForConfigEnvTest({
     cfg,
@@ -95,14 +95,14 @@ async function resolveProvidersAndCaptureDiscoveryEnv(cfg: OpenClawConfig) {
   return { discoveryEnv, providers };
 }
 
-let unauthenticatedProviderWritePlan: Awaited<ReturnType<typeof planOpenClawModelsJsonWithDeps>>;
+let unauthenticatedProviderWritePlan: Awaited<ReturnType<typeof planMerClawModelsJsonWithDeps>>;
 let unauthenticatedProviderParsed: { providers?: Record<string, unknown> };
 
 beforeAll(async () => {
-  unauthenticatedProviderWritePlan = await planOpenClawModelsJsonWithDeps(
+  unauthenticatedProviderWritePlan = await planMerClawModelsJsonWithDeps(
     {
       cfg: { models: { providers: {} } },
-      agentDir: "/tmp/openclaw-models-config-env-vars-test",
+      agentDir: "/tmp/merclaw-models-config-env-vars-test",
       env: {},
       existingRaw: "",
       existingParsed: null,
@@ -141,7 +141,7 @@ describe("models-config", () => {
     await resolveProvidersForModelsJsonWithDeps(
       {
         cfg: { models: { providers: {} } },
-        agentDir: "/tmp/openclaw-models-config-env-vars-test",
+        agentDir: "/tmp/merclaw-models-config-env-vars-test",
         env: {},
         pluginMetadataSnapshot,
       },
@@ -162,9 +162,9 @@ describe("models-config", () => {
     await resolveProvidersForModelsJsonWithDeps(
       {
         cfg: { models: { providers: {} } },
-        agentDir: "/tmp/openclaw-models-config-env-vars-test",
+        agentDir: "/tmp/merclaw-models-config-env-vars-test",
         env: {},
-        workspaceDir: "/tmp/openclaw-workspace",
+        workspaceDir: "/tmp/merclaw-workspace",
       },
       {
         resolveImplicitProviders: async ({ workspaceDir }) => {
@@ -174,7 +174,7 @@ describe("models-config", () => {
       },
     );
 
-    expect(observedWorkspaceDir).toBe("/tmp/openclaw-workspace");
+    expect(observedWorkspaceDir).toBe("/tmp/merclaw-workspace");
   });
 
   it("threads startup provider discovery scope into implicit provider discovery", async () => {
@@ -185,7 +185,7 @@ describe("models-config", () => {
     await resolveProvidersForModelsJsonWithDeps(
       {
         cfg: { models: { providers: {} } },
-        agentDir: "/tmp/openclaw-models-config-env-vars-test",
+        agentDir: "/tmp/merclaw-models-config-env-vars-test",
         env: {},
         providerDiscoveryProviderIds: ["openai"],
         providerDiscoveryEntriesOnly: true,
@@ -221,10 +221,10 @@ describe("models-config", () => {
       | Pick<PluginMetadataSnapshot, "index" | "manifestRegistry" | "owners">
       | undefined;
 
-    await planOpenClawModelsJsonWithDeps(
+    await planMerClawModelsJsonWithDeps(
       {
         cfg: { models: { providers: {} } },
-        agentDir: "/tmp/openclaw-models-config-env-vars-test",
+        agentDir: "/tmp/merclaw-models-config-env-vars-test",
         env: {},
         existingRaw: "",
         existingParsed: null,
@@ -248,10 +248,10 @@ describe("models-config", () => {
   });
 
   it("treats empty replace-mode provider sets as authoritative", async () => {
-    const plan = await planOpenClawModelsJsonWithDeps(
+    const plan = await planMerClawModelsJsonWithDeps(
       {
         cfg: { models: { mode: "replace", providers: {} } },
-        agentDir: "/tmp/openclaw-models-config-env-vars-test",
+        agentDir: "/tmp/merclaw-models-config-env-vars-test",
         env: {},
         existingRaw: `${JSON.stringify({ providers: { stale: {} } }, null, 2)}\n`,
         existingParsed: { providers: { stale: {} } },
@@ -280,10 +280,10 @@ describe("models-config", () => {
         setupProviders: new Map(),
       },
     } as unknown as Pick<PluginMetadataSnapshot, "index" | "manifestRegistry" | "owners">;
-    const plan = await planOpenClawModelsJsonWithDeps(
+    const plan = await planMerClawModelsJsonWithDeps(
       {
         cfg: { models: { providers: {} } },
-        agentDir: "/tmp/openclaw-models-config-env-vars-test",
+        agentDir: "/tmp/merclaw-models-config-env-vars-test",
         env: { ZAI_API_KEY: "sk-test" } as NodeJS.ProcessEnv,
         existingRaw: "",
         existingParsed: null,
@@ -320,10 +320,10 @@ describe("models-config", () => {
   });
 
   it("falls back to canonical env markers when provider runtime has no api-key policy", async () => {
-    const plan = await planOpenClawModelsJsonWithDeps(
+    const plan = await planMerClawModelsJsonWithDeps(
       {
         cfg: { models: { providers: {} } },
-        agentDir: "/tmp/openclaw-models-config-env-vars-test",
+        agentDir: "/tmp/merclaw-models-config-env-vars-test",
         env: { OPENAI_API_KEY: "sk-test" } as NodeJS.ProcessEnv,
         existingRaw: "",
         existingParsed: null,
@@ -346,10 +346,10 @@ describe("models-config", () => {
   });
 
   it("normalizes retired Gemini ids preserved from existing models.json rows", async () => {
-    const plan = await planOpenClawModelsJsonWithDeps(
+    const plan = await planMerClawModelsJsonWithDeps(
       {
         cfg: { models: { mode: "merge", providers: {} } },
-        agentDir: "/tmp/openclaw-models-config-env-vars-test",
+        agentDir: "/tmp/merclaw-models-config-env-vars-test",
         env: {},
         existingRaw: "",
         existingParsed: {

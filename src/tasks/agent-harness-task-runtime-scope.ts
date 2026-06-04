@@ -1,7 +1,7 @@
 import { normalizeDeliveryContext } from "../utils/delivery-context.shared.js";
 import type { DeliveryContext } from "../utils/delivery-context.types.js";
 
-const scopeRegistryKey = Symbol.for("openclaw.agentHarnessTaskRuntimeScope.registry");
+const scopeRegistryKey = Symbol.for("merclaw.agentHarnessTaskRuntimeScope.registry");
 
 type ScopeRegistry = {
   hostIssuedScopes: WeakSet<object>;

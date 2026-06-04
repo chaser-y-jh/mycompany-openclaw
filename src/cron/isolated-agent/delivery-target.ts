@@ -1,12 +1,12 @@
-import { normalizeOptionalThreadValue } from "@openclaw/normalization-core/string-coerce";
-import { uniqueStrings } from "@openclaw/normalization-core/string-normalization";
+import { normalizeOptionalThreadValue } from "@merclaw/normalization-core/string-coerce";
+import { uniqueStrings } from "@merclaw/normalization-core/string-normalization";
 import { resolveExplicitDeliveryTargetCompat } from "../../channels/plugins/target-parsing-loaded.js";
 import type { ChannelId } from "../../channels/plugins/types.public.js";
 import { resolveAgentMainSessionKey } from "../../config/sessions/main-session.js";
 import { resolveStorePath } from "../../config/sessions/paths.js";
 import { readSessionEntry } from "../../config/sessions/store-load.js";
 import type { SessionEntry } from "../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { formatErrorMessage } from "../../infra/errors.js";
 import { stripTargetProviderPrefix } from "../../infra/outbound/channel-target-prefix.js";
 import type { OutboundSessionRoute } from "../../infra/outbound/outbound-session.js";
@@ -128,7 +128,7 @@ function shouldStripResolvedTargetProviderPrefix(target: ResolvedMessagingTarget
 }
 
 export async function resolveDeliveryTarget(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   agentId: string,
   jobPayload: {
     channel?: ChannelId;

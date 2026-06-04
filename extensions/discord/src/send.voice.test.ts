@@ -2,7 +2,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { makeDiscordRest } from "./send.test-harness.js";
 
 const loadWebMediaRawMock = vi.hoisted(() => vi.fn());
-vi.mock("openclaw/plugin-sdk/web-media", () => ({
+vi.mock("merclaw/plugin-sdk/web-media", () => ({
   loadWebMediaRaw: loadWebMediaRawMock,
 }));
 

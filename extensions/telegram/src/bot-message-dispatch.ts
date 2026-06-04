@@ -3,25 +3,25 @@ import type { Bot } from "grammy";
 import {
   appendSessionTranscriptMessage,
   emitSessionTranscriptUpdate,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "merclaw/plugin-sdk/agent-harness-runtime";
 import {
   DEFAULT_TIMING,
   logAckFailure,
   logTypingFailure,
   removeAckReactionAfterReply,
-} from "openclaw/plugin-sdk/channel-feedback";
+} from "merclaw/plugin-sdk/channel-feedback";
 import {
   formatInboundEnvelope,
   resolveEnvelopeFormatOptions,
   runChannelInboundEvent,
-} from "openclaw/plugin-sdk/channel-inbound";
-import { CURRENT_MESSAGE_MARKER } from "openclaw/plugin-sdk/channel-mention-gating";
+} from "merclaw/plugin-sdk/channel-inbound";
+import { CURRENT_MESSAGE_MARKER } from "merclaw/plugin-sdk/channel-mention-gating";
 import {
   createChannelMessageReplyPipeline,
   createOutboundPayloadPlan,
   deriveDurableFinalDeliveryRequirements,
   projectOutboundPayloadPlanForDelivery,
-} from "openclaw/plugin-sdk/channel-outbound";
+} from "merclaw/plugin-sdk/channel-outbound";
 import {
   buildChannelProgressDraftLineForEntry,
   createChannelProgressDraftGate,
@@ -37,26 +37,26 @@ import {
   resolveChannelStreamingPreviewNativeToolProgressAllowFrom,
   resolveChannelStreamingPreviewToolProgress,
   resolveTranscriptBackedChannelFinalText,
-} from "openclaw/plugin-sdk/channel-outbound";
+} from "merclaw/plugin-sdk/channel-outbound";
 import type {
-  OpenClawConfig,
+  MerClawConfig,
   ReplyToMode,
   TelegramAccountConfig,
-} from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { normalizeMessagePresentation } from "openclaw/plugin-sdk/interactive-runtime";
-import { parseStrictPositiveInteger } from "openclaw/plugin-sdk/number-runtime";
-import { chunkMarkdownTextWithMode } from "openclaw/plugin-sdk/reply-chunking";
-import { createChannelHistoryWindow } from "openclaw/plugin-sdk/reply-history";
-import { resolveSendableOutboundReplyParts } from "openclaw/plugin-sdk/reply-payload";
-import type { ReplyPayload } from "openclaw/plugin-sdk/reply-payload";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
+} from "merclaw/plugin-sdk/config-contracts";
+import { formatErrorMessage } from "merclaw/plugin-sdk/error-runtime";
+import { normalizeMessagePresentation } from "merclaw/plugin-sdk/interactive-runtime";
+import { parseStrictPositiveInteger } from "merclaw/plugin-sdk/number-runtime";
+import { chunkMarkdownTextWithMode } from "merclaw/plugin-sdk/reply-chunking";
+import { createChannelHistoryWindow } from "merclaw/plugin-sdk/reply-history";
+import { resolveSendableOutboundReplyParts } from "merclaw/plugin-sdk/reply-payload";
+import type { ReplyPayload } from "merclaw/plugin-sdk/reply-payload";
+import type { RuntimeEnv } from "merclaw/plugin-sdk/runtime-env";
 import {
   createSubsystemLogger,
   danger,
   logVerbose,
   sleepWithAbort,
-} from "openclaw/plugin-sdk/runtime-env";
+} from "merclaw/plugin-sdk/runtime-env";
 import { resolveTelegramConfigReasoningDefault } from "./agent-config.js";
 import { withTelegramApiErrorLogging } from "./api-logging.js";
 import { normalizeAllowFrom } from "./bot-access.js";
@@ -222,7 +222,7 @@ function canUseNativeToolProgressDraftForChat(params: {
   return normalized.hasWildcard || normalized.entries.includes(String(params.chatId));
 }
 
-async function resolveStickerVisionSupport(cfg: OpenClawConfig, agentId: string) {
+async function resolveStickerVisionSupport(cfg: MerClawConfig, agentId: string) {
   try {
     const catalog = await loadModelCatalog({ config: cfg });
     const defaultModel = resolveDefaultModelForAgent({ cfg, agentId });
@@ -239,7 +239,7 @@ async function resolveStickerVisionSupport(cfg: OpenClawConfig, agentId: string)
 type DispatchTelegramMessageParams = {
   context: TelegramMessageContext;
   bot: Bot;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   runtime: RuntimeEnv;
   replyToMode: ReplyToMode;
   streamMode: TelegramStreamMode;
@@ -261,7 +261,7 @@ type FreshTelegramSessionStoreLoader = ((agentId: string) => {
 };
 
 function createFreshTelegramSessionStoreLoader(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   telegramDeps: TelegramBotDeps;
 }): FreshTelegramSessionStoreLoader {
   const storesByPath = new Map<string, TelegramSessionStore>();
@@ -282,7 +282,7 @@ function createFreshTelegramSessionStoreLoader(params: {
 }
 
 function resolveTelegramReasoningLevel(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   sessionKey?: string;
   agentId: string;
   loadFreshSessionStore: FreshTelegramSessionStoreLoader;
@@ -324,7 +324,7 @@ function resolveTelegramMirroredTranscriptText(
 }
 
 async function mirrorTelegramAssistantReplyToTranscript(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   route: TelegramMessageContext["route"];
   sessionKey: string;
   loadFreshSessionStore: FreshTelegramSessionStoreLoader;
@@ -355,7 +355,7 @@ async function mirrorTelegramAssistantReplyToTranscript(params: {
     role: "assistant" as const,
     content: [{ type: "text" as const, text }],
     api: "openai-responses",
-    provider: "openclaw",
+    provider: "merclaw",
     model: "delivery-mirror",
     usage: {
       input: 0,
@@ -484,7 +484,7 @@ function extractCurrentTelegramBody(body: string | undefined): string {
 }
 
 function buildRecoveredTelegramBody(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   context: TelegramMessageContext;
   currentMessage: string;
   historyKey?: string;
@@ -590,7 +590,7 @@ function migrateRecoveredTelegramRoomEventHistory(params: {
 }
 
 function resolveDispatchTelegramContext(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   context: TelegramMessageContext;
 }): TelegramMessageContext {
   const threadSpec = resolveDispatchTelegramThreadSpec({

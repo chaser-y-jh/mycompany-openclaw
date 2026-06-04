@@ -1,4 +1,4 @@
-import { ensureGlobalUndiciEnvProxyDispatcher } from "openclaw/plugin-sdk/runtime-env";
+import { ensureGlobalUndiciEnvProxyDispatcher } from "merclaw/plugin-sdk/runtime-env";
 import { refreshOpenAICodexToken as refreshOpenAICodexTokenFromFlow } from "./openai-chatgpt-oauth-flow.runtime.js";
 import type { OAuthCredentials } from "./openai-chatgpt-oauth-types.runtime.js";
 

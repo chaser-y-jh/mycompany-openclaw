@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { runDoctorHealthRepairs } from "./doctor-repair-flow.js";
 import { defineSplitHealthCheck, normalizeHealthCheck } from "./health-check-adapter.js";
 import type { RunnableHealthCheck } from "./health-check-runner-types.js";
 import type { HealthCheck, HealthRepairContext } from "./health-checks.js";
 
-function ctx(cfg: OpenClawConfig): HealthRepairContext {
+function ctx(cfg: MerClawConfig): HealthRepairContext {
   return {
     mode: "fix",
     runtime: {
@@ -206,7 +206,7 @@ describe("runDoctorHealthRepairs", () => {
               checkId: "test/not-fixed",
               severity: "warning",
               message: "still broken",
-              ocPath: "oc://openclaw.json/gateway.mode",
+              ocPath: "oc://merclaw.json/gateway.mode",
             },
           ];
         },
@@ -225,7 +225,7 @@ describe("runDoctorHealthRepairs", () => {
     expect(result.remainingFindings).toMatchObject([
       {
         checkId: "test/not-fixed",
-        ocPath: "oc://openclaw.json/gateway.mode",
+        ocPath: "oc://merclaw.json/gateway.mode",
       },
     ]);
     expect(result.warnings).toEqual(["test/not-fixed repair left 1 finding(s)"]);

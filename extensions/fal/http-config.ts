@@ -1,20 +1,20 @@
-import type { AuthProfileStore, OpenClawConfig } from "openclaw/plugin-sdk/provider-auth";
-import { resolveApiKeyForProvider } from "openclaw/plugin-sdk/provider-auth-runtime";
+import type { AuthProfileStore, MerClawConfig } from "merclaw/plugin-sdk/provider-auth";
+import { resolveApiKeyForProvider } from "merclaw/plugin-sdk/provider-auth-runtime";
 import {
   resolveProviderHttpRequestConfig,
   type ProviderRequestCapability,
-} from "openclaw/plugin-sdk/provider-http";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/provider-http";
+import { normalizeOptionalString } from "merclaw/plugin-sdk/string-coerce-runtime";
 
 const DEFAULT_FAL_BASE_URL = "https://fal.run";
 
 type FalAuthenticatedRequest = {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   agentDir?: string;
   authStore?: AuthProfileStore;
 };
 
-function resolveFalConfiguredBaseUrl(cfg?: OpenClawConfig): string | undefined {
+function resolveFalConfiguredBaseUrl(cfg?: MerClawConfig): string | undefined {
   return normalizeOptionalString(cfg?.models?.providers?.fal?.baseUrl);
 }
 

@@ -1,11 +1,11 @@
-# GitHub Copilot agent runtime (OpenClaw plugin)
+# GitHub Copilot agent runtime (MerClaw plugin)
 
-External OpenClaw plugin that registers a `copilot` agent harness backed by `@github/copilot-sdk` and the GitHub Copilot CLI.
+External MerClaw plugin that registers a `copilot` agent harness backed by `@github/copilot-sdk` and the GitHub Copilot CLI.
 
 ## Install
 
 ```bash
-openclaw plugins install @openclaw/copilot
+merclaw plugins install @merclaw/copilot
 ```
 
 Restart the Gateway after installing or updating the plugin.
@@ -24,5 +24,5 @@ for the SDK capability inventory the harness is pinned to.
 ## Package
 
 - Plugin id: `copilot`
-- Package: `@openclaw/copilot`
-- Minimum OpenClaw host: `2026.5.28`
+- Package: `@merclaw/copilot`
+- Minimum MerClaw host: `2026.5.28`

@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   collectTelegramInvalidAllowFromWarnings,
@@ -22,7 +22,7 @@ const listTelegramAccountIdsMock = vi.hoisted(() => vi.fn());
 const inspectTelegramAccountMock = vi.hoisted(() => vi.fn());
 const lookupTelegramChatIdMock = vi.hoisted(() => vi.fn());
 
-vi.mock("openclaw/plugin-sdk/runtime", () => {
+vi.mock("merclaw/plugin-sdk/runtime", () => {
   return {
     getChannelsCommandSecretTargetIds: () => ["channels"],
     resolveCommandSecretRefsViaGateway: resolveCommandSecretRefsViaGatewayMock,
@@ -241,7 +241,7 @@ describe("telegram doctor", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as MerClawConfig);
 
     expect(hits).toEqual([
       { path: "channels.telegram.allowFrom", entry: "@top" },
@@ -290,7 +290,7 @@ describe("telegram doctor", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     const hits = scanTelegramMalformedGroupsConfig(cfg);
     expect(hits).toEqual([
@@ -300,16 +300,16 @@ describe("telegram doctor", () => {
 
     const warnings = collectTelegramMalformedGroupsWarnings({
       hits,
-      doctorFixCommand: "openclaw doctor --fix",
+      doctorFixCommand: "merclaw doctor --fix",
     });
     expect(warnings[0]).toContain("object map keyed by Telegram group/chat id");
     expect(warnings[1]).toContain('channels.telegram.groups."-1001234567890".topics."99"');
-    expect(warnings[1]).toContain("openclaw doctor --fix");
+    expect(warnings[1]).toContain("merclaw doctor --fix");
 
     expect(
       await telegramDoctor.collectPreviewWarnings?.({
         cfg,
-        doctorFixCommand: "openclaw doctor --fix",
+        doctorFixCommand: "merclaw doctor --fix",
       }),
     ).toEqual(expect.arrayContaining(warnings));
   });
@@ -324,7 +324,7 @@ describe("telegram doctor", () => {
           allowFrom: ["@testuser"],
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as MerClawConfig);
 
     expect(result.config.channels?.telegram?.allowFrom).toEqual(["111"]);
     expect(result.changes[0]).toContain("@testuser");
@@ -337,7 +337,7 @@ describe("telegram doctor", () => {
           allowFrom: [-1001234567890],
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as MerClawConfig);
 
     expect(result.config.channels?.telegram?.allowFrom).toEqual([-1001234567890]);
     expect(result.changes).toEqual([
@@ -382,7 +382,7 @@ describe("telegram doctor", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as MerClawConfig);
 
     expect(result.config.channels?.telegram?.accounts?.inactive?.allowFrom).toEqual(["@testuser"]);
     expect(result.changes).toEqual([
@@ -394,11 +394,11 @@ describe("telegram doctor", () => {
   it("formats invalid allowFrom warnings", () => {
     const warnings = collectTelegramInvalidAllowFromWarnings({
       hits: [{ path: "channels.telegram.allowFrom", entry: "@top" }],
-      doctorFixCommand: "openclaw doctor --fix",
+      doctorFixCommand: "merclaw doctor --fix",
     });
 
     expect(warnings[0]).toContain("invalid sender entries");
-    expect(warnings[1]).toContain("openclaw doctor --fix");
+    expect(warnings[1]).toContain("merclaw doctor --fix");
   });
 
   it("warns and repairs Telegram apiRoot values that include the bot endpoint", () => {
@@ -413,7 +413,7 @@ describe("telegram doctor", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     const hits = scanTelegramBotEndpointApiRoots(cfg);
     expect(hits.map((hit) => hit.path)).toEqual([
@@ -421,7 +421,7 @@ describe("telegram doctor", () => {
       "channels.telegram.accounts.work.apiRoot",
     ]);
     expect(
-      collectTelegramApiRootWarnings({ hits, doctorFixCommand: "openclaw doctor --fix" }),
+      collectTelegramApiRootWarnings({ hits, doctorFixCommand: "merclaw doctor --fix" }),
     ).toContain(
       "- channels.telegram.apiRoot points at a full Telegram bot endpoint; apiRoot must be the Bot API root only. This can make startup calls like deleteWebhook, deleteMyCommands, and setMyCommands fail with 404 even when direct curl commands work.",
     );
@@ -444,7 +444,7 @@ describe("telegram doctor", () => {
           replyToMode: "first",
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     const hits = scanTelegramSelectedQuoteToolProgressWarnings(cfg);
     expect(hits).toEqual([{ path: "channels.telegram", replyToMode: "first" }]);
@@ -456,7 +456,7 @@ describe("telegram doctor", () => {
     expect(warnings[1]).toContain("streaming.preview.toolProgress: false");
     const collectedWarnings = await telegramDoctor.collectPreviewWarnings?.({
       cfg,
-      doctorFixCommand: "openclaw doctor --fix",
+      doctorFixCommand: "merclaw doctor --fix",
     });
     expect(collectedWarnings?.some((warning) => warning.includes("selected quote replies"))).toBe(
       true,
@@ -471,7 +471,7 @@ describe("telegram doctor", () => {
           accounts: {},
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     expect(scanTelegramSelectedQuoteToolProgressWarnings(cfg)).toEqual([
       { path: "channels.telegram", replyToMode: "all" },
@@ -492,7 +492,7 @@ describe("telegram doctor", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     expect(scanTelegramSelectedQuoteToolProgressWarnings(cfg)).toEqual([
       { path: "channels.telegram.accounts.work", replyToMode: "batched" },
@@ -511,7 +511,7 @@ describe("telegram doctor", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     expect(scanTelegramSelectedQuoteToolProgressWarnings(cfg)).toStrictEqual([]);
   });
@@ -525,7 +525,7 @@ describe("telegram doctor", () => {
             streaming: false,
           },
         },
-      } as unknown as OpenClawConfig),
+      } as unknown as MerClawConfig),
     ).toStrictEqual([]);
 
     expect(
@@ -540,7 +540,7 @@ describe("telegram doctor", () => {
             blockStreamingDefault: "on",
           },
         },
-      } as unknown as OpenClawConfig),
+      } as unknown as MerClawConfig),
     ).toStrictEqual([]);
   });
 
@@ -551,12 +551,12 @@ describe("telegram doctor", () => {
           apiRoot: "https://api.telegram.org/bot123456:ABC",
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     expect(
       await telegramDoctor.collectPreviewWarnings?.({
         cfg,
-        doctorFixCommand: "openclaw doctor --fix",
+        doctorFixCommand: "merclaw doctor --fix",
       }),
     ).toContain(
       "- channels.telegram.apiRoot points at a full Telegram bot endpoint; apiRoot must be the Bot API root only. This can make startup calls like deleteWebhook, deleteMyCommands, and setMyCommands fail with 404 even when direct curl commands work.",
@@ -564,7 +564,7 @@ describe("telegram doctor", () => {
 
     const repaired = await telegramDoctor.repairConfig?.({
       cfg,
-      doctorFixCommand: "openclaw doctor --fix",
+      doctorFixCommand: "merclaw doctor --fix",
     });
     expect(repaired?.config.channels?.telegram?.apiRoot).toBe("https://api.telegram.org");
     expect(repaired?.changes).toEqual([
@@ -579,7 +579,7 @@ describe("telegram doctor", () => {
           allowFrom: ["123"],
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     inspectTelegramAccountMock.mockReturnValueOnce({
       enabled: true,
@@ -616,7 +616,7 @@ describe("telegram doctor", () => {
     expect(
       await telegramDoctor.collectPreviewWarnings?.({
         cfg,
-        doctorFixCommand: "openclaw doctor --fix",
+        doctorFixCommand: "merclaw doctor --fix",
         env: {},
       }),
     ).toContain(missingEnvWarning);
@@ -633,7 +633,7 @@ describe("telegram doctor", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     expect(collectTelegramMissingEnvTokenWarnings({ cfg, env: {} })).toStrictEqual([]);
   });

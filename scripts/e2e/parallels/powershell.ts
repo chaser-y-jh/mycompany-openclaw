@@ -63,11 +63,11 @@ export function windowsModelProviderTimeoutScript(modelId: string): string {
       },
     },
   ]);
-  return `$providerTimeoutBatchPath = Join-Path ([System.IO.Path]::GetTempPath()) 'openclaw-provider-timeout.batch.json'
+  return `$providerTimeoutBatchPath = Join-Path ([System.IO.Path]::GetTempPath()) 'merclaw-provider-timeout.batch.json'
 @'
 ${batchJson}
 '@ | Set-Content -Path $providerTimeoutBatchPath -Encoding UTF8
-Invoke-OpenClaw config set --batch-file $providerTimeoutBatchPath --strict-json
+Invoke-MerClaw config set --batch-file $providerTimeoutBatchPath --strict-json
 $providerTimeoutExit = $LASTEXITCODE
 Remove-Item $providerTimeoutBatchPath -Force -ErrorAction SilentlyContinue
 if ($providerTimeoutExit -ne 0) { throw "model provider timeout config set failed" }`;
@@ -81,28 +81,28 @@ export function windowsAgentTurnConfigPatchScript(modelId: string): string {
     operations: batchJson ? (JSON.parse(batchJson) as unknown) : [],
     pluginId,
   });
-  return `$agentTurnConfigPatchPath = $env:OPENCLAW_CONFIG_PATH
-if (-not $agentTurnConfigPatchPath) { $agentTurnConfigPatchPath = Join-Path $env:USERPROFILE '.openclaw\\openclaw.json' }
-$agentTurnVersionText = Invoke-OpenClaw --version 2>$null | Out-String
+  return `$agentTurnConfigPatchPath = $env:MERCLAW_CONFIG_PATH
+if (-not $agentTurnConfigPatchPath) { $agentTurnConfigPatchPath = Join-Path $env:USERPROFILE '.merclaw\\merclaw.json' }
+$agentTurnVersionText = Invoke-MerClaw --version 2>$null | Out-String
 $agentTurnRuntimePolicySupported = $false
-if ($agentTurnVersionText -match 'OpenClaw\\s+(\\d{4})\\.(\\d{1,2})\\.(\\d{1,2})') {
+if ($agentTurnVersionText -match 'MerClaw\\s+(\\d{4})\\.(\\d{1,2})\\.(\\d{1,2})') {
   $agentTurnYear = [int]$Matches[1]
   $agentTurnMonth = [int]$Matches[2]
   $agentTurnDay = [int]$Matches[3]
   $agentTurnRuntimePolicySupported = ($agentTurnYear -gt 2026) -or ($agentTurnYear -eq 2026 -and (($agentTurnMonth -gt 5) -or ($agentTurnMonth -eq 5 -and $agentTurnDay -ge 9)))
 }
-$env:OPENCLAW_PARALLELS_AGENT_CONFIG_PATCH = @'
+$env:MERCLAW_PARALLELS_AGENT_CONFIG_PATCH = @'
 ${payloadJson}
 '@
-$env:OPENCLAW_PARALLELS_AGENT_CONFIG_PATH = $agentTurnConfigPatchPath
-$env:OPENCLAW_PARALLELS_AGENT_RUNTIME_POLICY_SUPPORTED = if ($agentTurnRuntimePolicySupported) { '1' } else { '0' }
-$agentTurnConfigPatchScriptPath = Join-Path ([System.IO.Path]::GetTempPath()) 'openclaw-agent-turn-config-patch.cjs'
+$env:MERCLAW_PARALLELS_AGENT_CONFIG_PATH = $agentTurnConfigPatchPath
+$env:MERCLAW_PARALLELS_AGENT_RUNTIME_POLICY_SUPPORTED = if ($agentTurnRuntimePolicySupported) { '1' } else { '0' }
+$agentTurnConfigPatchScriptPath = Join-Path ([System.IO.Path]::GetTempPath()) 'merclaw-agent-turn-config-patch.cjs'
 @'
 const fs = require("node:fs");
 const path = require("node:path");
-const configPath = process.env.OPENCLAW_PARALLELS_AGENT_CONFIG_PATH;
-const payload = JSON.parse(process.env.OPENCLAW_PARALLELS_AGENT_CONFIG_PATCH || "{}");
-const canWriteAgentRuntime = process.env.OPENCLAW_PARALLELS_AGENT_RUNTIME_POLICY_SUPPORTED === "1";
+const configPath = process.env.MERCLAW_PARALLELS_AGENT_CONFIG_PATH;
+const payload = JSON.parse(process.env.MERCLAW_PARALLELS_AGENT_CONFIG_PATCH || "{}");
+const canWriteAgentRuntime = process.env.MERCLAW_PARALLELS_AGENT_RUNTIME_POLICY_SUPPORTED === "1";
 function readJsonFile(filePath) {
   return JSON.parse(fs.readFileSync(filePath, "utf8").replace(/^\\uFEFF/u, ""));
 }
@@ -119,7 +119,7 @@ cfg.plugins = cfg.plugins && typeof cfg.plugins === "object" && !Array.isArray(c
 cfg.plugins.entries = { [payload.pluginId]: { enabled: true } };
 cfg.plugins.allow = [payload.pluginId];
 const stateDir = path.dirname(configPath);
-fs.rmSync(path.join(stateDir, "npm", "node_modules", "@openclaw", "codex"), { recursive: true, force: true });
+fs.rmSync(path.join(stateDir, "npm", "node_modules", "@merclaw", "codex"), { recursive: true, force: true });
 for (const op of payload.operations || []) {
   const segments = String(op.path || "").match(/(?:[^.[\\]]+)|(?:\\["((?:\\\\.|[^"\\\\])*)"\\])/g) || [];
   let cursor = cfg;
@@ -138,7 +138,7 @@ for (const op of payload.operations || []) {
 const selectedModelEntry = cfg.agents.defaults.models[payload.modelId];
 if (selectedModelEntry && typeof selectedModelEntry === "object" && !Array.isArray(selectedModelEntry)) {
   if (canWriteAgentRuntime) {
-    selectedModelEntry.agentRuntime = { id: "openclaw" };
+    selectedModelEntry.agentRuntime = { id: "merclaw" };
   } else {
     delete selectedModelEntry.agentRuntime;
   }
@@ -162,20 +162,20 @@ fs.writeFileSync(configPath, JSON.stringify(cfg, null, 2) + "\\n", { mode: 0o600
 node.exe $agentTurnConfigPatchScriptPath
 $agentTurnConfigPatchExit = $LASTEXITCODE
 Remove-Item $agentTurnConfigPatchScriptPath -Force -ErrorAction SilentlyContinue
-Remove-Item Env:OPENCLAW_PARALLELS_AGENT_CONFIG_PATCH -Force -ErrorAction SilentlyContinue
-Remove-Item Env:OPENCLAW_PARALLELS_AGENT_CONFIG_PATH -Force -ErrorAction SilentlyContinue
-Remove-Item Env:OPENCLAW_PARALLELS_AGENT_RUNTIME_POLICY_SUPPORTED -Force -ErrorAction SilentlyContinue
+Remove-Item Env:MERCLAW_PARALLELS_AGENT_CONFIG_PATCH -Force -ErrorAction SilentlyContinue
+Remove-Item Env:MERCLAW_PARALLELS_AGENT_CONFIG_PATH -Force -ErrorAction SilentlyContinue
+Remove-Item Env:MERCLAW_PARALLELS_AGENT_RUNTIME_POLICY_SUPPORTED -Force -ErrorAction SilentlyContinue
 if ($agentTurnConfigPatchExit -ne 0) { throw "agent turn config patch failed" }`;
 }
 
-export const windowsOpenClawResolver = String.raw`function Resolve-OpenClawCommand {
-  if ($script:OpenClawResolvedCommand) { return $script:OpenClawResolvedCommand }
+export const windowsMerClawResolver = String.raw`function Resolve-MerClawCommand {
+  if ($script:MerClawResolvedCommand) { return $script:MerClawResolvedCommand }
   $shimCandidates = @()
   if ($env:APPDATA) {
-    $shimCandidates += Join-Path $env:APPDATA 'npm\openclaw.cmd'
-    $shimCandidates += Join-Path $env:APPDATA 'npm\openclaw.ps1'
+    $shimCandidates += Join-Path $env:APPDATA 'npm\merclaw.cmd'
+    $shimCandidates += Join-Path $env:APPDATA 'npm\merclaw.ps1'
   }
-  foreach ($name in @('openclaw.cmd', 'openclaw.ps1', 'openclaw')) {
+  foreach ($name in @('merclaw.cmd', 'merclaw.ps1', 'merclaw')) {
     $command = Get-Command $name -ErrorAction SilentlyContinue | Select-Object -First 1
     if ($command -and $command.Source) { $shimCandidates += $command.Source }
   }
@@ -184,42 +184,42 @@ export const windowsOpenClawResolver = String.raw`function Resolve-OpenClawComma
     $npmPrefix = (& npm.cmd prefix -g 2>$null | Select-Object -First 1)
   } catch {}
   if ($npmPrefix) {
-    $shimCandidates += Join-Path $npmPrefix 'openclaw.cmd'
-    $shimCandidates += Join-Path $npmPrefix 'openclaw.ps1'
+    $shimCandidates += Join-Path $npmPrefix 'merclaw.cmd'
+    $shimCandidates += Join-Path $npmPrefix 'merclaw.ps1'
   }
   foreach ($candidate in $shimCandidates) {
     if ($candidate -and (Test-Path $candidate)) {
-      $script:OpenClawResolvedCommand = @{ Kind = 'shim'; Path = $candidate }
-      return $script:OpenClawResolvedCommand
+      $script:MerClawResolvedCommand = @{ Kind = 'shim'; Path = $candidate }
+      return $script:MerClawResolvedCommand
     }
   }
   $entryCandidates = @()
   if ($env:APPDATA) {
-    $entryCandidates += Join-Path $env:APPDATA 'npm\node_modules\openclaw\openclaw.mjs'
+    $entryCandidates += Join-Path $env:APPDATA 'npm\node_modules\merclaw\merclaw.mjs'
   }
   if ($npmPrefix) {
-    $entryCandidates += Join-Path $npmPrefix 'node_modules\openclaw\openclaw.mjs'
+    $entryCandidates += Join-Path $npmPrefix 'node_modules\merclaw\merclaw.mjs'
   }
   foreach ($candidate in $entryCandidates) {
     if ($candidate -and (Test-Path $candidate)) {
-      $script:OpenClawResolvedCommand = @{ Kind = 'node'; Path = $candidate }
-      return $script:OpenClawResolvedCommand
+      $script:MerClawResolvedCommand = @{ Kind = 'node'; Path = $candidate }
+      return $script:MerClawResolvedCommand
     }
   }
-  throw 'openclaw command not found in PATH, APPDATA npm, or npm global prefix'
+  throw 'merclaw command not found in PATH, APPDATA npm, or npm global prefix'
 }
-function Invoke-OpenClaw {
-  param([Parameter(ValueFromRemainingArguments = $true)][string[]] $OpenClawArgs)
-  $command = Resolve-OpenClawCommand
+function Invoke-MerClaw {
+  param([Parameter(ValueFromRemainingArguments = $true)][string[]] $MerClawArgs)
+  $command = Resolve-MerClawCommand
   $previousErrorActionPreference = $ErrorActionPreference
   $previousNativeErrorActionPreference = $PSNativeCommandUseErrorActionPreference
   $ErrorActionPreference = 'Continue'
   $PSNativeCommandUseErrorActionPreference = $false
   try {
     if ($command.Kind -eq 'node') {
-      & node.exe $command.Path @OpenClawArgs
+      & node.exe $command.Path @MerClawArgs
     } else {
-      & $command.Path @OpenClawArgs
+      & $command.Path @MerClawArgs
     }
   } finally {
     $ErrorActionPreference = $previousErrorActionPreference

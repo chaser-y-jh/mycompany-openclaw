@@ -1,9 +1,9 @@
-import type { StreamFn } from "openclaw/plugin-sdk/agent-core";
-import type { ProviderWrapStreamFnContext } from "openclaw/plugin-sdk/plugin-entry";
+import type { StreamFn } from "merclaw/plugin-sdk/agent-core";
+import type { ProviderWrapStreamFnContext } from "merclaw/plugin-sdk/plugin-entry";
 import {
   createDeepSeekV4OpenAICompatibleThinkingWrapper,
   createThinkingOnlyFinalTextWrapper,
-} from "openclaw/plugin-sdk/provider-stream-shared";
+} from "merclaw/plugin-sdk/provider-stream-shared";
 import { isMiMoProviderId, isMiMoReasoningModelRef } from "./thinking.js";
 
 const MIMO_REASONING_AS_VISIBLE_TEXT_MODEL_IDS = new Set(["mimo-v2-pro", "mimo-v2-omni"]);

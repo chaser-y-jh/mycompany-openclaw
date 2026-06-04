@@ -1,5 +1,5 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { DoctorSessionRouteStateOwner } from "openclaw/plugin-sdk/runtime-doctor";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import type { DoctorSessionRouteStateOwner } from "merclaw/plugin-sdk/runtime-doctor";
 
 type LegacyConfigRule = {
   path: string[];
@@ -21,13 +21,13 @@ export const legacyConfigRules: LegacyConfigRule[] = [
   {
     path: ["plugins", "entries", "codex", "config"],
     message:
-      'plugins.entries.codex.config.codexDynamicToolsProfile is retired; Codex app-server always keeps Codex-native workspace tools native. Run "openclaw doctor --fix".',
+      'plugins.entries.codex.config.codexDynamicToolsProfile is retired; Codex app-server always keeps Codex-native workspace tools native. Run "merclaw doctor --fix".',
     match: hasRetiredDynamicToolsProfile,
   },
 ];
 
-export function normalizeCompatibilityConfig({ cfg }: { cfg: OpenClawConfig }): {
-  config: OpenClawConfig;
+export function normalizeCompatibilityConfig({ cfg }: { cfg: MerClawConfig }): {
+  config: MerClawConfig;
   changes: string[];
 } {
   const rawEntry = asRecord(cfg.plugins?.entries?.codex);
@@ -36,7 +36,7 @@ export function normalizeCompatibilityConfig({ cfg }: { cfg: OpenClawConfig }): 
     return { config: cfg, changes: [] };
   }
 
-  const nextConfig = structuredClone(cfg) as OpenClawConfig & {
+  const nextConfig = structuredClone(cfg) as MerClawConfig & {
     plugins?: Record<string, unknown>;
   };
   const nextPlugins = asRecord(nextConfig.plugins);

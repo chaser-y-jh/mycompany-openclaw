@@ -1,7 +1,7 @@
 ---
-summary: "Use NVIDIA's OpenAI-compatible API in OpenClaw"
+summary: "Use NVIDIA's OpenAI-compatible API in MerClaw"
 read_when:
-  - You want to use open models in OpenClaw for free
+  - You want to use open models in MerClaw for free
   - You need NVIDIA_API_KEY setup
 title: "NVIDIA"
 ---
@@ -19,12 +19,12 @@ open models for free. Authenticate with an API key from
   <Step title="Export the key and run onboarding">
     ```bash
     export NVIDIA_API_KEY="nvapi-..."
-    openclaw onboard --auth-choice nvidia-api-key
+    merclaw onboard --auth-choice nvidia-api-key
     ```
   </Step>
   <Step title="Set an NVIDIA model">
     ```bash
-    openclaw models set nvidia/nvidia/nemotron-3-super-120b-a12b
+    merclaw models set nvidia/nvidia/nemotron-3-super-120b-a12b
     ```
   </Step>
 </Steps>
@@ -38,7 +38,7 @@ possible.
 For non-interactive setup, you can also pass the key directly:
 
 ```bash
-openclaw onboard --auth-choice nvidia-api-key --nvidia-api-key "nvapi-..."
+merclaw onboard --auth-choice nvidia-api-key --nvidia-api-key "nvapi-..."
 ```
 
 ## Config example
@@ -64,16 +64,16 @@ openclaw onboard --auth-choice nvidia-api-key --nvidia-api-key "nvapi-..."
 
 ## Featured catalog
 
-When an NVIDIA API key is configured, OpenClaw setup and model-selection paths
+When an NVIDIA API key is configured, MerClaw setup and model-selection paths
 try NVIDIA's public featured-model catalog from
 `https://assets.ngc.nvidia.com/products/api-catalog/featured-models.json` and
 caches the ranked result for 24 hours. New featured models from build.nvidia.com
 therefore appear in setup and model-selection surfaces without waiting for an
-OpenClaw release.
+MerClaw release.
 
 The fetch uses a fixed HTTPS host policy for `assets.ngc.nvidia.com`. If no
 NVIDIA API key is configured, or if that public catalog is unavailable or
-malformed, OpenClaw falls back to the bundled catalog below.
+malformed, MerClaw falls back to the bundled catalog below.
 
 ## Bundled fallback catalog
 
@@ -95,7 +95,7 @@ malformed, OpenClaw falls back to the bundled catalog below.
   </Accordion>
 
   <Accordion title="Catalog and pricing">
-    OpenClaw prefers NVIDIA's public featured-model catalog when NVIDIA auth is
+    MerClaw prefers NVIDIA's public featured-model catalog when NVIDIA auth is
     configured and caches it for 24 hours. The bundled fallback catalog is static
     and keeps deprecated shipped refs for upgrade compatibility. Costs default to
     `0` in source since NVIDIA currently offers free API access for the listed

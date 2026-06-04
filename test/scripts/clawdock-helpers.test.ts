@@ -11,7 +11,7 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../
 
 describe("scripts/clawdock/clawdock-helpers.sh", () => {
   it("loads the standard docker-compose.override.yml before ClawDock extra overrides", async () => {
-    const tempDir = await mkdtemp(path.join(tmpdir(), "openclaw-clawdock-"));
+    const tempDir = await mkdtemp(path.join(tmpdir(), "merclaw-clawdock-"));
     try {
       const projectDir = path.join(tempDir, "project");
       const binDir = path.join(tempDir, "bin");

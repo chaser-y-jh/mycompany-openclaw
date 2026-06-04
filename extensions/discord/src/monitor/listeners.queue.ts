@@ -1,7 +1,7 @@
-import { createSubsystemLogger, formatDurationSeconds } from "openclaw/plugin-sdk/runtime-env";
+import { createSubsystemLogger, formatDurationSeconds } from "merclaw/plugin-sdk/runtime-env";
 
 export type DiscordListenerLogger = ReturnType<
-  typeof import("openclaw/plugin-sdk/runtime-env").createSubsystemLogger
+  typeof import("merclaw/plugin-sdk/runtime-env").createSubsystemLogger
 >;
 
 const DISCORD_SLOW_LISTENER_THRESHOLD_MS = 30_000;

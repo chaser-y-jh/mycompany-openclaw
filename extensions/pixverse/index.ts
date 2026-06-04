@@ -1,4 +1,4 @@
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
+import { definePluginEntry } from "merclaw/plugin-sdk/plugin-entry";
 import { PIXVERSE_PROVIDER_ID } from "./constants.js";
 import { buildPixVerseApiKeyAuthMethod } from "./onboard.js";
 import { buildPixVerseVideoGenerationProvider } from "./video-generation-provider.js";

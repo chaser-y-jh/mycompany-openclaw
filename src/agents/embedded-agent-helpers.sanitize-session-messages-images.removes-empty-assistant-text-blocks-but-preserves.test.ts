@@ -1,5 +1,5 @@
-import type { AgentMessage } from "openclaw/plugin-sdk/agent-core";
-import type { AssistantMessage, ToolResultMessage, UserMessage } from "openclaw/plugin-sdk/llm";
+import type { AgentMessage } from "merclaw/plugin-sdk/agent-core";
+import type { AssistantMessage, ToolResultMessage, UserMessage } from "merclaw/plugin-sdk/llm";
 import { describe, expect, it } from "vitest";
 import {
   sanitizeGoogleTurnOrdering,

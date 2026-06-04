@@ -56,8 +56,8 @@ import {
 import { createTempDirHarness } from "./temp-dir.test-helper.js";
 
 const { cleanup, makeTempDir } = createTempDirHarness();
-const repoRoot = "/repo/openclaw";
-const gatewayTempRoot = "/tmp/openclaw-qa-runtime";
+const repoRoot = "/repo/merclaw";
+const gatewayTempRoot = "/tmp/merclaw-qa-runtime";
 
 afterEach(cleanup);
 
@@ -122,7 +122,7 @@ describe("qa suite runtime agent tools helpers", () => {
             tempRoot: gatewayTempRoot,
             runtimeEnv: {
               PATH: "/usr/bin",
-              OPENCLAW_KEY: "1",
+              MERCLAW_KEY: "1",
               EMPTY: undefined,
             },
           },
@@ -146,7 +146,7 @@ describe("qa suite runtime agent tools helpers", () => {
       cwd: gatewayTempRoot,
       env: {
         PATH: "/usr/bin",
-        OPENCLAW_KEY: "1",
+        MERCLAW_KEY: "1",
       },
     });
     expect(stderrOnMock).toHaveBeenCalledWith("data", expect.any(Function));

@@ -5,7 +5,7 @@ import {
   type EmbeddedAgentActiveSessionSteerTarget,
 } from "./attempt.queue-message.js";
 
-describe("embedded OpenClaw queued steering cancellation", () => {
+describe("embedded MerClaw queued steering cancellation", () => {
   it("waits for the queued user message_end transcript boundary", async () => {
     let emit!: (event: unknown) => void;
     const activeSession: EmbeddedAgentActiveSessionSteerTarget = {

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { resolveAgentHarnessPolicy } from "../../../agents/harness/policy.js";
 import type { SessionEntry } from "../../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../../config/types.merclaw.js";
 
 const mocks = vi.hoisted(() => ({
   ensureAuthProfileStore: vi.fn(),
@@ -62,14 +62,14 @@ describe("collectCodexRouteWarnings", () => {
             model: "openai-codex/gpt-5.5",
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
     });
 
     expect(warnings).toStrictEqual([
       [
         "- Legacy `openai-codex/*` model refs should be rewritten to `openai/*`.",
         "- agents.defaults.model: openai-codex/gpt-5.5 should become openai/gpt-5.5.",
-        "- Run `openclaw doctor --fix`: it rewrites configured model refs and stale sessions to `openai/*`, moves Codex intent to provider/model runtime policy, and clears old whole-agent runtime pins.",
+        "- Run `merclaw doctor --fix`: it rewrites configured model refs and stale sessions to `openai/*`, moves Codex intent to provider/model runtime policy, and clears old whole-agent runtime pins.",
       ].join("\n"),
     ]);
   });
@@ -85,19 +85,19 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
     });
 
     expect(warnings).toStrictEqual([
       [
         "- Legacy `openai-codex/*` model refs should be rewritten to `openai/*`.",
         '- agents.defaults.model: openai-codex/gpt-5.5 should become openai/gpt-5.5; current runtime is "codex".',
-        "- Run `openclaw doctor --fix`: it rewrites configured model refs and stale sessions to `openai/*`, moves Codex intent to provider/model runtime policy, and clears old whole-agent runtime pins.",
+        "- Run `merclaw doctor --fix`: it rewrites configured model refs and stale sessions to `openai/*`, moves Codex intent to provider/model runtime policy, and clears old whole-agent runtime pins.",
       ].join("\n"),
     ]);
   });
 
-  it("ignores OPENCLAW_AGENT_RUNTIME when reporting legacy model refs", () => {
+  it("ignores MERCLAW_AGENT_RUNTIME when reporting legacy model refs", () => {
     const warnings = collectCodexRouteWarnings({
       cfg: {
         agents: {
@@ -105,9 +105,9 @@ describe("collectCodexRouteWarnings", () => {
             model: "openai-codex/gpt-5.5",
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       env: {
-        OPENCLAW_AGENT_RUNTIME: "codex",
+        MERCLAW_AGENT_RUNTIME: "codex",
       },
     });
 
@@ -115,7 +115,7 @@ describe("collectCodexRouteWarnings", () => {
       [
         "- Legacy `openai-codex/*` model refs should be rewritten to `openai/*`.",
         "- agents.defaults.model: openai-codex/gpt-5.5 should become openai/gpt-5.5.",
-        "- Run `openclaw doctor --fix`: it rewrites configured model refs and stale sessions to `openai/*`, moves Codex intent to provider/model runtime policy, and clears old whole-agent runtime pins.",
+        "- Run `merclaw doctor --fix`: it rewrites configured model refs and stale sessions to `openai/*`, moves Codex intent to provider/model runtime policy, and clears old whole-agent runtime pins.",
       ].join("\n"),
     ]);
   });
@@ -128,7 +128,7 @@ describe("collectCodexRouteWarnings", () => {
             model: "openai/gpt-5.5",
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
     });
 
     expect(warnings).toStrictEqual([]);
@@ -144,19 +144,19 @@ describe("collectCodexRouteWarnings", () => {
               config: {
                 appServer: {
                   command:
-                    "node C:\\Users\\me\\.openclaw\\npm\\node_modules\\@openai\\codex\\bin\\codex.js",
+                    "node C:\\Users\\me\\.merclaw\\npm\\node_modules\\@openai\\codex\\bin\\codex.js",
                 },
               },
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
     });
 
     expect(warnings).toStrictEqual([
       [
         "- Codex app-server command override includes inline arguments.",
-        '- plugins.entries.codex.config.appServer.command: "node C:\\Users\\me\\.openclaw\\npm\\node_modules\\@openai\\codex\\bin\\codex.js" starts with "node" and embeds "C:\\Users\\me\\.openclaw\\npm\\node_modules\\@openai\\codex\\bin\\codex.js". The command field must be only the executable path.',
+        '- plugins.entries.codex.config.appServer.command: "node C:\\Users\\me\\.merclaw\\npm\\node_modules\\@openai\\codex\\bin\\codex.js" starts with "node" and embeds "C:\\Users\\me\\.merclaw\\npm\\node_modules\\@openai\\codex\\bin\\codex.js". The command field must be only the executable path.',
         "- Remove the override to use managed Codex startup, or move script/options to plugins.entries.codex.config.appServer.args.",
       ].join("\n"),
     ]);
@@ -177,19 +177,19 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
     });
 
     expect(warnings).toStrictEqual([
       [
         "- Codex runtime is selected, but the Codex plugin is disabled.",
         "- agents.defaults.model.primary: gpt-5.5 resolves to openai/gpt-5.5 with Codex runtime while the Codex plugin is disabled by config.",
-        "- Run `openclaw doctor --fix`: it enables plugins.entries.codex, or set the affected OpenAI models to an OpenClaw runtime policy.",
+        "- Run `merclaw doctor --fix`: it enables plugins.entries.codex, or set the affected OpenAI models to an MerClaw runtime policy.",
       ].join("\n"),
     ]);
   });
 
-  it("warns when Codex runtime has OpenClaw compaction summarizer overrides", () => {
+  it("warns when Codex runtime has MerClaw compaction summarizer overrides", () => {
     const warnings = collectCodexRouteWarnings({
       cfg: {
         agents: {
@@ -201,15 +201,15 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
     });
 
     expect(warnings).toStrictEqual([
       [
-        "- Codex runtime uses native server-side compaction and ignores OpenClaw compaction summarizer overrides.",
+        "- Codex runtime uses native server-side compaction and ignores MerClaw compaction summarizer overrides.",
         "- agents.defaults.compaction.model: openai/gpt-5.4 is ignored while this agent uses Codex runtime.",
         "- agents.defaults.compaction.provider: custom-summary is ignored while this agent uses Codex runtime.",
-        "- Run `openclaw doctor --fix`: it removes unsupported Codex compaction overrides.",
+        "- Run `merclaw doctor --fix`: it removes unsupported Codex compaction overrides.",
       ].join("\n"),
     ]);
   });
@@ -225,15 +225,15 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
     });
 
     expect(warnings).toStrictEqual([
       [
-        "- Codex runtime uses native server-side compaction and ignores OpenClaw compaction summarizer overrides.",
+        "- Codex runtime uses native server-side compaction and ignores MerClaw compaction summarizer overrides.",
         "- agents.defaults.compaction.model: openai/gpt-5.4 is ignored while this agent uses Codex runtime.",
         "- agents.defaults.compaction.provider: custom-summary is ignored while this agent uses Codex runtime.",
-        "- Run `openclaw doctor --fix`: it removes unsupported Codex compaction overrides.",
+        "- Run `merclaw doctor --fix`: it removes unsupported Codex compaction overrides.",
       ].join("\n"),
     ]);
   });
@@ -251,15 +251,15 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
     });
 
     expect(warnings).toStrictEqual([
       [
-        "- Codex runtime uses native server-side compaction and ignores OpenClaw compaction summarizer overrides.",
+        "- Codex runtime uses native server-side compaction and ignores MerClaw compaction summarizer overrides.",
         "- agents.defaults.compaction.model: openai/gpt-5.4 is ignored while this agent uses Codex runtime.",
         "- agents.defaults.compaction.provider: custom-summary is ignored while this agent uses Codex runtime.",
-        "- Run `openclaw doctor --fix`: it removes unsupported Codex compaction overrides.",
+        "- Run `merclaw doctor --fix`: it removes unsupported Codex compaction overrides.",
       ].join("\n"),
     ]);
   });
@@ -277,7 +277,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -303,7 +303,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -331,7 +331,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -363,7 +363,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -390,7 +390,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -437,7 +437,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -478,7 +478,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -506,7 +506,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -541,7 +541,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -565,7 +565,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -599,7 +599,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -638,7 +638,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -688,7 +688,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -746,7 +746,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -786,7 +786,7 @@ describe("collectCodexRouteWarnings", () => {
           providers: {
             openai: {
               baseUrl: "https://proxy.example.test/v1",
-              agentRuntime: { id: "openclaw" },
+              agentRuntime: { id: "merclaw" },
             },
           },
         },
@@ -829,7 +829,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -885,7 +885,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -945,7 +945,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -1021,7 +1021,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -1081,7 +1081,7 @@ describe("collectCodexRouteWarnings", () => {
             model: "openai-codex/gpt-5.4",
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -1122,7 +1122,7 @@ describe("collectCodexRouteWarnings", () => {
             model: "openai-codex/gpt-5.4",
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -1161,13 +1161,13 @@ describe("collectCodexRouteWarnings", () => {
           model: "openai-codex/gpt-5.4",
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     expect(collectCodexRouteWarnings({ cfg })).toStrictEqual([
       [
         "- Legacy `openai-codex/*` model refs should be rewritten to `openai/*`.",
         "- hooks.gmail.model: openai-codex/gpt-5.4 should become openai/gpt-5.4.",
-        "- Run `openclaw doctor --fix`: it rewrites configured model refs and stale sessions to `openai/*`, moves Codex intent to provider/model runtime policy, and clears old whole-agent runtime pins.",
+        "- Run `merclaw doctor --fix`: it rewrites configured model refs and stale sessions to `openai/*`, moves Codex intent to provider/model runtime policy, and clears old whole-agent runtime pins.",
       ].join("\n"),
     ]);
   });
@@ -1195,7 +1195,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -1239,7 +1239,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -1279,7 +1279,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -1320,7 +1320,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -1360,12 +1360,12 @@ describe("collectCodexRouteWarnings", () => {
               id: "worker",
               model: "anthropic/claude-sonnet-4-6",
               models: {
-                "anthropic/claude-sonnet-4-6": { agentRuntime: { id: "openclaw" } },
+                "anthropic/claude-sonnet-4-6": { agentRuntime: { id: "merclaw" } },
               },
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -1377,7 +1377,7 @@ describe("collectCodexRouteWarnings", () => {
     });
     expect(result.warnings).toStrictEqual([
       [
-        "- Codex runtime uses native server-side compaction and ignores OpenClaw compaction summarizer overrides.",
+        "- Codex runtime uses native server-side compaction and ignores MerClaw compaction summarizer overrides.",
         "- agents.defaults.compaction.model: openai/gpt-5.4 is ignored while this agent uses Codex runtime.",
         "- agents.defaults.compaction.provider: custom-summary is ignored while this agent uses Codex runtime.",
         "- Move or remove shared `agents.defaults.compaction.model/provider` settings manually; doctor keeps shared defaults while non-Codex agents can inherit them.",
@@ -1403,7 +1403,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -1414,7 +1414,7 @@ describe("collectCodexRouteWarnings", () => {
     });
     expect(result.warnings).toStrictEqual([
       [
-        "- Codex runtime uses native server-side compaction and ignores OpenClaw compaction summarizer overrides.",
+        "- Codex runtime uses native server-side compaction and ignores MerClaw compaction summarizer overrides.",
         "- agents.defaults.compaction.model: openai/gpt-5.4 is ignored while this agent uses Codex runtime.",
         "- agents.defaults.compaction.provider: custom-summary is ignored while this agent uses Codex runtime.",
         "- Move or remove shared `agents.defaults.compaction.model/provider` settings manually; doctor keeps shared defaults while non-Codex agents can inherit them.",
@@ -1446,7 +1446,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -1459,7 +1459,7 @@ describe("collectCodexRouteWarnings", () => {
     });
     expect(result.warnings).toStrictEqual([
       [
-        "- Codex runtime uses native server-side compaction and ignores OpenClaw compaction summarizer overrides.",
+        "- Codex runtime uses native server-side compaction and ignores MerClaw compaction summarizer overrides.",
         "- agents.defaults.compaction.provider: custom-summary is ignored while this agent uses Codex runtime.",
         "- Move or remove shared `agents.defaults.compaction.model/provider` settings manually; doctor keeps shared defaults while non-Codex agents can inherit them.",
       ].join("\n"),
@@ -1485,7 +1485,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -1498,7 +1498,7 @@ describe("collectCodexRouteWarnings", () => {
     expect(result.changes.join("\n")).not.toContain("Removed agents.defaults.compaction");
     expect(result.warnings).toStrictEqual([
       [
-        "- Codex runtime uses native server-side compaction and ignores OpenClaw compaction summarizer overrides.",
+        "- Codex runtime uses native server-side compaction and ignores MerClaw compaction summarizer overrides.",
         "- agents.defaults.compaction.model: openai/gpt-5.4 is ignored while this agent uses Codex runtime.",
         "- agents.defaults.compaction.provider: custom-summary is ignored while this agent uses Codex runtime.",
         "- Move or remove shared `agents.defaults.compaction.model/provider` settings manually; doctor keeps shared defaults while non-Codex agents can inherit them.",
@@ -1525,7 +1525,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -1557,7 +1557,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -1593,7 +1593,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -1641,19 +1641,19 @@ describe("collectCodexRouteWarnings", () => {
           model: "openai-codex/gpt-5.4",
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     expect(collectCodexRouteWarnings({ cfg })).toStrictEqual([
       [
         "- Legacy `openai-codex/*` model refs should be rewritten to `openai/*`.",
         "- hooks.gmail.model: openai-codex/gpt-5.4 should become openai/gpt-5.4.",
-        "- Run `openclaw doctor --fix`: it rewrites configured model refs and stale sessions to `openai/*`, moves Codex intent to provider/model runtime policy, and clears old whole-agent runtime pins.",
+        "- Run `merclaw doctor --fix`: it rewrites configured model refs and stale sessions to `openai/*`, moves Codex intent to provider/model runtime policy, and clears old whole-agent runtime pins.",
       ].join("\n"),
       [
-        "- Codex runtime uses native server-side compaction and ignores OpenClaw compaction summarizer overrides.",
+        "- Codex runtime uses native server-side compaction and ignores MerClaw compaction summarizer overrides.",
         "- agents.defaults.compaction.model: openai/gpt-5.4 is ignored while this agent uses Codex runtime.",
         "- agents.defaults.compaction.provider: custom-summary is ignored while this agent uses Codex runtime.",
-        "- Run `openclaw doctor --fix`: it removes unsupported Codex compaction overrides.",
+        "- Run `merclaw doctor --fix`: it removes unsupported Codex compaction overrides.",
       ].join("\n"),
     ]);
 
@@ -1689,7 +1689,7 @@ describe("collectCodexRouteWarnings", () => {
             model: "openai-codex/gpt-5.4",
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -1731,19 +1731,19 @@ describe("collectCodexRouteWarnings", () => {
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
     });
 
     expect(warnings).toStrictEqual([
       [
-        "- Codex runtime uses native server-side compaction and ignores OpenClaw compaction summarizer overrides.",
+        "- Codex runtime uses native server-side compaction and ignores MerClaw compaction summarizer overrides.",
         "- agents.defaults.compaction.provider: custom-summary is ignored while this agent uses Codex runtime.",
         "- Move or remove shared `agents.defaults.compaction.model/provider` settings manually; doctor keeps shared defaults while non-Codex agents can inherit them.",
       ].join("\n"),
       [
-        "- Codex runtime uses native server-side compaction and ignores OpenClaw compaction summarizer overrides.",
+        "- Codex runtime uses native server-side compaction and ignores MerClaw compaction summarizer overrides.",
         "- agents.list.codex.compaction.model: openai/gpt-5.4 is ignored while this agent uses Codex runtime.",
-        "- Run `openclaw doctor --fix`: it removes unsupported Codex compaction overrides.",
+        "- Run `merclaw doctor --fix`: it removes unsupported Codex compaction overrides.",
       ].join("\n"),
     ]);
   });
@@ -1766,7 +1766,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -1778,7 +1778,7 @@ describe("collectCodexRouteWarnings", () => {
     expect(result.cfg.agents?.defaults?.agentRuntime).toBeUndefined();
     expect(result.warnings).toStrictEqual([
       [
-        "- Codex runtime uses native server-side compaction and ignores OpenClaw compaction summarizer overrides.",
+        "- Codex runtime uses native server-side compaction and ignores MerClaw compaction summarizer overrides.",
         "- agents.defaults.compaction.model: openai/gpt-5.4 is ignored while this agent uses Codex runtime.",
         "- agents.defaults.compaction.provider: custom-summary is ignored while this agent uses Codex runtime.",
         "- Move or remove shared `agents.defaults.compaction.model/provider` settings manually; doctor keeps shared defaults while non-Codex agents can inherit them.",
@@ -1793,7 +1793,7 @@ describe("collectCodexRouteWarnings", () => {
           providers: {
             openai: {
               baseUrl: "https://api.openai.com/v1",
-              agentRuntime: { id: "openclaw" },
+              agentRuntime: { id: "merclaw" },
               models: [],
             },
           },
@@ -1817,7 +1817,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -1834,7 +1834,7 @@ describe("collectCodexRouteWarnings", () => {
         modelId: "gpt-5.4",
         config: result.cfg,
       }).runtime,
-    ).toBe("openclaw");
+    ).toBe("merclaw");
   });
 
   it("repairs configured Codex model refs to canonical OpenAI refs with model-scoped Codex runtime", () => {
@@ -1903,7 +1903,7 @@ describe("collectCodexRouteWarnings", () => {
             summaryModel: "openai-codex/gpt-5.4-mini",
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
       codexRuntimeReady: true,
     });
@@ -1986,7 +1986,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
       codexRuntimeReady: true,
     });
@@ -2016,7 +2016,7 @@ describe("collectCodexRouteWarnings", () => {
             model: "openai-codex/gpt-5.5",
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2045,7 +2045,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2081,7 +2081,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2110,7 +2110,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2142,7 +2142,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2171,7 +2171,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2203,7 +2203,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2236,7 +2236,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2263,7 +2263,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2293,7 +2293,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2323,7 +2323,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2351,7 +2351,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2372,7 +2372,7 @@ describe("collectCodexRouteWarnings", () => {
             codex: { enabled: false },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2397,7 +2397,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2426,7 +2426,7 @@ describe("collectCodexRouteWarnings", () => {
         agents: {
           defaults: {},
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2453,7 +2453,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2480,7 +2480,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2514,7 +2514,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2538,7 +2538,7 @@ describe("collectCodexRouteWarnings", () => {
             model: "openrouter:auto",
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2568,7 +2568,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2595,7 +2595,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2624,7 +2624,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2650,13 +2650,13 @@ describe("collectCodexRouteWarnings", () => {
               model: "gpt-5.5",
               models: {
                 "openai/gpt-5.5": {
-                  agentRuntime: { id: "openclaw" },
+                  agentRuntime: { id: "merclaw" },
                 },
               },
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2679,7 +2679,7 @@ describe("collectCodexRouteWarnings", () => {
             model: "gpt-5.5",
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2704,7 +2704,7 @@ describe("collectCodexRouteWarnings", () => {
             model: "gpt-5.5",
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2731,7 +2731,7 @@ describe("collectCodexRouteWarnings", () => {
             model: "gpt-5.5",
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2758,7 +2758,7 @@ describe("collectCodexRouteWarnings", () => {
             model: "gpt-5.5",
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2771,7 +2771,7 @@ describe("collectCodexRouteWarnings", () => {
     expect(result.cfg.plugins?.allow).toEqual(["openai", "codex"]);
   });
 
-  it("keeps the Codex plugin disabled when OpenAI routes explicitly use the OpenClaw runtime", () => {
+  it("keeps the Codex plugin disabled when OpenAI routes explicitly use the MerClaw runtime", () => {
     const result = maybeRepairCodexRoutes({
       cfg: {
         plugins: {
@@ -2782,7 +2782,7 @@ describe("collectCodexRouteWarnings", () => {
         models: {
           providers: {
             openai: {
-              agentRuntime: { id: "openclaw" },
+              agentRuntime: { id: "merclaw" },
               models: [],
             },
           },
@@ -2792,7 +2792,7 @@ describe("collectCodexRouteWarnings", () => {
             model: "gpt-5.5",
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2805,10 +2805,10 @@ describe("collectCodexRouteWarnings", () => {
         modelId: "gpt-5.5",
         config: result.cfg,
       }).runtime,
-    ).toBe("openclaw");
+    ).toBe("merclaw");
   });
 
-  it("keeps the Codex plugin disabled when an auth-profiled OpenAI route explicitly uses the OpenClaw runtime", () => {
+  it("keeps the Codex plugin disabled when an auth-profiled OpenAI route explicitly uses the MerClaw runtime", () => {
     const result = maybeRepairCodexRoutes({
       cfg: {
         plugins: {
@@ -2821,12 +2821,12 @@ describe("collectCodexRouteWarnings", () => {
             model: "openai/gpt-5.5@work",
             models: {
               "openai/gpt-5.5": {
-                agentRuntime: { id: "openclaw" },
+                agentRuntime: { id: "merclaw" },
               },
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2855,7 +2855,7 @@ describe("collectCodexRouteWarnings", () => {
             model: "qwen-max",
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2884,7 +2884,7 @@ describe("collectCodexRouteWarnings", () => {
             model: "qwen-max",
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2913,7 +2913,7 @@ describe("collectCodexRouteWarnings", () => {
             model: "qwen-max",
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2924,14 +2924,14 @@ describe("collectCodexRouteWarnings", () => {
     expect(result.cfg.plugins?.entries?.codex?.enabled).toBe(true);
   });
 
-  it("keeps repaired OpenAI refs on Codex runtime even when the OpenAI provider is otherwise OpenClaw/API-key routed", () => {
+  it("keeps repaired OpenAI refs on Codex runtime even when the OpenAI provider is otherwise MerClaw/API-key routed", () => {
     const result = maybeRepairCodexRoutes({
       cfg: {
         models: {
           providers: {
             openai: {
               baseUrl: "https://api.openai.com/v1",
-              agentRuntime: { id: "openclaw" },
+              agentRuntime: { id: "merclaw" },
               models: [],
             },
           },
@@ -2941,7 +2941,7 @@ describe("collectCodexRouteWarnings", () => {
             model: "openai-codex/gpt-5.5",
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2965,7 +2965,7 @@ describe("collectCodexRouteWarnings", () => {
           providers: {
             openai: {
               baseUrl: "https://api.openai.com/v1",
-              agentRuntime: { id: "openclaw" },
+              agentRuntime: { id: "merclaw" },
               models: [],
             },
           },
@@ -2985,7 +2985,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           ],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -2995,7 +2995,7 @@ describe("collectCodexRouteWarnings", () => {
     });
     expect(result.cfg.agents?.list?.[1]?.model).toBe("openai/gpt-5.5");
     expect(result.cfg.agents?.list?.[1]?.models?.["openai/gpt-5.5"]?.agentRuntime).toEqual({
-      id: "openclaw",
+      id: "merclaw",
     });
     expect(
       resolveAgentHarnessPolicy({
@@ -3011,7 +3011,7 @@ describe("collectCodexRouteWarnings", () => {
         agentId: "worker",
         config: result.cfg,
       }).runtime,
-    ).toBe("openclaw");
+    ).toBe("merclaw");
   });
 
   it("preserves inherited default legacy runtime pins for listed-agent legacy refs", () => {
@@ -3020,7 +3020,7 @@ describe("collectCodexRouteWarnings", () => {
         defaults: {
           models: {
             "openai-codex/gpt-5.4": {
-              agentRuntime: { id: "openclaw" },
+              agentRuntime: { id: "merclaw" },
             },
           },
         },
@@ -3031,7 +3031,7 @@ describe("collectCodexRouteWarnings", () => {
           },
         ],
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     expect(
       resolveAgentHarnessPolicy({
@@ -3040,7 +3040,7 @@ describe("collectCodexRouteWarnings", () => {
         agentId: "worker",
         config: cfg,
       }).runtime,
-    ).toBe("openclaw");
+    ).toBe("merclaw");
 
     const result = maybeRepairCodexRoutes({
       cfg,
@@ -3048,7 +3048,7 @@ describe("collectCodexRouteWarnings", () => {
     });
 
     expect(result.cfg.agents?.defaults?.models?.["openai/gpt-5.4"]?.agentRuntime).toEqual({
-      id: "openclaw",
+      id: "merclaw",
     });
     expect(result.cfg.agents?.defaults?.models?.["openai-codex/gpt-5.4"]).toBeUndefined();
     expect(result.cfg.agents?.list?.[0]?.model).toBe("openai/gpt-5.4");
@@ -3063,7 +3063,7 @@ describe("collectCodexRouteWarnings", () => {
         agentId: "worker",
         config: result.cfg,
       }).runtime,
-    ).toBe("openclaw");
+    ).toBe("merclaw");
   });
 
   it("preserves listed-agent legacy model-map runtime pins while repairing listed-agent refs", () => {
@@ -3075,13 +3075,13 @@ describe("collectCodexRouteWarnings", () => {
             model: "openai-codex/gpt-5.4",
             models: {
               "openai-codex/gpt-5.4": {
-                agentRuntime: { id: "openclaw" },
+                agentRuntime: { id: "merclaw" },
               },
             },
           },
         ],
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     expect(
       resolveAgentHarnessPolicy({
@@ -3090,7 +3090,7 @@ describe("collectCodexRouteWarnings", () => {
         agentId: "worker",
         config: cfg,
       }).runtime,
-    ).toBe("openclaw");
+    ).toBe("merclaw");
 
     const result = maybeRepairCodexRoutes({
       cfg,
@@ -3099,7 +3099,7 @@ describe("collectCodexRouteWarnings", () => {
 
     expect(result.cfg.agents?.list?.[0]?.model).toBe("openai/gpt-5.4");
     expect(result.cfg.agents?.list?.[0]?.models?.["openai/gpt-5.4"]?.agentRuntime).toEqual({
-      id: "openclaw",
+      id: "merclaw",
     });
     expect(result.cfg.agents?.list?.[0]?.models?.["openai-codex/gpt-5.4"]).toBeUndefined();
     expect(result.changes.join("\n")).not.toContain(
@@ -3112,7 +3112,7 @@ describe("collectCodexRouteWarnings", () => {
         agentId: "worker",
         config: result.cfg,
       }).runtime,
-    ).toBe("openclaw");
+    ).toBe("merclaw");
   });
 
   it("preserves inherited default wildcard runtime pins for listed-agent legacy refs", () => {
@@ -3121,7 +3121,7 @@ describe("collectCodexRouteWarnings", () => {
         defaults: {
           models: {
             "openai-codex/*": {
-              agentRuntime: { id: "openclaw" },
+              agentRuntime: { id: "merclaw" },
             },
           },
         },
@@ -3132,7 +3132,7 @@ describe("collectCodexRouteWarnings", () => {
           },
         ],
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     expect(
       resolveAgentHarnessPolicy({
@@ -3141,7 +3141,7 @@ describe("collectCodexRouteWarnings", () => {
         agentId: "worker",
         config: cfg,
       }).runtime,
-    ).toBe("openclaw");
+    ).toBe("merclaw");
 
     const result = maybeRepairCodexRoutes({
       cfg,
@@ -3149,7 +3149,7 @@ describe("collectCodexRouteWarnings", () => {
     });
 
     expect(result.cfg.agents?.defaults?.models?.["openai/*"]?.agentRuntime).toEqual({
-      id: "openclaw",
+      id: "merclaw",
     });
     expect(result.cfg.agents?.defaults?.models?.["openai-codex/*"]).toBeUndefined();
     expect(result.cfg.agents?.list?.[0]?.model).toBe("openai/gpt-5.4");
@@ -3164,7 +3164,7 @@ describe("collectCodexRouteWarnings", () => {
         agentId: "worker",
         config: result.cfg,
       }).runtime,
-    ).toBe("openclaw");
+    ).toBe("merclaw");
   });
 
   it("preserves provider-level legacy runtime pins while repairing default legacy refs", () => {
@@ -3172,7 +3172,7 @@ describe("collectCodexRouteWarnings", () => {
       models: {
         providers: {
           "openai-codex": {
-            agentRuntime: { id: "openclaw" },
+            agentRuntime: { id: "merclaw" },
           },
         },
       },
@@ -3184,7 +3184,7 @@ describe("collectCodexRouteWarnings", () => {
       plugins: {
         entries: { codex: { enabled: false } },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     expect(
       resolveAgentHarnessPolicy({
@@ -3192,7 +3192,7 @@ describe("collectCodexRouteWarnings", () => {
         modelId: "gpt-5.4",
         config: cfg,
       }).runtime,
-    ).toBe("openclaw");
+    ).toBe("merclaw");
 
     const result = maybeRepairCodexRoutes({
       cfg,
@@ -3201,10 +3201,10 @@ describe("collectCodexRouteWarnings", () => {
 
     expect(result.cfg.agents?.defaults?.model).toBe("openai/gpt-5.4");
     expect(result.cfg.agents?.defaults?.models?.["openai/gpt-5.4"]?.agentRuntime).toEqual({
-      id: "openclaw",
+      id: "merclaw",
     });
     expect(result.changes.join("\n")).toContain(
-      'Set agents.defaults.models.openai/gpt-5.4.agentRuntime.id to "openclaw"',
+      'Set agents.defaults.models.openai/gpt-5.4.agentRuntime.id to "merclaw"',
     );
     expect(
       resolveAgentHarnessPolicy({
@@ -3212,7 +3212,7 @@ describe("collectCodexRouteWarnings", () => {
         modelId: "gpt-5.4",
         config: result.cfg,
       }).runtime,
-    ).toBe("openclaw");
+    ).toBe("merclaw");
   });
 
   it("preserves legacy provider catalog runtime pins while repairing default legacy refs", () => {
@@ -3223,7 +3223,7 @@ describe("collectCodexRouteWarnings", () => {
             models: [
               {
                 id: "gpt-5.4",
-                agentRuntime: { id: "openclaw" },
+                agentRuntime: { id: "merclaw" },
               },
             ],
           },
@@ -3234,7 +3234,7 @@ describe("collectCodexRouteWarnings", () => {
           model: "openai-codex/gpt-5.4",
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     expect(
       resolveAgentHarnessPolicy({
@@ -3242,7 +3242,7 @@ describe("collectCodexRouteWarnings", () => {
         modelId: "gpt-5.4",
         config: cfg,
       }).runtime,
-    ).toBe("openclaw");
+    ).toBe("merclaw");
 
     const result = maybeRepairCodexRoutes({
       cfg,
@@ -3251,10 +3251,10 @@ describe("collectCodexRouteWarnings", () => {
 
     expect(result.cfg.agents?.defaults?.model).toBe("openai/gpt-5.4");
     expect(result.cfg.agents?.defaults?.models?.["openai/gpt-5.4"]?.agentRuntime).toEqual({
-      id: "openclaw",
+      id: "merclaw",
     });
     expect(result.changes.join("\n")).toContain(
-      'Set agents.defaults.models.openai/gpt-5.4.agentRuntime.id to "openclaw"',
+      'Set agents.defaults.models.openai/gpt-5.4.agentRuntime.id to "merclaw"',
     );
     expect(
       resolveAgentHarnessPolicy({
@@ -3262,7 +3262,7 @@ describe("collectCodexRouteWarnings", () => {
         modelId: "gpt-5.4",
         config: result.cfg,
       }).runtime,
-    ).toBe("openclaw");
+    ).toBe("merclaw");
   });
 
   it("preserves legacy provider catalog runtime pins while repairing listed-agent legacy refs", () => {
@@ -3273,7 +3273,7 @@ describe("collectCodexRouteWarnings", () => {
             models: [
               {
                 id: "gpt-5.4",
-                agentRuntime: { id: "openclaw" },
+                agentRuntime: { id: "merclaw" },
               },
             ],
           },
@@ -3287,7 +3287,7 @@ describe("collectCodexRouteWarnings", () => {
           },
         ],
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     expect(
       resolveAgentHarnessPolicy({
@@ -3296,7 +3296,7 @@ describe("collectCodexRouteWarnings", () => {
         agentId: "worker",
         config: cfg,
       }).runtime,
-    ).toBe("openclaw");
+    ).toBe("merclaw");
 
     const result = maybeRepairCodexRoutes({
       cfg,
@@ -3305,10 +3305,10 @@ describe("collectCodexRouteWarnings", () => {
 
     expect(result.cfg.agents?.list?.[0]?.model).toBe("openai/gpt-5.4");
     expect(result.cfg.agents?.list?.[0]?.models?.["openai/gpt-5.4"]?.agentRuntime).toEqual({
-      id: "openclaw",
+      id: "merclaw",
     });
     expect(result.changes.join("\n")).toContain(
-      'Set agents.list.worker.models.openai/gpt-5.4.agentRuntime.id to "openclaw"',
+      'Set agents.list.worker.models.openai/gpt-5.4.agentRuntime.id to "merclaw"',
     );
     expect(
       resolveAgentHarnessPolicy({
@@ -3317,7 +3317,7 @@ describe("collectCodexRouteWarnings", () => {
         agentId: "worker",
         config: result.cfg,
       }).runtime,
-    ).toBe("openclaw");
+    ).toBe("merclaw");
   });
 
   it("shields listed canonical refs when provider-level legacy default pins migrate", () => {
@@ -3325,7 +3325,7 @@ describe("collectCodexRouteWarnings", () => {
       models: {
         providers: {
           "openai-codex": {
-            agentRuntime: { id: "openclaw" },
+            agentRuntime: { id: "merclaw" },
           },
         },
       },
@@ -3344,7 +3344,7 @@ describe("collectCodexRouteWarnings", () => {
           },
         ],
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     expect(
       resolveAgentHarnessPolicy({
@@ -3353,7 +3353,7 @@ describe("collectCodexRouteWarnings", () => {
         agentId: "main",
         config: cfg,
       }).runtime,
-    ).toBe("openclaw");
+    ).toBe("merclaw");
     expect(
       resolveAgentHarnessPolicy({
         provider: "openai",
@@ -3370,7 +3370,7 @@ describe("collectCodexRouteWarnings", () => {
 
     expect(result.cfg.agents?.defaults?.model).toBe("openai/gpt-5.4");
     expect(result.cfg.agents?.defaults?.models?.["openai/gpt-5.4"]?.agentRuntime).toEqual({
-      id: "openclaw",
+      id: "merclaw",
     });
     expect(result.cfg.agents?.list?.[0]?.model).toBeUndefined();
     expect(result.cfg.agents?.list?.[1]?.model).toBe("openai/gpt-5.4");
@@ -3387,7 +3387,7 @@ describe("collectCodexRouteWarnings", () => {
         agentId: "main",
         config: result.cfg,
       }).runtime,
-    ).toBe("openclaw");
+    ).toBe("merclaw");
     expect(
       resolveAgentHarnessPolicy({
         provider: "openai",
@@ -3403,7 +3403,7 @@ describe("collectCodexRouteWarnings", () => {
       models: {
         providers: {
           "openai-codex": {
-            agentRuntime: { id: "openclaw" },
+            agentRuntime: { id: "merclaw" },
           },
         },
       },
@@ -3415,7 +3415,7 @@ describe("collectCodexRouteWarnings", () => {
           },
         ],
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     expect(
       resolveAgentHarnessPolicy({
@@ -3424,7 +3424,7 @@ describe("collectCodexRouteWarnings", () => {
         agentId: "worker",
         config: cfg,
       }).runtime,
-    ).toBe("openclaw");
+    ).toBe("merclaw");
 
     const result = maybeRepairCodexRoutes({
       cfg,
@@ -3433,10 +3433,10 @@ describe("collectCodexRouteWarnings", () => {
 
     expect(result.cfg.agents?.list?.[0]?.model).toBe("openai/gpt-5.4");
     expect(result.cfg.agents?.list?.[0]?.models?.["openai/gpt-5.4"]?.agentRuntime).toEqual({
-      id: "openclaw",
+      id: "merclaw",
     });
     expect(result.changes.join("\n")).toContain(
-      'Set agents.list.worker.models.openai/gpt-5.4.agentRuntime.id to "openclaw"',
+      'Set agents.list.worker.models.openai/gpt-5.4.agentRuntime.id to "merclaw"',
     );
     expect(
       resolveAgentHarnessPolicy({
@@ -3445,7 +3445,7 @@ describe("collectCodexRouteWarnings", () => {
         agentId: "worker",
         config: result.cfg,
       }).runtime,
-    ).toBe("openclaw");
+    ).toBe("merclaw");
   });
 
   it("does not apply pre-existing canonical default runtime pins to listed-agent legacy refs", () => {
@@ -3454,7 +3454,7 @@ describe("collectCodexRouteWarnings", () => {
         defaults: {
           models: {
             "openai/*": {
-              agentRuntime: { id: "openclaw" },
+              agentRuntime: { id: "merclaw" },
             },
           },
         },
@@ -3465,7 +3465,7 @@ describe("collectCodexRouteWarnings", () => {
           },
         ],
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     expect(
       resolveAgentHarnessPolicy({
@@ -3482,7 +3482,7 @@ describe("collectCodexRouteWarnings", () => {
     });
 
     expect(result.cfg.agents?.defaults?.models?.["openai/*"]?.agentRuntime).toEqual({
-      id: "openclaw",
+      id: "merclaw",
     });
     expect(result.cfg.agents?.list?.[0]?.model).toBe("openai/gpt-5.4");
     expect(result.cfg.agents?.list?.[0]?.models?.["openai/gpt-5.4"]?.agentRuntime).toEqual({
@@ -3509,19 +3509,19 @@ describe("collectCodexRouteWarnings", () => {
             models: {
               "openai-codex/gpt-5.5": {
                 alias: "legacy-codex",
-                agentRuntime: { id: "openclaw" },
+                agentRuntime: { id: "merclaw" },
               },
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
     expect(result.cfg.agents?.defaults?.models).toEqual({
       "openai/gpt-5.5": {
         alias: "legacy-codex",
-        agentRuntime: { id: "openclaw" },
+        agentRuntime: { id: "merclaw" },
       },
     });
     expect(result.changes.join("\n")).not.toContain(
@@ -3533,7 +3533,7 @@ describe("collectCodexRouteWarnings", () => {
         modelId: "gpt-5.5",
         config: result.cfg,
       }).runtime,
-    ).toBe("openclaw");
+    ).toBe("merclaw");
   });
 
   it("overwrites non-concrete model-scoped runtime pins when preserving Codex route intent", () => {
@@ -3555,7 +3555,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -3579,7 +3579,7 @@ describe("collectCodexRouteWarnings", () => {
           providers: {
             openai: {
               baseUrl: "https://api.openai.com/v1",
-              agentRuntime: { id: "openclaw" },
+              agentRuntime: { id: "merclaw" },
               models: [],
             },
           },
@@ -3594,7 +3594,7 @@ describe("collectCodexRouteWarnings", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -3607,13 +3607,13 @@ describe("collectCodexRouteWarnings", () => {
         modelId: "gpt-5.4",
         config: result.cfg,
       }).runtime,
-    ).toBe("openclaw");
+    ).toBe("merclaw");
     expect(result.changes).toStrictEqual([]);
     expect(result.warnings).toStrictEqual([
       [
         "- Legacy `openai-codex/*` model refs should be rewritten to `openai/*`.",
         "- agents.defaults.heartbeat.model: openai-codex/gpt-5.4 should become openai/gpt-5.4.",
-        "- Run `openclaw doctor --fix`: it rewrites configured model refs and stale sessions to `openai/*`, moves Codex intent to provider/model runtime policy, and clears old whole-agent runtime pins.",
+        "- Run `merclaw doctor --fix`: it rewrites configured model refs and stale sessions to `openai/*`, moves Codex intent to provider/model runtime policy, and clears old whole-agent runtime pins.",
       ].join("\n"),
     ]);
   });
@@ -3641,7 +3641,7 @@ describe("collectCodexRouteWarnings", () => {
             summaryModel: "openai-codex/gpt-5.4",
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -3660,7 +3660,7 @@ describe("collectCodexRouteWarnings", () => {
           providers: {
             openai: {
               baseUrl: "https://api.openai.com/v1",
-              agentRuntime: { id: "openclaw" },
+              agentRuntime: { id: "merclaw" },
               models: [],
             },
           },
@@ -3675,7 +3675,7 @@ describe("collectCodexRouteWarnings", () => {
             model: "openai-codex/gpt-5.4",
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -3688,13 +3688,13 @@ describe("collectCodexRouteWarnings", () => {
         modelId: "gpt-5.4",
         config: result.cfg,
       }).runtime,
-    ).toBe("openclaw");
+    ).toBe("merclaw");
     expect(result.changes).toStrictEqual([]);
     expect(result.warnings).toStrictEqual([
       [
         "- Legacy `openai-codex/*` model refs should be rewritten to `openai/*`.",
         "- hooks.gmail.model: openai-codex/gpt-5.4 should become openai/gpt-5.4.",
-        "- Run `openclaw doctor --fix`: it rewrites configured model refs and stale sessions to `openai/*`, moves Codex intent to provider/model runtime policy, and clears old whole-agent runtime pins.",
+        "- Run `merclaw doctor --fix`: it rewrites configured model refs and stale sessions to `openai/*`, moves Codex intent to provider/model runtime policy, and clears old whole-agent runtime pins.",
       ].join("\n"),
     ]);
   });
@@ -3776,7 +3776,7 @@ describe("collectCodexRouteWarnings", () => {
     expect(store.main.agentRuntimeOverride).toBeUndefined();
   });
 
-  it("preserves canonical OpenAI sessions that are explicitly pinned to OpenClaw", () => {
+  it("preserves canonical OpenAI sessions that are explicitly pinned to MerClaw", () => {
     const store: Record<string, SessionEntry> = {
       main: {
         sessionId: "s1",
@@ -3785,8 +3785,8 @@ describe("collectCodexRouteWarnings", () => {
         model: "gpt-5.5",
         providerOverride: "openai",
         modelOverride: "gpt-5.4",
-        agentHarnessId: "openclaw",
-        agentRuntimeOverride: "openclaw",
+        agentHarnessId: "merclaw",
+        agentRuntimeOverride: "merclaw",
         authProfileOverride: "openai:work",
       },
     };
@@ -3798,8 +3798,8 @@ describe("collectCodexRouteWarnings", () => {
 
     expect(result).toEqual({ changed: false, sessionKeys: [] });
     expect(store.main.updatedAt).toBe(1);
-    expect(store.main.agentHarnessId).toBe("openclaw");
-    expect(store.main.agentRuntimeOverride).toBe("openclaw");
+    expect(store.main.agentHarnessId).toBe("merclaw");
+    expect(store.main.agentRuntimeOverride).toBe("merclaw");
     expect(store.main.authProfileOverride).toBe("openai:work");
   });
 
@@ -3845,7 +3845,7 @@ describe("collectCodexRouteWarnings", () => {
             model: "openai-codex/gpt-5.5",
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -3891,7 +3891,7 @@ describe("collectCodexRouteWarnings", () => {
             model: "openai-codex/gpt-5.5",
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -3907,7 +3907,7 @@ describe("collectCodexRouteWarnings", () => {
             model: { primary: "openai-codex/gpt-5.4" },
             models: {
               "openai-codex/gpt-5.4": {
-                agentRuntime: { id: "openclaw" },
+                agentRuntime: { id: "merclaw" },
               },
             },
           },
@@ -3920,7 +3920,7 @@ describe("collectCodexRouteWarnings", () => {
         plugins: {
           entries: { codex: { enabled: false } },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       shouldRepair: true,
     });
 
@@ -3928,7 +3928,7 @@ describe("collectCodexRouteWarnings", () => {
       | { agentRuntime?: { id?: string } }
       | undefined;
     expect(migrated).toBeDefined();
-    expect(migrated?.agentRuntime).toEqual({ id: "openclaw" });
+    expect(migrated?.agentRuntime).toEqual({ id: "merclaw" });
     expect(result.cfg.agents?.defaults?.models?.["openai-codex/gpt-5.4"]).toBeUndefined();
   });
 
@@ -3941,7 +3941,7 @@ describe("collectCodexRouteWarnings", () => {
               model: { primary: "openai-codex/gpt-5.4" },
               models: {
                 "openai-codex/gpt-5.4": {
-                  agentRuntime: { id: "openclaw" },
+                  agentRuntime: { id: "merclaw" },
                 },
                 "openai/gpt-5.4": {
                   alias: "canonical-codex",
@@ -3953,14 +3953,14 @@ describe("collectCodexRouteWarnings", () => {
           plugins: {
             entries: { codex: { enabled: false } },
           },
-        } as unknown as OpenClawConfig,
+        } as unknown as MerClawConfig,
         shouldRepair: true,
       });
 
       expect(result.cfg.agents?.defaults?.model).toEqual({ primary: "openai/gpt-5.4" });
       expect(result.cfg.agents?.defaults?.models?.["openai/gpt-5.4"]).toEqual({
         alias: "canonical-codex",
-        agentRuntime: { id: "openclaw" },
+        agentRuntime: { id: "merclaw" },
       });
       expect(result.cfg.agents?.defaults?.models?.["openai-codex/gpt-5.4"]).toBeUndefined();
       expect(result.cfg.plugins?.entries?.codex?.enabled).toBe(false);
@@ -3970,7 +3970,7 @@ describe("collectCodexRouteWarnings", () => {
           modelId: "gpt-5.4",
           config: result.cfg,
         }).runtime,
-      ).toBe("openclaw");
+      ).toBe("merclaw");
     });
   }
 });

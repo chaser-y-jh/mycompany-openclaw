@@ -1,5 +1,5 @@
 import path from "node:path";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import { resolveGatewayProfileSuffix } from "./constants.js";
 
 const windowsAbsolutePath = /^[a-zA-Z]:[\\/]/;
@@ -32,25 +32,25 @@ function resolveUserPathWithHome(input: string, home?: string): string {
 }
 
 export function resolveGatewayStateDir(env: Record<string, string | undefined>): string {
-  const override = normalizeOptionalString(env.OPENCLAW_STATE_DIR);
+  const override = normalizeOptionalString(env.MERCLAW_STATE_DIR);
   if (override) {
     const home = override.startsWith("~") ? resolveHomeDir(env) : undefined;
     return resolveUserPathWithHome(override, home);
   }
   const home = resolveHomeDir(env);
-  const suffix = resolveGatewayProfileSuffix(env.OPENCLAW_PROFILE);
-  return path.join(home, `.openclaw${suffix}`);
+  const suffix = resolveGatewayProfileSuffix(env.MERCLAW_PROFILE);
+  return path.join(home, `.merclaw${suffix}`);
 }
 
 export function resolveGatewayTaskScriptPath(env: Record<string, string | undefined>): string {
-  const override = normalizeOptionalString(env.OPENCLAW_TASK_SCRIPT);
+  const override = normalizeOptionalString(env.MERCLAW_TASK_SCRIPT);
   if (override) {
     return override;
   }
-  const scriptName = normalizeOptionalString(env.OPENCLAW_TASK_SCRIPT_NAME) || "gateway.cmd";
+  const scriptName = normalizeOptionalString(env.MERCLAW_TASK_SCRIPT_NAME) || "gateway.cmd";
   if (/[/\\]|\.\./.test(scriptName)) {
     throw new Error(
-      `OPENCLAW_TASK_SCRIPT_NAME must be a file name only, not a path: ${scriptName}`,
+      `MERCLAW_TASK_SCRIPT_NAME must be a file name only, not a path: ${scriptName}`,
     );
   }
   return path.join(resolveGatewayStateDir(env), scriptName);

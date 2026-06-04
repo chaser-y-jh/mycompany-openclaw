@@ -1,4 +1,4 @@
-import { importFreshModule } from "openclaw/plugin-sdk/test-fixtures";
+import { importFreshModule } from "merclaw/plugin-sdk/test-fixtures";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
 let probeModule: typeof import("./list.probe.js");
@@ -40,7 +40,7 @@ describe("mapFailoverReasonToProbeStatus", () => {
 });
 
 describe("runAuthProbes", () => {
-  it("runs Codex auth probes through raw OpenClaw model-run mode", async () => {
+  it("runs Codex auth probes through raw MerClaw model-run mode", async () => {
     const runEmbeddedAgent = vi.fn(async () => ({ text: "OK" }));
     vi.doMock("../../agents/embedded-agent.js", () => ({ runEmbeddedAgent }));
     vi.doMock("../../agents/auth-profiles.js", () => ({
@@ -78,8 +78,8 @@ describe("runAuthProbes", () => {
       const result = await module.runAuthProbes({
         cfg: {} as never,
         agentId: "probe-agent",
-        agentDir: "/tmp/openclaw-probe-agent",
-        workspaceDir: "/tmp/openclaw-probe-workspace",
+        agentDir: "/tmp/merclaw-probe-agent",
+        workspaceDir: "/tmp/merclaw-probe-workspace",
         providers: ["openai"],
         modelCandidates: ["openai/gpt-5.5"],
         options: {

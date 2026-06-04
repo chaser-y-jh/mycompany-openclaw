@@ -1,4 +1,4 @@
-import { resolveExpiresAtMsFromDurationMs } from "openclaw/plugin-sdk/number-runtime";
+import { resolveExpiresAtMsFromDurationMs } from "merclaw/plugin-sdk/number-runtime";
 
 /**
  * QQBot reminder tool core logic.

@@ -1,5 +1,5 @@
-import { normalizeStringEntries } from "@openclaw/normalization-core/string-normalization";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { normalizeStringEntries } from "@merclaw/normalization-core/string-normalization";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import type { PluginManifestRecord } from "../plugins/manifest-registry.js";
 import type { PluginConfigUiHint } from "../plugins/types.js";
 import { getPath, setPathCreateStrict } from "../secrets/path-utils.js";
@@ -56,7 +56,7 @@ function resolveJsonSchemaProperty(
 }
 
 function getExistingPluginConfig(
-  config: OpenClawConfig,
+  config: MerClawConfig,
   pluginId: string,
 ): Record<string, unknown> {
   return (config.plugins?.entries?.[pluginId]?.config as Record<string, unknown>) ?? {};
@@ -132,7 +132,7 @@ export function discoverUnconfiguredPlugins(params: {
     configSchema?: Record<string, unknown>;
     enabled?: boolean;
   }>;
-  config: OpenClawConfig;
+  config: MerClawConfig;
 }): ConfigurablePlugin[] {
   const all = discoverConfigurablePlugins(params);
   return all.filter((plugin) => {
@@ -145,7 +145,7 @@ export function discoverUnconfiguredPlugins(params: {
 }
 
 async function listEnabledConfigurableManifestPlugins(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   workspaceDir?: string;
 }): Promise<readonly PluginManifestRecord[]> {
   const { loadPluginMetadataSnapshot } = await loadPluginMetadataSnapshotModule();
@@ -166,11 +166,11 @@ async function listEnabledConfigurableManifestPlugins(params: {
  */
 async function promptPluginFields(params: {
   plugin: ConfigurablePlugin;
-  config: OpenClawConfig;
+  config: MerClawConfig;
   prompter: WizardPrompter;
   /** When true, show all fields including already-configured ones (for configure flow). */
   showConfigured?: boolean;
-}): Promise<OpenClawConfig> {
+}): Promise<MerClawConfig> {
   const { plugin, config, prompter } = params;
   const existing = getExistingPluginConfig(config, plugin.id);
   const updatedConfig = structuredClone(existing);
@@ -191,7 +191,7 @@ async function promptPluginFields(params: {
     const helpSuffix = hint.help ? ` — ${hint.help}` : "";
 
     // Skip sensitive fields — WizardPrompter has no masked input;
-    // direct users to openclaw config set or the Web UI instead.
+    // direct users to merclaw config set or the Web UI instead.
     if (hint.sensitive) {
       await prompter.note(
         t("wizard.plugins.sensitiveField", {
@@ -315,10 +315,10 @@ async function promptPluginFields(params: {
  * Shows unconfigured plugin fields and prompts the user.
  */
 export async function setupPluginConfig(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   prompter: WizardPrompter;
   workspaceDir?: string;
-}): Promise<OpenClawConfig> {
+}): Promise<MerClawConfig> {
   const manifestPlugins = await listEnabledConfigurableManifestPlugins({
     config: params.config,
     workspaceDir: params.workspaceDir,
@@ -377,10 +377,10 @@ export async function setupPluginConfig(params: {
  * Shows all configurable plugins and all their non-advanced fields.
  */
 export async function configurePluginConfig(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   prompter: WizardPrompter;
   workspaceDir?: string;
-}): Promise<OpenClawConfig> {
+}): Promise<MerClawConfig> {
   const manifestPlugins = await listEnabledConfigurableManifestPlugins({
     config: params.config,
     workspaceDir: params.workspaceDir,

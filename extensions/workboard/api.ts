@@ -1,1 +1,1 @@
-export { definePluginEntry, type OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
+export { definePluginEntry, type MerClawPluginApi } from "merclaw/plugin-sdk/plugin-entry";

@@ -3,7 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { stripAnsi } from "../../packages/terminal-core/src/ansi.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { MerClawConfig } from "../config/config.js";
 import { setLoggerOverride } from "../logging/logger.js";
 import { loggingState } from "../logging/state.js";
 import { captureEnv } from "../test-utils/env.js";
@@ -25,7 +25,7 @@ describe("loader", () => {
   let envSnapshot: ReturnType<typeof captureEnv>;
 
   beforeAll(async () => {
-    fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-hooks-loader-"));
+    fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-hooks-loader-"));
   });
 
   beforeEach(async () => {
@@ -36,8 +36,8 @@ describe("loader", () => {
     await fs.mkdir(tmpDir, { recursive: true });
 
     // Disable bundled hooks during tests by setting env var to non-existent directory
-    envSnapshot = captureEnv(["OPENCLAW_BUNDLED_HOOKS_DIR"]);
-    process.env.OPENCLAW_BUNDLED_HOOKS_DIR = "/nonexistent/bundled/hooks";
+    envSnapshot = captureEnv(["MERCLAW_BUNDLED_HOOKS_DIR"]);
+    process.env.MERCLAW_BUNDLED_HOOKS_DIR = "/nonexistent/bundled/hooks";
     setLoggerOverride({ level: "silent", consoleLevel: "error" });
     loggingState.rawConsole = {
       log: vi.fn(),
@@ -61,7 +61,7 @@ describe("loader", () => {
         "---",
         `name: ${params.hookName}`,
         `description: ${params.hookName} test hook`,
-        'metadata: {"openclaw":{"events":["command:new"]}}',
+        'metadata: {"merclaw":{"events":["command:new"]}}',
         "---",
         "",
         `# ${params.hookName}`,
@@ -87,9 +87,9 @@ describe("loader", () => {
   }
 
   function withLegacyInternalHookHandlers(
-    config: OpenClawConfig,
+    config: MerClawConfig,
     handlers?: Array<{ event: string; module: string; export?: string }>,
-  ): OpenClawConfig {
+  ): MerClawConfig {
     if (!handlers) {
       return config;
     }
@@ -102,12 +102,12 @@ describe("loader", () => {
           handlers,
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
   }
 
   function createEnabledHooksConfig(
     handlers?: Array<{ event: string; module: string; export?: string }>,
-  ): OpenClawConfig {
+  ): MerClawConfig {
     return withLegacyInternalHookHandlers(
       {
         hooks: {
@@ -135,36 +135,36 @@ describe("loader", () => {
 
   describe("loadInternalHooks", () => {
     it("detects configured internal hook surfaces", () => {
-      expect(hasConfiguredInternalHooks({} satisfies OpenClawConfig)).toBe(false);
+      expect(hasConfiguredInternalHooks({} satisfies MerClawConfig)).toBe(false);
       expect(
         hasConfiguredInternalHooks({
           hooks: { internal: { entries: { "session-memory": { enabled: true } } } },
-        } satisfies OpenClawConfig),
+        } satisfies MerClawConfig),
       ).toBe(true);
       expect(
         hasConfiguredInternalHooks({
           hooks: { internal: { entries: { "session-memory": { enabled: false } } } },
-        } satisfies OpenClawConfig),
+        } satisfies MerClawConfig),
       ).toBe(false);
       expect(
         hasConfiguredInternalHooks({
           hooks: { internal: { load: { extraDirs: ["/tmp/hooks"] } } },
-        } satisfies OpenClawConfig),
+        } satisfies MerClawConfig),
       ).toBe(true);
       expect(
         resolveConfiguredInternalHookNames({
           hooks: { internal: { entries: { "session-memory": { enabled: true } } } },
-        } satisfies OpenClawConfig),
+        } satisfies MerClawConfig),
       ).toEqual(new Set(["session-memory"]));
       expect(
         resolveConfiguredInternalHookNames({
           hooks: { internal: { enabled: true } },
-        } satisfies OpenClawConfig),
+        } satisfies MerClawConfig),
       ).toBeNull();
       expect(
         resolveConfiguredInternalHookNames({
           hooks: { internal: { installs: { pack: { source: "path" } } } },
-        } satisfies OpenClawConfig),
+        } satisfies MerClawConfig),
       ).toBeNull();
     });
 
@@ -176,7 +176,7 @@ describe("loader", () => {
         },
       ]);
 
-    const expectNoCommandHookRegistration = async (cfg: OpenClawConfig) => {
+    const expectNoCommandHookRegistration = async (cfg: MerClawConfig) => {
       const count = await loadInternalHooks(cfg, tmpDir);
       expect(count).toBe(0);
       expect(getRegisteredEventKeys()).not.toContain("command:new");
@@ -190,7 +190,7 @@ describe("loader", () => {
               enabled: false,
             },
           },
-        } satisfies OpenClawConfig,
+        } satisfies MerClawConfig,
         withLegacyInternalHookHandlers(
           {
             hooks: {
@@ -198,7 +198,7 @@ describe("loader", () => {
                 enabled: false,
               },
             },
-          } satisfies OpenClawConfig,
+          } satisfies MerClawConfig,
           [],
         ),
       ]) {
@@ -209,9 +209,9 @@ describe("loader", () => {
 
     it("skips hook discovery until internal hooks are configured", async () => {
       for (const cfg of [
-        {} satisfies OpenClawConfig,
-        { hooks: {} } satisfies OpenClawConfig,
-        { hooks: { internal: {} } } satisfies OpenClawConfig,
+        {} satisfies MerClawConfig,
+        { hooks: {} } satisfies MerClawConfig,
+        { hooks: { internal: {} } } satisfies MerClawConfig,
       ]) {
         const count = await loadInternalHooks(cfg, tmpDir);
         expect(count).toBe(0);
@@ -232,7 +232,7 @@ describe("loader", () => {
               },
             },
           },
-        } satisfies OpenClawConfig,
+        } satisfies MerClawConfig,
         tmpDir,
         { managedHooksDir: hooksDir, bundledHooksDir: "/nonexistent/bundled/hooks" },
       );
@@ -409,7 +409,7 @@ describe("loader", () => {
           "---",
           "name: symlink-hook",
           "description: symlink test",
-          'metadata: {"openclaw":{"events":["command:new"]}}',
+          'metadata: {"merclaw":{"events":["command:new"]}}',
           "---",
           "",
           "# Symlink Hook",
@@ -454,7 +454,7 @@ describe("loader", () => {
           "---",
           "name: hardlink-hook",
           "description: hardlink test",
-          'metadata: {"openclaw":{"events":["command:new"]}}',
+          'metadata: {"merclaw":{"events":["command:new"]}}',
           "---",
           "",
           "# Hardlink Hook",

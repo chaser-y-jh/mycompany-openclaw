@@ -2,7 +2,7 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it, vi } from "vitest";
-import { createInfiniteSessionConfig, writeOpenClawCompactionMarker } from "./compaction-bridge.js";
+import { createInfiniteSessionConfig, writeMerClawCompactionMarker } from "./compaction-bridge.js";
 
 describe("createInfiniteSessionConfig", () => {
   it("returns undefined when no options provided", () => {
@@ -60,13 +60,13 @@ describe("createInfiniteSessionConfig", () => {
   });
 });
 
-describe("writeOpenClawCompactionMarker", () => {
+describe("writeMerClawCompactionMarker", () => {
   it("writes a JSON marker with expected shape under <workspaceDir>/files", async () => {
     const workspaceDir = await mkdtemp(join(tmpdir(), "copilot-compaction-"));
     try {
-      const written = await writeOpenClawCompactionMarker(
+      const written = await writeMerClawCompactionMarker(
         {
-          sessionId: "openclaw-sess-123",
+          sessionId: "merclaw-sess-123",
           workspaceDir,
           trigger: "manual",
           currentTokenCount: 42,
@@ -77,12 +77,12 @@ describe("writeOpenClawCompactionMarker", () => {
       );
 
       expect(written.path).toBe(
-        join(workspaceDir, "files", "openclaw-compaction-1700000000000-openclaw-sess-123.json"),
+        join(workspaceDir, "files", "merclaw-compaction-1700000000000-merclaw-sess-123.json"),
       );
       expect(written.marker).toEqual({
         version: 1,
         source: "copilot-harness",
-        sessionId: "openclaw-sess-123",
+        sessionId: "merclaw-sess-123",
         ts: 1_700_000_000_000,
         compacted: false,
         trigger: "manual",
@@ -108,7 +108,7 @@ describe("writeOpenClawCompactionMarker", () => {
       }),
     };
 
-    const written = await writeOpenClawCompactionMarker(
+    const written = await writeMerClawCompactionMarker(
       {
         sessionId: "s1",
         workspaceDir: "/ws",
@@ -133,7 +133,7 @@ describe("writeOpenClawCompactionMarker", () => {
       }),
     };
 
-    const written = await writeOpenClawCompactionMarker(
+    const written = await writeMerClawCompactionMarker(
       { sessionId: "s1", workspaceDir: "/ws" },
       { now: () => 7, fs: fs as never },
     );
@@ -158,11 +158,11 @@ describe("writeOpenClawCompactionMarker", () => {
       mkdir: vi.fn(async () => undefined),
       writeFile: vi.fn(async () => undefined),
     };
-    const written = await writeOpenClawCompactionMarker(
+    const written = await writeMerClawCompactionMarker(
       { sessionId: "abc:/?\\@!def", workspaceDir: "/ws" },
       { now: () => 1, fs: fs as never },
     );
-    expect(written.path).toContain("openclaw-compaction-1-abc______def.json");
+    expect(written.path).toContain("merclaw-compaction-1-abc______def.json");
     // sessionId in the marker body stays the original unsanitized value.
     expect(written.marker.sessionId).toBe("abc:/?\\@!def");
   });
@@ -177,7 +177,7 @@ describe("writeOpenClawCompactionMarker", () => {
         calls.push({ kind: "write", path });
       }),
     };
-    await writeOpenClawCompactionMarker(
+    await writeMerClawCompactionMarker(
       { sessionId: "s", workspaceDir: "/ws" },
       { now: () => 1, fs: fs as never },
     );
@@ -190,11 +190,11 @@ describe("writeOpenClawCompactionMarker", () => {
       mkdir: vi.fn(async () => undefined),
       writeFile: vi.fn(async () => undefined),
     };
-    const written = await writeOpenClawCompactionMarker(
+    const written = await writeMerClawCompactionMarker(
       { sessionId: "s", workspaceDir: "/ws" },
       { now: () => 1, fs: fs as never, subdir: "compaction" },
     );
-    expect(written.path).toBe("/ws/compaction/openclaw-compaction-1-s.json");
+    expect(written.path).toBe("/ws/compaction/merclaw-compaction-1-s.json");
   });
 
   it("surfaces mkdir failures", async () => {
@@ -205,7 +205,7 @@ describe("writeOpenClawCompactionMarker", () => {
       writeFile: vi.fn(async () => undefined),
     };
     await expect(
-      writeOpenClawCompactionMarker(
+      writeMerClawCompactionMarker(
         { sessionId: "s", workspaceDir: "/ws" },
         { now: () => 1, fs: fs as never },
       ),
@@ -221,7 +221,7 @@ describe("writeOpenClawCompactionMarker", () => {
       }),
     };
     await expect(
-      writeOpenClawCompactionMarker(
+      writeMerClawCompactionMarker(
         { sessionId: "s", workspaceDir: "/ws" },
         { now: () => 1, fs: fs as never },
       ),
@@ -230,13 +230,13 @@ describe("writeOpenClawCompactionMarker", () => {
 
   it("throws on missing sessionId", async () => {
     await expect(
-      writeOpenClawCompactionMarker({ sessionId: "", workspaceDir: "/ws" }),
+      writeMerClawCompactionMarker({ sessionId: "", workspaceDir: "/ws" }),
     ).rejects.toThrow(/sessionId is required/);
   });
 
   it("throws on missing workspaceDir", async () => {
     await expect(
-      writeOpenClawCompactionMarker({ sessionId: "s", workspaceDir: "" }),
+      writeMerClawCompactionMarker({ sessionId: "s", workspaceDir: "" }),
     ).rejects.toThrow(/workspaceDir is required/);
   });
 });

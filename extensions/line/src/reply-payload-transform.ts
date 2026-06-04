@@ -1,9 +1,9 @@
-import { parseStrictFiniteNumber } from "openclaw/plugin-sdk/number-runtime";
-import type { ReplyPayload } from "openclaw/plugin-sdk/reply-runtime";
+import { parseStrictFiniteNumber } from "merclaw/plugin-sdk/number-runtime";
+import type { ReplyPayload } from "merclaw/plugin-sdk/reply-runtime";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeStringEntries,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/string-coerce-runtime";
 import {
   createAgendaCard,
   createAppleTvRemoteCard,

@@ -1,6 +1,6 @@
-import { timestampMsToIsoString } from "@openclaw/normalization-core/number-coercion";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
-import { normalizeStringEntries } from "@openclaw/normalization-core/string-normalization";
+import { timestampMsToIsoString } from "@merclaw/normalization-core/number-coercion";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
+import { normalizeStringEntries } from "@merclaw/normalization-core/string-normalization";
 import { sanitizeTerminalText } from "../../packages/terminal-core/src/safe-text.js";
 import { isRich, theme } from "../../packages/terminal-core/src/theme.js";
 import { formatCliCommand } from "../cli/command-format.js";
@@ -126,7 +126,7 @@ export async function commitmentsListCommand(
   }
   if (commitments.length === 0) {
     runtime.log(
-      `No commitments found. Run ${formatCliCommand("openclaw commitments --all")} to include dismissed and expired commitments.`,
+      `No commitments found. Run ${formatCliCommand("merclaw commitments --all")} to include dismissed and expired commitments.`,
     );
     return;
   }
@@ -142,7 +142,7 @@ export async function commitmentsDismissCommand(
   const ids = normalizeStringEntries(opts.ids);
   if (ids.length === 0) {
     runtime.error(
-      `At least one commitment id is required. Run ${formatCliCommand("openclaw commitments list")} to choose one.`,
+      `At least one commitment id is required. Run ${formatCliCommand("merclaw commitments list")} to choose one.`,
     );
     runtime.exit(1);
     return;

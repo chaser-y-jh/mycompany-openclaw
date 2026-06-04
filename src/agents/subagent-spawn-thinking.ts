@@ -1,6 +1,6 @@
-import { asOptionalObjectRecord } from "@openclaw/normalization-core/record-coerce";
+import { asOptionalObjectRecord } from "@merclaw/normalization-core/record-coerce";
 import { normalizeThinkLevel } from "../auto-reply/thinking.shared.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 
 function readString(value: Record<string, unknown>, key: string): string | undefined {
   const raw = value[key];
@@ -8,7 +8,7 @@ function readString(value: Record<string, unknown>, key: string): string | undef
 }
 
 export function resolveSubagentThinkingOverride(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   requesterAgentConfig?: unknown;
   targetAgentConfig?: unknown;
   thinkingOverrideRaw?: string;

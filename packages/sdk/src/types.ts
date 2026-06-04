@@ -12,7 +12,7 @@ export type GatewayEvent = {
   stateVersion?: unknown;
 };
 
-export type OpenClawTransport = {
+export type MerClawTransport = {
   request<T = unknown>(
     method: string,
     params?: unknown,
@@ -22,13 +22,13 @@ export type OpenClawTransport = {
   close?(): Promise<void> | void;
 };
 
-export type ConnectableOpenClawTransport = OpenClawTransport & {
+export type ConnectableMerClawTransport = MerClawTransport & {
   connect(): Promise<void>;
 };
 
 export type RuntimeSelection =
   | "auto"
-  | { type: "embedded"; id: "openclaw" | "codex" | (string & {}) }
+  | { type: "embedded"; id: "merclaw" | "codex" | (string & {}) }
   | { type: "cli"; id: "claude-cli" | (string & {}) }
   | { type: "acp"; harness: "claude" | "cursor" | "gemini" | "opencode" | (string & {}) }
   | { type: "managed"; provider: "local" | "node" | "testbox" | "cloud" | (string & {}) };
@@ -217,7 +217,7 @@ export type RunResult = {
   raw?: unknown;
 };
 
-export type OpenClawEventType =
+export type MerClawEventType =
   | "run.created"
   | "run.queued"
   | "run.started"
@@ -247,11 +247,11 @@ export type OpenClawEventType =
   | "git.pr"
   | "raw";
 
-export type OpenClawEvent<TData = unknown> = {
+export type MerClawEvent<TData = unknown> = {
   version: 1;
   id: string;
   ts: number;
-  type: OpenClawEventType;
+  type: MerClawEventType;
   runId?: string;
   sessionId?: string;
   sessionKey?: string;

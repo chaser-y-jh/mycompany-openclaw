@@ -144,7 +144,7 @@ describe("stuck session recovery", () => {
     const outcome = await recoverStuckDiagnosticSession({
       sessionId: "sibling-session",
       sessionKey: "agent:main:fallback",
-      sessionFile: "/tmp/openclaw-shared-session.jsonl",
+      sessionFile: "/tmp/merclaw-shared-session.jsonl",
       ageMs: 180_000,
       queueDepth: 1,
     });
@@ -227,10 +227,10 @@ describe("stuck session recovery", () => {
   });
 
   it("logs stopped cron context when aborting an active embedded run", async () => {
-    const previousStateDir = process.env.OPENCLAW_STATE_DIR;
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-recovery-context-"));
+    const previousStateDir = process.env.MERCLAW_STATE_DIR;
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-recovery-context-"));
     try {
-      process.env.OPENCLAW_STATE_DIR = tempDir;
+      process.env.MERCLAW_STATE_DIR = tempDir;
       await saveCronStore(path.join(tempDir, "cron", "jobs.json"), {
         version: 1,
         jobs: [
@@ -269,9 +269,9 @@ describe("stuck session recovery", () => {
       });
     } finally {
       if (previousStateDir === undefined) {
-        delete process.env.OPENCLAW_STATE_DIR;
+        delete process.env.MERCLAW_STATE_DIR;
       } else {
-        process.env.OPENCLAW_STATE_DIR = previousStateDir;
+        process.env.MERCLAW_STATE_DIR = previousStateDir;
       }
       fs.rmSync(tempDir, { recursive: true, force: true });
     }

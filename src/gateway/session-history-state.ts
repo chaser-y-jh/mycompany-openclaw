@@ -1,10 +1,10 @@
-import { asPositiveSafeInteger } from "@openclaw/normalization-core/number-coercion";
+import { asPositiveSafeInteger } from "@merclaw/normalization-core/number-coercion";
 import {
   DEFAULT_CHAT_HISTORY_TEXT_MAX_CHARS,
   projectChatDisplayMessages,
 } from "./chat-display-projection.js";
 import {
-  attachOpenClawTranscriptMeta,
+  attachMerClawTranscriptMeta,
   readRecentSessionMessagesWithStatsAsync,
   readSessionMessagesAsync,
 } from "./session-utils.js";
@@ -14,7 +14,7 @@ type SessionHistoryTranscriptMeta = {
 };
 
 type SessionHistoryMessage = Record<string, unknown> & {
-  __openclaw?: SessionHistoryTranscriptMeta;
+  __merclaw?: SessionHistoryTranscriptMeta;
 };
 
 type PaginatedSessionHistory = {
@@ -92,11 +92,11 @@ function buildPaginatedSessionHistory(params: {
 }
 
 function resolveMessageSeq(message: SessionHistoryMessage | undefined): number | undefined {
-  return asPositiveSafeInteger(message?.["__openclaw"]?.seq);
+  return asPositiveSafeInteger(message?.["__merclaw"]?.seq);
 }
 
 function isMessageToolMirrorMessage(message: SessionHistoryMessage): boolean {
-  return message.openclawMessageToolMirror !== undefined;
+  return message.merclawMessageToolMirror !== undefined;
 }
 
 function paginateSessionMessages(
@@ -251,7 +251,7 @@ export class SessionHistorySseState {
     } else {
       this.rawTranscriptSeq += 1;
     }
-    const nextMessage = attachOpenClawTranscriptMeta(update.message, {
+    const nextMessage = attachMerClawTranscriptMeta(update.message, {
       ...(typeof update.messageId === "string" ? { id: update.messageId } : {}),
       seq: this.rawTranscriptSeq,
     });
@@ -274,7 +274,7 @@ export class SessionHistorySseState {
         const emittedMessage: SessionHistoryMessage =
           isMessageToolMirrorMessage(projectedMessage) ||
           resolveMessageSeq(projectedMessage) === undefined
-            ? (attachOpenClawTranscriptMeta(projectedMessage, {
+            ? (attachMerClawTranscriptMeta(projectedMessage, {
                 seq: this.rawTranscriptSeq,
               }) as SessionHistoryMessage)
             : projectedMessage;

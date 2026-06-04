@@ -2,7 +2,7 @@
  * Database access layer for education auth.
  *
  * Uses the education-specific SQLite database file managed by the plugin.
- * The database path is resolved from the OpenClaw state directory.
+ * The database path is resolved from the MerClaw state directory.
  */
 
 import { DatabaseSync } from "node:sqlite";

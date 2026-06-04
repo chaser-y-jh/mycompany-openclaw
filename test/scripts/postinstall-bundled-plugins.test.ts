@@ -8,7 +8,7 @@ import {
   collectLegacyPluginRuntimeDepsStateRoots,
   isSourceCheckoutRoot,
   isDirectPostinstallInvocation,
-  pruneOpenClawCompileCache,
+  pruneMerClawCompileCache,
   pruneInstalledPackageDist,
   pruneLegacyPluginRuntimeDepsState,
   pruneBundledPluginSourceNodeModules,
@@ -21,7 +21,7 @@ import { createScriptTestHarness } from "./test-helpers.js";
 const { createTempDirAsync } = createScriptTestHarness();
 
 async function createExtensionsDir() {
-  const root = await createTempDirAsync("openclaw-postinstall-");
+  const root = await createTempDirAsync("merclaw-postinstall-");
   const extensionsDir = path.join(root, "dist", "extensions");
   await fs.mkdir(extensionsDir, { recursive: true });
   return extensionsDir;
@@ -88,15 +88,15 @@ describe("bundled plugin postinstall", () => {
 
     expect(
       isDirectPostinstallInvocation({
-        entryPath: "/var/folders/tmp/openclaw/scripts/postinstall-bundled-plugins.mjs",
-        modulePath: "/private/var/folders/tmp/openclaw/scripts/postinstall-bundled-plugins.mjs",
+        entryPath: "/var/folders/tmp/merclaw/scripts/postinstall-bundled-plugins.mjs",
+        modulePath: "/private/var/folders/tmp/merclaw/scripts/postinstall-bundled-plugins.mjs",
         realpathSync,
       }),
     ).toBe(true);
   });
 
   it("prunes Node versioned compile cache dirs during package postinstall", () => {
-    const configuredBase = path.join("/tmp", "openclaw-cache");
+    const configuredBase = path.join("/tmp", "merclaw-cache");
     const defaultBase = path.join(tmpdir(), "node-compile-cache");
     const removed: string[] = [];
     const existsSync = vi.fn((value: string) => value === configuredBase || value === defaultBase);
@@ -104,7 +104,7 @@ describe("bundled plugin postinstall", () => {
       if (value === configuredBase) {
         return [
           { name: "v22.13.1-x64-efe9a9df-1001", isDirectory: () => true },
-          { name: "openclaw", isDirectory: () => true },
+          { name: "merclaw", isDirectory: () => true },
           { name: "README", isDirectory: () => false },
         ];
       }
@@ -117,7 +117,7 @@ describe("bundled plugin postinstall", () => {
       removed.push(value);
     });
 
-    pruneOpenClawCompileCache({
+    pruneMerClawCompileCache({
       env: { NODE_COMPILE_CACHE: configuredBase },
       existsSync,
       readdirSync,
@@ -129,7 +129,7 @@ describe("bundled plugin postinstall", () => {
       path.join(configuredBase, "v22.13.1-x64-efe9a9df-1001"),
       path.join(defaultBase, "v24.14.1-x64-efe9a9df-1001"),
     ]);
-    expect(removed).not.toContain(path.join(configuredBase, "openclaw"));
+    expect(removed).not.toContain(path.join(configuredBase, "merclaw"));
     for (const cacheDir of removed) {
       expect(rmSync).toHaveBeenCalledWith(cacheDir, {
         recursive: true,
@@ -141,7 +141,7 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("keeps pruning sibling compile cache dirs after one removal fails", () => {
-    const configuredBase = path.join("/tmp", "openclaw-cache");
+    const configuredBase = path.join("/tmp", "merclaw-cache");
     const attempted: string[] = [];
     const warn = vi.fn();
     const firstCacheDir = path.join(configuredBase, "v22.13.1-x64-efe9a9df-1001");
@@ -153,7 +153,7 @@ describe("bundled plugin postinstall", () => {
       }
     });
 
-    pruneOpenClawCompileCache({
+    pruneMerClawCompileCache({
       env: { NODE_COMPILE_CACHE: configuredBase },
       existsSync: vi.fn((value: string) => value === configuredBase),
       readdirSync: vi.fn(() => [
@@ -166,12 +166,12 @@ describe("bundled plugin postinstall", () => {
 
     expect(attempted).toEqual([firstCacheDir, secondCacheDir]);
     expect(warn).toHaveBeenCalledWith(
-      "[postinstall] could not prune OpenClaw compile cache: Error: locked",
+      "[postinstall] could not prune MerClaw compile cache: Error: locked",
     );
   });
 
   it("does not warn when compile-cache pruning hits EACCES or EPERM (shared caches)", () => {
-    const base = path.join("/tmp", "openclaw-shared-compile-cache");
+    const base = path.join("/tmp", "merclaw-shared-compile-cache");
     const dirA = path.join(base, "v22.13.1-x64-efe9a9df-1001");
     const dirB = path.join(base, "v22.13.1-x64-efe9a9df-1002");
     const warn = vi.fn();
@@ -186,7 +186,7 @@ describe("bundled plugin postinstall", () => {
       }
     });
 
-    pruneOpenClawCompileCache({
+    pruneMerClawCompileCache({
       env: { NODE_COMPILE_CACHE: base },
       existsSync: vi.fn((value: string) => value === base),
       readdirSync: vi.fn(() => [
@@ -202,12 +202,12 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("does not warn when the compile-cache base directory cannot be listed (EACCES)", () => {
-    const base = path.join("/tmp", "openclaw-compile-cache-no-list");
+    const base = path.join("/tmp", "merclaw-compile-cache-no-list");
     const warn = vi.fn();
     const rmSync = vi.fn();
     const err = Object.assign(new Error(`EACCES: ${base}`), { code: "EACCES" });
 
-    pruneOpenClawCompileCache({
+    pruneMerClawCompileCache({
       env: { NODE_COMPILE_CACHE: base },
       existsSync: vi.fn(() => true),
       readdirSync: vi.fn(() => {
@@ -222,7 +222,7 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("patches the Baileys upload helper dispatcher guard", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-baileys-postinstall-");
+    const packageRoot = await createTempDirAsync("merclaw-baileys-postinstall-");
     const mediaFile = await writeBaileysMediaFile(
       packageRoot,
       [
@@ -267,7 +267,7 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("recognizes already patched Baileys upload helpers", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-baileys-postinstall-");
+    const packageRoot = await createTempDirAsync("merclaw-baileys-postinstall-");
     await writeBaileysMediaFile(
       packageRoot,
       [
@@ -300,7 +300,7 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("recognizes Baileys upload helpers with a prepared dispatcher", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-baileys-postinstall-");
+    const packageRoot = await createTempDirAsync("merclaw-baileys-postinstall-");
     await writeBaileysMediaFile(
       packageRoot,
       [
@@ -352,7 +352,7 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("prunes source-checkout bundled plugin node_modules", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-source-checkout-");
+    const packageRoot = await createTempDirAsync("merclaw-source-checkout-");
     const extensionsDir = path.join(packageRoot, "extensions");
     await fs.mkdir(path.join(packageRoot, ".git"), { recursive: true });
     await fs.mkdir(path.join(packageRoot, "src"), { recursive: true });
@@ -377,7 +377,7 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("keeps source-checkout prune non-fatal", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-source-checkout-prune-error-");
+    const packageRoot = await createTempDirAsync("merclaw-source-checkout-prune-error-");
     const extensionsDir = path.join(packageRoot, "extensions");
     await fs.mkdir(path.join(packageRoot, ".git"), { recursive: true });
     await fs.mkdir(path.join(packageRoot, "src"), { recursive: true });
@@ -402,9 +402,9 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("does not prune user-state legacy runtime deps during source-checkout postinstall", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-source-checkout-state-skip-");
-    const home = await createTempDirAsync("openclaw-source-checkout-home-");
-    const legacyRuntimeRoot = path.join(home, ".openclaw", "plugin-runtime-deps");
+    const packageRoot = await createTempDirAsync("merclaw-source-checkout-state-skip-");
+    const home = await createTempDirAsync("merclaw-source-checkout-home-");
+    const legacyRuntimeRoot = path.join(home, ".merclaw", "plugin-runtime-deps");
     await fs.mkdir(path.join(packageRoot, ".git"), { recursive: true });
     await fs.mkdir(path.join(packageRoot, "src"), { recursive: true });
     await fs.mkdir(path.join(packageRoot, "extensions"), { recursive: true });
@@ -421,7 +421,7 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("honors disable env before source-checkout pruning", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-source-checkout-disabled-");
+    const packageRoot = await createTempDirAsync("merclaw-source-checkout-disabled-");
     const extensionsDir = path.join(packageRoot, "extensions");
     await fs.mkdir(path.join(packageRoot, ".git"), { recursive: true });
     await fs.mkdir(path.join(packageRoot, "src"), { recursive: true });
@@ -429,7 +429,7 @@ describe("bundled plugin postinstall", () => {
     await fs.writeFile(path.join(extensionsDir, "acpx", "package.json"), "{}\n");
 
     runBundledPluginPostinstall({
-      env: { OPENCLAW_DISABLE_BUNDLED_PLUGIN_POSTINSTALL: "1" },
+      env: { MERCLAW_DISABLE_BUNDLED_PLUGIN_POSTINSTALL: "1" },
       packageRoot,
       log: { log: vi.fn(), warn: vi.fn() },
     });
@@ -438,7 +438,7 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("migrates the plugin registry during postinstall from built dist contracts", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-postinstall-registry-");
+    const packageRoot = await createTempDirAsync("merclaw-postinstall-registry-");
     const log = { log: vi.fn(), warn: vi.fn() };
     const migratePluginRegistryForInstall = vi.fn(async () => ({
       status: "migrated",
@@ -465,7 +465,7 @@ describe("bundled plugin postinstall", () => {
         ),
       ),
       importModule,
-      env: { OPENCLAW_HOME: "/tmp/home" },
+      env: { MERCLAW_HOME: "/tmp/home" },
       log,
     });
 
@@ -480,7 +480,7 @@ describe("bundled plugin postinstall", () => {
       status: "migrated",
     });
     expect(migratePluginRegistryForInstall).toHaveBeenCalledWith({
-      env: { OPENCLAW_HOME: "/tmp/home" },
+      env: { MERCLAW_HOME: "/tmp/home" },
       packageRoot,
     });
     expect(log.log).toHaveBeenCalledWith(
@@ -494,7 +494,7 @@ describe("bundled plugin postinstall", () => {
       status: "skip-existing",
       migrated: false,
       preflight: {
-        deprecationWarnings: ["OPENCLAW_FORCE_PLUGIN_REGISTRY_MIGRATION is deprecated"],
+        deprecationWarnings: ["MERCLAW_FORCE_PLUGIN_REGISTRY_MIGRATION is deprecated"],
       },
     }));
     const importModule = vi.fn(async () => ({ migratePluginRegistryForInstall }));
@@ -507,7 +507,7 @@ describe("bundled plugin postinstall", () => {
     });
 
     expect(warn).toHaveBeenCalledWith(
-      "[postinstall] OPENCLAW_FORCE_PLUGIN_REGISTRY_MIGRATION is deprecated",
+      "[postinstall] MERCLAW_FORCE_PLUGIN_REGISTRY_MIGRATION is deprecated",
     );
   });
 
@@ -534,7 +534,7 @@ describe("bundled plugin postinstall", () => {
     await expect(
       runPluginRegistryPostinstallMigration({
         packageRoot: "/pkg",
-        env: { OPENCLAW_DISABLE_PLUGIN_REGISTRY_MIGRATION: "1" },
+        env: { MERCLAW_DISABLE_PLUGIN_REGISTRY_MIGRATION: "1" },
         existsSync: vi.fn(() => true),
         importModule,
         log: { log: vi.fn(), warn: vi.fn() },
@@ -558,7 +558,7 @@ describe("bundled plugin postinstall", () => {
     await expect(
       runPluginRegistryPostinstallMigration({
         packageRoot: "/pkg",
-        env: { OPENCLAW_DISABLE_PLUGIN_REGISTRY_MIGRATION: "0" },
+        env: { MERCLAW_DISABLE_PLUGIN_REGISTRY_MIGRATION: "0" },
         existsSync: vi.fn(() => true),
         importModule,
         log: { log: vi.fn(), warn: vi.fn() },
@@ -570,13 +570,13 @@ describe("bundled plugin postinstall", () => {
     });
     expect(importModule).toHaveBeenCalledOnce();
     expect(migratePluginRegistryForInstall).toHaveBeenCalledWith({
-      env: { OPENCLAW_DISABLE_PLUGIN_REGISTRY_MIGRATION: "0" },
+      env: { MERCLAW_DISABLE_PLUGIN_REGISTRY_MIGRATION: "0" },
       packageRoot: "/pkg",
     });
   });
 
   it("prunes stale dist files from packaged installs", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-packaged-install-");
+    const packageRoot = await createTempDirAsync("merclaw-packaged-install-");
     const currentFile = path.join(packageRoot, "dist", "channel-BOa4MfoC.js");
     const staleFile = path.join(packageRoot, "dist", "channel-CJUAgRQR.js");
     await fs.mkdir(path.dirname(currentFile), { recursive: true });
@@ -596,7 +596,7 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("omits unpacked plugin-sdk test helpers from the package dist inventory", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-packaged-inventory-");
+    const packageRoot = await createTempDirAsync("merclaw-packaged-inventory-");
     const runtimeFile = path.join(packageRoot, "dist", "plugin-sdk", "runtime.js");
     const testHelperFile = path.join(packageRoot, "dist", "plugin-sdk", "testing.js");
     const nestedTestHelperFile = path.join(
@@ -624,19 +624,19 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("prunes legacy plugin runtime deps state during packaged postinstall", async () => {
-    const prefix = await createTempDirAsync("openclaw-packaged-prefix-");
-    const packageRoot = path.join(prefix, "lib", "node_modules", "openclaw");
+    const prefix = await createTempDirAsync("merclaw-packaged-prefix-");
+    const packageRoot = path.join(prefix, "lib", "node_modules", "merclaw");
     const nodeModulesRoot = path.dirname(packageRoot);
-    const home = await createTempDirAsync("openclaw-packaged-home-");
+    const home = await createTempDirAsync("merclaw-packaged-home-");
     const stateOverride = path.join(home, "custom-state");
     const systemState = path.join(home, "system-state");
-    const defaultLegacyRoot = path.join(home, ".openclaw", "plugin-runtime-deps");
+    const defaultLegacyRoot = path.join(home, ".merclaw", "plugin-runtime-deps");
     const oldBrandLegacyRoot = path.join(home, ".clawdbot", "plugin-runtime-deps");
     const overrideLegacyRoot = path.join(stateOverride, "plugin-runtime-deps");
     const systemLegacyRoot = path.join(systemState, "plugin-runtime-deps");
     const thirdPartyNodeModules = path.join(
       home,
-      ".openclaw",
+      ".merclaw",
       "extensions",
       "lossless-claw",
       "node_modules",
@@ -644,7 +644,7 @@ describe("bundled plugin postinstall", () => {
     const currentFile = path.join(packageRoot, "dist", "entry.js");
     const legacySymlinkTarget = path.join(
       defaultLegacyRoot,
-      "openclaw-2026.4.29-slack",
+      "merclaw-2026.4.29-slack",
       "node_modules",
       "@slack",
       "web-api",
@@ -673,7 +673,7 @@ describe("bundled plugin postinstall", () => {
     runBundledPluginPostinstall({
       env: {
         HOME: home,
-        OPENCLAW_STATE_DIR: stateOverride,
+        MERCLAW_STATE_DIR: stateOverride,
         STATE_DIRECTORY: systemState,
       },
       packageRoot,
@@ -699,14 +699,14 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("prunes global plugin-runtime symlinks before deleting their legacy targets", async () => {
-    const prefix = await createTempDirAsync("openclaw-packaged-prefix-");
-    const home = await createTempDirAsync("openclaw-packaged-home-");
-    const packageRoot = path.join(prefix, "lib", "node_modules", "openclaw");
+    const prefix = await createTempDirAsync("merclaw-packaged-prefix-");
+    const home = await createTempDirAsync("merclaw-packaged-home-");
+    const packageRoot = path.join(prefix, "lib", "node_modules", "merclaw");
     const nodeModulesRoot = path.dirname(packageRoot);
-    const legacyRuntimeRoot = path.join(home, ".openclaw", "plugin-runtime-deps");
+    const legacyRuntimeRoot = path.join(home, ".merclaw", "plugin-runtime-deps");
     const legacyTarget = path.join(
       legacyRuntimeRoot,
-      "openclaw-2026.4.29-slack",
+      "merclaw-2026.4.29-slack",
       "node_modules",
       "@slack",
       "web-api",
@@ -757,33 +757,33 @@ describe("bundled plugin postinstall", () => {
     );
     expect(warn).toHaveBeenNthCalledWith(
       2,
-      "[postinstall] could not prune legacy plugin runtime deps /home/alice/.openclaw/plugin-runtime-deps: Error: locked",
+      "[postinstall] could not prune legacy plugin runtime deps /home/alice/.merclaw/plugin-runtime-deps: Error: locked",
     );
   });
 
-  it("resolves legacy plugin runtime deps roots from OpenClaw state env", () => {
+  it("resolves legacy plugin runtime deps roots from MerClaw state env", () => {
     expect(
       collectLegacyPluginRuntimeDepsStateRoots({
         env: {
           HOME: "/users/alice",
-          OPENCLAW_HOME: "/srv/openclaw-home",
-          OPENCLAW_CONFIG_PATH: "~/profile/openclaw.json",
-          OPENCLAW_STATE_DIR: "~/state",
-          STATE_DIRECTORY: "/var/lib/openclaw",
+          MERCLAW_HOME: "/srv/merclaw-home",
+          MERCLAW_CONFIG_PATH: "~/profile/merclaw.json",
+          MERCLAW_STATE_DIR: "~/state",
+          STATE_DIRECTORY: "/var/lib/merclaw",
         },
         homedir: () => "/users/alice",
       }),
     ).toEqual([
-      "/srv/openclaw-home/.clawdbot/plugin-runtime-deps",
-      "/srv/openclaw-home/.openclaw/plugin-runtime-deps",
-      "/srv/openclaw-home/profile/plugin-runtime-deps",
-      "/srv/openclaw-home/state/plugin-runtime-deps",
-      "/var/lib/openclaw/plugin-runtime-deps",
+      "/srv/merclaw-home/.clawdbot/plugin-runtime-deps",
+      "/srv/merclaw-home/.merclaw/plugin-runtime-deps",
+      "/srv/merclaw-home/profile/plugin-runtime-deps",
+      "/srv/merclaw-home/state/plugin-runtime-deps",
+      "/var/lib/merclaw/plugin-runtime-deps",
     ]);
   });
 
   it("keeps imported dist chunks even when inventory is stale", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-packaged-install-import-");
+    const packageRoot = await createTempDirAsync("merclaw-packaged-install-import-");
     const entryFile = path.join(packageRoot, "dist", "cli", "run-main.js");
     const importedChunk = path.join(packageRoot, "dist", "memory-state-CcqRgDZU.js");
     const staleFile = path.join(packageRoot, "dist", "memory-state-old.js");
@@ -805,7 +805,7 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("does not abort dist pruning when a listed chunk disappears before import expansion", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-packaged-install-missing-chunk-");
+    const packageRoot = await createTempDirAsync("merclaw-packaged-install-missing-chunk-");
     const entryFile = path.join(packageRoot, "dist", "control-ui", "assets", "instances.js");
     const staleFile = path.join(packageRoot, "dist", "stale.js");
     await fs.mkdir(path.dirname(entryFile), { recursive: true });
@@ -833,7 +833,7 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("prunes stale private QA files without restoring compat sidecars", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-packaged-install-qa-compat-");
+    const packageRoot = await createTempDirAsync("merclaw-packaged-install-qa-compat-");
     const currentFile = path.join(packageRoot, "dist", "entry.js");
     const stalePackage = path.join(packageRoot, "dist", "extensions", "qa-lab", "package.json");
     const staleManifest = path.join(
@@ -841,7 +841,7 @@ describe("bundled plugin postinstall", () => {
       "dist",
       "extensions",
       "qa-lab",
-      "openclaw.plugin.json",
+      "merclaw.plugin.json",
     );
     await fs.mkdir(path.dirname(stalePackage), { recursive: true });
     await fs.writeFile(currentFile, "export {};\n");
@@ -863,7 +863,7 @@ describe("bundled plugin postinstall", () => {
       path.join(packageRoot, "dist", "extensions", "qa-channel", "package.json"),
     );
     await expectPathMissing(
-      path.join(packageRoot, "dist", "extensions", "qa-channel", "openclaw.plugin.json"),
+      path.join(packageRoot, "dist", "extensions", "qa-channel", "merclaw.plugin.json"),
     );
     await expectPathMissing(
       path.join(packageRoot, "dist", "extensions", "qa-lab", "runtime-api.js"),
@@ -871,7 +871,7 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("keeps packaged postinstall non-fatal when the dist inventory is missing", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-packaged-install-missing-inventory-");
+    const packageRoot = await createTempDirAsync("merclaw-packaged-install-missing-inventory-");
     const staleFile = path.join(packageRoot, "dist", "channel-CJUAgRQR.js");
     await fs.mkdir(path.dirname(staleFile), { recursive: true });
     await fs.writeFile(staleFile, "export {};\n");
@@ -891,7 +891,7 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("keeps packaged postinstall non-fatal when the dist inventory is invalid", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-packaged-install-invalid-inventory-");
+    const packageRoot = await createTempDirAsync("merclaw-packaged-install-invalid-inventory-");
     const currentFile = path.join(packageRoot, "dist", "channel-BOa4MfoC.js");
     const inventoryPath = path.join(packageRoot, "dist", "postinstall-inventory.json");
     await fs.mkdir(path.dirname(currentFile), { recursive: true });
@@ -961,7 +961,7 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("prunes stale bundled plugin dependency debris from packaged dist", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-packaged-install-dist-prune-");
+    const packageRoot = await createTempDirAsync("merclaw-packaged-install-dist-prune-");
     const staleFile = path.join(packageRoot, "dist", "stale-runtime.js");
     const packageJson = path.join(packageRoot, "dist", "extensions", "slack", "package.json");
     const binDir = path.join(packageRoot, "dist", "extensions", "slack", "node_modules", ".bin");
@@ -979,7 +979,7 @@ describe("bundled plugin postinstall", () => {
       "dist",
       "extensions",
       "slack",
-      ".openclaw-install-stage",
+      ".merclaw-install-stage",
       "node_modules",
       "typebox",
       "build",
@@ -991,7 +991,7 @@ describe("bundled plugin postinstall", () => {
       "dist",
       "extensions",
       "slack",
-      ".openclaw-install-stage-retry",
+      ".merclaw-install-stage-retry",
       "node_modules",
       "typebox",
       "build",
@@ -1058,13 +1058,13 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("prunes only bundled plugin package node_modules in source checkouts", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-source-prune-");
+    const packageRoot = await createTempDirAsync("merclaw-source-prune-");
     const extensionsDir = path.join(packageRoot, "extensions");
     await fs.mkdir(path.join(extensionsDir, "acpx", "node_modules"), { recursive: true });
     await fs.mkdir(path.join(extensionsDir, "fixtures", "node_modules"), { recursive: true });
     await fs.writeFile(
       path.join(extensionsDir, "acpx", "package.json"),
-      JSON.stringify({ name: "@openclaw/acpx" }),
+      JSON.stringify({ name: "@merclaw/acpx" }),
     );
 
     pruneBundledPluginSourceNodeModules({ extensionsDir });

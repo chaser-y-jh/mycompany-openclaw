@@ -1,5 +1,5 @@
-import type { PluginRuntime } from "openclaw/plugin-sdk/channel-core";
-import { createPluginRuntimeStore } from "openclaw/plugin-sdk/runtime-store";
+import type { PluginRuntime } from "merclaw/plugin-sdk/channel-core";
+import { createPluginRuntimeStore } from "merclaw/plugin-sdk/runtime-store";
 
 type SlackChannelRuntime = {
   handleSlackAction?: typeof import("./action-runtime.js").handleSlackAction;

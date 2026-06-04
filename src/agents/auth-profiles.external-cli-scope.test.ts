@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { resolveExternalCliAuthScopeFromConfig } from "./auth-profiles/external-cli-scope.js";
 
 describe("external CLI auth scope", () => {
@@ -70,7 +70,7 @@ describe("external CLI auth scope", () => {
           },
         ],
       },
-    } satisfies OpenClawConfig;
+    } satisfies MerClawConfig;
 
     const scope = resolveExternalCliAuthScopeFromConfig(cfg);
 

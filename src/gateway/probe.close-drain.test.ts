@@ -35,7 +35,7 @@ function activeClientSocketsToPort(port: number): Socket[] {
 }
 
 async function createTempStateDir(): Promise<string> {
-  const tempRoot = await fs.mkdtemp(path.join(tmpdir(), "openclaw-probe-close-drain-"));
+  const tempRoot = await fs.mkdtemp(path.join(tmpdir(), "merclaw-probe-close-drain-"));
   tempRoots.push(tempRoot);
   return tempRoot;
 }
@@ -101,7 +101,7 @@ describe("probeGateway close drain", () => {
         auth: { token: "secret" },
         timeoutMs: 1_000,
         includeDetails: false,
-        env: { ...process.env, OPENCLAW_STATE_DIR: await createTempStateDir() },
+        env: { ...process.env, MERCLAW_STATE_DIR: await createTempStateDir() },
       });
 
       expect(result.ok).toBe(true);

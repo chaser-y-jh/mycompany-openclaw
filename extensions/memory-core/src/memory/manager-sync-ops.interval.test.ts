@@ -1,10 +1,10 @@
 import type { DatabaseSync } from "node:sqlite";
 import type {
-  OpenClawConfig,
+  MerClawConfig,
   ResolvedMemorySearchConfig,
-} from "openclaw/plugin-sdk/memory-core-host-engine-foundation";
-import type { MemorySource } from "openclaw/plugin-sdk/memory-core-host-engine-storage";
-import { MAX_TIMER_TIMEOUT_MS } from "openclaw/plugin-sdk/number-runtime";
+} from "merclaw/plugin-sdk/memory-core-host-engine-foundation";
+import type { MemorySource } from "merclaw/plugin-sdk/memory-core-host-engine-storage";
+import { MAX_TIMER_TIMEOUT_MS } from "merclaw/plugin-sdk/number-runtime";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { MemoryManagerSyncOps } from "./manager-sync-ops.js";
 
@@ -18,9 +18,9 @@ type MemoryIndexEntry = {
 };
 
 class IntervalSyncHarness extends MemoryManagerSyncOps {
-  protected readonly cfg = {} as OpenClawConfig;
+  protected readonly cfg = {} as MerClawConfig;
   protected readonly agentId = "main";
-  protected readonly workspaceDir = "/tmp/openclaw-memory-interval-test";
+  protected readonly workspaceDir = "/tmp/merclaw-memory-interval-test";
   protected readonly settings: ResolvedMemorySearchConfig;
   protected readonly batch = {
     enabled: false,

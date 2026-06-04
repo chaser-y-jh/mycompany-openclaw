@@ -34,7 +34,7 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/agent-runtime", () => ({
+vi.mock("merclaw/plugin-sdk/agent-runtime", () => ({
   findModelInCatalog: mocks.findModelInCatalog,
   loadModelCatalog: mocks.loadModelCatalog,
   modelSupportsVision: mocks.modelSupportsVision,
@@ -42,7 +42,7 @@ vi.mock("openclaw/plugin-sdk/agent-runtime", () => ({
   resolveDefaultModelForAgent: mocks.resolveDefaultModelForAgent,
 }));
 
-vi.mock("openclaw/plugin-sdk/media-runtime", () => ({
+vi.mock("merclaw/plugin-sdk/media-runtime", () => ({
   resolveAutoImageModel: mocks.resolveAutoImageModel,
   resolveAutoMediaKeyProviders: mocks.resolveAutoMediaKeyProviders,
   resolveDefaultMediaModel: mocks.resolveDefaultMediaModel,

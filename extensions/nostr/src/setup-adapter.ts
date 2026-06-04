@@ -1,8 +1,8 @@
-import type { ChannelSetupAdapter } from "openclaw/plugin-sdk/channel-setup";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { DEFAULT_ACCOUNT_ID } from "openclaw/plugin-sdk/routing";
-import { patchTopLevelChannelConfigSection, splitSetupEntries } from "openclaw/plugin-sdk/setup";
-import { uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { ChannelSetupAdapter } from "merclaw/plugin-sdk/channel-setup";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { DEFAULT_ACCOUNT_ID } from "merclaw/plugin-sdk/routing";
+import { patchTopLevelChannelConfigSection, splitSetupEntries } from "merclaw/plugin-sdk/setup";
+import { uniqueStrings } from "merclaw/plugin-sdk/string-coerce-runtime";
 
 const channel = "nostr" as const;
 
@@ -30,7 +30,7 @@ export function parseRelayUrls(raw: string): { relays: string[]; error?: string 
 }
 
 export function createNostrSetupAdapter(params: {
-  resolveAccountId: (cfg: OpenClawConfig, accountId?: string | null) => string;
+  resolveAccountId: (cfg: MerClawConfig, accountId?: string | null) => string;
   validatePrivateKey: (privateKey: string) => boolean;
 }): ChannelSetupAdapter {
   return {

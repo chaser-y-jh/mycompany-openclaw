@@ -1,1 +1,1 @@
-export { validateToolArguments, validateToolCall } from "@openclaw/llm-core";
+export { validateToolArguments, validateToolCall } from "@merclaw/llm-core";

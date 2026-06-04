@@ -1,23 +1,23 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import type { MemorySearchResult } from "openclaw/plugin-sdk/memory-core-host-runtime-files";
-import { resolveDefaultAgentId, resolveSessionAgentId } from "openclaw/plugin-sdk/memory-host-core";
-import { getActiveMemorySearchManager } from "openclaw/plugin-sdk/memory-host-search";
+import type { MemorySearchResult } from "merclaw/plugin-sdk/memory-core-host-runtime-files";
+import { resolveDefaultAgentId, resolveSessionAgentId } from "merclaw/plugin-sdk/memory-host-core";
+import { getActiveMemorySearchManager } from "merclaw/plugin-sdk/memory-host-search";
 import {
   extractTranscriptIdentityFromSessionsMemoryHit,
   loadCombinedSessionStoreForGateway,
   resolveTranscriptStemToSessionKeys,
-} from "openclaw/plugin-sdk/session-transcript-hit";
+} from "merclaw/plugin-sdk/session-transcript-hit";
 import {
   createAgentToAgentPolicy,
   createSessionVisibilityGuard,
   resolveEffectiveSessionToolsVisibility,
-} from "openclaw/plugin-sdk/session-visibility";
+} from "merclaw/plugin-sdk/session-visibility";
 import {
   normalizeLowercaseStringOrEmpty,
   uniqueStrings,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
-import type { OpenClawConfig } from "../api.js";
+} from "merclaw/plugin-sdk/string-coerce-runtime";
+import type { MerClawConfig } from "../api.js";
 import { assessClaimFreshness, isClaimContestedStatus } from "./claim-health.js";
 import type { ResolvedMemoryWikiConfig, WikiSearchBackend, WikiSearchCorpus } from "./config.js";
 import {
@@ -30,10 +30,10 @@ import {
 import { initializeMemoryWikiVault } from "./vault.js";
 
 const QUERY_DIRS = ["entities", "concepts", "sources", "syntheses", "reports"] as const;
-const AGENT_DIGEST_PATH = ".openclaw-wiki/cache/agent-digest.json";
-const CLAIMS_DIGEST_PATH = ".openclaw-wiki/cache/claims.jsonl";
+const AGENT_DIGEST_PATH = ".merclaw-wiki/cache/agent-digest.json";
+const CLAIMS_DIGEST_PATH = ".merclaw-wiki/cache/claims.jsonl";
 const RELATED_BLOCK_PATTERN =
-  /<!-- openclaw:wiki:related:start -->[\s\S]*?<!-- openclaw:wiki:related:end -->/g;
+  /<!-- merclaw:wiki:related:start -->[\s\S]*?<!-- merclaw:wiki:related:end -->/g;
 const MARKDOWN_FRONTMATTER_PATTERN = /^\s*---\r?\n[\s\S]*?\r?\n---\r?\n?/;
 const ROUTE_QUESTION_STOP_WORDS = new Set([
   "a",
@@ -993,7 +993,7 @@ function shouldUseSharedMemory(config: ResolvedMemoryWikiConfig): boolean {
 
 function assertSessionVisibilityAppConfig(params: {
   config: ResolvedMemoryWikiConfig;
-  appConfig?: OpenClawConfig;
+  appConfig?: MerClawConfig;
   agentId?: string;
   agentSessionKey?: string;
   sandboxed?: boolean;
@@ -1028,13 +1028,13 @@ function shouldSearchWiki(config: ResolvedMemoryWikiConfig): boolean {
 
 function shouldSearchSharedMemory(
   config: ResolvedMemoryWikiConfig,
-  appConfig?: OpenClawConfig,
+  appConfig?: MerClawConfig,
 ): boolean {
   return shouldUseSharedMemory(config) && appConfig !== undefined;
 }
 
 function resolveActiveMemoryAgentId(params: {
-  appConfig?: OpenClawConfig;
+  appConfig?: MerClawConfig;
   agentId?: string;
   agentSessionKey?: string;
 }): string | null {
@@ -1054,7 +1054,7 @@ function resolveActiveMemoryAgentId(params: {
 }
 
 async function resolveActiveMemoryManager(params: {
-  appConfig?: OpenClawConfig;
+  appConfig?: MerClawConfig;
   agentId?: string;
   agentSessionKey?: string;
 }) {
@@ -1219,7 +1219,7 @@ function toMemoryWikiSearchResult(
 }
 
 async function filterMemoryWikiSearchHitsBySessionVisibility(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentId: string | undefined;
   requesterSessionKey: string | undefined;
   sandboxed: boolean;
@@ -1244,7 +1244,7 @@ async function filterMemoryWikiSearchHitsBySessionVisibility(params: {
 type SessionMemoryPathVisibilityChecker = (relPath: string) => boolean;
 
 function filterSessionKeysByScopedAgent(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   keys: string[];
   scopedAgentId: string | undefined;
 }): string[] {
@@ -1265,7 +1265,7 @@ function filterSessionKeysByScopedAgent(params: {
 }
 
 async function createSessionMemoryPathVisibilityChecker(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentId: string | undefined;
   requesterSessionKey: string | undefined;
   sandboxed: boolean;
@@ -1453,7 +1453,7 @@ export function resolveQueryableWikiPageByLookup(
 
 export async function searchMemoryWiki(params: {
   config: ResolvedMemoryWikiConfig;
-  appConfig?: OpenClawConfig;
+  appConfig?: MerClawConfig;
   agentId?: string;
   agentSessionKey?: string;
   sandboxed?: boolean;
@@ -1520,7 +1520,7 @@ export async function searchMemoryWiki(params: {
 
 export async function getMemoryWikiPage(params: {
   config: ResolvedMemoryWikiConfig;
-  appConfig?: OpenClawConfig;
+  appConfig?: MerClawConfig;
   agentId?: string;
   agentSessionKey?: string;
   sandboxed?: boolean;

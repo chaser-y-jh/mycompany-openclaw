@@ -12,7 +12,7 @@ import { ModelRegistry } from "./model-registry.js";
 const tempDirs: string[] = [];
 
 function writeModelsJson(contents: unknown): string {
-  const dir = mkdtempSync(join(tmpdir(), "openclaw-model-registry-"));
+  const dir = mkdtempSync(join(tmpdir(), "merclaw-model-registry-"));
   tempDirs.push(dir);
   const file = join(dir, "models.json");
   writeFileSync(file, JSON.stringify(contents, null, 2), "utf-8");
@@ -24,7 +24,7 @@ function writeModelsJsonWithPluginCatalog(params: {
   pluginRelativePath: string;
   pluginCatalog: unknown;
 }): string {
-  const dir = mkdtempSync(join(tmpdir(), "openclaw-model-registry-"));
+  const dir = mkdtempSync(join(tmpdir(), "merclaw-model-registry-"));
   tempDirs.push(dir);
   const file = join(dir, "models.json");
   const pluginFile = join(dir, params.pluginRelativePath);

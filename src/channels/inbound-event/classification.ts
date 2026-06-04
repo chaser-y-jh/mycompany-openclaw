@@ -1,5 +1,5 @@
 import { resolveAgentConfig } from "../../agents/agent-scope.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import type { ConversationFacts } from "../turn/types.js";
 import type { InboundEventKind } from "./kind.js";
 
@@ -33,7 +33,7 @@ export function classifyChannelInboundEvent(
 }
 
 export function resolveUnmentionedGroupInboundPolicy(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentId?: string;
 }): InboundEventKind {
   const agentGroupChat = params.agentId

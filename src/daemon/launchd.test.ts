@@ -9,17 +9,17 @@ import {
 } from "./launchd-plist.js";
 import {
   installLaunchAgent,
-  disableCurrentOpenClawUpdateLaunchdJob,
-  disableOpenClawUpdateLaunchdJob,
-  findStaleOpenClawUpdateLaunchdJobs,
+  disableCurrentMerClawUpdateLaunchdJob,
+  disableMerClawUpdateLaunchdJob,
+  findStaleMerClawUpdateLaunchdJobs,
   isLaunchAgentListed,
-  isOpenClawUpdateLaunchdLabel,
+  isMerClawUpdateLaunchdLabel,
   parseLaunchctlPrint,
-  parseLaunchctlListOpenClawUpdateJobs,
+  parseLaunchctlListMerClawUpdateJobs,
   readLaunchAgentProgramArguments,
   readLaunchAgentRuntime,
   repairLaunchAgentBootstrap,
-  removeOpenClawUpdateLaunchdJob,
+  removeMerClawUpdateLaunchdJob,
   restartLaunchAgent,
   resolveLaunchAgentPlistPath,
   stopLaunchAgent,
@@ -82,7 +82,7 @@ function countMatching<T>(items: readonly T[], predicate: (item: T) => boolean):
 function createDefaultLaunchdEnv(): Record<string, string | undefined> {
   return {
     HOME: "/Users/test",
-    OPENCLAW_PROFILE: "default",
+    MERCLAW_PROFILE: "default",
   };
 }
 
@@ -104,7 +104,7 @@ async function runStopLaunchAgentWithFakeTimers(args: Parameters<typeof stopLaun
 
 function expectLaunchctlEnableBootstrapOrder(env: Record<string, string | undefined>) {
   const domain = typeof process.getuid === "function" ? `gui/${process.getuid()}` : "gui/501";
-  const label = "ai.openclaw.gateway";
+  const label = "ai.merclaw.gateway";
   const plistPath = resolveLaunchAgentPlistPath(env);
   const serviceId = `${domain}/${label}`;
   const enableIndex = state.launchctlCalls.findIndex(
@@ -416,9 +416,9 @@ describe("launchd runtime state", () => {
 
 describe("launchctl list detection", () => {
   it("detects the resolved label in launchctl list", async () => {
-    state.listOutput = "123 0 ai.openclaw.gateway\n";
+    state.listOutput = "123 0 ai.merclaw.gateway\n";
     const listed = await isLaunchAgentListed({
-      env: { HOME: "/Users/test", OPENCLAW_PROFILE: "default" },
+      env: { HOME: "/Users/test", MERCLAW_PROFILE: "default" },
     });
     expect(listed).toBe(true);
   });
@@ -426,28 +426,28 @@ describe("launchctl list detection", () => {
   it("returns false when the label is missing", async () => {
     state.listOutput = "123 0 com.other.service\n";
     const listed = await isLaunchAgentListed({
-      env: { HOME: "/Users/test", OPENCLAW_PROFILE: "default" },
+      env: { HOME: "/Users/test", MERCLAW_PROFILE: "default" },
     });
     expect(listed).toBe(false);
   });
 
-  it("parses stale OpenClaw updater jobs from launchctl list", () => {
-    const jobs = parseLaunchctlListOpenClawUpdateJobs(
+  it("parses stale MerClaw updater jobs from launchctl list", () => {
+    const jobs = parseLaunchctlListMerClawUpdateJobs(
       [
-        "123 0 ai.openclaw.gateway",
-        "- 127 ai.openclaw.update.2026.5.12",
-        "8142 0 ai.openclaw.update.2026.5.13-beta.1",
+        "123 0 ai.merclaw.gateway",
+        "- 127 ai.merclaw.update.2026.5.12",
+        "8142 0 ai.merclaw.update.2026.5.13-beta.1",
         "- 0 com.example.other",
       ].join("\n"),
     );
 
     expect(jobs).toEqual([
       {
-        label: "ai.openclaw.update.2026.5.12",
+        label: "ai.merclaw.update.2026.5.12",
         lastExitStatus: 127,
       },
       {
-        label: "ai.openclaw.update.2026.5.13-beta.1",
+        label: "ai.merclaw.update.2026.5.13-beta.1",
         pid: 8142,
         lastExitStatus: 0,
       },
@@ -455,84 +455,84 @@ describe("launchctl list detection", () => {
   });
 
   it.runIf(process.platform === "darwin")(
-    "finds stale OpenClaw updater jobs via launchctl list",
+    "finds stale MerClaw updater jobs via launchctl list",
     async () => {
-      state.listOutput = "- 127 ai.openclaw.update.2026.5.12\n";
+      state.listOutput = "- 127 ai.merclaw.update.2026.5.12\n";
 
-      const jobs = await findStaleOpenClawUpdateLaunchdJobs();
+      const jobs = await findStaleMerClawUpdateLaunchdJobs();
 
       expect(jobs).toEqual([
         {
-          label: "ai.openclaw.update.2026.5.12",
+          label: "ai.merclaw.update.2026.5.12",
           lastExitStatus: 127,
         },
       ]);
     },
   );
 
-  it("recognizes only legacy OpenClaw update launchd labels", () => {
-    expect(isOpenClawUpdateLaunchdLabel("ai.openclaw.update.2026.5.12")).toBe(true);
-    expect(isOpenClawUpdateLaunchdLabel("ai.openclaw.gateway")).toBe(false);
-    expect(isOpenClawUpdateLaunchdLabel("com.example.update")).toBe(false);
+  it("recognizes only legacy MerClaw update launchd labels", () => {
+    expect(isMerClawUpdateLaunchdLabel("ai.merclaw.update.2026.5.12")).toBe(true);
+    expect(isMerClawUpdateLaunchdLabel("ai.merclaw.gateway")).toBe(false);
+    expect(isMerClawUpdateLaunchdLabel("com.example.update")).toBe(false);
   });
 
   it.runIf(process.platform === "darwin")("removes legacy updater launchd jobs", async () => {
-    await expect(removeOpenClawUpdateLaunchdJob(" ai.openclaw.update.2026.5.12 ")).resolves.toBe(
+    await expect(removeMerClawUpdateLaunchdJob(" ai.merclaw.update.2026.5.12 ")).resolves.toBe(
       true,
     );
 
-    expect(state.launchctlCalls).toContainEqual(["remove", "ai.openclaw.update.2026.5.12"]);
+    expect(state.launchctlCalls).toContainEqual(["remove", "ai.merclaw.update.2026.5.12"]);
   });
 
   it.runIf(process.platform === "darwin")(
     "disables the current legacy updater launchd job",
     async () => {
       await expect(
-        disableCurrentOpenClawUpdateLaunchdJob({
-          LAUNCH_JOB_LABEL: "ai.openclaw.update.2026.5.12",
+        disableCurrentMerClawUpdateLaunchdJob({
+          LAUNCH_JOB_LABEL: "ai.merclaw.update.2026.5.12",
         }),
       ).resolves.toBe(true);
 
       const domain = typeof process.getuid === "function" ? `gui/${process.getuid()}` : "gui/501";
       expect(state.launchctlCalls).toContainEqual([
         "disable",
-        `${domain}/ai.openclaw.update.2026.5.12`,
+        `${domain}/ai.merclaw.update.2026.5.12`,
       ]);
       expect(launchctlCommandNames()).not.toContain("remove");
     },
   );
 
   it.runIf(process.platform === "darwin")(
-    "disables the current legacy updater launchd job from OpenClaw label env",
+    "disables the current legacy updater launchd job from MerClaw label env",
     async () => {
       await expect(
-        disableCurrentOpenClawUpdateLaunchdJob({
-          OPENCLAW_LAUNCHD_LABEL: "ai.openclaw.update.2026.5.12",
+        disableCurrentMerClawUpdateLaunchdJob({
+          MERCLAW_LAUNCHD_LABEL: "ai.merclaw.update.2026.5.12",
         }),
       ).resolves.toBe(true);
 
       const domain = typeof process.getuid === "function" ? `gui/${process.getuid()}` : "gui/501";
       expect(state.launchctlCalls).toContainEqual([
         "disable",
-        `${domain}/ai.openclaw.update.2026.5.12`,
+        `${domain}/ai.merclaw.update.2026.5.12`,
       ]);
     },
   );
 
   it.runIf(process.platform === "darwin")(
-    "does not let non-update launchd markers mask the OpenClaw update label",
+    "does not let non-update launchd markers mask the MerClaw update label",
     async () => {
       await expect(
-        disableCurrentOpenClawUpdateLaunchdJob({
+        disableCurrentMerClawUpdateLaunchdJob({
           XPC_SERVICE_NAME: "0",
-          OPENCLAW_LAUNCHD_LABEL: "ai.openclaw.update.2026.5.12",
+          MERCLAW_LAUNCHD_LABEL: "ai.merclaw.update.2026.5.12",
         }),
       ).resolves.toBe(true);
 
       const domain = typeof process.getuid === "function" ? `gui/${process.getuid()}` : "gui/501";
       expect(state.launchctlCalls).toContainEqual([
         "disable",
-        `${domain}/ai.openclaw.update.2026.5.12`,
+        `${domain}/ai.merclaw.update.2026.5.12`,
       ]);
     },
   );
@@ -541,8 +541,8 @@ describe("launchctl list detection", () => {
     "does not disable the current gateway launchd job",
     async () => {
       await expect(
-        disableCurrentOpenClawUpdateLaunchdJob({
-          LAUNCH_JOB_LABEL: "ai.openclaw.gateway",
+        disableCurrentMerClawUpdateLaunchdJob({
+          LAUNCH_JOB_LABEL: "ai.merclaw.gateway",
         }),
       ).resolves.toBe(false);
 
@@ -554,9 +554,9 @@ describe("launchctl list detection", () => {
     "does not disable profile-specific gateway launchd jobs that look like updater labels",
     async () => {
       await expect(
-        disableCurrentOpenClawUpdateLaunchdJob({
-          LAUNCH_JOB_LABEL: "ai.openclaw.update.2026.5.12",
-          OPENCLAW_PROFILE: "update.2026.5.12",
+        disableCurrentMerClawUpdateLaunchdJob({
+          LAUNCH_JOB_LABEL: "ai.merclaw.update.2026.5.12",
+          MERCLAW_PROFILE: "update.2026.5.12",
         }),
       ).resolves.toBe(false);
 
@@ -568,11 +568,11 @@ describe("launchctl list detection", () => {
     "does not disable custom gateway launchd labels that look like updater labels",
     async () => {
       await expect(
-        disableCurrentOpenClawUpdateLaunchdJob({
-          LAUNCH_JOB_LABEL: "ai.openclaw.update.2026.5.12",
-          OPENCLAW_LAUNCHD_LABEL: "ai.openclaw.update.2026.5.12",
-          OPENCLAW_SERVICE_MARKER: "openclaw",
-          OPENCLAW_SERVICE_KIND: "gateway",
+        disableCurrentMerClawUpdateLaunchdJob({
+          LAUNCH_JOB_LABEL: "ai.merclaw.update.2026.5.12",
+          MERCLAW_LAUNCHD_LABEL: "ai.merclaw.update.2026.5.12",
+          MERCLAW_SERVICE_MARKER: "merclaw",
+          MERCLAW_SERVICE_KIND: "gateway",
         }),
       ).resolves.toBe(false);
 
@@ -581,14 +581,14 @@ describe("launchctl list detection", () => {
   );
 
   it.runIf(process.platform === "darwin")("disables explicit legacy updater jobs", async () => {
-    await expect(disableOpenClawUpdateLaunchdJob("ai.openclaw.update.2026.5.12")).resolves.toBe(
+    await expect(disableMerClawUpdateLaunchdJob("ai.merclaw.update.2026.5.12")).resolves.toBe(
       true,
     );
 
     const domain = typeof process.getuid === "function" ? `gui/${process.getuid()}` : "gui/501";
     expect(state.launchctlCalls).toContainEqual([
       "disable",
-      `${domain}/ai.openclaw.update.2026.5.12`,
+      `${domain}/ai.merclaw.update.2026.5.12`,
     ]);
   });
 });
@@ -699,7 +699,7 @@ describe("launchd install", () => {
 
   it("writes LaunchAgent environment to an owner-only env file when provided", async () => {
     const env = createDefaultLaunchdEnv();
-    const tmpDir = "/Users/test/.openclaw/tmp";
+    const tmpDir = "/Users/test/.merclaw/tmp";
     const apiKey = "secret-api-key";
     await installLaunchAgent({
       env,
@@ -709,8 +709,8 @@ describe("launchd install", () => {
     });
 
     const plistPath = resolveLaunchAgentPlistPath(env);
-    const envFilePath = "/Users/test/.openclaw/service-env/ai.openclaw.gateway.env";
-    const wrapperPath = "/Users/test/.openclaw/service-env/ai.openclaw.gateway-env-wrapper.sh";
+    const envFilePath = "/Users/test/.merclaw/service-env/ai.merclaw.gateway.env";
+    const wrapperPath = "/Users/test/.merclaw/service-env/ai.merclaw.gateway-env-wrapper.sh";
     const plist = state.files.get(plistPath) ?? "";
     expect(plist).not.toContain("<key>EnvironmentVariables</key>");
     expect(plist).not.toContain(apiKey);
@@ -721,7 +721,7 @@ describe("launchd install", () => {
     expect(envFile).toContain(`export OPENAI_API_KEY='${apiKey}'`);
     expect(state.fileModes.get(envFilePath)).toBe(0o600);
     expect(state.fileModes.get(wrapperPath)).toBe(0o700);
-    expect(state.dirModes.get("/Users/test/.openclaw/service-env")).toBe(0o700);
+    expect(state.dirModes.get("/Users/test/.merclaw/service-env")).toBe(0o700);
 
     const command = await readLaunchAgentProgramArguments(env);
     expect(command?.programArguments).toEqual(defaultProgramArguments);
@@ -735,29 +735,29 @@ describe("launchd install", () => {
     const callerEnv = createDefaultLaunchdEnv();
     const serviceEnv = {
       ...callerEnv,
-      OPENCLAW_STATE_DIR: "/Users/test/service-env/custom-state",
+      MERCLAW_STATE_DIR: "/Users/test/service-env/custom-state",
     };
     await installLaunchAgent({
       env: serviceEnv,
       stdout: new PassThrough(),
       programArguments: defaultProgramArguments,
       environment: {
-        OPENCLAW_GATEWAY_PORT: "18789",
-        OPENCLAW_STATE_DIR: serviceEnv.OPENCLAW_STATE_DIR,
+        MERCLAW_GATEWAY_PORT: "18789",
+        MERCLAW_STATE_DIR: serviceEnv.MERCLAW_STATE_DIR,
       },
     });
 
     const plistPath = resolveLaunchAgentPlistPath(callerEnv);
-    const envFilePath = "/Users/test/service-env/custom-state/service-env/ai.openclaw.gateway.env";
+    const envFilePath = "/Users/test/service-env/custom-state/service-env/ai.merclaw.gateway.env";
     const wrapperPath =
-      "/Users/test/service-env/custom-state/service-env/ai.openclaw.gateway-env-wrapper.sh";
-    const callerEnvFilePath = "/Users/test/.openclaw/service-env/ai.openclaw.gateway.env";
+      "/Users/test/service-env/custom-state/service-env/ai.merclaw.gateway-env-wrapper.sh";
+    const callerEnvFilePath = "/Users/test/.merclaw/service-env/ai.merclaw.gateway.env";
     const callerWrapperPath =
-      "/Users/test/.openclaw/service-env/ai.openclaw.gateway-env-wrapper.sh";
+      "/Users/test/.merclaw/service-env/ai.merclaw.gateway-env-wrapper.sh";
     const mangledEnvFilePath =
-      "/Users/test/service-env/custom-state/service-env/[ai.openclaw.gateway.env](http:/ai.openclaw.gateway.env)";
+      "/Users/test/service-env/custom-state/service-env/[ai.merclaw.gateway.env](http:/ai.merclaw.gateway.env)";
     const mangledWrapperPath =
-      "/Users/test/service-env/custom-state/service-env/[ai.openclaw.gateway-env-wrapper.sh](http:/ai.openclaw.gateway-env-wrapper.sh)";
+      "/Users/test/service-env/custom-state/service-env/[ai.merclaw.gateway-env-wrapper.sh](http:/ai.merclaw.gateway-env-wrapper.sh)";
     state.files.set(
       plistPath,
       (state.files.get(plistPath) ?? "")
@@ -767,9 +767,9 @@ describe("launchd install", () => {
 
     const command = await readLaunchAgentProgramArguments(callerEnv);
     expect(command?.programArguments).toEqual(defaultProgramArguments);
-    expect(command?.environment?.OPENCLAW_GATEWAY_PORT).toBe("18789");
-    expect(command?.environment?.OPENCLAW_STATE_DIR).toBe(serviceEnv.OPENCLAW_STATE_DIR);
-    expect(command?.environmentValueSources?.OPENCLAW_GATEWAY_PORT).toBe("file");
+    expect(command?.environment?.MERCLAW_GATEWAY_PORT).toBe("18789");
+    expect(command?.environment?.MERCLAW_STATE_DIR).toBe(serviceEnv.MERCLAW_STATE_DIR);
+    expect(command?.environmentValueSources?.MERCLAW_GATEWAY_PORT).toBe("file");
 
     await restartLaunchAgent({
       env: callerEnv,
@@ -782,15 +782,15 @@ describe("launchd install", () => {
     expect(rewritten).not.toContain(mangledEnvFilePath);
     expect(rewritten).not.toContain(mangledWrapperPath);
     const rewrittenEnv = state.files.get(callerEnvFilePath) ?? "";
-    expect(rewrittenEnv).toContain("export OPENCLAW_GATEWAY_PORT='18789'");
+    expect(rewrittenEnv).toContain("export MERCLAW_GATEWAY_PORT='18789'");
     expect(rewrittenEnv).toContain(
-      "export OPENCLAW_STATE_DIR='/Users/test/service-env/custom-state'",
+      "export MERCLAW_STATE_DIR='/Users/test/service-env/custom-state'",
     );
   });
 
   it("creates the LaunchAgent TMPDIR before bootstrap", async () => {
     const env = createDefaultLaunchdEnv();
-    const tmpDir = "/Users/test/.openclaw/tmp";
+    const tmpDir = "/Users/test/.merclaw/tmp";
     await installLaunchAgent({
       env,
       stdout: new PassThrough(),
@@ -817,7 +817,7 @@ describe("launchd install", () => {
     expect(plist).toContain("<key>StandardInPath</key>");
     expect(plist).toContain(`<string>${LAUNCH_AGENT_STDIN_PATH}</string>`);
     expect(plist).toContain("<key>StandardOutPath</key>");
-    expect(plist).toContain("<string>/Users/test/Library/Logs/openclaw/gateway.log</string>");
+    expect(plist).toContain("<string>/Users/test/Library/Logs/merclaw/gateway.log</string>");
     expect(plist).not.toContain("<key>SuccessfulExit</key>");
     expect(plist).toContain("<key>ExitTimeOut</key>");
     expect(plist).toContain(`<integer>${LAUNCH_AGENT_EXIT_TIMEOUT_SECONDS}</integer>`);
@@ -842,7 +842,7 @@ describe("launchd install", () => {
         '<plist version="1.0">',
         "  <dict>",
         "    <key>Label</key>",
-        "    <string>ai.openclaw.gateway</string>",
+        "    <string>ai.merclaw.gateway</string>",
         "    <key>ProgramArguments</key>",
         "    <array>",
         "      <string>node</string>",
@@ -861,7 +861,7 @@ describe("launchd install", () => {
     const plist = state.files.get(plistPath) ?? "";
     expect(plist).toContain("<key>StandardInPath</key>");
     expect(plist).toContain("<key>StandardOutPath</key>");
-    expect(plist).toContain("<string>/Users/test/Library/Logs/openclaw/gateway.log</string>");
+    expect(plist).toContain("<string>/Users/test/Library/Logs/merclaw/gateway.log</string>");
     expect(plist).toContain("<key>StandardErrorPath</key>");
     expect(plist).toContain("<string>/dev/null</string>");
     expect(plist).toContain("<key>KeepAlive</key>");
@@ -904,7 +904,7 @@ describe("launchd install", () => {
     await stopLaunchAgent({ env, stdout });
 
     const domain = typeof process.getuid === "function" ? `gui/${process.getuid()}` : "gui/501";
-    const serviceId = `${domain}/ai.openclaw.gateway`;
+    const serviceId = `${domain}/ai.merclaw.gateway`;
     expect(state.launchctlCalls).toEqual([["bootout", serviceId]]);
     expect(output).toContain("Stopped LaunchAgent");
   });
@@ -912,7 +912,7 @@ describe("launchd install", () => {
   it("verifies the configured gateway port is released before reporting stop success", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "19003",
+      MERCLAW_GATEWAY_PORT: "19003",
     };
     const stdout = new PassThrough();
     let output = "";
@@ -933,7 +933,7 @@ describe("launchd install", () => {
       env,
       stdout: new PassThrough(),
       programArguments: defaultProgramArguments,
-      environment: { OPENCLAW_GATEWAY_PORT: "19006" },
+      environment: { MERCLAW_GATEWAY_PORT: "19006" },
     });
     state.launchctlCalls.length = 0;
 
@@ -946,7 +946,7 @@ describe("launchd install", () => {
   it("fails stop when the verified gateway port remains busy after cleanup", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "19004",
+      MERCLAW_GATEWAY_PORT: "19004",
     };
     const stdout = new PassThrough();
     let output = "";
@@ -981,10 +981,10 @@ describe("launchd install", () => {
     await stopLaunchAgent({ env, stdout, disable: true });
 
     const domain = typeof process.getuid === "function" ? `gui/${process.getuid()}` : "gui/501";
-    const serviceId = `${domain}/ai.openclaw.gateway`;
+    const serviceId = `${domain}/ai.merclaw.gateway`;
     expect(state.launchctlCalls).toEqual([
       ["disable", serviceId],
-      ["stop", "ai.openclaw.gateway"],
+      ["stop", "ai.merclaw.gateway"],
       ["print", serviceId],
     ]);
     expect(output).toContain("Stopped LaunchAgent");
@@ -993,7 +993,7 @@ describe("launchd install", () => {
   it("verifies the configured gateway port is released before reporting disable stop success", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "19005",
+      MERCLAW_GATEWAY_PORT: "19005",
     };
     const stdout = new PassThrough();
     let output = "";
@@ -1023,10 +1023,10 @@ describe("launchd install", () => {
     await stopLaunchAgent({ env, stdout, disable: true });
 
     const domain = typeof process.getuid === "function" ? `gui/${process.getuid()}` : "gui/501";
-    const serviceId = `${domain}/ai.openclaw.gateway`;
+    const serviceId = `${domain}/ai.merclaw.gateway`;
     expect(state.launchctlCalls).toEqual([
       ["disable", serviceId],
-      ["stop", "ai.openclaw.gateway"],
+      ["stop", "ai.merclaw.gateway"],
       ["print", serviceId],
     ]);
     expect(launchctlCommandNames()).not.toContain("bootout");
@@ -1071,7 +1071,7 @@ describe("launchd install", () => {
   it("does not report degraded stop success when fallback cleanup leaves the port busy", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "19008",
+      MERCLAW_GATEWAY_PORT: "19008",
     };
     const stdout = new PassThrough();
     let output = "";
@@ -1207,7 +1207,7 @@ describe("launchd install", () => {
   it("restarts LaunchAgent with kickstart and no bootout", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "18789",
+      MERCLAW_GATEWAY_PORT: "18789",
     };
     const result = await restartLaunchAgent({
       env,
@@ -1215,7 +1215,7 @@ describe("launchd install", () => {
     });
 
     const domain = typeof process.getuid === "function" ? `gui/${process.getuid()}` : "gui/501";
-    const label = "ai.openclaw.gateway";
+    const label = "ai.merclaw.gateway";
     const serviceId = `${domain}/${label}`;
     expect(result).toEqual({ outcome: "completed" });
     expect(cleanStaleGatewayProcessesSync).toHaveBeenCalledWith(18789);
@@ -1230,7 +1230,7 @@ describe("launchd install", () => {
   it("reloads launchd after rewriting an existing plist", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "18789",
+      MERCLAW_GATEWAY_PORT: "18789",
     };
     const plistPath = resolveLaunchAgentPlistPath(env);
     state.files.set(
@@ -1240,14 +1240,14 @@ describe("launchd install", () => {
         '<plist version="1.0">',
         "  <dict>",
         "    <key>Label</key>",
-        "    <string>ai.openclaw.gateway</string>",
+        "    <string>ai.merclaw.gateway</string>",
         "    <key>ProgramArguments</key>",
         "    <array>",
         "      <string>node</string>",
         "      <string>gateway.js</string>",
         "    </array>",
         "    <key>StandardOutPath</key>",
-        "    <string>/Users/test/.openclaw-default/logs/gateway.log</string>",
+        "    <string>/Users/test/.merclaw-default/logs/gateway.log</string>",
         "  </dict>",
         "</plist>",
       ].join("\n"),
@@ -1261,7 +1261,7 @@ describe("launchd install", () => {
     const plist = state.files.get(plistPath) ?? "";
     expect(plist).toContain("<key>StandardInPath</key>");
     expect(plist).toContain("<string>/dev/null</string>");
-    expect(plist).toContain("<string>/Users/test/Library/Logs/openclaw/gateway.log</string>");
+    expect(plist).toContain("<string>/Users/test/Library/Logs/merclaw/gateway.log</string>");
     expect(launchctlCommandNames()).toEqual(["enable", "bootout", "enable", "bootstrap"]);
     expect(launchctlCommandNames()).not.toContain("kickstart");
   });
@@ -1269,7 +1269,7 @@ describe("launchd install", () => {
   it("treats a concurrent launchd bootstrap as success when the service is loaded", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "18789",
+      MERCLAW_GATEWAY_PORT: "18789",
     };
     const plistPath = resolveLaunchAgentPlistPath(env);
     state.files.set(
@@ -1279,14 +1279,14 @@ describe("launchd install", () => {
         '<plist version="1.0">',
         "  <dict>",
         "    <key>Label</key>",
-        "    <string>ai.openclaw.gateway</string>",
+        "    <string>ai.merclaw.gateway</string>",
         "    <key>ProgramArguments</key>",
         "    <array>",
         "      <string>node</string>",
         "      <string>gateway.js</string>",
         "    </array>",
         "    <key>StandardOutPath</key>",
-        "    <string>/Users/test/.openclaw-default/logs/gateway.log</string>",
+        "    <string>/Users/test/.merclaw-default/logs/gateway.log</string>",
         "  </dict>",
         "</plist>",
       ].join("\n"),
@@ -1307,7 +1307,7 @@ describe("launchd install", () => {
   it("uses the configured gateway port for stale cleanup", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "19001",
+      MERCLAW_GATEWAY_PORT: "19001",
     };
 
     await restartLaunchAgent({
@@ -1321,7 +1321,7 @@ describe("launchd install", () => {
   it("ignores invalid configured gateway ports for stale cleanup", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "65536",
+      MERCLAW_GATEWAY_PORT: "65536",
     };
     state.files.clear();
 
@@ -1340,7 +1340,7 @@ describe("launchd install", () => {
       env,
       stdout: new PassThrough(),
       programArguments: defaultProgramArguments,
-      environment: { OPENCLAW_GATEWAY_PORT: "19007" },
+      environment: { MERCLAW_GATEWAY_PORT: "19007" },
     });
     state.launchctlCalls.length = 0;
 
@@ -1359,7 +1359,7 @@ describe("launchd install", () => {
       env,
       stdout: new PassThrough(),
       programArguments: defaultProgramArguments,
-      environment: { OPENCLAW_GATEWAY_PORT: "65536" },
+      environment: { MERCLAW_GATEWAY_PORT: "65536" },
     });
     state.launchctlCalls.length = 0;
 
@@ -1375,7 +1375,7 @@ describe("launchd install", () => {
   it("fails restart before kickstart when the configured gateway port remains busy", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "19002",
+      MERCLAW_GATEWAY_PORT: "19002",
     };
     const plistPath = resolveLaunchAgentPlistPath(env);
     const originalPlist = [
@@ -1383,14 +1383,14 @@ describe("launchd install", () => {
       '<plist version="1.0">',
       "  <dict>",
       "    <key>Label</key>",
-      "    <string>ai.openclaw.gateway</string>",
+      "    <string>ai.merclaw.gateway</string>",
       "    <key>ProgramArguments</key>",
       "    <array>",
       "      <string>node</string>",
       "      <string>gateway.js</string>",
       "    </array>",
       "    <key>StandardOutPath</key>",
-      "    <string>/Users/test/.openclaw-default/logs/gateway.log</string>",
+      "    <string>/Users/test/.merclaw-default/logs/gateway.log</string>",
       "  </dict>",
       "</plist>",
     ].join("\n");
@@ -1442,7 +1442,7 @@ describe("launchd install", () => {
     });
 
     const domain = typeof process.getuid === "function" ? `gui/${process.getuid()}` : "gui/501";
-    const serviceId = `${domain}/ai.openclaw.gateway`;
+    const serviceId = `${domain}/ai.merclaw.gateway`;
     const kickstartCalls = state.launchctlCalls.filter(
       (c) => c[0] === "kickstart" && c[1] === "-k" && c[2] === serviceId,
     );
@@ -1517,14 +1517,14 @@ describe("launchd install", () => {
         '<plist version="1.0">',
         "  <dict>",
         "    <key>Label</key>",
-        "    <string>ai.openclaw.gateway</string>",
+        "    <string>ai.merclaw.gateway</string>",
         "    <key>ProgramArguments</key>",
         "    <array>",
         "      <string>node</string>",
         "      <string>gateway.js</string>",
         "    </array>",
         "    <key>StandardOutPath</key>",
-        "    <string>/Users/test/.openclaw-default/logs/gateway.log</string>",
+        "    <string>/Users/test/.merclaw-default/logs/gateway.log</string>",
         "  </dict>",
         "</plist>",
       ].join("\n"),
@@ -1541,7 +1541,7 @@ describe("launchd install", () => {
       mode: "reload",
       waitForPid: process.pid,
     });
-    expect(state.files.get(plistPath)).toContain("/Users/test/Library/Logs/openclaw/gateway.log");
+    expect(state.files.get(plistPath)).toContain("/Users/test/Library/Logs/merclaw/gateway.log");
     expect(state.launchctlCalls).toStrictEqual([]);
   });
 
@@ -1576,7 +1576,7 @@ describe("launchd install", () => {
     }
     expect(message).toContain("logged-in macOS GUI session");
     expect(message).toContain("wrong user (including sudo)");
-    expect(message).toContain("https://docs.openclaw.ai/gateway");
+    expect(message).toContain("https://docs.merclaw.ai/gateway");
   });
 
   it("surfaces generic bootstrap failures without GUI-specific guidance", async () => {
@@ -1596,40 +1596,40 @@ describe("launchd install", () => {
 describe("resolveLaunchAgentPlistPath", () => {
   it.each([
     {
-      name: "uses default label when OPENCLAW_PROFILE is unset",
+      name: "uses default label when MERCLAW_PROFILE is unset",
       env: { HOME: "/Users/test" },
-      expected: "/Users/test/Library/LaunchAgents/ai.openclaw.gateway.plist",
+      expected: "/Users/test/Library/LaunchAgents/ai.merclaw.gateway.plist",
     },
     {
-      name: "uses profile-specific label when OPENCLAW_PROFILE is set to a custom value",
-      env: { HOME: "/Users/test", OPENCLAW_PROFILE: "jbphoenix" },
-      expected: "/Users/test/Library/LaunchAgents/ai.openclaw.jbphoenix.plist",
+      name: "uses profile-specific label when MERCLAW_PROFILE is set to a custom value",
+      env: { HOME: "/Users/test", MERCLAW_PROFILE: "jbphoenix" },
+      expected: "/Users/test/Library/LaunchAgents/ai.merclaw.jbphoenix.plist",
     },
     {
-      name: "prefers OPENCLAW_LAUNCHD_LABEL over OPENCLAW_PROFILE",
+      name: "prefers MERCLAW_LAUNCHD_LABEL over MERCLAW_PROFILE",
       env: {
         HOME: "/Users/test",
-        OPENCLAW_PROFILE: "jbphoenix",
-        OPENCLAW_LAUNCHD_LABEL: "com.custom.label",
+        MERCLAW_PROFILE: "jbphoenix",
+        MERCLAW_LAUNCHD_LABEL: "com.custom.label",
       },
       expected: "/Users/test/Library/LaunchAgents/com.custom.label.plist",
     },
     {
-      name: "trims whitespace from OPENCLAW_LAUNCHD_LABEL",
+      name: "trims whitespace from MERCLAW_LAUNCHD_LABEL",
       env: {
         HOME: "/Users/test",
-        OPENCLAW_LAUNCHD_LABEL: "  com.custom.label  ",
+        MERCLAW_LAUNCHD_LABEL: "  com.custom.label  ",
       },
       expected: "/Users/test/Library/LaunchAgents/com.custom.label.plist",
     },
     {
-      name: "ignores empty OPENCLAW_LAUNCHD_LABEL and falls back to profile",
+      name: "ignores empty MERCLAW_LAUNCHD_LABEL and falls back to profile",
       env: {
         HOME: "/Users/test",
-        OPENCLAW_PROFILE: "myprofile",
-        OPENCLAW_LAUNCHD_LABEL: "   ",
+        MERCLAW_PROFILE: "myprofile",
+        MERCLAW_LAUNCHD_LABEL: "   ",
       },
-      expected: "/Users/test/Library/LaunchAgents/ai.openclaw.myprofile.plist",
+      expected: "/Users/test/Library/LaunchAgents/ai.merclaw.myprofile.plist",
     },
   ])("$name", ({ env, expected }) => {
     expect(resolveLaunchAgentPlistPath(env)).toBe(expected);
@@ -1639,7 +1639,7 @@ describe("resolveLaunchAgentPlistPath", () => {
     expect(() =>
       resolveLaunchAgentPlistPath({
         HOME: "/Users/test",
-        OPENCLAW_LAUNCHD_LABEL: "../evil/label",
+        MERCLAW_LAUNCHD_LABEL: "../evil/label",
       }),
     ).toThrow("Invalid launchd label");
   });

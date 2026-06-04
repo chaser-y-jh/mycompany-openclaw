@@ -59,9 +59,9 @@ describe("scripts/test-live", () => {
 
     expect(env).toMatchObject({
       CI: "1",
-      OPENCLAW_LIVE_CODEX_HARNESS: "1",
-      OPENCLAW_LIVE_TEST: "1",
-      OPENCLAW_LIVE_TEST_QUIET: "1",
+      MERCLAW_LIVE_CODEX_HARNESS: "1",
+      MERCLAW_LIVE_TEST: "1",
+      MERCLAW_LIVE_TEST_QUIET: "1",
       PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN: "false",
       pnpm_config_verify_deps_before_run: "false",
     });
@@ -69,18 +69,18 @@ describe("scripts/test-live", () => {
 
   it("rejects loose heartbeat intervals instead of parsing prefixes", () => {
     expect(resolveTestLiveHeartbeatMs({})).toBe(20_000);
-    expect(resolveTestLiveHeartbeatMs({ OPENCLAW_LIVE_WRAPPER_HEARTBEAT_MS: "2500" })).toBe(
+    expect(resolveTestLiveHeartbeatMs({ MERCLAW_LIVE_WRAPPER_HEARTBEAT_MS: "2500" })).toBe(
       2500,
     );
     expect(() =>
-      resolveTestLiveHeartbeatMs({ OPENCLAW_LIVE_WRAPPER_HEARTBEAT_MS: "1e3" }),
-    ).toThrow("invalid OPENCLAW_LIVE_WRAPPER_HEARTBEAT_MS: 1e3");
+      resolveTestLiveHeartbeatMs({ MERCLAW_LIVE_WRAPPER_HEARTBEAT_MS: "1e3" }),
+    ).toThrow("invalid MERCLAW_LIVE_WRAPPER_HEARTBEAT_MS: 1e3");
     expect(() =>
-      resolveTestLiveHeartbeatMs({ OPENCLAW_LIVE_WRAPPER_HEARTBEAT_MS: "1000ms" }),
-    ).toThrow("invalid OPENCLAW_LIVE_WRAPPER_HEARTBEAT_MS: 1000ms");
+      resolveTestLiveHeartbeatMs({ MERCLAW_LIVE_WRAPPER_HEARTBEAT_MS: "1000ms" }),
+    ).toThrow("invalid MERCLAW_LIVE_WRAPPER_HEARTBEAT_MS: 1000ms");
     expect(() =>
-      resolveTestLiveHeartbeatMs({ OPENCLAW_LIVE_WRAPPER_HEARTBEAT_MS: "0" }),
-    ).toThrow("invalid OPENCLAW_LIVE_WRAPPER_HEARTBEAT_MS: 0");
+      resolveTestLiveHeartbeatMs({ MERCLAW_LIVE_WRAPPER_HEARTBEAT_MS: "0" }),
+    ).toThrow("invalid MERCLAW_LIVE_WRAPPER_HEARTBEAT_MS: 0");
   });
 
   it("prints help without spawning live Vitest", () => {

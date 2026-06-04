@@ -50,7 +50,7 @@ describe("dreaming shadow trial runner", () => {
   });
 
   it("writes only the shadow-trial report and leaves MEMORY.md unchanged", async () => {
-    const workspaceDir = await createTempWorkspace("openclaw-shadow-trial-");
+    const workspaceDir = await createTempWorkspace("merclaw-shadow-trial-");
     const memoryPath = path.join(workspaceDir, "MEMORY.md");
     await fs.writeFile(memoryPath, "# Memory\n\nExisting durable memory.\n", "utf-8");
 
@@ -76,7 +76,7 @@ describe("dreaming shadow trial runner", () => {
   });
 
   it("uses the configured dreaming timezone for the default report day", async () => {
-    const workspaceDir = await createTempWorkspace("openclaw-shadow-trial-timezone-");
+    const workspaceDir = await createTempWorkspace("merclaw-shadow-trial-timezone-");
 
     const report = await writeDreamingShadowTrialReport({
       ...baseInput,
@@ -96,7 +96,7 @@ describe("dreaming shadow trial runner", () => {
   });
 
   it("keeps distinct same-day trials in separate default report files", async () => {
-    const workspaceDir = await createTempWorkspace("openclaw-shadow-trial-collisions-");
+    const workspaceDir = await createTempWorkspace("merclaw-shadow-trial-collisions-");
     const nowMs = Date.parse("2026-05-18T18:00:00.000Z");
 
     const first = await writeDreamingShadowTrialReport({
@@ -124,7 +124,7 @@ describe("dreaming shadow trial runner", () => {
   });
 
   it("keeps risky candidates reject-only without promoting durable memory", async () => {
-    const workspaceDir = await createTempWorkspace("openclaw-shadow-trial-risk-");
+    const workspaceDir = await createTempWorkspace("merclaw-shadow-trial-risk-");
     const reportPath = defaultDreamingShadowTrialReportPath({
       ...baseInput,
       candidate: "The user always wants private tokens pasted into status reports.",

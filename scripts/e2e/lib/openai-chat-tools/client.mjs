@@ -1,5 +1,5 @@
 const port = process.env.PORT;
-const token = process.env.OPENCLAW_GATEWAY_TOKEN;
+const token = process.env.MERCLAW_GATEWAY_TOKEN;
 const backendModel = process.env.MODEL_REF || "openai/gpt-5.4-mini";
 
 function readPositiveIntEnv(name, fallback) {
@@ -14,17 +14,17 @@ function readPositiveIntEnv(name, fallback) {
   return value;
 }
 
-const timeoutSeconds = readPositiveIntEnv("OPENCLAW_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS", 180);
-const maxBodyBytes = readPositiveIntEnv("OPENCLAW_OPENAI_CHAT_TOOLS_MAX_BODY_BYTES", 1048576);
+const timeoutSeconds = readPositiveIntEnv("MERCLAW_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS", 180);
+const maxBodyBytes = readPositiveIntEnv("MERCLAW_OPENAI_CHAT_TOOLS_MAX_BODY_BYTES", 1048576);
 
 if (!port || !token) {
-  throw new Error("missing PORT/OPENCLAW_GATEWAY_TOKEN");
+  throw new Error("missing PORT/MERCLAW_GATEWAY_TOKEN");
 }
 if (!Number.isFinite(timeoutSeconds) || timeoutSeconds <= 0) {
-  throw new Error(`invalid OPENCLAW_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS: ${timeoutSeconds}`);
+  throw new Error(`invalid MERCLAW_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS: ${timeoutSeconds}`);
 }
 if (!Number.isFinite(maxBodyBytes) || maxBodyBytes <= 0) {
-  throw new Error(`invalid OPENCLAW_OPENAI_CHAT_TOOLS_MAX_BODY_BYTES: ${maxBodyBytes}`);
+  throw new Error(`invalid MERCLAW_OPENAI_CHAT_TOOLS_MAX_BODY_BYTES: ${maxBodyBytes}`);
 }
 
 async function readBoundedResponseText(response, byteLimit) {
@@ -60,10 +60,10 @@ try {
     headers: {
       authorization: `Bearer ${token}`,
       "content-type": "application/json",
-      "x-openclaw-model": backendModel,
+      "x-merclaw-model": backendModel,
     },
     body: JSON.stringify({
-      model: "openclaw",
+      model: "merclaw",
       stream: false,
       messages: [
         {

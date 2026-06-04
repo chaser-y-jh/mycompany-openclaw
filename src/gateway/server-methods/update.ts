@@ -6,7 +6,7 @@ import {
 } from "../../../packages/gateway-protocol/src/index.js";
 import { isRestartEnabled } from "../../config/commands.flags.js";
 import { extractDeliveryInfo } from "../../config/sessions.js";
-import { resolveOpenClawPackageRoot } from "../../infra/openclaw-root.js";
+import { resolveMerClawPackageRoot } from "../../infra/merclaw-root.js";
 import { readPackageVersion } from "../../infra/package-json.js";
 import { type RestartSentinelPayload, writeRestartSentinel } from "../../infra/restart-sentinel.js";
 import { scheduleGatewaySigusr1Restart } from "../../infra/restart.js";
@@ -114,7 +114,7 @@ export const updateHandlers: GatewayRequestHandlers = {
       const configChannel = normalizeUpdateChannel(config.update?.channel);
       const invocationCwd = tryResolveProcessCwd();
       const root =
-        (await resolveOpenClawPackageRoot({
+        (await resolveMerClawPackageRoot({
           moduleUrl: import.meta.url,
           argv1: process.argv[1],
           ...(invocationCwd ? { cwd: invocationCwd } : {}),

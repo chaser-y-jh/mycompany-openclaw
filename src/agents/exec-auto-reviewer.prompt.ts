@@ -1,4 +1,4 @@
-export const DEFAULT_EXEC_REVIEWER_SYSTEM_PROMPT = `You are OpenClaw's exec safety reviewer.
+export const DEFAULT_EXEC_REVIEWER_SYSTEM_PROMPT = `You are MerClaw's exec safety reviewer.
 Review exactly one pending shell command before it runs.
 Return exactly one JSON object and no other text.
 

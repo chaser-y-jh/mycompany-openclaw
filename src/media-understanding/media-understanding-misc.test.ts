@@ -130,14 +130,14 @@ describe("media understanding attachments SSRF", () => {
   });
 
   it("reads local attachments inside configured roots", async () => {
-    await withLocalAttachmentCache("openclaw-media-cache-allowed-", async ({ cache }) => {
+    await withLocalAttachmentCache("merclaw-media-cache-allowed-", async ({ cache }) => {
       const result = await cache.getBuffer({ attachmentIndex: 0, maxBytes: 1024, timeoutMs: 1000 });
       expect(result.buffer.toString()).toBe("ok");
     });
   });
 
   it("resolves relative attachment paths against the provided workspaceDir", async () => {
-    await withTempDir({ prefix: "openclaw-media-cache-workspace-" }, async (base) => {
+    await withTempDir({ prefix: "merclaw-media-cache-workspace-" }, async (base) => {
       const workspaceDir = path.join(base, "workspace");
       const attachmentPath = path.join(workspaceDir, "media", "inbound", "report.pdf");
       await fs.mkdir(path.dirname(attachmentPath), { recursive: true });
@@ -167,7 +167,7 @@ describe("media understanding attachments SSRF", () => {
   });
 
   it("blocks directory attachments even inside configured roots", async () => {
-    await withTempDir({ prefix: "openclaw-media-cache-dir-" }, async (base) => {
+    await withTempDir({ prefix: "merclaw-media-cache-dir-" }, async (base) => {
       const allowedRoot = path.join(base, "allowed");
       const attachmentPath = path.join(allowedRoot, "nested");
       await fs.mkdir(attachmentPath, { recursive: true });
@@ -186,7 +186,7 @@ describe("media understanding attachments SSRF", () => {
     if (process.platform === "win32") {
       return;
     }
-    await withTempDir({ prefix: "openclaw-media-cache-symlink-" }, async (base) => {
+    await withTempDir({ prefix: "merclaw-media-cache-symlink-" }, async (base) => {
       const allowedRoot = path.join(base, "allowed");
       const outsidePath = "/etc/passwd";
       const symlinkPath = path.join(allowedRoot, "note.txt");
@@ -205,7 +205,7 @@ describe("media understanding attachments SSRF", () => {
 
   it("enforces maxBytes after reading local attachments", async () => {
     await withLocalAttachmentCache(
-      "openclaw-media-cache-max-bytes-",
+      "merclaw-media-cache-max-bytes-",
       async ({ cache, canonicalAttachmentPath }) => {
         const originalOpen = fs.open.bind(fs);
         const openSpy = vi.spyOn(fs, "open");
@@ -235,7 +235,7 @@ describe("media understanding attachments SSRF", () => {
       return;
     }
     await withLocalAttachmentCache(
-      "openclaw-media-cache-flags-",
+      "merclaw-media-cache-flags-",
       async ({ cache, canonicalAttachmentPath }) => {
         const openSpy = vi.spyOn(fs, "open");
 
@@ -252,7 +252,7 @@ describe("media understanding attachments SSRF", () => {
   });
 
   it("rejects local attachments when canonicalization fails", async () => {
-    await withTempDir({ prefix: "openclaw-media-cache-realpath-failure-" }, async (base) => {
+    await withTempDir({ prefix: "merclaw-media-cache-realpath-failure-" }, async (base) => {
       const allowedRoot = path.join(base, "allowed");
       const attachmentPath = path.join(allowedRoot, "voice-note.m4a");
       await fs.mkdir(allowedRoot, { recursive: true });

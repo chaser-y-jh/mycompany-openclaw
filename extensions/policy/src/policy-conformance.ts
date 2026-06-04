@@ -1,8 +1,8 @@
 import { promises as fs } from "node:fs";
 import { basename, isAbsolute, resolve } from "node:path";
 import JSON5 from "json5";
-import type { HealthFinding } from "openclaw/plugin-sdk/health";
-import { normalizeAgentId } from "openclaw/plugin-sdk/routing";
+import type { HealthFinding } from "merclaw/plugin-sdk/health";
+import { normalizeAgentId } from "merclaw/plugin-sdk/routing";
 import {
   isPolicyValueAtLeastAsStrict,
   policyContainerShapeFindings,

@@ -5,7 +5,7 @@ import {
   runTelegramThinkingFinalFlow,
   runTelegramWorkingFinalFlow,
 } from "../../scripts/dev/channel-message-flows.ts";
-import type { OpenClawConfig } from "../../src/config/types.openclaw.js";
+import type { MerClawConfig } from "../../src/config/types.merclaw.js";
 
 describe("channel message flows dev runner", () => {
   it("parses the Telegram thinking-final flow from channel/target flags", () => {
@@ -80,7 +80,7 @@ describe("channel message flows dev runner", () => {
 
     const result = await runTelegramThinkingFinalFlow(
       {
-        cfg: {} as OpenClawConfig,
+        cfg: {} as MerClawConfig,
         delayMs: 0,
         target: "123",
         thinkingUpdates: ["Checking the request.", "Reading the Telegram code.", "Ready."],
@@ -116,7 +116,7 @@ describe("channel message flows dev runner", () => {
 
     const result = await runTelegramWorkingFinalFlow(
       {
-        cfg: {} as OpenClawConfig,
+        cfg: {} as MerClawConfig,
         delayMs: 0,
         durationMs: 12_000,
         target: "123",
@@ -160,7 +160,7 @@ describe("channel message flows dev runner", () => {
 
     const result = await runTelegramWorkingFinalFlow(
       {
-        cfg: {} as OpenClawConfig,
+        cfg: {} as MerClawConfig,
         durationMs: 20_000,
         target: "123",
       },

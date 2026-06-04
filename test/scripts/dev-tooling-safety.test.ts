@@ -49,8 +49,8 @@ describe("dev tooling safety helpers", () => {
   });
 
   it("redacts home paths and masks opaque ids", () => {
-    expect(redactHomePath("/home/alice/.openclaw/state.json", "/home/alice")).toBe(
-      "~/.openclaw/state.json",
+    expect(redactHomePath("/home/alice/.merclaw/state.json", "/home/alice")).toBe(
+      "~/.merclaw/state.json",
     );
     expect(maskIdentifier("session-key-abcdef123456")).toBe("sessio...3456");
   });
@@ -224,7 +224,7 @@ describe("script-specific dev tooling hardening", () => {
   it("rejects invalid OpenAI realtime smoke timeout values", () => {
     expect(realtimeSmokeTesting.resolveOpenAIHttpTimeoutMs("42")).toBe(42);
     expect(() => realtimeSmokeTesting.resolveOpenAIHttpTimeoutMs("2s")).toThrow(
-      /OPENCLAW_REALTIME_OPENAI_HTTP_TIMEOUT_MS must be an integer/u,
+      /MERCLAW_REALTIME_OPENAI_HTTP_TIMEOUT_MS must be an integer/u,
     );
   });
 
@@ -308,7 +308,7 @@ describe("script-specific dev tooling hardening", () => {
   it("rejects invalid Claude usage timeout values", () => {
     expect(claudeUsageTesting.resolveFetchTimeoutMs("123")).toBe(123);
     expect(() => claudeUsageTesting.resolveFetchTimeoutMs("1.5")).toThrow(
-      /OPENCLAW_DEBUG_CLAUDE_USAGE_FETCH_TIMEOUT_MS must be an integer/u,
+      /MERCLAW_DEBUG_CLAUDE_USAGE_FETCH_TIMEOUT_MS must be an integer/u,
     );
   });
 

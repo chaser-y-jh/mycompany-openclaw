@@ -286,7 +286,7 @@ function prepareMirroredDocsDir(sourceDir = DOCS_DIR) {
     return { dir: sourceRoot, mirroredClawHub: false, cleanup: () => {} };
   }
 
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-docs-link-audit-"));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-docs-link-audit-"));
   fs.cpSync(sourceRoot, tempDir, { recursive: true });
   syncClawHubDocsTree(tempDir, { repoPath: clawhubRepo, required: false });
   return {
@@ -297,7 +297,7 @@ function prepareMirroredDocsDir(sourceDir = DOCS_DIR) {
 }
 
 export function prepareAnchorAuditDocsDir(sourceDir = DOCS_DIR) {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-docs-anchor-audit-"));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-docs-anchor-audit-"));
   fs.cpSync(sourceDir, tempDir, { recursive: true });
 
   for (const entry of fs.readdirSync(tempDir, { withFileTypes: true })) {

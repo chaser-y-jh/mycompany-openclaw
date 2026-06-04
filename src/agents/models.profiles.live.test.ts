@@ -1,10 +1,10 @@
 import { writeSync } from "node:fs";
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
-import { type Api, completeSimple, type Model } from "openclaw/plugin-sdk/llm";
+import { normalizeProviderId } from "@merclaw/model-catalog-core/provider-id";
+import { type Api, completeSimple, type Model } from "merclaw/plugin-sdk/llm";
 import { Type } from "typebox";
 import { describe, expect, it } from "vitest";
 import { getRuntimeConfig } from "../config/config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { parseLiveCsvFilter } from "../media-generation/live-test-helpers.js";
 import { withBundledPluginEnablementCompat } from "../plugins/bundled-compat.js";
 import { resolveOwningPluginIdsForProviderRef } from "../plugins/providers.js";
@@ -62,31 +62,31 @@ import {
 } from "./live-test-provider-drift.js";
 import { getApiKeyForModel, requireApiKey } from "./model-auth.js";
 import { shouldSuppressBuiltInModel } from "./model-suppression.js";
-import { ensureOpenClawModelsJson } from "./models-config.js";
+import { ensureMerClawModelsJson } from "./models-config.js";
 import { prepareModelForSimpleCompletion } from "./simple-completion-transport.js";
 
 const LIVE = isLiveTestEnabled();
-const DIRECT_ENABLED = Boolean(process.env.OPENCLAW_LIVE_MODELS?.trim());
+const DIRECT_ENABLED = Boolean(process.env.MERCLAW_LIVE_MODELS?.trim());
 const REQUIRE_PROFILE_KEYS = isLiveProfileKeyModeEnabled();
-const LIVE_HEARTBEAT_MS = Math.max(1_000, toInt(process.env.OPENCLAW_LIVE_HEARTBEAT_MS, 30_000));
+const LIVE_HEARTBEAT_MS = Math.max(1_000, toInt(process.env.MERCLAW_LIVE_HEARTBEAT_MS, 30_000));
 const LIVE_SETUP_TIMEOUT_MS = Math.max(
   1_000,
-  toInt(process.env.OPENCLAW_LIVE_SETUP_TIMEOUT_MS, 45_000),
+  toInt(process.env.MERCLAW_LIVE_SETUP_TIMEOUT_MS, 45_000),
 );
 const LIVE_TEST_TIMEOUT_MS = Math.max(
   1_000,
-  toInt(process.env.OPENCLAW_LIVE_TEST_TIMEOUT_MS, 60 * 60 * 1000),
+  toInt(process.env.MERCLAW_LIVE_TEST_TIMEOUT_MS, 60 * 60 * 1000),
 );
 const DEFAULT_LIVE_MODEL_CONCURRENCY = 20;
 const LIVE_MODEL_CONCURRENCY = resolveLiveModelConcurrency(
-  process.env.OPENCLAW_LIVE_MODEL_CONCURRENCY,
+  process.env.MERCLAW_LIVE_MODEL_CONCURRENCY,
 );
 const LIVE_MODELS_JSON_TIMEOUT_MS = resolveLiveModelsJsonTimeoutMs(
-  process.env.OPENCLAW_LIVE_MODELS_JSON_TIMEOUT_MS,
+  process.env.MERCLAW_LIVE_MODELS_JSON_TIMEOUT_MS,
 );
 const LIVE_FILE_PROBE_ENABLED = isLiveModelProbeEnabled(process.env, LIVE_MODEL_FILE_PROBE_ENV);
 const LIVE_IMAGE_PROBE_ENABLED = isLiveModelProbeEnabled(process.env, LIVE_MODEL_IMAGE_PROBE_ENV);
-let activeLiveCompletionConfig: OpenClawConfig | undefined;
+let activeLiveCompletionConfig: MerClawConfig | undefined;
 
 const describeLive = LIVE ? describe : describe.skip;
 
@@ -138,7 +138,7 @@ function formatExplicitLiveModelRef(ref: { provider: string; id: string }): stri
 function findUnmatchedExplicitLiveModelRefs(params: {
   refs: readonly { provider: string; id: string }[];
   models: readonly Pick<Model, "provider" | "id">[];
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   env?: NodeJS.ProcessEnv;
 }): string[] {
   const unmatched: string[] = [];
@@ -177,7 +177,7 @@ function resolveLiveProviderDiscoveryProviderIds(params: {
 }
 
 function resolveLiveProviderDiscoveryPluginIds(params: {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   providers: readonly string[] | undefined;
   env?: NodeJS.ProcessEnv;
 }): string[] {
@@ -201,10 +201,10 @@ function resolveLiveProviderDiscoveryPluginIds(params: {
 }
 
 function applyLiveProviderDiscoveryPluginCompat(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   providers: readonly string[] | undefined;
   env?: NodeJS.ProcessEnv;
-}): OpenClawConfig {
+}): MerClawConfig {
   const pluginIds = resolveLiveProviderDiscoveryPluginIds(params);
   return pluginIds.length > 0
     ? (withBundledPluginEnablementCompat({
@@ -492,7 +492,7 @@ describe("explicit live model discovery scope", () => {
     ).toEqual(["together", "zai"]);
   });
 
-  it("merges explicit model providers with OPENCLAW_LIVE_PROVIDERS", () => {
+  it("merges explicit model providers with MERCLAW_LIVE_PROVIDERS", () => {
     const explicitRefs = parseExplicitLiveModelRefs(parseModelFilter("zai/glm-5.1"));
 
     expect(
@@ -512,7 +512,7 @@ describe("explicit live model discovery scope", () => {
           openai: { enabled: true },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies MerClawConfig;
 
     expect(
       applyLiveProviderDiscoveryPluginCompat({
@@ -907,13 +907,13 @@ describeLive("live models (profile keys)", () => {
         Promise.resolve().then(() => getRuntimeConfig()),
         "[live-models] load config",
       );
-      const rawModels = process.env.OPENCLAW_LIVE_MODELS?.trim();
+      const rawModels = process.env.MERCLAW_LIVE_MODELS?.trim();
       const useModern = rawModels === "modern" || rawModels === "all";
       const useSmall = rawModels === "small";
       const useExplicit = Boolean(rawModels) && !useModern && !useSmall;
       const filter = useExplicit ? parseModelFilter(rawModels) : null;
       const explicitRefs = useExplicit ? parseExplicitLiveModelRefs(filter) : [];
-      const providers = parseProviderFilter(process.env.OPENCLAW_LIVE_PROVIDERS);
+      const providers = parseProviderFilter(process.env.MERCLAW_LIVE_PROVIDERS);
       const providerList = resolveLiveProviderDiscoveryProviderIds({
         providerFilter: providers,
         explicitRefs,
@@ -926,7 +926,7 @@ describeLive("live models (profile keys)", () => {
       activeLiveCompletionConfig = cfg;
       logProgress("[live-models] preparing models.json");
       await withLiveStageTimeout(
-        ensureOpenClawModelsJson(
+        ensureMerClawModelsJson(
           cfg,
           undefined,
           providerList ? { providerDiscoveryProviderIds: providerList } : undefined,
@@ -936,7 +936,7 @@ describeLive("live models (profile keys)", () => {
       );
       if (!DIRECT_ENABLED) {
         logProgress(
-          "[live-models] skipping (set OPENCLAW_LIVE_MODELS=modern|small|all|<list>; all=modern)",
+          "[live-models] skipping (set MERCLAW_LIVE_MODELS=modern|small|all|<list>; all=modern)",
         );
         return;
       }
@@ -1002,9 +1002,9 @@ describeLive("live models (profile keys)", () => {
         }
         return augmented.models;
       })();
-      const perModelTimeoutMs = toInt(process.env.OPENCLAW_LIVE_MODEL_TIMEOUT_MS, 30_000);
+      const perModelTimeoutMs = toInt(process.env.MERCLAW_LIVE_MODEL_TIMEOUT_MS, 30_000);
       const maxModels = resolveHighSignalLiveModelLimit({
-        rawMaxModels: process.env.OPENCLAW_LIVE_MAX_MODELS,
+        rawMaxModels: process.env.MERCLAW_LIVE_MAX_MODELS,
         useExplicitModels: useExplicit,
         ...(useSmall ? { defaultLimit: DEFAULT_SMALL_LIVE_MODEL_LIMIT } : {}),
       });
@@ -1131,7 +1131,7 @@ describeLive("live models (profile keys)", () => {
       logProgress(`[live-models] selection=${selectionLabel}`);
       if (selectedCandidates.length < candidates.length) {
         logProgress(
-          `[live-models] capped to ${selectedCandidates.length}/${candidates.length} via OPENCLAW_LIVE_MAX_MODELS=${maxModels}`,
+          `[live-models] capped to ${selectedCandidates.length}/${candidates.length} via MERCLAW_LIVE_MAX_MODELS=${maxModels}`,
         );
       }
       logProgress(`[live-models] running ${selectedCandidates.length} models`);

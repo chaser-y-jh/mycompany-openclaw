@@ -2,7 +2,7 @@ import {
   embeddedAgentLog,
   type CompactEmbeddedAgentSessionParams,
   type EmbeddedAgentCompactResult,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "merclaw/plugin-sdk/agent-harness-runtime";
 import {
   defaultCodexAppServerClientFactory,
   type CodexAppServerClientFactory,
@@ -18,14 +18,14 @@ export async function maybeCompactCodexAppServerSession(
   params: CompactEmbeddedAgentSessionParams,
   options: { pluginConfig?: unknown; clientFactory?: CodexAppServerClientFactory } = {},
 ): Promise<EmbeddedAgentCompactResult | undefined> {
-  warnIfIgnoringOpenClawCompactionOverrides(params);
+  warnIfIgnoringMerClawCompactionOverrides(params);
   // Codex owns automatic context-pressure compaction for Codex runtime sessions.
   // This entry point starts native Codex compaction for the bound thread and
   // returns immediately; Codex applies the compaction inside its app-server.
   return compactCodexNativeThread(params, options);
 }
 
-function warnIfIgnoringOpenClawCompactionOverrides(
+function warnIfIgnoringMerClawCompactionOverrides(
   params: CompactEmbeddedAgentSessionParams,
 ): void {
   const ignoredConfig = readIgnoredCompactionOverridePaths(params);
@@ -38,7 +38,7 @@ function warnIfIgnoringOpenClawCompactionOverrides(
   }
   warnedIgnoredCompactionOverrides.add(warningKey);
   embeddedAgentLog.warn(
-    "ignoring OpenClaw compaction overrides for Codex app-server compaction; Codex uses native server-side compaction",
+    "ignoring MerClaw compaction overrides for Codex app-server compaction; Codex uses native server-side compaction",
     {
       sessionId: params.sessionId,
       sessionKey: params.sessionKey,

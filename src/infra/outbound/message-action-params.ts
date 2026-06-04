@@ -1,11 +1,11 @@
-import { basenameFromAnyPath } from "@openclaw/media-core/file-name";
-import { extensionForMime } from "@openclaw/media-core/mime";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { basenameFromAnyPath } from "@merclaw/media-core/file-name";
+import { extensionForMime } from "@merclaw/media-core/mime";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import { assertMediaNotDataUrl, resolveSandboxedMediaSource } from "../../agents/sandbox-paths.js";
 import { readStringParam } from "../../agents/tools/common.js";
 import { resolveChannelMessageToolMediaSourceParamKeys } from "../../channels/plugins/message-action-discovery.js";
 import type { ChannelId, ChannelMessageActionName } from "../../channels/plugins/types.public.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { root } from "../../infra/fs-safe.js";
 import { basenameFromMediaSource } from "../../infra/local-file-access.js";
 import { resolveChannelAccountMediaMaxMb } from "../../media/configured-max-bytes.js";
@@ -141,7 +141,7 @@ function buildActionMediaSourceParamKeys(extraParamKeys?: readonly string[]): st
 }
 
 export function resolveExtraActionMediaSourceParamKeys(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   action?: ChannelMessageActionName;
   args: Record<string, unknown>;
   channel?: string;
@@ -204,7 +204,7 @@ function readAttachmentFileHint(args: Record<string, unknown>): string | undefin
 }
 
 function resolveAttachmentMaxBytes(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channel: ChannelId;
   accountId?: string | null;
 }): number | undefined {
@@ -332,7 +332,7 @@ function buildAttachmentMediaLoadOptions(params: {
 }
 
 async function hydrateAttachmentPayload(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channel: ChannelId;
   accountId?: string | null;
   args: Record<string, unknown>;
@@ -463,7 +463,7 @@ export async function normalizeSandboxMediaList(params: {
 }
 
 async function hydrateAttachmentActionPayload(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channel: ChannelId;
   accountId?: string | null;
   args: Record<string, unknown>;
@@ -512,7 +512,7 @@ async function hydrateAttachmentActionPayload(params: {
 }
 
 export async function hydrateAttachmentParamsForAction(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channel: ChannelId;
   accountId?: string | null;
   args: Record<string, unknown>;

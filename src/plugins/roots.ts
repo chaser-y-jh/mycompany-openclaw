@@ -1,5 +1,5 @@
 import path from "node:path";
-import { normalizeStringEntries } from "@openclaw/normalization-core/string-normalization";
+import { normalizeStringEntries } from "@merclaw/normalization-core/string-normalization";
 import { resolveConfigDir, resolveUserPath } from "../utils.js";
 import { resolveBundledPluginsDir } from "./bundled-dir.js";
 
@@ -22,7 +22,7 @@ export function resolvePluginSourceRoots(params: {
   const workspaceRoot = params.workspaceDir ? resolveUserPath(params.workspaceDir, env) : undefined;
   const stock = resolveBundledPluginsDir(env);
   const global = path.join(resolveConfigDir(env), "extensions");
-  const workspace = workspaceRoot ? path.join(workspaceRoot, ".openclaw", "extensions") : undefined;
+  const workspace = workspaceRoot ? path.join(workspaceRoot, ".merclaw", "extensions") : undefined;
   return { stock, global, workspace };
 }
 

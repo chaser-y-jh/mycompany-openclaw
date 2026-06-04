@@ -1,5 +1,5 @@
-import type { StreamFn } from "openclaw/plugin-sdk/agent-core";
-import type { Context, Model } from "openclaw/plugin-sdk/llm";
+import type { StreamFn } from "merclaw/plugin-sdk/agent-core";
+import type { Context, Model } from "merclaw/plugin-sdk/llm";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   GPT_PARALLEL_TOOL_CALLS_PAYLOAD_APIS,
@@ -25,7 +25,7 @@ afterEach(() => {
   extraParamsTesting.resetProviderRuntimeDepsForTest();
 });
 
-describe("transport params runtime contract (embedded OpenClaw/OpenAI path)", () => {
+describe("transport params runtime contract (embedded MerClaw/OpenAI path)", () => {
   it.each(OPENAI_GPT5_TRANSPORT_DEFAULT_CASES)(
     "applies OpenAI GPT-5 transport defaults for $provider/$modelId",
     ({ provider, modelId }) => {

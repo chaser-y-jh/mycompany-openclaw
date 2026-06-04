@@ -1,7 +1,7 @@
 import { spawn } from "node:child_process";
 import os from "node:os";
 import path from "node:path";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
+import type { RuntimeEnv } from "merclaw/plugin-sdk/runtime-env";
 
 type SignalDaemonOpts = {
   cliPath: string;

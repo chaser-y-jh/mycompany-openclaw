@@ -1,4 +1,4 @@
-import { parseMediaContentLength } from "openclaw/plugin-sdk/media-runtime";
+import { parseMediaContentLength } from "merclaw/plugin-sdk/media-runtime";
 import { getMSTeamsRuntime } from "../runtime.js";
 import { ensureUserAgentHeader } from "../user-agent.js";
 import {

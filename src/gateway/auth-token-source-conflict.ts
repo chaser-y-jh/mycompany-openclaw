@@ -1,8 +1,8 @@
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { normalizeSecretInputString, resolveSecretInputRef } from "../config/types.secrets.js";
 
-const GATEWAY_ENV_TOKEN = "OPENCLAW_GATEWAY_TOKEN";
+const GATEWAY_ENV_TOKEN = "MERCLAW_GATEWAY_TOKEN";
 const GATEWAY_SERVICE_KIND = "gateway";
 
 export type GatewayAuthTokenSourceConflict = {
@@ -15,15 +15,15 @@ export type GatewayAuthTokenSourceConflict = {
 };
 
 export function resolveGatewayAuthTokenSourceConflict(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env: NodeJS.ProcessEnv;
 }): GatewayAuthTokenSourceConflict | null {
-  const envToken = normalizeOptionalString(params.env.OPENCLAW_GATEWAY_TOKEN);
+  const envToken = normalizeOptionalString(params.env.MERCLAW_GATEWAY_TOKEN);
   if (!envToken) {
     return null;
   }
 
-  if (params.env.OPENCLAW_SERVICE_KIND?.trim() === GATEWAY_SERVICE_KIND) {
+  if (params.env.MERCLAW_SERVICE_KIND?.trim() === GATEWAY_SERVICE_KIND) {
     return null;
   }
 
@@ -60,7 +60,7 @@ export function resolveGatewayAuthTokenSourceConflict(params: {
     "prefers gateway.auth.token. If the values differ, CLI/RPC calls can fail to authenticate " +
     "with the running gateway.";
   const remediation =
-    `Remove ${GATEWAY_ENV_TOKEN} from the shell, ~/.openclaw/.env, or launchctl env if gateway.auth.token is intended, ` +
+    `Remove ${GATEWAY_ENV_TOKEN} from the shell, ~/.merclaw/.env, or launchctl env if gateway.auth.token is intended, ` +
     `or point gateway.auth.token at \${${GATEWAY_ENV_TOKEN}} if the env var should be canonical.`;
 
   return {

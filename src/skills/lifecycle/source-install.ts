@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { redactSensitiveUrlLikeString } from "@openclaw/net-policy/redact-sensitive-url";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { redactSensitiveUrlLikeString } from "@merclaw/net-policy/redact-sensitive-url";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import { sanitizeForLog } from "../../../packages/terminal-core/src/ansi.js";
 import { sanitizeHostExecEnv } from "../../infra/host-env-security.js";
 import { withTempDir } from "../../infra/install-source-utils.js";
@@ -42,7 +42,7 @@ export type SkillSourceInstallResult =
     }
   | { ok: false; error: string };
 
-const SKILL_SOURCE_ORIGIN_RELATIVE_PATH = path.join(".openclaw", "source-origin.json");
+const SKILL_SOURCE_ORIGIN_RELATIVE_PATH = path.join(".merclaw", "source-origin.json");
 const DEFAULT_GIT_TIMEOUT_MS = 120_000;
 
 function createGitCommandEnv(): NodeJS.ProcessEnv {
@@ -256,7 +256,7 @@ async function installGitSkill(params: {
     return { ok: false, error: `Unsupported git skill spec: ${params.spec}` };
   }
 
-  return await withTempDir("openclaw-git-skill-", async (tmpDir) => {
+  return await withTempDir("merclaw-git-skill-", async (tmpDir) => {
     const repoDir = path.join(tmpDir, "repo");
     const exportDir = path.join(tmpDir, "export");
     params.logger?.info?.(

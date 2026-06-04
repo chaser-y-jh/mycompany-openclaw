@@ -1,9 +1,9 @@
 // Load session runtime model metadata so we can infer context windows when the
 // agent reports a model id. This includes custom models.json entries.
 
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
 import { getRuntimeConfig } from "../config/config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { computeBackoff, type BackoffPolicy } from "../infra/backoff.js";
 import { discoverAuthStorage, discoverModels } from "./agent-model-discovery.js";
 import {
@@ -118,7 +118,7 @@ function loadModelsConfigRuntime() {
   return CONTEXT_WINDOW_RUNTIME_STATE.modelsConfigRuntimeLoader.load();
 }
 
-function primeConfiguredContextWindows(): OpenClawConfig | undefined {
+function primeConfiguredContextWindows(): MerClawConfig | undefined {
   if (CONTEXT_WINDOW_RUNTIME_STATE.configuredConfig) {
     applyConfiguredContextWindows({
       cache: MODEL_CONTEXT_TOKEN_CACHE,
@@ -169,7 +169,7 @@ export function ensureContextWindowCacheLoaded(): Promise<void> {
     try {
       await (
         await loadModelsConfigRuntime()
-      ).ensureOpenClawModelsJson(cfg, agentDir, {
+      ).ensureMerClawModelsJson(cfg, agentDir, {
         workspaceDir,
       });
     } catch {
@@ -259,7 +259,7 @@ function resolveProviderModelRef(params: {
 // keys overlap with raw slash-containing model IDs (e.g. OpenRouter's
 // "google/gemini-2.5-pro" stored as a raw catalog entry).
 function resolveConfiguredProviderContextTokens(
-  cfg: OpenClawConfig | undefined,
+  cfg: MerClawConfig | undefined,
   provider: string,
   model: string,
 ): number | undefined {
@@ -362,7 +362,7 @@ function resolveModelFamilyId(modelId: string): string {
 }
 
 export function resolveContextTokensForModel(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   provider?: string;
   model?: string;
   contextTokensOverride?: number;

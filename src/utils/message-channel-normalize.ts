@@ -1,4 +1,4 @@
-import { uniqueStrings } from "@openclaw/normalization-core/string-normalization";
+import { uniqueStrings } from "@merclaw/normalization-core/string-normalization";
 import { CHANNEL_IDS } from "../channels/ids.js";
 import { listRegisteredChannelPluginIds } from "../channels/registry.js";
 import {
@@ -7,7 +7,7 @@ import {
 } from "./message-channel-constants.js";
 import { normalizeMessageChannel as normalizeMessageChannelCore } from "./message-channel-core.js";
 
-type ChannelId = string & { readonly __openclawChannelIdBrand?: never };
+type ChannelId = string & { readonly __merclawChannelIdBrand?: never };
 
 export type DeliverableMessageChannel = ChannelId;
 

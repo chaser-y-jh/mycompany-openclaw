@@ -5,7 +5,7 @@ import {
   resolveAgentDir,
   resolveAgentWorkspaceDir,
 } from "../../../agents/agent-scope.js";
-import { createOpenClawCodingTools } from "../../../agents/agent-tools.js";
+import { createMerClawCodingTools } from "../../../agents/agent-tools.js";
 import { DEFAULT_MODEL, DEFAULT_PROVIDER } from "../../../agents/defaults.js";
 import { resolveModel } from "../../../agents/embedded-agent-runner/model.js";
 import { parseModelRef } from "../../../agents/model-selection-normalize.js";
@@ -15,14 +15,14 @@ import {
   type RuntimeToolSchemaDiagnostic,
 } from "../../../agents/tool-schema-projection.js";
 import { resolveAgentModelPrimaryValue } from "../../../config/model-input.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../../config/types.merclaw.js";
 import { formatErrorMessage } from "../../../infra/errors.js";
 import { extractModelCompat } from "../../../plugins/provider-model-compat.js";
 import type { ProviderRuntimeModel } from "../../../plugins/provider-runtime-model.types.js";
 import { getPluginToolMeta } from "../../../plugins/tools.js";
 
 function resolvePrimaryModelRef(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   agentModel?: NonNullable<ReturnType<typeof resolveAgentConfig>>["model"],
 ): { provider: string; model: string } {
   const raw =
@@ -38,7 +38,7 @@ function resolvePrimaryModelRef(
 }
 
 function resolveRuntimeModelContext(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentDir: string;
   workspaceDir: string;
   provider: string;
@@ -72,12 +72,12 @@ function formatDiagnostic(params: {
 }): string {
   const plugin = params.pluginId ? ` from plugin "${params.pluginId}"` : "";
   return sanitizeForLog(
-    `- agents.${params.agentId}: active tool "${params.diagnostic.toolName}"${plugin} has unsupported runtime input schema (${params.diagnostic.violations.join(", ")}). OpenClaw will quarantine this tool at runtime; fix or disable the plugin, or remove the tool from active allowlists.`,
+    `- agents.${params.agentId}: active tool "${params.diagnostic.toolName}"${plugin} has unsupported runtime input schema (${params.diagnostic.violations.join(", ")}). MerClaw will quarantine this tool at runtime; fix or disable the plugin, or remove the tool from active allowlists.`,
   );
 }
 
 export function collectActiveToolSchemaProjectionWarnings(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env?: NodeJS.ProcessEnv;
 }): string[] {
   if (params.cfg.plugins?.enabled === false) {
@@ -107,9 +107,9 @@ export function collectActiveToolSchemaProjectionWarnings(params: {
         ),
       );
     }
-    let tools: ReturnType<typeof createOpenClawCodingTools>;
+    let tools: ReturnType<typeof createMerClawCodingTools>;
     try {
-      tools = createOpenClawCodingTools({
+      tools = createMerClawCodingTools({
         agentId,
         agentDir,
         workspaceDir,

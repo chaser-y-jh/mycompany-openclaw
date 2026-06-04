@@ -1,5 +1,5 @@
-import { missingTargetError } from "openclaw/plugin-sdk/channel-feedback";
-import { normalizeStringEntries } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { missingTargetError } from "merclaw/plugin-sdk/channel-feedback";
+import { normalizeStringEntries } from "merclaw/plugin-sdk/string-coerce-runtime";
 import {
   isWhatsAppGroupJid,
   isWhatsAppNewsletterJid,

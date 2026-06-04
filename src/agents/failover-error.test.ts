@@ -30,11 +30,11 @@ const OPENROUTER_MODEL_NOT_FOUND_PAYLOAD =
 const TOGETHER_MONTHLY_SPEND_CAP_MESSAGE =
   "The account associated with this API key has reached its maximum allowed monthly spending limit.";
 // Issue-backed Anthropic/OpenAI-compatible insufficient_quota payload under HTTP 400:
-// https://github.com/openclaw/openclaw/issues/23440
+// https://github.com/merclaw/merclaw/issues/23440
 const INSUFFICIENT_QUOTA_PAYLOAD =
   '{"type":"error","error":{"type":"insufficient_quota","message":"Your account has insufficient quota balance to run this request."}}';
 // Issue-backed ZhipuAI/GLM quota-exhausted log from #33785:
-// https://github.com/openclaw/openclaw/issues/33785
+// https://github.com/merclaw/merclaw/issues/33785
 const ZHIPUAI_WEEKLY_MONTHLY_LIMIT_EXHAUSTED_MESSAGE =
   "LLM error 1310: Weekly/Monthly Limit Exhausted. Your limit will reset at 2026-03-06 22:19:54 (request_id: 20260303141547610b7f574d1b44cb)";
 // AWS Bedrock 429 ThrottlingException / 503 ServiceUnavailable:
@@ -413,7 +413,7 @@ describe("failover-error", () => {
     const sessionLockError = new SessionWriteLockTimeoutError({
       timeoutMs: 10_000,
       owner: "pid=37121",
-      lockPath: "/tmp/openclaw/session.jsonl.lock",
+      lockPath: "/tmp/merclaw/session.jsonl.lock",
     });
     expect(resolveFailoverReasonFromError(sessionLockError)).toBeNull();
     expect(isTimeoutError(sessionLockError)).toBe(false);
@@ -442,7 +442,7 @@ describe("failover-error", () => {
         cause: new SessionWriteLockTimeoutError({
           timeoutMs: 10_000,
           owner: "pid=37121",
-          lockPath: "/tmp/openclaw/session.jsonl.lock",
+          lockPath: "/tmp/merclaw/session.jsonl.lock",
         }),
       }),
     ).toBe("rate_limit");
@@ -455,7 +455,7 @@ describe("failover-error", () => {
         cause: new SessionWriteLockTimeoutError({
           timeoutMs: 10_000,
           owner: "pid=37121",
-          lockPath: "/tmp/openclaw/session.jsonl.lock",
+          lockPath: "/tmp/merclaw/session.jsonl.lock",
         }),
       }),
     ).toBe("rate_limit");
@@ -470,7 +470,7 @@ describe("failover-error", () => {
         cause: new SessionWriteLockTimeoutError({
           timeoutMs: 10_000,
           owner: "pid=37121",
-          lockPath: "/tmp/openclaw/session.jsonl.lock",
+          lockPath: "/tmp/merclaw/session.jsonl.lock",
         }),
       }),
     ).toBeNull();
@@ -483,7 +483,7 @@ describe("failover-error", () => {
         reason: new SessionWriteLockTimeoutError({
           timeoutMs: 10_000,
           owner: "pid=37121",
-          lockPath: "/tmp/openclaw/session.jsonl.lock",
+          lockPath: "/tmp/merclaw/session.jsonl.lock",
         }),
         cause: new Error("operation timed out"),
       }),
@@ -1020,7 +1020,7 @@ describe("failover-error", () => {
   });
 
   it("403 OpenRouter 'Key limit exceeded' returns billing (model fallback trigger)", () => {
-    // GitHub: openclaw/openclaw#53849 — OpenRouter returns 403 with "Key limit exceeded"
+    // GitHub: merclaw/merclaw#53849 — OpenRouter returns 403 with "Key limit exceeded"
     // when the monthly key spending limit is reached. This must trigger billing failover
     // (model fallback), not generic auth.
     expect(
@@ -1195,11 +1195,11 @@ describe("failover-error", () => {
       new SessionWriteLockTimeoutError({
         timeoutMs: 10_000,
         owner: "pid=37121",
-        lockPath: "/tmp/openclaw/session.jsonl.lock",
+        lockPath: "/tmp/merclaw/session.jsonl.lock",
       });
     const makeEmbeddedTakeoverError = () => {
       const err = new Error(
-        "session file changed while embedded prompt lock was released: /tmp/openclaw/session.jsonl",
+        "session file changed while embedded prompt lock was released: /tmp/merclaw/session.jsonl",
       );
       err.name = "EmbeddedAttemptSessionTakeoverError";
       return err;

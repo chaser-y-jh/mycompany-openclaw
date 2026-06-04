@@ -6,8 +6,8 @@
     {
       "layers" : [
         {
-          "image-name" : "openclaw-mac.png",
-          "name" : "openclaw-mac",
+          "image-name" : "merclaw-mac.png",
+          "name" : "merclaw-mac",
           "position" : {
             "scale" : 1.07,
             "translation-in-points" : [

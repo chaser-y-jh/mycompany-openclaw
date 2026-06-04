@@ -78,10 +78,10 @@ function expectedTrashSourcePath(targetPath: string): string {
 
 describe("handleReset", () => {
   it("uses active profile paths for destructive reset targets", async () => {
-    const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-reset-profile-"));
-    const profileStateDir = path.join(homeDir, ".openclaw-work");
-    const defaultStateDir = path.join(homeDir, ".openclaw");
-    const profileConfigPath = path.join(profileStateDir, "openclaw.json");
+    const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-reset-profile-"));
+    const profileStateDir = path.join(homeDir, ".merclaw-work");
+    const defaultStateDir = path.join(homeDir, ".merclaw");
+    const profileConfigPath = path.join(profileStateDir, "merclaw.json");
     const profileCredentialsDir = path.join(profileStateDir, "credentials");
     const profileSessionsDir = path.join(profileStateDir, "agents", "main", "sessions");
     const workspaceDir = path.join(profileStateDir, "workspace");
@@ -94,10 +94,10 @@ describe("handleReset", () => {
     fs.writeFileSync(profileConfigPath, "{}\n");
 
     vi.stubEnv("HOME", homeDir);
-    vi.stubEnv("OPENCLAW_HOME", homeDir);
-    vi.stubEnv("OPENCLAW_PROFILE", "work");
-    vi.stubEnv("OPENCLAW_STATE_DIR", profileStateDir);
-    vi.stubEnv("OPENCLAW_CONFIG_PATH", profileConfigPath);
+    vi.stubEnv("MERCLAW_HOME", homeDir);
+    vi.stubEnv("MERCLAW_PROFILE", "work");
+    vi.stubEnv("MERCLAW_STATE_DIR", profileStateDir);
+    vi.stubEnv("MERCLAW_CONFIG_PATH", profileConfigPath);
 
     const runtime = { log: vi.fn() } as unknown as RuntimeEnv;
     const expectedTrashedPaths = [
@@ -122,7 +122,7 @@ describe("handleReset", () => {
 
 describe("moveToTrash", () => {
   it("uses fs-safe trash instead of resolving a PATH trash command", async () => {
-    const testRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-trash-helper-"));
+    const testRoot = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-trash-helper-"));
     const targetPath = path.join(testRoot, "target");
     fs.mkdirSync(targetPath, { recursive: true });
     const runtime = { log: vi.fn() } as unknown as RuntimeEnv;
@@ -142,9 +142,9 @@ describe("moveToTrash", () => {
   });
 
   it("allows fs-safe trash to move a symlink whose target resolves outside the parent", async () => {
-    const testRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-trash-symlink-"));
+    const testRoot = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-trash-symlink-"));
     const targetPath = path.join(testRoot, "target-link");
-    const outsideTarget = path.join(os.tmpdir(), "openclaw-trash-symlink-target");
+    const outsideTarget = path.join(os.tmpdir(), "merclaw-trash-symlink-target");
     fs.writeFileSync(targetPath, "link placeholder");
     vi.spyOn(fsPromises, "lstat").mockResolvedValue({
       isSymbolicLink: () => true,
@@ -166,11 +166,11 @@ describe("moveToTrash", () => {
   });
 
   it("canonicalizes a symlinked parent before calling fs-safe trash", async () => {
-    const testRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-trash-parent-link-"));
+    const testRoot = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-trash-parent-link-"));
     const lexicalParent = path.join(testRoot, "state-link");
     const realParent = path.join(testRoot, "state-real");
-    const targetPath = path.join(lexicalParent, "openclaw.json");
-    const sourcePath = path.join(realParent, "openclaw.json");
+    const targetPath = path.join(lexicalParent, "merclaw.json");
+    const sourcePath = path.join(realParent, "merclaw.json");
     fs.mkdirSync(lexicalParent, { recursive: true });
     fs.writeFileSync(targetPath, "{}\n");
     vi.spyOn(fsPromises, "realpath").mockImplementation(async (candidate) =>

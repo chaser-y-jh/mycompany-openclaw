@@ -2,7 +2,7 @@ import {
   controlRealtimeVoiceAgentRun,
   shouldAutoControlRealtimeVoiceAgentText,
   type RealtimeVoiceAgentControlResult,
-} from "openclaw/plugin-sdk/realtime-voice";
+} from "merclaw/plugin-sdk/realtime-voice";
 import type { VoiceSessionEntry } from "./session.js";
 
 export type DiscordVoiceAgentControlOutcome =

@@ -29,7 +29,7 @@ export function createCodexSupervisorMcpServer(opts: CodexSupervisorMcpServeOpti
   close: () => Promise<void>;
 } {
   const supervisor = opts.supervisor ?? new CodexSupervisor(loadCodexSupervisorEndpoints());
-  const server = new McpServer({ name: "openclaw-codex-supervisor", version: VERSION });
+  const server = new McpServer({ name: "merclaw-codex-supervisor", version: VERSION });
   registerCodexSupervisorMcpTools(server, supervisor, opts.toolOptions);
   return {
     server,

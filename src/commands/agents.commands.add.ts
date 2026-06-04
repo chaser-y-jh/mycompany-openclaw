@@ -3,7 +3,7 @@ import path from "node:path";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/normalization-core/string-coerce";
 import {
   resolveAgentDir,
   resolveAgentWorkspaceDir,
@@ -122,7 +122,7 @@ export async function agentsAddCommand(
 
   if (nonInteractive && !workspaceFlag) {
     runtime.error(
-      `Non-interactive agent creation requires --workspace. Re-run ${formatCliCommand("openclaw agents add <id> --workspace <path>")} or omit flags to use the wizard.`,
+      `Non-interactive agent creation requires --workspace. Re-run ${formatCliCommand("merclaw agents add <id> --workspace <path>")} or omit flags to use the wizard.`,
     );
     runtime.exit(1);
     return;
@@ -131,14 +131,14 @@ export async function agentsAddCommand(
   if (nonInteractive) {
     if (!nameInput) {
       runtime.error(
-        `Agent name is required in non-interactive mode. Run ${formatCliCommand("openclaw agents add <id> --workspace <path>")}.`,
+        `Agent name is required in non-interactive mode. Run ${formatCliCommand("merclaw agents add <id> --workspace <path>")}.`,
       );
       runtime.exit(1);
       return;
     }
     if (!workspaceFlag) {
       runtime.error(
-        `Non-interactive agent creation requires --workspace. Re-run ${formatCliCommand("openclaw agents add <id> --workspace <path>")} or omit flags to use the wizard.`,
+        `Non-interactive agent creation requires --workspace. Re-run ${formatCliCommand("merclaw agents add <id> --workspace <path>")} or omit flags to use the wizard.`,
       );
       runtime.exit(1);
       return;
@@ -146,7 +146,7 @@ export async function agentsAddCommand(
     const agentId = normalizeAgentId(nameInput);
     if (agentId === DEFAULT_AGENT_ID) {
       runtime.error(
-        `"${DEFAULT_AGENT_ID}" is reserved. Choose another name, or run ${formatCliCommand("openclaw agents list")} to inspect the default agent.`,
+        `"${DEFAULT_AGENT_ID}" is reserved. Choose another name, or run ${formatCliCommand("merclaw agents list")} to inspect the default agent.`,
       );
       runtime.exit(1);
       return;
@@ -156,7 +156,7 @@ export async function agentsAddCommand(
     }
     if (findAgentEntryIndex(listAgentEntries(cfg), agentId) >= 0) {
       runtime.error(
-        `Agent "${agentId}" already exists. Run ${formatCliCommand("openclaw agents list")} to inspect configured agents.`,
+        `Agent "${agentId}" already exists. Run ${formatCliCommand("merclaw agents list")} to inspect configured agents.`,
       );
       runtime.exit(1);
       return;
@@ -265,7 +265,7 @@ export async function agentsAddCommand(
 
   const prompter = createClackPrompter();
   try {
-    await prompter.intro("Add OpenClaw agent");
+    await prompter.intro("Add MerClaw agent");
     const name =
       nameInput ??
       (await prompter.text({
@@ -460,7 +460,7 @@ export async function agentsAddCommand(
         await prompter.note(
           [
             "Routing unchanged. Add bindings when you're ready.",
-            "Docs: https://docs.openclaw.ai/concepts/multi-agent",
+            "Docs: https://docs.merclaw.ai/concepts/multi-agent",
           ].join("\n"),
           "Routing",
         );

@@ -4,8 +4,8 @@ import path from "node:path";
 
 const home = os.homedir();
 
-function openclawPath(...parts) {
-  return path.join(home, ".openclaw", ...parts);
+function merclawPath(...parts) {
+  return path.join(home, ".merclaw", ...parts);
 }
 
 function readJson(file) {
@@ -26,7 +26,7 @@ function readRequiredJson(file) {
 }
 
 function records() {
-  const index = readJson(openclawPath("plugins", "installs.json"));
+  const index = readJson(merclawPath("plugins", "installs.json"));
   return index.installRecords ?? index.records ?? {};
 }
 
@@ -35,7 +35,7 @@ function recordFor(pluginId) {
 }
 
 function config() {
-  return readJson(process.env.OPENCLAW_CONFIG_PATH ?? openclawPath("openclaw.json"));
+  return readJson(process.env.MERCLAW_CONFIG_PATH ?? merclawPath("merclaw.json"));
 }
 
 function assert(condition, message) {
@@ -63,7 +63,7 @@ function assertVersion(pluginId, version) {
 function assertNpmProjectRoot(pluginId, packageName) {
   const record = recordFor(pluginId);
   assert(record?.installPath, `install path missing for ${pluginId}`);
-  const relative = path.relative(openclawPath("npm", "projects"), record.installPath);
+  const relative = path.relative(merclawPath("npm", "projects"), record.installPath);
   assert(
     !relative.startsWith("..") && !path.isAbsolute(relative),
     `install path outside npm projects: ${record.installPath}`,
@@ -86,7 +86,7 @@ function assertNpmProjectRoot(pluginId, packageName) {
     );
   }
   assert(
-    !fs.existsSync(openclawPath("npm", "node_modules", ...packageSegments)),
+    !fs.existsSync(merclawPath("npm", "node_modules", ...packageSegments)),
     `legacy flat npm install path exists for ${packageName}`,
   );
 }

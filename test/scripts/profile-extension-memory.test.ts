@@ -57,7 +57,7 @@ describe("scripts/profile-extension-memory", () => {
   });
 
   it("bounds noisy child output without losing RSS samples", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-extension-memory-test-"));
+    const root = mkdtempSync(path.join(tmpdir(), "merclaw-extension-memory-test-"));
     try {
       const extensionDir = path.join(root, "dist", "extensions", "noisy");
       const reportPath = path.join(root, "report.json");

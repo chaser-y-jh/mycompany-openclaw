@@ -10,7 +10,7 @@ describe("run-with-env", () => {
   it("parses leading env assignments before the command separator", () => {
     expect(
       parseRunWithEnvArgs([
-        "OPENCLAW_GATEWAY_PROJECT_SHARDS=1",
+        "MERCLAW_GATEWAY_PROJECT_SHARDS=1",
         "EMPTY=",
         "--",
         "node",
@@ -19,7 +19,7 @@ describe("run-with-env", () => {
       ]),
     ).toEqual({
       env: {
-        OPENCLAW_GATEWAY_PROJECT_SHARDS: "1",
+        MERCLAW_GATEWAY_PROJECT_SHARDS: "1",
         EMPTY: "",
       },
       command: "node",
@@ -28,7 +28,7 @@ describe("run-with-env", () => {
   });
 
   it("rejects missing command separators", () => {
-    expect(() => parseRunWithEnvArgs(["OPENCLAW_GATEWAY_PROJECT_SHARDS=1", "node"])).toThrow(
+    expect(() => parseRunWithEnvArgs(["MERCLAW_GATEWAY_PROJECT_SHARDS=1", "node"])).toThrow(
       /Usage:/u,
     );
   });
@@ -46,7 +46,7 @@ describe("run-with-env", () => {
 
   it("keeps command help passthrough after the separator", () => {
     expect(
-      isRunWithEnvHelpRequest(["OPENCLAW_GATEWAY_PROJECT_SHARDS=1", "--", "node", "--help"]),
+      isRunWithEnvHelpRequest(["MERCLAW_GATEWAY_PROJECT_SHARDS=1", "--", "node", "--help"]),
     ).toBe(false);
   });
 

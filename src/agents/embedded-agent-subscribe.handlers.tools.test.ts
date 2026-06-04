@@ -1,4 +1,4 @@
-import type { AgentEvent } from "openclaw/plugin-sdk/agent-core";
+import type { AgentEvent } from "merclaw/plugin-sdk/agent-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   onAgentEvent as registerAgentEventListener,
@@ -1885,7 +1885,7 @@ describe("control UI credential redaction (issue #72283)", () => {
         type: "tool_execution_start",
         toolName: "exec",
         toolCallId: "tool-exec-secret",
-        args: { command: "cat ~/.openclaw/openclaw.json" },
+        args: { command: "cat ~/.merclaw/merclaw.json" },
       } as never,
     );
 

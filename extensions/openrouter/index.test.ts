@@ -1,11 +1,11 @@
 import {
   registerProviderPlugin,
   registerSingleProviderPlugin,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
+} from "merclaw/plugin-sdk/plugin-test-runtime";
 import {
   expectPassthroughReplayPolicy,
   expectUnifiedModelCatalogProviderRegistration,
-} from "openclaw/plugin-sdk/provider-test-contracts";
+} from "merclaw/plugin-sdk/provider-test-contracts";
 import { describe, expect, it, vi } from "vitest";
 import openrouterPlugin from "./index.js";
 import {
@@ -259,8 +259,8 @@ describe("openrouter provider hooks", () => {
     let capturedPayload: Record<string, unknown> | undefined;
     const baseStreamFn = vi.fn(
       (
-        ...args: Parameters<import("openclaw/plugin-sdk/agent-core").StreamFn>
-      ): ReturnType<import("openclaw/plugin-sdk/agent-core").StreamFn> => {
+        ...args: Parameters<import("merclaw/plugin-sdk/agent-core").StreamFn>
+      ): ReturnType<import("merclaw/plugin-sdk/agent-core").StreamFn> => {
         const payload: Record<string, unknown> = {};
         void args[2]?.onPayload?.(payload, args[0]);
         capturedPayload = payload;
@@ -357,8 +357,8 @@ describe("openrouter provider hooks", () => {
     let capturedPayload: Record<string, unknown> | undefined;
     const baseStreamFn = vi.fn(
       (
-        ...args: Parameters<import("openclaw/plugin-sdk/agent-core").StreamFn>
-      ): ReturnType<import("openclaw/plugin-sdk/agent-core").StreamFn> => {
+        ...args: Parameters<import("merclaw/plugin-sdk/agent-core").StreamFn>
+      ): ReturnType<import("merclaw/plugin-sdk/agent-core").StreamFn> => {
         void args[2]?.onPayload?.({}, args[0]);
         return { async *[Symbol.asyncIterator]() {} } as never;
       },
@@ -396,8 +396,8 @@ describe("openrouter provider hooks", () => {
     let capturedPayload: Record<string, unknown> | undefined;
     const baseStreamFn = vi.fn(
       (
-        ...args: Parameters<import("openclaw/plugin-sdk/agent-core").StreamFn>
-      ): ReturnType<import("openclaw/plugin-sdk/agent-core").StreamFn> => {
+        ...args: Parameters<import("merclaw/plugin-sdk/agent-core").StreamFn>
+      ): ReturnType<import("merclaw/plugin-sdk/agent-core").StreamFn> => {
         const payload = {
           messages: [
             { role: "user", content: "read file" },
@@ -450,8 +450,8 @@ describe("openrouter provider hooks", () => {
     const payloads: Array<Record<string, unknown>> = [];
     const baseStreamFn = vi.fn(
       (
-        ...args: Parameters<import("openclaw/plugin-sdk/agent-core").StreamFn>
-      ): ReturnType<import("openclaw/plugin-sdk/agent-core").StreamFn> => {
+        ...args: Parameters<import("merclaw/plugin-sdk/agent-core").StreamFn>
+      ): ReturnType<import("merclaw/plugin-sdk/agent-core").StreamFn> => {
         const payload = { messages: [] };
         void args[2]?.onPayload?.(payload, args[0]);
         payloads.push(payload);
@@ -494,8 +494,8 @@ describe("openrouter provider hooks", () => {
     const payloads: Array<Record<string, unknown>> = [];
     const baseStreamFn = vi.fn(
       (
-        ...args: Parameters<import("openclaw/plugin-sdk/agent-core").StreamFn>
-      ): ReturnType<import("openclaw/plugin-sdk/agent-core").StreamFn> => {
+        ...args: Parameters<import("merclaw/plugin-sdk/agent-core").StreamFn>
+      ): ReturnType<import("merclaw/plugin-sdk/agent-core").StreamFn> => {
         const payload = {
           messages: [{ role: "assistant", tool_calls: [{ id: "call_1", type: "function" }] }],
         };
@@ -557,8 +557,8 @@ describe("openrouter provider hooks", () => {
     let capturedPayload: Record<string, unknown> | undefined;
     const baseStreamFn = vi.fn(
       (
-        ...args: Parameters<import("openclaw/plugin-sdk/agent-core").StreamFn>
-      ): ReturnType<import("openclaw/plugin-sdk/agent-core").StreamFn> => {
+        ...args: Parameters<import("merclaw/plugin-sdk/agent-core").StreamFn>
+      ): ReturnType<import("merclaw/plugin-sdk/agent-core").StreamFn> => {
         const payload = {
           messages: [
             { role: "user", content: "Return JSON." },
@@ -607,8 +607,8 @@ describe("openrouter provider hooks", () => {
     ];
     const baseStreamFn = vi.fn(
       (
-        ...args: Parameters<import("openclaw/plugin-sdk/agent-core").StreamFn>
-      ): ReturnType<import("openclaw/plugin-sdk/agent-core").StreamFn> => {
+        ...args: Parameters<import("merclaw/plugin-sdk/agent-core").StreamFn>
+      ): ReturnType<import("merclaw/plugin-sdk/agent-core").StreamFn> => {
         const payload = { messages: [...messages] };
         void args[2]?.onPayload?.(payload, args[0]);
         capturedPayload = payload;
@@ -645,8 +645,8 @@ describe("openrouter provider hooks", () => {
     const payloads: Array<Record<string, unknown>> = [];
     const baseStreamFn = vi.fn(
       (
-        ...args: Parameters<import("openclaw/plugin-sdk/agent-core").StreamFn>
-      ): ReturnType<import("openclaw/plugin-sdk/agent-core").StreamFn> => {
+        ...args: Parameters<import("merclaw/plugin-sdk/agent-core").StreamFn>
+      ): ReturnType<import("merclaw/plugin-sdk/agent-core").StreamFn> => {
         const payload = {
           messages: [
             { role: "user", content: "Return JSON." },

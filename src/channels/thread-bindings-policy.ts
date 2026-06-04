@@ -1,6 +1,6 @@
-import { MAX_DATE_TIMESTAMP_MS } from "@openclaw/normalization-core/number-coercion";
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { MAX_DATE_TIMESTAMP_MS } from "@merclaw/normalization-core/number-coercion";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { normalizeAccountId } from "../routing/session-key.js";
 import {
   resolveThreadBindingLifecycle as resolveSharedThreadBindingLifecycle,
@@ -143,7 +143,7 @@ export function resolveThreadBindingsEnabled(params: {
 }
 
 function resolveChannelThreadBindings(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channel: string;
   accountId: string;
 }): {
@@ -172,7 +172,7 @@ function normalizeSpawnContext(value: unknown): ThreadBindingSpawnContext | unde
 }
 
 export function resolveThreadBindingSpawnPolicy(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channel: string;
   accountId?: string;
   kind: ThreadBindingSpawnKind;
@@ -212,7 +212,7 @@ export function resolveThreadBindingSpawnPolicy(params: {
 }
 
 export function resolveThreadBindingIdleTimeoutMsForChannel(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channel: string;
   accountId?: string;
 }): number {
@@ -224,7 +224,7 @@ export function resolveThreadBindingIdleTimeoutMsForChannel(params: {
 }
 
 export function resolveThreadBindingMaxAgeMsForChannel(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channel: string;
   accountId?: string;
 }): number {
@@ -236,7 +236,7 @@ export function resolveThreadBindingMaxAgeMsForChannel(params: {
 }
 
 function resolveThreadBindingChannelScope(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channel: string;
   accountId?: string;
 }) {

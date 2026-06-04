@@ -1,8 +1,8 @@
 import { normalizeAgentId } from "../routing/session-key.js";
-import type { OpenClawConfig } from "./types.openclaw.js";
+import type { MerClawConfig } from "./types.merclaw.js";
 
 export function resolveExecCommandHighlighting(params: {
-  config?: OpenClawConfig | null;
+  config?: MerClawConfig | null;
   agentId?: string | null;
 }): boolean {
   const config = params.config ?? {};

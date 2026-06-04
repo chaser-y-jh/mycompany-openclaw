@@ -8,9 +8,9 @@ import {
   type AuthProfileCredential,
   type AuthProfileFailureReason,
   type AuthProfileStore,
-} from "openclaw/plugin-sdk/agent-runtime";
-import type { PluginCommandContext } from "openclaw/plugin-sdk/plugin-entry";
-import { normalizeUniqueStringEntries } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/agent-runtime";
+import type { PluginCommandContext } from "merclaw/plugin-sdk/plugin-entry";
+import { normalizeUniqueStringEntries } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { CODEX_CONTROL_METHODS, type CodexControlMethod } from "./app-server/capabilities.js";
 import { isJsonObject, type JsonObject, type JsonValue } from "./app-server/protocol.js";
 import { rememberCodexRateLimits } from "./app-server/rate-limit-cache.js";

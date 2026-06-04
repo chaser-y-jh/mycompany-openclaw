@@ -42,7 +42,7 @@ const { registerBrowserPermissionRoutes, testing } = await import("./permissions
 function createProfileContext() {
   return {
     profile: {
-      name: "openclaw",
+      name: "merclaw",
       cdpUrl: "http://127.0.0.1:18800",
     },
     ensureBrowserAvailable: vi.fn(async () => {}),

@@ -2,14 +2,14 @@ import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalLowercaseString,
   normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/normalization-core/string-coerce";
 import { resolveAgentConfig } from "../../agents/agent-scope.js";
 import { resolveMentionPatternPolicy } from "../../channels/mention-pattern-policy.js";
 import type { ChannelId } from "../../channels/plugins/channel-id.types.js";
 import { getLoadedChannelPluginById } from "../../channels/plugins/registry-loaded.js";
 import type { ChannelPlugin } from "../../channels/plugins/types.plugin.js";
 import { normalizeAnyChannelId } from "../../channels/registry.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
 import { compileConfigRegexes, type ConfigRegexRejectReason } from "../../security/config-regex.js";
 import { escapeRegExp } from "../../utils.js";
@@ -111,7 +111,7 @@ function compileMentionPatternsCached(params: {
   return cacheMentionRegexes(params.cache, cacheKey, compiled.regexes);
 }
 
-function resolveMentionPatterns(cfg: OpenClawConfig | undefined, agentId?: string): string[] {
+function resolveMentionPatterns(cfg: MerClawConfig | undefined, agentId?: string): string[] {
   if (!cfg) {
     return [];
   }
@@ -129,7 +129,7 @@ function resolveMentionPatterns(cfg: OpenClawConfig | undefined, agentId?: strin
 }
 
 export function buildMentionRegexes(
-  cfg: OpenClawConfig | undefined,
+  cfg: MerClawConfig | undefined,
   agentId?: string,
   options?: BuildMentionRegexesOptions,
 ): RegExp[] {
@@ -196,7 +196,7 @@ export function stripStructuralPrefixes(text: string): string {
 export function stripMentions(
   text: string,
   ctx: MsgContext,
-  cfg: OpenClawConfig | undefined,
+  cfg: MerClawConfig | undefined,
   agentId?: string,
 ): string {
   let result = text;

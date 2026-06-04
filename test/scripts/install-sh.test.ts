@@ -11,7 +11,7 @@ function runInstallShell(script: string, env: NodeJS.ProcessEnv = {}) {
     encoding: "utf8",
     env: {
       ...process.env,
-      OPENCLAW_INSTALL_SH_NO_RUN: "1",
+      MERCLAW_INSTALL_SH_NO_RUN: "1",
       ...env,
     },
   });
@@ -261,7 +261,7 @@ describe("install.sh", () => {
   });
 
   it("installs Git with apk on Alpine", () => {
-    const tmp = mkdtempSync(join(tmpdir(), "openclaw-install-git-apk-"));
+    const tmp = mkdtempSync(join(tmpdir(), "merclaw-install-git-apk-"));
     const bin = join(tmp, "bin");
     const apkLog = join(tmp, "apk-args.txt");
     mkdirSync(bin, { recursive: true });
@@ -305,7 +305,7 @@ describe("install.sh", () => {
   });
 
   it("does not select apk Git on non-Alpine hosts", () => {
-    const tmp = mkdtempSync(join(tmpdir(), "openclaw-install-git-native-"));
+    const tmp = mkdtempSync(join(tmpdir(), "merclaw-install-git-native-"));
     const bin = join(tmp, "bin");
     const apkLog = join(tmp, "apk-args.txt");
     mkdirSync(bin, { recursive: true });
@@ -365,7 +365,7 @@ describe("install.sh", () => {
   });
 
   it("does not emit --before when raw user npmrc config contains min-release-age", () => {
-    const tmp = mkdtempSync(join(tmpdir(), "openclaw-install-npmrc-"));
+    const tmp = mkdtempSync(join(tmpdir(), "merclaw-install-npmrc-"));
     const bin = join(tmp, "bin");
     const home = join(tmp, "home");
     const npmrc = join(tmp, "user.npmrc");
@@ -403,7 +403,7 @@ describe("install.sh", () => {
           "set -euo pipefail",
           `cd ${JSON.stringify(process.cwd())}`,
           `source ${JSON.stringify(SCRIPT_PATH)}`,
-          `run_npm_global_install openclaw@latest ${JSON.stringify(join(tmp, "install.log"))}`,
+          `run_npm_global_install merclaw@latest ${JSON.stringify(join(tmp, "install.log"))}`,
           'printf "cmd=%s\\n" "$LAST_NPM_INSTALL_CMD"',
         ].join("\n"),
         {
@@ -427,7 +427,7 @@ describe("install.sh", () => {
   });
 
   it("does not emit --before when default global npmrc config contains min-release-age", () => {
-    const tmp = mkdtempSync(join(tmpdir(), "openclaw-install-global-npmrc-"));
+    const tmp = mkdtempSync(join(tmpdir(), "merclaw-install-global-npmrc-"));
     const bin = join(tmp, "bin");
     const home = join(tmp, "home");
     const prefix = join(tmp, "prefix");
@@ -471,7 +471,7 @@ describe("install.sh", () => {
           "set -euo pipefail",
           `cd ${JSON.stringify(process.cwd())}`,
           `source ${JSON.stringify(SCRIPT_PATH)}`,
-          `run_npm_global_install openclaw@latest ${JSON.stringify(join(tmp, "install.log"))}`,
+          `run_npm_global_install merclaw@latest ${JSON.stringify(join(tmp, "install.log"))}`,
           'printf "cmd=%s\\n" "$LAST_NPM_INSTALL_CMD"',
         ].join("\n"),
         {
@@ -499,7 +499,7 @@ describe("install.sh", () => {
   });
 
   it("does not emit --before when builtin npmrc config contains min-release-age", () => {
-    const tmp = mkdtempSync(join(tmpdir(), "openclaw-install-builtin-npmrc-"));
+    const tmp = mkdtempSync(join(tmpdir(), "merclaw-install-builtin-npmrc-"));
     const bin = join(tmp, "bin");
     const home = join(tmp, "home");
     const npmrc = join(tmp, "npmrc");
@@ -541,7 +541,7 @@ describe("install.sh", () => {
           "set -euo pipefail",
           `cd ${JSON.stringify(process.cwd())}`,
           `source ${JSON.stringify(SCRIPT_PATH)}`,
-          `run_npm_global_install openclaw@latest ${JSON.stringify(join(tmp, "install.log"))}`,
+          `run_npm_global_install merclaw@latest ${JSON.stringify(join(tmp, "install.log"))}`,
           'printf "cmd=%s\\n" "$LAST_NPM_INSTALL_CMD"',
         ].join("\n"),
         {
@@ -568,12 +568,12 @@ describe("install.sh", () => {
     }
   });
 
-  it("uses OPENCLAW_HOME for git and onboarding defaults", () => {
-    const tmp = mkdtempSync(join(tmpdir(), "openclaw-install-home-"));
+  it("uses MERCLAW_HOME for git and onboarding defaults", () => {
+    const tmp = mkdtempSync(join(tmpdir(), "merclaw-install-home-"));
     const osHome = join(tmp, "os-home");
-    const openclawHome = join(tmp, "openclaw-home");
+    const merclawHome = join(tmp, "merclaw-home");
     mkdirSync(osHome, { recursive: true });
-    mkdirSync(openclawHome, { recursive: true });
+    mkdirSync(merclawHome, { recursive: true });
 
     let result: ReturnType<typeof runInstallShell> | undefined;
     try {
@@ -582,13 +582,13 @@ describe("install.sh", () => {
           `cd ${JSON.stringify(process.cwd())}`,
           `source ${JSON.stringify(SCRIPT_PATH)}`,
           'printf "git=%s\\nworkspace=%s\\n" "$GIT_DIR" "$(resolve_workspace_dir)"',
-          "OPENCLAW_PROFILE=work",
+          "MERCLAW_PROFILE=work",
           'printf "workspaceProfile=%s\\n" "$(resolve_workspace_dir)"',
         ].join("\n"),
         {
           HOME: osHome,
-          OPENCLAW_HOME: openclawHome,
-          OPENCLAW_GIT_DIR: undefined,
+          MERCLAW_HOME: merclawHome,
+          MERCLAW_GIT_DIR: undefined,
           TERM: "dumb",
         },
       );
@@ -598,29 +598,29 @@ describe("install.sh", () => {
 
     expect(result?.status).toBe(0);
     const output = result?.stdout ?? "";
-    expect(output).toContain(`git=${join(openclawHome, "openclaw")}`);
-    expect(output).toContain(`workspace=${join(openclawHome, ".openclaw", "workspace")}`);
+    expect(output).toContain(`git=${join(merclawHome, "merclaw")}`);
+    expect(output).toContain(`workspace=${join(merclawHome, ".merclaw", "workspace")}`);
     expect(output).toContain(
-      `workspaceProfile=${join(openclawHome, ".openclaw", "workspace-work")}`,
+      `workspaceProfile=${join(merclawHome, ".merclaw", "workspace-work")}`,
     );
     const mkdirParentIndex = script.indexOf('mkdir -p "$(dirname "$repo_dir")"');
     const cloneIndex = script.indexOf(
-      'run_quiet_step "Cloning OpenClaw" git clone "$repo_url" "$repo_dir"',
+      'run_quiet_step "Cloning MerClaw" git clone "$repo_url" "$repo_dir"',
     );
     expect(mkdirParentIndex).toBeGreaterThan(-1);
     expect(cloneIndex).toBeGreaterThan(-1);
     expect(mkdirParentIndex).toBeLessThan(cloneIndex);
   });
 
-  it("skips bootstrap onboarding when legacy HOME config exists with OPENCLAW_HOME", () => {
-    const tmp = mkdtempSync(join(tmpdir(), "openclaw-install-legacy-config-"));
+  it("skips bootstrap onboarding when legacy HOME config exists with MERCLAW_HOME", () => {
+    const tmp = mkdtempSync(join(tmpdir(), "merclaw-install-legacy-config-"));
     const osHome = join(tmp, "os-home");
-    const openclawHome = join(tmp, "openclaw-home");
-    const legacyConfigDir = join(osHome, ".openclaw");
-    const bootstrapDir = join(openclawHome, ".openclaw", "workspace");
+    const merclawHome = join(tmp, "merclaw-home");
+    const legacyConfigDir = join(osHome, ".merclaw");
+    const bootstrapDir = join(merclawHome, ".merclaw", "workspace");
     mkdirSync(legacyConfigDir, { recursive: true });
     mkdirSync(bootstrapDir, { recursive: true });
-    writeFileSync(join(legacyConfigDir, "openclaw.json"), "{}\n");
+    writeFileSync(join(legacyConfigDir, "merclaw.json"), "{}\n");
     writeFileSync(join(bootstrapDir, "BOOTSTRAP.md"), "# bootstrap\n");
 
     let result: ReturnType<typeof runInstallShell> | undefined;
@@ -634,8 +634,8 @@ describe("install.sh", () => {
         ].join("\n"),
         {
           HOME: osHome,
-          OPENCLAW_HOME: openclawHome,
-          OPENCLAW_CONFIG_PATH: undefined,
+          MERCLAW_HOME: merclawHome,
+          MERCLAW_CONFIG_PATH: undefined,
           TERM: "dumb",
         },
       );
@@ -648,26 +648,26 @@ describe("install.sh", () => {
     expect(result?.stderr ?? "").toBe("");
   });
 
-  it("rejects OpenClaw GitHub source targets for npm installs", () => {
+  it("rejects MerClaw GitHub source targets for npm installs", () => {
     const result = runInstallShell(`
       set -euo pipefail
       source "${SCRIPT_PATH}"
       set +e
-      OPENCLAW_VERSION=main
+      MERCLAW_VERSION=main
       USE_BETA=0
-      install_openclaw
+      install_merclaw
       status=$?
       printf 'status=%s\\n' "$status"
     `);
 
     expect(result.status).toBe(0);
     expect(result.stdout).toContain("status=1");
-    expect(result.stdout).toContain("npm installs do not support OpenClaw GitHub source targets");
+    expect(result.stdout).toContain("npm installs do not support MerClaw GitHub source targets");
     expect(result.stdout).toContain("--install-method git --version main");
   });
 
   it("does not emit before args when npmrc min-release-age computes a before cutoff", () => {
-    const tmp = mkdtempSync(join(tmpdir(), "openclaw-install-npm-freshness-"));
+    const tmp = mkdtempSync(join(tmpdir(), "merclaw-install-npm-freshness-"));
     const bin = join(tmp, "bin");
     const home = join(tmp, "home");
     const argsLog = join(tmp, "npm-args.log");
@@ -687,7 +687,7 @@ describe("install.sh", () => {
           `PATH=${JSON.stringify(`${bin}:/usr/bin:/bin`)}`,
           "NPM_LOGLEVEL=error",
           "NPM_SILENT_FLAG=",
-          `run_npm_global_install openclaw@latest ${JSON.stringify(join(tmp, "install.log"))}`,
+          `run_npm_global_install merclaw@latest ${JSON.stringify(join(tmp, "install.log"))}`,
         ].join("\n"),
       );
       argsOutput = readFileSync(argsLog, "utf8");
@@ -701,7 +701,7 @@ describe("install.sh", () => {
   });
 
   it("ignores project npmrc when choosing global install freshness args", () => {
-    const tmp = mkdtempSync(join(tmpdir(), "openclaw-install-global-freshness-"));
+    const tmp = mkdtempSync(join(tmpdir(), "merclaw-install-global-freshness-"));
     const bin = join(tmp, "bin");
     const home = join(tmp, "home");
     const project = join(tmp, "project");
@@ -725,7 +725,7 @@ describe("install.sh", () => {
           `PATH=${JSON.stringify(`${bin}:/usr/bin:/bin`)}`,
           "NPM_LOGLEVEL=error",
           "NPM_SILENT_FLAG=",
-          `run_npm_global_install openclaw@latest ${JSON.stringify(join(tmp, "install.log"))}`,
+          `run_npm_global_install merclaw@latest ${JSON.stringify(join(tmp, "install.log"))}`,
         ].join("\n"),
       );
       argsOutput = readFileSync(argsLog, "utf8");
@@ -754,7 +754,7 @@ describe("install.sh", () => {
         "parse_args --verify",
         "configure_install_stage_total",
         'ui_stage "Preparing environment"',
-        'ui_stage "Installing OpenClaw"',
+        'ui_stage "Installing MerClaw"',
         'ui_stage "Finalizing setup"',
         'ui_stage "Verifying installation"',
       ].join("\n"),
@@ -772,22 +772,22 @@ describe("install.sh", () => {
         `source ${JSON.stringify(SCRIPT_PATH)}`,
         "npm() {",
         '  if [[ "$1" == "prefix" && "$2" == "-g" ]]; then sleep 2; return 0; fi',
-        '  if [[ "$1" == "config" && "$2" == "get" && "$3" == "prefix" ]]; then printf "/tmp/openclaw-npm\\n"; return 0; fi',
+        '  if [[ "$1" == "config" && "$2" == "get" && "$3" == "prefix" ]]; then printf "/tmp/merclaw-npm\\n"; return 0; fi',
         "  return 1",
         "}",
         "npm_global_bin_dir",
       ].join("\n"),
-      { OPENCLAW_INSTALL_PROBE_TIMEOUT_SECONDS: "0.1" },
+      { MERCLAW_INSTALL_PROBE_TIMEOUT_SECONDS: "0.1" },
     );
 
     expect(result.status).toBe(0);
-    expect(result.stdout.trim()).toBe("/tmp/openclaw-npm/bin");
+    expect(result.stdout.trim()).toBe("/tmp/merclaw-npm/bin");
     expect(result.stderr).toContain("timed out during installer finalization probe: npm prefix -g");
   });
 
   it("bounds daemon status probes during finalization helpers", () => {
-    const tmp = mkdtempSync(join(tmpdir(), "openclaw-install-probe-"));
-    const claw = join(tmp, "openclaw");
+    const tmp = mkdtempSync(join(tmpdir(), "merclaw-install-probe-"));
+    const claw = join(tmp, "merclaw");
     writeFileSync(
       claw,
       [
@@ -811,13 +811,13 @@ describe("install.sh", () => {
           '  printf "not-loaded\\n"',
           "fi",
         ].join("\n"),
-        { OPENCLAW_INSTALL_PROBE_TIMEOUT_SECONDS: "0.1" },
+        { MERCLAW_INSTALL_PROBE_TIMEOUT_SECONDS: "0.1" },
       );
 
       expect(result.status).toBe(0);
       expect(result.stdout.trim()).toBe("not-loaded");
       expect(result.stderr).toContain(
-        "timed out during installer finalization probe: openclaw daemon status --json",
+        "timed out during installer finalization probe: merclaw daemon status --json",
       );
     } finally {
       rmSync(tmp, { force: true, recursive: true });
@@ -829,7 +829,7 @@ describe("install.sh", () => {
       /# Step 1: Node\.js[\s\S]*?load_nvm_for_node_detection\s+if ! check_node; then/,
     );
 
-    const tmp = mkdtempSync(join(tmpdir(), "openclaw-install-nvm-"));
+    const tmp = mkdtempSync(join(tmpdir(), "merclaw-install-nvm-"));
     const home = join(tmp, "home");
     const systemBin = join(tmp, "system-bin");
     const nvmBin = join(home, ".nvm/versions/node/v22.22.1/bin");
@@ -907,7 +907,7 @@ describe("install.sh", () => {
   });
 
   it("promotes a supported Linux Node binary over stale PATH entries", () => {
-    const tmp = mkdtempSync(join(tmpdir(), "openclaw-install-node-promote-"));
+    const tmp = mkdtempSync(join(tmpdir(), "merclaw-install-node-promote-"));
     const staleBin = join(tmp, "usr-local-bin");
     const supportedBin = join(tmp, "usr-bin");
     mkdirSync(staleBin, { recursive: true });
@@ -960,7 +960,7 @@ describe("install.sh", () => {
   });
 
   it("persists a supported Linux Node path before noninteractive shell guards", () => {
-    const tmp = mkdtempSync(join(tmpdir(), "openclaw-install-linux-node-path-"));
+    const tmp = mkdtempSync(join(tmpdir(), "merclaw-install-linux-node-path-"));
     const home = join(tmp, "home");
     const oldBin = join(tmp, "old/bin");
     const installedBin = join(tmp, "usr/bin");
@@ -1025,7 +1025,7 @@ describe("install.sh", () => {
   });
 
   it("warns before redirecting an unwritable npm prefix", () => {
-    const tmp = mkdtempSync(join(tmpdir(), "openclaw-install-npm-prefix-"));
+    const tmp = mkdtempSync(join(tmpdir(), "merclaw-install-npm-prefix-"));
     const home = join(tmp, "home");
     const events = join(tmp, "events.log");
     mkdirSync(home, { recursive: true });
@@ -1072,13 +1072,13 @@ describe("install.sh", () => {
     expect(noSudoWarningIndex).toBeGreaterThan(npmSetIndex);
     expect(result?.stdout).toContain("npm global prefix is not writable");
     expect(result?.stdout).toContain("npm normally writes that setting to ~/.npmrc");
-    expect(result?.stdout).toContain("npm i -g openclaw@latest");
+    expect(result?.stdout).toContain("npm i -g merclaw@latest");
     expect(result?.stdout).toContain("using this user prefix");
     expect(result?.stdout).not.toContain("has been saved");
   });
 
   it("persists npm prefix PATH before noninteractive shell guards", () => {
-    const tmp = mkdtempSync(join(tmpdir(), "openclaw-install-npm-prefix-shell-"));
+    const tmp = mkdtempSync(join(tmpdir(), "merclaw-install-npm-prefix-shell-"));
     const home = join(tmp, "home");
     mkdirSync(home, { recursive: true });
     writeFileSync(
@@ -1128,15 +1128,15 @@ describe("install.sh", () => {
     expect(result?.stdout).toContain(`path=${home}/.npm-global/bin`);
   });
 
-  it("uses a quoted absolute openclaw path in follow-up commands when npm bin is not on the original PATH", () => {
-    const tmp = mkdtempSync(join(tmpdir(), "openclaw-install-command-"));
+  it("uses a quoted absolute merclaw path in follow-up commands when npm bin is not on the original PATH", () => {
+    const tmp = mkdtempSync(join(tmpdir(), "merclaw-install-command-"));
     const npmBin = join(tmp, "npm bin");
     const visibleBin = join(tmp, "visible-bin");
     mkdirSync(npmBin, { recursive: true });
     mkdirSync(visibleBin, { recursive: true });
-    const openclawBin = join(npmBin, "openclaw");
-    writeFileSync(openclawBin, "#!/bin/sh\nexit 0\n");
-    chmodSync(openclawBin, 0o755);
+    const merclawBin = join(npmBin, "merclaw");
+    writeFileSync(merclawBin, "#!/bin/sh\nexit 0\n");
+    chmodSync(merclawBin, 0o755);
 
     let result: ReturnType<typeof runInstallShell> | undefined;
     try {
@@ -1144,17 +1144,17 @@ describe("install.sh", () => {
         set -euo pipefail
         source "${SCRIPT_PATH}"
         ORIGINAL_PATH=${JSON.stringify(`${visibleBin}:/usr/bin:/bin`)}
-        printf 'missing=%s\\n' "$(openclaw_command_for_user "${openclawBin}")"
+        printf 'missing=%s\\n' "$(merclaw_command_for_user "${merclawBin}")"
         ORIGINAL_PATH=${JSON.stringify(`${npmBin}:${visibleBin}:/usr/bin:/bin`)}
-        printf 'present=%s\\n' "$(openclaw_command_for_user "${openclawBin}")"
+        printf 'present=%s\\n' "$(merclaw_command_for_user "${merclawBin}")"
       `);
     } finally {
       rmSync(tmp, { recursive: true, force: true });
     }
 
     expect(result?.status).toBe(0);
-    expect(result?.stdout).toContain(`missing=${openclawBin.replace(/ /g, "\\ ")}`);
-    expect(result?.stdout).toContain("present=openclaw");
+    expect(result?.stdout).toContain(`missing=${merclawBin.replace(/ /g, "\\ ")}`);
+    expect(result?.stdout).toContain("present=merclaw");
   });
 
   it("resolves requested git install versions to checkout refs", () => {
@@ -1162,20 +1162,20 @@ describe("install.sh", () => {
       set -euo pipefail
       source "${SCRIPT_PATH}"
       npm() {
-        if [[ "$1" == "view" && "$2" == "openclaw" && "$3" == "dist-tags.beta" ]]; then
+        if [[ "$1" == "view" && "$2" == "merclaw" && "$3" == "dist-tags.beta" ]]; then
           printf '2026.5.12-beta.3\\n'
           return 0
         fi
         return 1
       }
-      OPENCLAW_VERSION=v2026.5.12-beta.3
-      printf 'tag=%s\\n' "$(resolve_git_openclaw_ref)"
-      OPENCLAW_VERSION=2026.5.12-beta.3
-      printf 'semver=%s\\n' "$(resolve_git_openclaw_ref)"
-      OPENCLAW_VERSION=beta
-      printf 'beta=%s\\n' "$(resolve_git_openclaw_ref)"
-      OPENCLAW_VERSION=main
-      printf 'main=%s\\n' "$(resolve_git_openclaw_ref)"
+      MERCLAW_VERSION=v2026.5.12-beta.3
+      printf 'tag=%s\\n' "$(resolve_git_merclaw_ref)"
+      MERCLAW_VERSION=2026.5.12-beta.3
+      printf 'semver=%s\\n' "$(resolve_git_merclaw_ref)"
+      MERCLAW_VERSION=beta
+      printf 'beta=%s\\n' "$(resolve_git_merclaw_ref)"
+      MERCLAW_VERSION=main
+      printf 'main=%s\\n' "$(resolve_git_merclaw_ref)"
     `);
 
     expect(result.status).toBe(0);
@@ -1341,7 +1341,7 @@ describe("install.sh macOS Homebrew Node behavior", () => {
   });
 
   it("reruns spinner-wrapped commands when gum reports ioctl failure", () => {
-    const dir = mkdtempSync(join(tmpdir(), "openclaw-install-sh-gum-"));
+    const dir = mkdtempSync(join(tmpdir(), "merclaw-install-sh-gum-"));
     try {
       const gumPath = join(dir, "gum");
       const commandPath = join(dir, "command");
@@ -1375,46 +1375,46 @@ describe("install.sh macOS Homebrew Node behavior", () => {
   });
 });
 
-describe("install.sh duplicate OpenClaw install detection", () => {
+describe("install.sh duplicate MerClaw install detection", () => {
   it("warns with concrete package paths and versions for duplicate npm roots", () => {
     const result = runInstallShell(`
       set -euo pipefail
       source "${SCRIPT_PATH}"
       root="$(mktemp -d)"
       trap 'rm -rf "$root"' EXIT
-      mkdir -p "$root/brew/openclaw" "$root/fnm/openclaw"
-      printf '{"version":"2026.3.7"}\\n' > "$root/brew/openclaw/package.json"
-      printf '{"version":"2026.3.1"}\\n' > "$root/fnm/openclaw/package.json"
-      collect_openclaw_npm_root_candidates() { printf '%s\\n' "$root/brew" "$root/fnm"; }
-      OPENCLAW_BIN="$root/fnm/.bin/openclaw"
+      mkdir -p "$root/brew/merclaw" "$root/fnm/merclaw"
+      printf '{"version":"2026.3.7"}\\n' > "$root/brew/merclaw/package.json"
+      printf '{"version":"2026.3.1"}\\n' > "$root/fnm/merclaw/package.json"
+      collect_merclaw_npm_root_candidates() { printf '%s\\n' "$root/brew" "$root/fnm"; }
+      MERCLAW_BIN="$root/fnm/.bin/merclaw"
       ui_warn() { echo "WARN: $*"; }
-      warn_duplicate_openclaw_global_installs
+      warn_duplicate_merclaw_global_installs
     `);
 
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain("Multiple OpenClaw global installs detected");
+    expect(result.stdout).toContain("Multiple MerClaw global installs detected");
     expect(result.stdout).toContain("2026.3.7");
     expect(result.stdout).toContain("2026.3.1");
-    expect(result.stdout).toContain("/brew/openclaw");
-    expect(result.stdout).toContain("/fnm/openclaw");
-    expect(result.stdout).toContain("Active openclaw:");
-    expect(result.stdout).toContain("npm uninstall -g openclaw");
+    expect(result.stdout).toContain("/brew/merclaw");
+    expect(result.stdout).toContain("/fnm/merclaw");
+    expect(result.stdout).toContain("Active merclaw:");
+    expect(result.stdout).toContain("npm uninstall -g merclaw");
   });
 
-  it("stays quiet when only one OpenClaw npm root exists", () => {
+  it("stays quiet when only one MerClaw npm root exists", () => {
     const result = runInstallShell(`
       set -euo pipefail
       source "${SCRIPT_PATH}"
       root="$(mktemp -d)"
       trap 'rm -rf "$root"' EXIT
-      mkdir -p "$root/only/openclaw"
-      printf '{"version":"2026.3.7"}\\n' > "$root/only/openclaw/package.json"
-      collect_openclaw_npm_root_candidates() { printf '%s\\n' "$root/only"; }
+      mkdir -p "$root/only/merclaw"
+      printf '{"version":"2026.3.7"}\\n' > "$root/only/merclaw/package.json"
+      collect_merclaw_npm_root_candidates() { printf '%s\\n' "$root/only"; }
       ui_warn() { echo "WARN: $*"; }
-      warn_duplicate_openclaw_global_installs
+      warn_duplicate_merclaw_global_installs
     `);
 
     expect(result.status).toBe(0);
-    expect(result.stdout).not.toContain("Multiple OpenClaw global installs detected");
+    expect(result.stdout).not.toContain("Multiple MerClaw global installs detected");
   });
 });

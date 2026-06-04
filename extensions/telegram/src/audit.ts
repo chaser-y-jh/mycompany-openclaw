@@ -1,5 +1,5 @@
-import type { TelegramGroupConfig } from "openclaw/plugin-sdk/config-contracts";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { TelegramGroupConfig } from "merclaw/plugin-sdk/config-contracts";
+import { normalizeOptionalString } from "merclaw/plugin-sdk/string-coerce-runtime";
 export type {
   AuditTelegramGroupMembershipParams,
   TelegramGroupMembershipAudit,

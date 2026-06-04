@@ -11,7 +11,7 @@ import {
 const tempDirs: string[] = [];
 
 async function createTempDir(): Promise<string> {
-  const dir = await mkdtemp(path.join(os.tmpdir(), "openclaw-codex-spawn-"));
+  const dir = await mkdtemp(path.join(os.tmpdir(), "merclaw-codex-spawn-"));
   tempDirs.push(dir);
   return dir;
 }
@@ -92,7 +92,7 @@ describe("resolveCodexAppServerSpawnInvocation", () => {
   it("rejects Windows Codex app-server commands that include inline script arguments", () => {
     expect(() =>
       resolveCodexAppServerSpawnInvocation(
-        startOptions("node C:\\Users\\me\\.openclaw\\npm\\node_modules\\@openai\\codex\\bin\\codex.js"),
+        startOptions("node C:\\Users\\me\\.merclaw\\npm\\node_modules\\@openai\\codex\\bin\\codex.js"),
         {
           platform: "win32",
           env: {},

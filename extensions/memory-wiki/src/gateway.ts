@@ -1,7 +1,7 @@
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { resolveDefaultAgentId } from "openclaw/plugin-sdk/memory-host-core";
-import { readPositiveIntegerParam } from "openclaw/plugin-sdk/param-readers";
-import type { OpenClawConfig, OpenClawPluginApi } from "../api.js";
+import { formatErrorMessage } from "merclaw/plugin-sdk/error-runtime";
+import { resolveDefaultAgentId } from "merclaw/plugin-sdk/memory-host-core";
+import { readPositiveIntegerParam } from "merclaw/plugin-sdk/param-readers";
+import type { MerClawConfig, MerClawPluginApi } from "../api.js";
 import { applyMemoryWikiMutation, normalizeMemoryWikiMutationInput } from "./apply.js";
 import { compileMemoryWikiVault } from "./compile.js";
 import {
@@ -31,7 +31,7 @@ const WRITE_SCOPE = "operator.write" as const;
 const ADMIN_SCOPE = "operator.admin" as const;
 const LOCAL_FILE_INGEST_SCOPE = ADMIN_SCOPE;
 type GatewayMethodContext = Parameters<
-  Parameters<OpenClawPluginApi["registerGatewayMethod"]>[1]
+  Parameters<MerClawPluginApi["registerGatewayMethod"]>[1]
 >[0];
 type GatewayRespond = GatewayMethodContext["respond"];
 
@@ -78,7 +78,7 @@ function respondError(respond: GatewayRespond, error: unknown) {
 
 function resolveGatewayAgentId(
   requestParams: Record<string, unknown>,
-  appConfig: OpenClawConfig | undefined,
+  appConfig: MerClawConfig | undefined,
 ): string | undefined {
   return (
     readStringParam(requestParams, "agentId") ??
@@ -88,15 +88,15 @@ function resolveGatewayAgentId(
 
 async function syncImportedSourcesIfNeeded(
   config: ResolvedMemoryWikiConfig,
-  appConfig?: OpenClawConfig,
+  appConfig?: MerClawConfig,
 ) {
   await syncMemoryWikiImportedSources({ config, appConfig });
 }
 
 export function registerMemoryWikiGatewayMethods(params: {
-  api: OpenClawPluginApi;
+  api: MerClawPluginApi;
   config: ResolvedMemoryWikiConfig;
-  appConfig?: OpenClawConfig;
+  appConfig?: MerClawConfig;
 }) {
   const { api, config, appConfig } = params;
 

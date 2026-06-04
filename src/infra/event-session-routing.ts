@@ -1,7 +1,7 @@
-import { isRecord } from "@openclaw/normalization-core/record-coerce";
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { isRecord } from "@merclaw/normalization-core/record-coerce";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
 import type { SessionScope } from "../config/types.base.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { resolveAgentRoute } from "../routing/resolve-route.js";
 import {
   buildAgentMainSessionKey,
@@ -88,7 +88,7 @@ export function parseDirectAgentSessionTarget(
 }
 
 export function resolveEventSessionAllowFrom(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   sessionKey?: string | null;
   channel?: string | null;
   accountId?: string | null;
@@ -121,7 +121,7 @@ export function resolveEventSessionAllowFrom(params: {
 }
 
 function shouldPreserveDirectSessionKeyFromRoute(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   sessionKey: string;
   target: DirectSessionTarget | null;
 }): boolean {
@@ -149,7 +149,7 @@ function shouldPreserveDirectSessionKeyFromRoute(params: {
 }
 
 export function resolveEventSessionRoutingPolicy(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   sessionKey?: string | null;
   channel?: string | null;
   accountId?: string | null;
@@ -186,7 +186,7 @@ export function resolveEventSessionRoutingPolicy(params: {
 }
 
 export function resolveMainScopedEventSessionKey(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   sessionKey: string;
   agentId?: string | null;
   policy?: EventSessionRoutingPolicy;

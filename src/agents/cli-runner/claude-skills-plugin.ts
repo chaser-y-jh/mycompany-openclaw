@@ -1,13 +1,13 @@
 import { accessSync } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
-import { resolvePreferredOpenClawTmpDir } from "../../infra/tmp-openclaw-dir.js";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
+import { resolvePreferredMerClawTmpDir } from "../../infra/tmp-merclaw-dir.js";
 import type { SkillSnapshot } from "../../skills/types.js";
 import { cliBackendLog } from "./log.js";
 
 const CLAUDE_CLI_BACKEND_ID = "claude-cli";
-const OPENCLAW_CLAUDE_PLUGIN_NAME = "openclaw-skills";
+const MERCLAW_CLAUDE_PLUGIN_NAME = "merclaw-skills";
 
 type MaterializedSkill = {
   name: string;
@@ -97,18 +97,18 @@ export async function prepareClaudeCliSkillsPlugin(params: {
   }
 
   const tempDir = await fs.mkdtemp(
-    path.join(resolvePreferredOpenClawTmpDir(), "openclaw-claude-skills-"),
+    path.join(resolvePreferredMerClawTmpDir(), "merclaw-claude-skills-"),
   );
-  const pluginDir = path.join(tempDir, OPENCLAW_CLAUDE_PLUGIN_NAME);
+  const pluginDir = path.join(tempDir, MERCLAW_CLAUDE_PLUGIN_NAME);
   const manifestDir = path.join(pluginDir, ".claude-plugin");
   const skillsDir = path.join(pluginDir, "skills");
   await fs.mkdir(manifestDir, { recursive: true, mode: 0o700 });
   await fs.mkdir(skillsDir, { recursive: true, mode: 0o700 });
 
   const manifest = {
-    name: OPENCLAW_CLAUDE_PLUGIN_NAME,
+    name: MERCLAW_CLAUDE_PLUGIN_NAME,
     version: "0.0.0",
-    description: "Session-scoped OpenClaw skills selected for this agent run.",
+    description: "Session-scoped MerClaw skills selected for this agent run.",
     skills: "./skills",
   };
   await fs.writeFile(

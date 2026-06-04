@@ -1,8 +1,8 @@
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
+import { normalizeProviderId } from "@merclaw/model-catalog-core/provider-id";
 import type { AgentModelEntryConfig } from "../config/types.agent-defaults.js";
 import type { AgentRuntimePolicyConfig } from "../config/types.agents-shared.js";
 import type { ModelDefinitionConfig, ModelProviderConfig } from "../config/types.models.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { normalizeAgentId } from "../routing/session-key.js";
 import { listAgentEntries, resolveSessionAgentIds } from "./agent-scope.js";
 
@@ -30,7 +30,7 @@ function hasRuntimePolicy(value: AgentRuntimePolicyConfig | undefined): boolean 
 }
 
 function resolveProviderConfig(
-  config: OpenClawConfig | undefined,
+  config: MerClawConfig | undefined,
   provider: string | undefined,
 ): ModelProviderConfig | undefined {
   if (!config?.models?.providers || !provider?.trim()) {
@@ -161,7 +161,7 @@ function modelKeyIsProviderWildcard(params: {
 }
 
 function resolveAgentModelEntryRuntimePolicy(params: {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   provider?: string;
   modelId?: string;
   agentId?: string;
@@ -220,15 +220,15 @@ function resolveModelConfig(params: {
 }
 
 export function resolveModelRuntimePolicy(params: {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   provider?: string;
   modelId?: string;
   agentId?: string;
   sessionKey?: string;
 }): ResolvedModelRuntimePolicy {
-  if (process.env.OPENCLAW_BUILD_PRIVATE_QA === "1") {
-    const forcedRuntime = process.env.OPENCLAW_QA_FORCE_RUNTIME?.trim().toLowerCase();
-    if (forcedRuntime === "openclaw" || forcedRuntime === "codex") {
+  if (process.env.MERCLAW_BUILD_PRIVATE_QA === "1") {
+    const forcedRuntime = process.env.MERCLAW_QA_FORCE_RUNTIME?.trim().toLowerCase();
+    if (forcedRuntime === "merclaw" || forcedRuntime === "codex") {
       return { policy: { id: forcedRuntime }, source: "model" };
     }
   }

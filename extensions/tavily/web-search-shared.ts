@@ -1,7 +1,7 @@
 import {
   createWebSearchProviderContractFields,
   type WebSearchProviderPlugin,
-} from "openclaw/plugin-sdk/provider-web-search-contract";
+} from "merclaw/plugin-sdk/provider-web-search-contract";
 
 export const TAVILY_CREDENTIAL_PATH = "plugins.entries.tavily.config.webSearch.apiKey";
 
@@ -15,7 +15,7 @@ export function buildTavilyWebSearchProviderBase(): Omit<WebSearchProviderPlugin
     envVars: ["TAVILY_API_KEY"],
     placeholder: "tvly-...",
     signupUrl: "https://tavily.com/",
-    docsUrl: "https://docs.openclaw.ai/tools/tavily",
+    docsUrl: "https://docs.merclaw.ai/tools/tavily",
     autoDetectOrder: 70,
     credentialPath: TAVILY_CREDENTIAL_PATH,
     ...createWebSearchProviderContractFields({

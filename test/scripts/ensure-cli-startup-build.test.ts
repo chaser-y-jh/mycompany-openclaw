@@ -11,7 +11,7 @@ import {
 const tempRoots: string[] = [];
 
 function makeTempRoot(): string {
-  const root = mkdtempSync(path.join(tmpdir(), "openclaw-cli-startup-build-"));
+  const root = mkdtempSync(path.join(tmpdir(), "merclaw-cli-startup-build-"));
   tempRoots.push(root);
   mkdirSync(path.join(root, "scripts"), { recursive: true });
   writeFileSync(path.join(root, "scripts", "build-all.mjs"), "", "utf8");
@@ -124,7 +124,7 @@ describe("ensure-cli-startup-build", () => {
 
     ensureCliStartupBuild({
       rootDir: root,
-      env: { OPENCLAW_CLI_STARTUP_BUILD_TIMEOUT_MS: "1234" },
+      env: { MERCLAW_CLI_STARTUP_BUILD_TIMEOUT_MS: "1234" },
       spawnSync: (command, args, options) => {
         calls.push({ command, args, options });
         return { status: 0 };
@@ -173,7 +173,7 @@ describe("resolveCliStartupBuildTimeoutMs", () => {
       ["nope", 10 * 60 * 1000],
       ["10m", 10 * 60 * 1000],
     ] as const) {
-      expect(resolveCliStartupBuildTimeoutMs({ OPENCLAW_CLI_STARTUP_BUILD_TIMEOUT_MS: raw })).toBe(
+      expect(resolveCliStartupBuildTimeoutMs({ MERCLAW_CLI_STARTUP_BUILD_TIMEOUT_MS: raw })).toBe(
         expected,
       );
     }

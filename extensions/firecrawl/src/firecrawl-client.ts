@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
 import {
   DEFAULT_CACHE_TTL_MINUTES,
   markdownToText,
@@ -10,16 +10,16 @@ import {
   withSelfHostedWebToolsEndpoint,
   withStrictWebToolsEndpoint,
   writeCache,
-} from "openclaw/plugin-sdk/provider-web-fetch";
-import { normalizeSecretInput } from "openclaw/plugin-sdk/secret-input";
-import { wrapExternalContent, wrapWebContent } from "openclaw/plugin-sdk/security-runtime";
+} from "merclaw/plugin-sdk/provider-web-fetch";
+import { normalizeSecretInput } from "merclaw/plugin-sdk/secret-input";
+import { wrapExternalContent, wrapWebContent } from "merclaw/plugin-sdk/security-runtime";
 import {
   SsrFBlockedError,
   isBlockedHostnameOrIp,
   isPrivateIpAddress,
   resolvePinnedHostnameWithPolicy,
   type LookupFn,
-} from "openclaw/plugin-sdk/ssrf-runtime";
+} from "merclaw/plugin-sdk/ssrf-runtime";
 import {
   DEFAULT_FIRECRAWL_BASE_URL,
   resolveFirecrawlApiKey,
@@ -73,7 +73,7 @@ async function readFirecrawlJsonResponse(
 }
 
 export type FirecrawlSearchParams = {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   query: string;
   count?: number;
   timeoutSeconds?: number;
@@ -83,7 +83,7 @@ export type FirecrawlSearchParams = {
 };
 
 export type FirecrawlScrapeParams = {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   url: string;
   extractMode: "markdown" | "text";
   maxChars?: number;

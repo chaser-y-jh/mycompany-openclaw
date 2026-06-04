@@ -4,9 +4,9 @@ import path from "node:path";
 import {
   initializeGlobalHookRunner,
   resetGlobalHookRunner,
-} from "openclaw/plugin-sdk/hook-runtime";
-import { createMockPluginRegistry } from "openclaw/plugin-sdk/plugin-test-runtime";
-import { castAgentMessage } from "openclaw/plugin-sdk/test-fixtures";
+} from "merclaw/plugin-sdk/hook-runtime";
+import { createMockPluginRegistry } from "merclaw/plugin-sdk/plugin-test-runtime";
+import { castAgentMessage } from "merclaw/plugin-sdk/test-fixtures";
 import { afterEach, describe, expect, it } from "vitest";
 import { runAgentHarnessBeforeMessageWriteHook } from "../agents/harness/hook-helpers.js";
 import {
@@ -96,7 +96,7 @@ describe("user turn transcript persistence", () => {
     });
 
     it("resolves staged relative media paths against the media workspace", () => {
-      const workspaceDir = createTempDir("openclaw-user-turn-media-");
+      const workspaceDir = createTempDir("merclaw-user-turn-media-");
 
       expect(
         buildPersistedUserTurnMediaInputsFromFields({
@@ -113,7 +113,7 @@ describe("user turn transcript persistence", () => {
     });
 
     it("does not rewrite absolute or URL-like media paths", () => {
-      const workspaceDir = createTempDir("openclaw-user-turn-media-");
+      const workspaceDir = createTempDir("merclaw-user-turn-media-");
       const absolutePath = path.join(workspaceDir, "media/inbound/a.png");
 
       expect(
@@ -173,7 +173,7 @@ describe("user turn transcript persistence", () => {
       const blocked = castAgentMessage({
         role: "user",
         content: "[blocked]",
-        __openclaw: { beforeAgentRunBlocked: true },
+        __merclaw: { beforeAgentRunBlocked: true },
       });
 
       expect(
@@ -219,7 +219,7 @@ describe("user turn transcript persistence", () => {
 
   describe("appendUserTurnTranscriptMessage", () => {
     it("appends a structured user turn through the shared transcript writer", async () => {
-      const dir = createTempDir("openclaw-user-turn-append-");
+      const dir = createTempDir("merclaw-user-turn-append-");
       const transcriptPath = path.join(dir, "session.jsonl");
       const provenance = {
         kind: "inter_session" as const,
@@ -258,7 +258,7 @@ describe("user turn transcript persistence", () => {
     });
 
     it("uses inline update mode by default", async () => {
-      const dir = createTempDir("openclaw-user-turn-append-inline-");
+      const dir = createTempDir("merclaw-user-turn-append-inline-");
       const transcriptPath = path.join(dir, "session.jsonl");
 
       const appended = await appendUserTurnTranscriptMessage({
@@ -286,7 +286,7 @@ describe("user turn transcript persistence", () => {
     });
 
     it("returns the existing user turn when the idempotency key was already persisted", async () => {
-      const dir = createTempDir("openclaw-user-turn-append-idempotent-");
+      const dir = createTempDir("merclaw-user-turn-append-idempotent-");
       const transcriptPath = path.join(dir, "session.jsonl");
 
       const first = await appendUserTurnTranscriptMessage({
@@ -354,7 +354,7 @@ describe("user turn transcript persistence", () => {
           },
         ]),
       );
-      const dir = createTempDir("openclaw-user-turn-redacted-idempotent-");
+      const dir = createTempDir("merclaw-user-turn-redacted-idempotent-");
       const transcriptPath = path.join(dir, "session.jsonl");
 
       await appendUserTurnTranscriptMessage({
@@ -390,7 +390,7 @@ describe("user turn transcript persistence", () => {
 
   describe("persistUserTurnTranscript", () => {
     it("resolves the session file and persists the user turn", async () => {
-      const dir = createTempDir("openclaw-user-turn-persist-");
+      const dir = createTempDir("merclaw-user-turn-persist-");
       const transcriptPath = path.join(dir, "session.jsonl");
       const sessionStore = {
         main: {
@@ -428,7 +428,7 @@ describe("user turn transcript persistence", () => {
 
   describe("createUserTurnTranscriptRecorder", () => {
     it("persists fallback user turns only once", async () => {
-      const dir = createTempDir("openclaw-user-turn-recorder-fallback-");
+      const dir = createTempDir("merclaw-user-turn-recorder-fallback-");
       const transcriptPath = path.join(dir, "session.jsonl");
       const recorder = createUserTurnTranscriptRecorder({
         input: {
@@ -462,7 +462,7 @@ describe("user turn transcript persistence", () => {
     });
 
     it("resolves media lazily at persistence time", async () => {
-      const dir = createTempDir("openclaw-user-turn-recorder-lazy-media-");
+      const dir = createTempDir("merclaw-user-turn-recorder-lazy-media-");
       const transcriptPath = path.join(dir, "session.jsonl");
       let resolverCalled = false;
       const recorder = createUserTurnTranscriptRecorder({
@@ -519,7 +519,7 @@ describe("user turn transcript persistence", () => {
     });
 
     it("falls back to the admitted text message when lazy media resolution fails", async () => {
-      const dir = createTempDir("openclaw-user-turn-recorder-lazy-failed-");
+      const dir = createTempDir("merclaw-user-turn-recorder-lazy-failed-");
       const transcriptPath = path.join(dir, "session.jsonl");
       const errors: unknown[] = [];
       const recorder = createUserTurnTranscriptRecorder({
@@ -560,7 +560,7 @@ describe("user turn transcript persistence", () => {
     });
 
     it("does not fallback-persist after runtime persistence is marked", async () => {
-      const dir = createTempDir("openclaw-user-turn-recorder-runtime-");
+      const dir = createTempDir("merclaw-user-turn-recorder-runtime-");
       const transcriptPath = path.join(dir, "session.jsonl");
       const recorder = createUserTurnTranscriptRecorder({
         input: {
@@ -587,7 +587,7 @@ describe("user turn transcript persistence", () => {
     });
 
     it("does not fallback-persist after before_agent_run blocks the turn", async () => {
-      const dir = createTempDir("openclaw-user-turn-recorder-blocked-");
+      const dir = createTempDir("merclaw-user-turn-recorder-blocked-");
       const transcriptPath = path.join(dir, "session.jsonl");
       const recorder = createUserTurnTranscriptRecorder({
         input: {
@@ -610,7 +610,7 @@ describe("user turn transcript persistence", () => {
     });
 
     it("uses the runtime target supplied at approved persistence time", async () => {
-      const dir = createTempDir("openclaw-user-turn-recorder-target-");
+      const dir = createTempDir("merclaw-user-turn-recorder-target-");
       const staleTranscriptPath = path.join(dir, "stale.jsonl");
       const admittedTranscriptPath = path.join(dir, "admitted.jsonl");
       const recorder = createUserTurnTranscriptRecorder({
@@ -647,7 +647,7 @@ describe("user turn transcript persistence", () => {
     });
 
     it("waits for runtime persistence before deciding fallback ownership", async () => {
-      const dir = createTempDir("openclaw-user-turn-recorder-pending-");
+      const dir = createTempDir("merclaw-user-turn-recorder-pending-");
       const transcriptPath = path.join(dir, "session.jsonl");
       let releaseRuntimePersistence!: () => void;
       const runtimePersistenceStarted = new Promise<void>((resolve) => {
@@ -692,7 +692,7 @@ describe("user turn transcript persistence", () => {
     });
 
     it("fallback-persists when pending runtime persistence fails", async () => {
-      const dir = createTempDir("openclaw-user-turn-recorder-pending-failed-");
+      const dir = createTempDir("merclaw-user-turn-recorder-pending-failed-");
       const transcriptPath = path.join(dir, "session.jsonl");
       const errors: unknown[] = [];
       let rejectRuntimePersistence!: (error: unknown) => void;

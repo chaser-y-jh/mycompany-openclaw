@@ -1,8 +1,8 @@
 import {
   asDateTimestampMs,
   resolveExpiresAtMsFromDurationMs,
-} from "openclaw/plugin-sdk/number-runtime";
-import { generateSecureToken } from "openclaw/plugin-sdk/secure-random-runtime";
+} from "merclaw/plugin-sdk/number-runtime";
+import { generateSecureToken } from "merclaw/plugin-sdk/secure-random-runtime";
 
 const SLACK_EXTERNAL_ARG_MENU_TOKEN_BYTES = 18;
 const SLACK_EXTERNAL_ARG_MENU_TOKEN_LENGTH = Math.ceil(
@@ -13,7 +13,7 @@ const SLACK_EXTERNAL_ARG_MENU_TOKEN_PATTERN = new RegExp(
 );
 const SLACK_EXTERNAL_ARG_MENU_TTL_MS = 10 * 60 * 1000;
 
-export const SLACK_EXTERNAL_ARG_MENU_PREFIX = "openclaw_cmdarg_ext:";
+export const SLACK_EXTERNAL_ARG_MENU_PREFIX = "merclaw_cmdarg_ext:";
 
 export type SlackExternalArgMenuChoice = { label: string; value: string };
 type SlackExternalArgMenuEntry = {

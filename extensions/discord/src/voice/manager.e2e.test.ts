@@ -1,5 +1,5 @@
 import { PassThrough, type Readable } from "node:stream";
-import type { RealtimeVoiceAgentControlResult } from "openclaw/plugin-sdk/realtime-voice";
+import type { RealtimeVoiceAgentControlResult } from "merclaw/plugin-sdk/realtime-voice";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { ChannelType } from "../internal/discord.js";
 import { createVoiceCaptureState } from "./capture-state.js";
@@ -157,7 +157,7 @@ const {
         active: false,
         queued: false,
         reason: "no_active_run",
-        message: "There is no active OpenClaw run to steer.",
+        message: "There is no active MerClaw run to steer.",
         speak: true,
         show: true,
         suppress: false,
@@ -191,9 +191,9 @@ vi.mock("./sdk-runtime.js", () => ({
   }),
 }));
 
-vi.mock("openclaw/plugin-sdk/routing", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/routing")>(
-    "openclaw/plugin-sdk/routing",
+vi.mock("merclaw/plugin-sdk/routing", async () => {
+  const actual = await vi.importActual<typeof import("merclaw/plugin-sdk/routing")>(
+    "merclaw/plugin-sdk/routing",
   );
   return {
     ...actual,
@@ -201,36 +201,36 @@ vi.mock("openclaw/plugin-sdk/routing", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/agent-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/agent-runtime")>(
-    "openclaw/plugin-sdk/agent-runtime",
+vi.mock("merclaw/plugin-sdk/agent-runtime", async () => {
+  const actual = await vi.importActual<typeof import("merclaw/plugin-sdk/agent-runtime")>(
+    "merclaw/plugin-sdk/agent-runtime",
   );
   return {
     ...actual,
     agentCommandFromIngress: agentCommandMock,
     getTtsProvider: vi.fn(() => "openai"),
-    resolveAgentDir: vi.fn(() => "/tmp/openclaw-agent"),
+    resolveAgentDir: vi.fn(() => "/tmp/merclaw-agent"),
     resolveTtsConfig: vi.fn(() => ({
       modelOverrides: {},
       providerConfigs: {},
     })),
-    resolveTtsPrefsPath: vi.fn(() => "/tmp/openclaw-tts.json"),
+    resolveTtsPrefsPath: vi.fn(() => "/tmp/merclaw-tts.json"),
   };
 });
 
-vi.mock("openclaw/plugin-sdk/realtime-bootstrap-context", async () => {
+vi.mock("merclaw/plugin-sdk/realtime-bootstrap-context", async () => {
   const actual = await vi.importActual<
-    typeof import("openclaw/plugin-sdk/realtime-bootstrap-context")
-  >("openclaw/plugin-sdk/realtime-bootstrap-context");
+    typeof import("merclaw/plugin-sdk/realtime-bootstrap-context")
+  >("merclaw/plugin-sdk/realtime-bootstrap-context");
   return {
     ...actual,
     resolveRealtimeBootstrapContextInstructions: resolveRealtimeBootstrapContextInstructionsMock,
   };
 });
 
-vi.mock("openclaw/plugin-sdk/runtime-env", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/runtime-env")>(
-    "openclaw/plugin-sdk/runtime-env",
+vi.mock("merclaw/plugin-sdk/runtime-env", async () => {
+  const actual = await vi.importActual<typeof import("merclaw/plugin-sdk/runtime-env")>(
+    "merclaw/plugin-sdk/runtime-env",
   );
   return {
     ...actual,
@@ -238,9 +238,9 @@ vi.mock("openclaw/plugin-sdk/runtime-env", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/realtime-voice", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/realtime-voice")>(
-    "openclaw/plugin-sdk/realtime-voice",
+vi.mock("merclaw/plugin-sdk/realtime-voice", async () => {
+  const actual = await vi.importActual<typeof import("merclaw/plugin-sdk/realtime-voice")>(
+    "merclaw/plugin-sdk/realtime-voice",
   );
   return {
     ...actual,
@@ -380,7 +380,7 @@ describe("DiscordVoiceManager", () => {
       active: false,
       queued: false,
       reason: "no_active_run",
-      message: "There is no active OpenClaw run to steer.",
+      message: "There is no active MerClaw run to steer.",
       speak: true,
       show: true,
       suppress: false,
@@ -2270,10 +2270,10 @@ describe("DiscordVoiceManager", () => {
         }
       | undefined;
     expect(bridgeParams?.autoRespondToAudio).toBe(false);
-    expect(bridgeParams?.instructions).toContain("same OpenClaw agent");
+    expect(bridgeParams?.instructions).toContain("same MerClaw agent");
     expect(bridgeParams?.instructions).toContain("short natural backchannel");
-    expect(bridgeParams?.tools?.map((tool) => tool.name)).toContain("openclaw_agent_consult");
-    expect(bridgeParams?.tools?.map((tool) => tool.name)).toContain("openclaw_agent_control");
+    expect(bridgeParams?.tools?.map((tool) => tool.name)).toContain("merclaw_agent_consult");
+    expect(bridgeParams?.tools?.map((tool) => tool.name)).toContain("merclaw_agent_control");
     const player = getLastAudioPlayer();
     bridgeParams?.audioSink?.sendAudio(Buffer.alloc(24_000));
     expect(player.play).toHaveBeenCalled();
@@ -2283,7 +2283,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-1",
         callId: "call-1",
-        name: "openclaw_agent_consult",
+        name: "merclaw_agent_consult",
         args: { question: "what did I ask?" },
       },
       realtimeSessionMock,
@@ -2344,7 +2344,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-control",
         callId: "call-control",
-        name: "openclaw_agent_control",
+        name: "merclaw_agent_control",
         args: { text: "revísalo en WebUI", mode: "steer" },
       },
       realtimeSessionMock,
@@ -2394,7 +2394,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-exact",
         callId: "call-exact",
-        name: "openclaw_agent_consult",
+        name: "merclaw_agent_consult",
         args: {
           question: "Speak the provided exact answer verbatim to the Discord voice channel.",
           context: 'Provided answer text: "already answered"\\nSpoken style: verbatim only',
@@ -2406,10 +2406,10 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-internal",
         callId: "call-internal",
-        name: "openclaw_agent_consult",
+        name: "merclaw_agent_consult",
         args: {
           question: [
-            "Speak this exact OpenClaw answer to the Discord voice channel, without adding, removing, or rephrasing words.",
+            "Speak this exact MerClaw answer to the Discord voice channel, without adding, removing, or rephrasing words.",
             'Answer: "direct internal answer"',
           ].join("\n"),
         },
@@ -2787,7 +2787,7 @@ describe("DiscordVoiceManager", () => {
       sessionId: "embedded-active",
       active: true,
       aborted: true,
-      message: "Cancelled the active OpenClaw run.",
+      message: "Cancelled the active MerClaw run.",
       speak: true,
       show: true,
       suppress: false,
@@ -2825,16 +2825,16 @@ describe("DiscordVoiceManager", () => {
         force: true,
       }),
     );
-    await vi.waitFor(() => expectUserMessageIncludes("Cancelled the active OpenClaw run."));
+    await vi.waitFor(() => expectUserMessageIncludes("Cancelled the active MerClaw run."));
     expect(textToSpeechMock).not.toHaveBeenCalledWith(
-      expect.objectContaining({ text: "Cancelled the active OpenClaw run." }),
+      expect.objectContaining({ text: "Cancelled the active MerClaw run." }),
     );
 
     const stopCallsAfterControl = player.stop.mock.calls.length;
-    bridgeParams?.onTranscript?.("assistant", "Cancelled the active OpenClaw run.", true);
+    bridgeParams?.onTranscript?.("assistant", "Cancelled the active MerClaw run.", true);
     expect(player.stop).toHaveBeenCalledTimes(stopCallsAfterControl);
     bridgeParams?.audioSink?.sendAudio(Buffer.alloc(24_000));
-    bridgeParams?.onTranscript?.("assistant", "Cancelled the active OpenClaw run.", true);
+    bridgeParams?.onTranscript?.("assistant", "Cancelled the active MerClaw run.", true);
     expect(player.stop).toHaveBeenCalledTimes(stopCallsAfterControl + 1);
   });
 
@@ -3131,8 +3131,8 @@ describe("DiscordVoiceManager", () => {
     expectUserMessageIncludes("wake answer");
   });
 
-  it("accepts OpenClaw as a default wake name before realtime agent-proxy consults", async () => {
-    agentCommandMock.mockResolvedValueOnce({ payloads: [{ text: "openclaw wake answer" }] });
+  it("accepts MerClaw as a default wake name before realtime agent-proxy consults", async () => {
+    agentCommandMock.mockResolvedValueOnce({ payloads: [{ text: "merclaw wake answer" }] });
     const manager = createManager(
       {
         groupPolicy: "open",
@@ -3170,7 +3170,7 @@ describe("DiscordVoiceManager", () => {
       "u-owner",
     );
     ownerTurn?.sendInputAudio(Buffer.alloc(8));
-    bridgeParams?.onTranscript?.("user", "OpenClaw, how is it going", true);
+    bridgeParams?.onTranscript?.("user", "MerClaw, how is it going", true);
     await new Promise((resolve) => setTimeout(resolve, 260));
 
     expect(controlRealtimeVoiceAgentRunMock).toHaveBeenCalledWith({
@@ -3178,8 +3178,8 @@ describe("DiscordVoiceManager", () => {
       text: "how is it going",
     });
     expect(lastAgentCommandArgs().message).toContain("how is it going");
-    expect(lastAgentCommandArgs().message).not.toContain("OpenClaw");
-    expectUserMessageIncludes("openclaw wake answer");
+    expect(lastAgentCommandArgs().message).not.toContain("MerClaw");
+    expectUserMessageIncludes("merclaw wake answer");
   });
 
   it("ignores default agent wake names longer than two words", async () => {
@@ -3231,11 +3231,11 @@ describe("DiscordVoiceManager", () => {
       "u-owner",
     );
     fallbackTurn?.sendInputAudio(Buffer.alloc(8));
-    bridgeParams?.onTranscript?.("user", "OpenClaw, fallback still wakes", true);
+    bridgeParams?.onTranscript?.("user", "MerClaw, fallback still wakes", true);
     await new Promise((resolve) => setTimeout(resolve, 260));
 
     expect(lastAgentCommandArgs().message).toContain("fallback still wakes");
-    expect(lastAgentCommandArgs().message).not.toContain("OpenClaw");
+    expect(lastAgentCommandArgs().message).not.toContain("MerClaw");
     expectUserMessageIncludes("fallback wake answer");
   });
 
@@ -3316,11 +3316,11 @@ describe("DiscordVoiceManager", () => {
     expect(agentCommandArgsAt(3).message).toContain("can you hear me?");
     expect(agentCommandArgsAt(3).message).not.toContain("Marty");
 
-    const openClawTurn = entry.realtime?.beginSpeakerTurn(
+    const merClawTurn = entry.realtime?.beginSpeakerTurn(
       { extraSystemPrompt: undefined, senderIsOwner: true, speakerLabel: "Owner" },
       "u-owner",
     );
-    openClawTurn?.sendInputAudio(Buffer.alloc(8));
+    merClawTurn?.sendInputAudio(Buffer.alloc(8));
     bridgeParams?.onTranscript?.("user", "Open claw can you still hear me?", true);
     await new Promise((resolve) => setTimeout(resolve, 260));
 
@@ -3577,7 +3577,7 @@ describe("DiscordVoiceManager", () => {
       "u-owner",
     );
     fallbackTurn?.sendInputAudio(Buffer.alloc(8));
-    bridgeParams?.onTranscript?.("user", "OpenClaw, ship it", true);
+    bridgeParams?.onTranscript?.("user", "MerClaw, ship it", true);
     await new Promise((resolve) => setTimeout(resolve, 260));
 
     expect(agentCommandMock).not.toHaveBeenCalled();
@@ -3781,7 +3781,7 @@ describe("DiscordVoiceManager", () => {
 
     expect(lastAgentCommandArgs().message).toBe("What?");
     expect(lastAgentCommandArgs().message).not.toContain("consultPolicy");
-    expect(lastAgentCommandArgs().message).not.toContain("openclaw_agent_consult");
+    expect(lastAgentCommandArgs().message).not.toContain("merclaw_agent_consult");
     expectUserMessageIncludes("Could you repeat that?");
   });
 
@@ -4078,7 +4078,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-owner",
         callId: "call-owner",
-        name: "openclaw_agent_consult",
+        name: "merclaw_agent_consult",
         args: { question: "owner question" },
       },
       realtimeSessionMock,
@@ -4146,7 +4146,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-late",
         callId: "call-late",
-        name: "openclaw_agent_consult",
+        name: "merclaw_agent_consult",
         args: { question: "late question" },
       },
       realtimeSessionMock,
@@ -4160,7 +4160,7 @@ describe("DiscordVoiceManager", () => {
       "call-late",
       {
         status: "already_delivered",
-        message: "OpenClaw already delivered this answer to Discord voice.",
+        message: "MerClaw already delivered this answer to Discord voice.",
       },
       { suppressResponse: true },
     );
@@ -4220,7 +4220,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-late",
         callId: "call-late",
-        name: "openclaw_agent_consult",
+        name: "merclaw_agent_consult",
         args: { question: "late question" },
       },
       realtimeSessionMock,
@@ -4231,7 +4231,7 @@ describe("DiscordVoiceManager", () => {
         "call-late",
         {
           status: "already_delivered",
-          message: "OpenClaw already delivered this answer to Discord voice.",
+          message: "MerClaw already delivered this answer to Discord voice.",
         },
         { suppressResponse: true },
       ),
@@ -4298,7 +4298,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-late",
         callId: "call-late",
-        name: "openclaw_agent_consult",
+        name: "merclaw_agent_consult",
         args: { question: "late question" },
       },
       realtimeSessionMock,
@@ -4368,7 +4368,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-old",
         callId: "call-old",
-        name: "openclaw_agent_consult",
+        name: "merclaw_agent_consult",
         args: { question: "repeat question" },
       },
       realtimeSessionMock,
@@ -4391,7 +4391,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-new",
         callId: "call-new",
-        name: "openclaw_agent_consult",
+        name: "merclaw_agent_consult",
         args: { question: "repeat question" },
       },
       realtimeSessionMock,
@@ -4405,7 +4405,7 @@ describe("DiscordVoiceManager", () => {
       "call-new",
       {
         status: "already_delivered",
-        message: "OpenClaw already delivered this answer to Discord voice.",
+        message: "MerClaw already delivered this answer to Discord voice.",
       },
       { suppressResponse: true },
     );
@@ -4517,14 +4517,14 @@ describe("DiscordVoiceManager", () => {
       | undefined;
     expect(bridgeParams?.autoRespondToAudio).toBe(true);
     expect(bridgeParams?.interruptResponseOnInputAudio).toBe(false);
-    expect(bridgeParams?.instructions).toContain("Call openclaw_agent_consult");
-    expect(bridgeParams?.tools?.map((tool) => tool.name)).toContain("openclaw_agent_consult");
+    expect(bridgeParams?.instructions).toContain("Call merclaw_agent_consult");
+    expect(bridgeParams?.tools?.map((tool) => tool.name)).toContain("merclaw_agent_consult");
 
     bridgeParams?.onToolCall?.(
       {
         itemId: "item-1",
         callId: "call-1",
-        name: "openclaw_agent_consult",
+        name: "merclaw_agent_consult",
         args: { question: "check my Discord" },
       },
       realtimeSessionMock,
@@ -4553,7 +4553,7 @@ describe("DiscordVoiceManager", () => {
       sessionKey: "agent:main:discord:channel:1001",
     });
     resolveRealtimeBootstrapContextInstructionsMock.mockResolvedValue(
-      "OpenClaw realtime voice profile context:\n\n### IDENTITY.md\nName: Wilfred",
+      "MerClaw realtime voice profile context:\n\n### IDENTITY.md\nName: Wilfred",
     );
     const manager = createManager({
       groupPolicy: "open",
@@ -4581,10 +4581,10 @@ describe("DiscordVoiceManager", () => {
           instructions?: string;
         }
       | undefined;
-    expect(bridgeParams?.instructions).toContain("OpenClaw realtime voice profile context");
+    expect(bridgeParams?.instructions).toContain("MerClaw realtime voice profile context");
     expect(bridgeParams?.instructions).toContain("Name: Wilfred");
     expect(bridgeParams?.instructions).toContain("short natural backchannel");
-    expect(bridgeParams?.instructions).toContain("Call openclaw_agent_consult");
+    expect(bridgeParams?.instructions).toContain("Call merclaw_agent_consult");
   });
 
   it("routes bidi realtime consults through a configured voice agent session target", async () => {
@@ -4654,7 +4654,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-1",
         callId: "call-1",
-        name: "openclaw_agent_consult",
+        name: "merclaw_agent_consult",
         args: { question: "check the maintainer channel context" },
       },
       realtimeSessionMock,
@@ -4722,7 +4722,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-guest",
         callId: "call-guest",
-        name: "openclaw_agent_consult",
+        name: "merclaw_agent_consult",
         args: { question: "guest question" },
       },
       realtimeSessionMock,
@@ -4794,7 +4794,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-guest",
         callId: "call-guest",
-        name: "openclaw_agent_consult",
+        name: "merclaw_agent_consult",
         args: { question: "guest question" },
       },
       realtimeSessionMock,

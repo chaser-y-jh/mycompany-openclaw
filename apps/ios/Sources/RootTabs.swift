@@ -1,5 +1,5 @@
-import OpenClawKit
-import OpenClawProtocol
+import MerClawKit
+import MerClawProtocol
 import SwiftUI
 import UIKit
 
@@ -43,7 +43,7 @@ struct RootTabs: View {
 
     private static var initialTab: AppTab {
         let arguments = ProcessInfo.processInfo.arguments
-        guard let flagIndex = arguments.firstIndex(of: "--openclaw-initial-tab") else {
+        guard let flagIndex = arguments.firstIndex(of: "--merclaw-initial-tab") else {
             return .control
         }
         let valueIndex = arguments.index(after: flagIndex)
@@ -67,7 +67,7 @@ struct RootTabs: View {
 
     private static var initialChatSessionKey: String? {
         let arguments = ProcessInfo.processInfo.arguments
-        guard let flagIndex = arguments.firstIndex(of: "--openclaw-chat-session") else {
+        guard let flagIndex = arguments.firstIndex(of: "--merclaw-chat-session") else {
             return nil
         }
         let valueIndex = arguments.index(after: flagIndex)
@@ -132,7 +132,7 @@ struct RootTabs: View {
             self.rootLifecycle(
                 self.rootOverlays(
                     self.tabContent
-                        .tint(OpenClawBrand.accent))))
+                        .tint(MerClawBrand.accent))))
     }
 
     private var tabContent: some View {
@@ -320,7 +320,7 @@ struct RootTabs: View {
                     GatewayQuickSetupSheet()
                         .environment(self.appModel)
                         .environment(self.gatewayController)
-                        .openClawSheetChrome()
+                        .merClawSheetChrome()
                         .preferredColorScheme(self.appearancePreference.colorScheme)
                 }
             }
@@ -400,7 +400,7 @@ struct RootTabs: View {
                 activeAgentCaption: "Routes chat and talk",
                 agentCount: agents.count,
                 agents: Array(agents.prefix(6)),
-                footer: "OpenClaw only runs phone-side capabilities while the app is connected and permitted.")
+                footer: "MerClaw only runs phone-side capabilities while the app is connected and permitted.")
         case .connecting:
             return RootTabsHomeCanvasPayload(
                 gatewayState: "connecting",
@@ -418,7 +418,7 @@ struct RootTabs: View {
         case .error, .disconnected:
             return RootTabsHomeCanvasPayload(
                 gatewayState: self.gatewayStatus == .error ? "error" : "offline",
-                eyebrow: self.gatewayStatus == .error ? "Gateway needs attention" : "OpenClaw iOS",
+                eyebrow: self.gatewayStatus == .error ? "Gateway needs attention" : "MerClaw iOS",
                 title: "Pair a gateway",
                 subtitle:
                 "Connect this phone as a local node for chat, realtime voice, share intake, and approved device tools.",
@@ -429,7 +429,7 @@ struct RootTabs: View {
                 agentCount: agents.count,
                 agents: Array(agents.prefix(4)),
                 footer:
-                "Use Settings to scan a pairing QR code or paste a setup code from your OpenClaw gateway.")
+                "Use Settings to scan a pairing QR code or paste a setup code from your MerClaw gateway.")
         }
     }
 

@@ -1,7 +1,7 @@
 import {
   createDefaultModelsPresetAppliers,
-  type OpenClawConfig,
-} from "openclaw/plugin-sdk/provider-onboard";
+  type MerClawConfig,
+} from "merclaw/plugin-sdk/provider-onboard";
 import {
   buildXiaomiProvider,
   buildXiaomiTokenPlanProvider,
@@ -18,7 +18,7 @@ export const XIAOMI_TOKEN_PLAN_DEFAULT_MODEL_REF = `${XIAOMI_TOKEN_PLAN_PROVIDER
 
 const xiaomiPresetAppliers = createDefaultModelsPresetAppliers({
   primaryModelRef: XIAOMI_DEFAULT_MODEL_REF,
-  resolveParams: (_cfg: OpenClawConfig) => {
+  resolveParams: (_cfg: MerClawConfig) => {
     const defaultProvider = buildXiaomiProvider();
     return {
       providerId: XIAOMI_PROVIDER_ID,
@@ -33,7 +33,7 @@ const xiaomiPresetAppliers = createDefaultModelsPresetAppliers({
 
 const xiaomiTokenPlanPresetAppliers = createDefaultModelsPresetAppliers({
   primaryModelRef: XIAOMI_TOKEN_PLAN_DEFAULT_MODEL_REF,
-  resolveParams: (_cfg: OpenClawConfig) => {
+  resolveParams: (_cfg: MerClawConfig) => {
     const defaultProvider = buildXiaomiTokenPlanProvider();
     return {
       providerId: XIAOMI_TOKEN_PLAN_PROVIDER_ID,
@@ -57,10 +57,10 @@ const xiaomiTokenPlanPresetAppliers = createDefaultModelsPresetAppliers({
 });
 
 function withProviderBaseUrl(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   providerId: string,
   baseUrl: string,
-): OpenClawConfig {
+): MerClawConfig {
   const providers: Record<string, unknown> = {
     ...cfg.models?.providers,
     [providerId]: {
@@ -74,21 +74,21 @@ function withProviderBaseUrl(
       ...cfg.models,
       providers,
     },
-  } as OpenClawConfig;
+  } as MerClawConfig;
 }
 
-export function applyXiaomiProviderConfig(cfg: OpenClawConfig): OpenClawConfig {
+export function applyXiaomiProviderConfig(cfg: MerClawConfig): MerClawConfig {
   return xiaomiPresetAppliers.applyProviderConfig(cfg);
 }
 
-export function applyXiaomiConfig(cfg: OpenClawConfig): OpenClawConfig {
+export function applyXiaomiConfig(cfg: MerClawConfig): MerClawConfig {
   return xiaomiPresetAppliers.applyConfig(cfg);
 }
 
 export function applyXiaomiTokenPlanProviderConfig(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   region: XiaomiTokenPlanRegion,
-): OpenClawConfig {
+): MerClawConfig {
   return withProviderBaseUrl(
     xiaomiTokenPlanPresetAppliers.applyProviderConfig(cfg),
     XIAOMI_TOKEN_PLAN_PROVIDER_ID,
@@ -97,9 +97,9 @@ export function applyXiaomiTokenPlanProviderConfig(
 }
 
 export function applyXiaomiTokenPlanConfig(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   region: XiaomiTokenPlanRegion,
-): OpenClawConfig {
+): MerClawConfig {
   return withProviderBaseUrl(
     xiaomiTokenPlanPresetAppliers.applyConfig(cfg),
     XIAOMI_TOKEN_PLAN_PROVIDER_ID,

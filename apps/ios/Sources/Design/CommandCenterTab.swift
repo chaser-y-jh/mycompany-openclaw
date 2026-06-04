@@ -1,11 +1,11 @@
-import OpenClawChatUI
+import MerClawChatUI
 import SwiftUI
 
 struct CommandCenterTab: View {
     @Environment(NodeAppModel.self) private var appModel
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.scenePhase) private var scenePhase
-    @State private var activeChatSessions: [OpenClawChatSessionEntry] = []
+    @State private var activeChatSessions: [MerClawChatSessionEntry] = []
     var openChat: () -> Void
     var openSettings: () -> Void
 
@@ -52,7 +52,7 @@ struct CommandCenterTab: View {
                     .padding(.top, 16)
                     .padding(.bottom, 18)
                 }
-                .safeAreaPadding(.bottom, OpenClawProMetric.bottomScrollInset)
+                .safeAreaPadding(.bottom, MerClawProMetric.bottomScrollInset)
             }
             .navigationBarHidden(true)
         }
@@ -63,12 +63,12 @@ struct CommandCenterTab: View {
 
     private var header: some View {
         HStack(alignment: .center, spacing: 11) {
-            OpenClawProMark(size: 31, shadowRadius: 9)
-            Text("OpenClaw")
+            MerClawProMark(size: 31, shadowRadius: 9)
+            Text("MerClaw")
                 .font(.system(size: 27, weight: .bold, design: .rounded))
             Spacer()
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     private var commandAmbientOverlay: some View {
@@ -107,13 +107,13 @@ struct CommandCenterTab: View {
                         icon: "server.rack",
                         title: "Address",
                         value: self.gatewayAddressText,
-                        color: OpenClawBrand.accent)
+                        color: MerClawBrand.accent)
                     Divider().frame(height: 38)
                     self.gatewayFact(
                         icon: "person.2.fill",
                         title: "Agents",
                         value: self.gatewayAgentCountText,
-                        color: OpenClawBrand.accentHot)
+                        color: MerClawBrand.accentHot)
                 }
                 .padding(.vertical, 9)
                 .background {
@@ -128,7 +128,7 @@ struct CommandCenterTab: View {
                 }
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     private func gatewayFact(icon: String, title: String, value: String, color: Color) -> some View {
@@ -154,12 +154,12 @@ struct CommandCenterTab: View {
 
     private var pendingApprovals: some View {
         self.pendingApprovalsContent
-            .padding(.horizontal, OpenClawProMetric.pagePadding)
+            .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     private var pendingApprovalsContent: some View {
         CommandPanel(
-            tint: self.pendingApproval == nil ? nil : OpenClawBrand.warn,
+            tint: self.pendingApproval == nil ? nil : MerClawBrand.warn,
             isProminent: self.pendingApproval != nil,
             padding: self.pendingApproval == nil ? 11 : 13)
         {
@@ -167,7 +167,7 @@ struct CommandCenterTab: View {
                 self.cardHeader(
                     title: "Pending approvals",
                     value: self.pendingApproval == nil ? nil : "Review requests ›",
-                    color: OpenClawBrand.accentHot,
+                    color: MerClawBrand.accentHot,
                     badgeValue: self.approvalItems.isEmpty ? nil : "\(self.approvalItems.count)")
 
                 if self.approvalItems.isEmpty {
@@ -261,7 +261,7 @@ struct CommandCenterTab: View {
                 .padding(.bottom, 10)
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     private var liveActivity: some View {
@@ -270,7 +270,7 @@ struct CommandCenterTab: View {
                 self.cardHeader(
                     title: "Live activity",
                     value: nil,
-                    color: OpenClawBrand.accent)
+                    color: MerClawBrand.accent)
                     .padding(.horizontal, 12)
                     .padding(.top, 11)
                     .padding(.bottom, 3)
@@ -283,11 +283,11 @@ struct CommandCenterTab: View {
                     .padding(.bottom, 10)
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     private var startWorkAction: some View {
-        CommandPanel(tint: OpenClawBrand.accent, isProminent: true, padding: 9) {
+        CommandPanel(tint: MerClawBrand.accent, isProminent: true, padding: 9) {
             Button(action: self.openChat) {
                 Label("Start work", systemImage: "play.fill")
                     .font(.subheadline.weight(.bold))
@@ -297,15 +297,15 @@ struct CommandCenterTab: View {
                     .background {
                         RoundedRectangle(cornerRadius: 13, style: .continuous)
                             .fill(LinearGradient(
-                                colors: [OpenClawBrand.accentHot, OpenClawBrand.accent],
+                                colors: [MerClawBrand.accentHot, MerClawBrand.accent],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing))
-                            .shadow(color: OpenClawBrand.accentHot.opacity(0.34), radius: 18, y: 8)
+                            .shadow(color: MerClawBrand.accentHot.opacity(0.34), radius: 18, y: 8)
                     }
             }
             .buttonStyle(.plain)
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     private func cardHeader(
@@ -325,7 +325,7 @@ struct CommandCenterTab: View {
                     .foregroundStyle(.white)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 3)
-                    .background(OpenClawBrand.accentHot, in: Capsule())
+                    .background(MerClawBrand.accentHot, in: Capsule())
             }
             Spacer(minLength: 8)
             if let value {
@@ -364,7 +364,7 @@ struct CommandCenterTab: View {
     }
 
     private var gatewayStatusColor: Color {
-        self.gatewayConnected ? OpenClawBrand.ok : .secondary
+        self.gatewayConnected ? MerClawBrand.ok : .secondary
     }
 
     private var gatewayAddressText: String {
@@ -398,14 +398,14 @@ struct CommandCenterTab: View {
                     title: pendingApproval.commandPreview ?? "Review gateway action",
                     detail: "Agent: \(self.appModel.activeAgentName)",
                     priority: self.appModel.pendingExecApprovalPromptResolving ? "Resolving" : "High",
-                    color: OpenClawBrand.danger),
+                    color: MerClawBrand.danger),
                 ApprovalItem(
                     id: "pending-context",
                     icon: "doc.text.fill",
                     title: pendingApproval.allowsAllowAlways ? "Permission can be saved" : "One-time approval",
                     detail: "Gateway request",
                     priority: pendingApproval.allowsAllowAlways ? "Medium" : "Review",
-                    color: OpenClawBrand.warn),
+                    color: MerClawBrand.warn),
             ]
         }
 
@@ -448,8 +448,8 @@ struct CommandCenterTab: View {
     }
 
     private var liveActivityColor: Color {
-        if self.pendingApproval != nil { return OpenClawBrand.warn }
-        return self.gatewayConnected ? OpenClawBrand.ok : .secondary
+        if self.pendingApproval != nil { return MerClawBrand.warn }
+        return self.gatewayConnected ? MerClawBrand.ok : .secondary
     }
 
     private var gatewayDisplayStatusValue: String {
@@ -485,7 +485,7 @@ struct CommandCenterTab: View {
                     detail: Self.sessionDetail(session),
                     state: isCurrent ? "current" : "recent",
                     trailing: "chat",
-                    color: isCurrent ? OpenClawBrand.accent : OpenClawBrand.ok,
+                    color: isCurrent ? MerClawBrand.accent : MerClawBrand.ok,
                     progress: nil,
                     route: .chat(session.key))
             }
@@ -500,7 +500,7 @@ struct CommandCenterTab: View {
                 detail: self.appModel.activeAgentName,
                 state: self.gatewayConnected ? "ready" : "offline",
                 trailing: "session",
-                color: self.gatewayConnected ? OpenClawBrand.ok : .secondary,
+                color: self.gatewayConnected ? MerClawBrand.ok : .secondary,
                 progress: nil,
                 route: .chat(self.appModel.chatSessionKey)),
             WorkItem(
@@ -510,7 +510,7 @@ struct CommandCenterTab: View {
                 detail: self.appModel.talkMode.statusText,
                 state: self.appModel.talkMode.isEnabled ? "active" : "off",
                 trailing: "voice",
-                color: self.appModel.talkMode.isEnabled ? OpenClawBrand.ok : .secondary,
+                color: self.appModel.talkMode.isEnabled ? MerClawBrand.ok : .secondary,
                 progress: nil,
                 route: .settings),
             WorkItem(
@@ -520,7 +520,7 @@ struct CommandCenterTab: View {
                 detail: self.appModel.screenRecordActive ? "Screen capture is active" : "Screen and device tools",
                 state: self.appModel.screenRecordActive ? "running" : "idle",
                 trailing: "device",
-                color: self.appModel.screenRecordActive ? OpenClawBrand.warn : .secondary,
+                color: self.appModel.screenRecordActive ? MerClawBrand.warn : .secondary,
                 progress: nil,
                 route: .settings),
             WorkItem(
@@ -530,7 +530,7 @@ struct CommandCenterTab: View {
                 detail: self.gatewayConnected ? "\(self.appModel.gatewayAgents.count) available" : "Roster unavailable",
                 state: self.gatewayConnected ? "online" : "offline",
                 trailing: "gateway",
-                color: self.gatewayConnected ? OpenClawBrand.ok : .secondary,
+                color: self.gatewayConnected ? MerClawBrand.ok : .secondary,
                 progress: nil,
                 route: .settings),
         ]
@@ -567,11 +567,11 @@ struct CommandCenterTab: View {
     }
 
     private static func sessionChoices(
-        _ sessions: [OpenClawChatSessionEntry],
-        currentSessionKey: String) -> [OpenClawChatSessionEntry]
+        _ sessions: [MerClawChatSessionEntry],
+        currentSessionKey: String) -> [MerClawChatSessionEntry]
     {
         let sorted = sessions.sorted { ($0.updatedAt ?? 0) > ($1.updatedAt ?? 0) }
-        var result: [OpenClawChatSessionEntry] = []
+        var result: [MerClawChatSessionEntry] = []
         var included = Set<String>()
 
         if let current = sorted.first(where: { $0.key == currentSessionKey }) {
@@ -590,7 +590,7 @@ struct CommandCenterTab: View {
         return result
     }
 
-    private static func sessionTitle(_ session: OpenClawChatSessionEntry) -> String {
+    private static func sessionTitle(_ session: MerClawChatSessionEntry) -> String {
         if let title = redactedSessionTitle(for: session.key) {
             return title
         }
@@ -645,7 +645,7 @@ struct CommandCenterTab: View {
             .joined(separator: " ")
     }
 
-    private static func sessionDetail(_ session: OpenClawChatSessionEntry) -> String {
+    private static func sessionDetail(_ session: MerClawChatSessionEntry) -> String {
         if let updatedAt = session.updatedAt, updatedAt > 0 {
             return self.relativeTimeText(forMilliseconds: updatedAt)
         }

@@ -1,6 +1,6 @@
-import type { Api, Model } from "openclaw/plugin-sdk/llm";
+import type { Api, Model } from "merclaw/plugin-sdk/llm";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { OPENCLAW_EMBEDDED_CONTEXT_ENGINE_HOST } from "../../context-engine/host-compat.js";
+import { MERCLAW_EMBEDDED_CONTEXT_ENGINE_HOST } from "../../context-engine/host-compat.js";
 import type { ContextEngine } from "../../context-engine/types.js";
 import {
   onInternalDiagnosticEvent,
@@ -9,7 +9,7 @@ import {
   type DiagnosticEventPayload,
 } from "../../infra/diagnostic-events.js";
 import type { EmbeddedRunAttemptResult } from "../embedded-agent-runner/run/types.js";
-import { createOpenClawAgentHarness } from "./builtin-openclaw.js";
+import { createMerClawAgentHarness } from "./builtin-merclaw.js";
 import type { AgentHarness, AgentHarnessAttemptParams } from "./types.js";
 import type { AgentHarnessV2 } from "./v2.js";
 import { adaptAgentHarnessToV2, runAgentHarnessV2LifecycleAttempt } from "./v2.js";
@@ -213,11 +213,11 @@ describe("AgentHarness V2 compatibility adapter", () => {
     expect(runAttempt).toHaveBeenCalledOnce();
   });
 
-  it("advertises OpenClaw embedded host capabilities through the V1 adapter", async () => {
-    const harness = createOpenClawAgentHarness();
+  it("advertises MerClaw embedded host capabilities through the V1 adapter", async () => {
+    const harness = createMerClawAgentHarness();
 
     expect(harness.contextEngineHostCapabilities).toEqual(
-      OPENCLAW_EMBEDDED_CONTEXT_ENGINE_HOST.capabilities,
+      MERCLAW_EMBEDDED_CONTEXT_ENGINE_HOST.capabilities,
     );
   });
 

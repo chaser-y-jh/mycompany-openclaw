@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { normalizeOptionalString } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { runCommandWithRuntime } from "../core-api.js";
 import {
   BROWSER_TAB_REFERENCE_HELP,
@@ -212,7 +212,7 @@ export function registerBrowserDebugCommands(
     .description("Stop trace recording and write a .zip")
     .option(
       "--out <path>",
-      "Output path within openclaw temp dir (e.g. trace.zip or /tmp/openclaw/trace.zip)",
+      "Output path within merclaw temp dir (e.g. trace.zip or /tmp/merclaw/trace.zip)",
     )
     .option("--target-id <id>", BROWSER_TAB_REFERENCE_HELP)
     .action(async (opts, cmd) => {

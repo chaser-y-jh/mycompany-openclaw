@@ -30,7 +30,7 @@ describe("applyFinalEffectiveToolPolicy", () => {
   it("filters bundled tools through inherited subagent allowlists", () => {
     const agentId = `bundled-inherited-allow-${Date.now()}-${Math.random().toString(16).slice(2)}`;
     const sessionKey = `agent:${agentId}:subagent:limited`;
-    const storePath = path.join(os.tmpdir(), `openclaw-bundled-inherited-allow-${agentId}.json`);
+    const storePath = path.join(os.tmpdir(), `merclaw-bundled-inherited-allow-${agentId}.json`);
     fs.writeFileSync(
       storePath,
       JSON.stringify(
@@ -67,7 +67,7 @@ describe("applyFinalEffectiveToolPolicy", () => {
   it("honors configured plugin allow entries alongside inherited bundled tool allows", () => {
     const agentId = `bundled-plugin-allow-${Date.now()}-${Math.random().toString(16).slice(2)}`;
     const sessionKey = `agent:${agentId}:subagent:limited`;
-    const storePath = path.join(os.tmpdir(), `openclaw-bundled-plugin-allow-${agentId}.json`);
+    const storePath = path.join(os.tmpdir(), `merclaw-bundled-plugin-allow-${agentId}.json`);
     fs.writeFileSync(
       storePath,
       JSON.stringify(

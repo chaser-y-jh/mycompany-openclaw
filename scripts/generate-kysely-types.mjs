@@ -6,18 +6,18 @@ import { DatabaseSync } from "node:sqlite";
 
 const SCHEMAS = [
   {
-    name: "openclaw-state",
-    schema: "src/state/openclaw-state-schema.sql",
-    outFile: "src/state/openclaw-state-db.generated.d.ts",
-    schemaOutFile: "src/state/openclaw-state-schema.generated.ts",
-    schemaExport: "OPENCLAW_STATE_SCHEMA_SQL",
+    name: "merclaw-state",
+    schema: "src/state/merclaw-state-schema.sql",
+    outFile: "src/state/merclaw-state-db.generated.d.ts",
+    schemaOutFile: "src/state/merclaw-state-schema.generated.ts",
+    schemaExport: "MERCLAW_STATE_SCHEMA_SQL",
   },
   {
-    name: "openclaw-agent",
-    schema: "src/state/openclaw-agent-schema.sql",
-    outFile: "src/state/openclaw-agent-db.generated.d.ts",
-    schemaOutFile: "src/state/openclaw-agent-schema.generated.ts",
-    schemaExport: "OPENCLAW_AGENT_SCHEMA_SQL",
+    name: "merclaw-agent",
+    schema: "src/state/merclaw-agent-schema.sql",
+    outFile: "src/state/merclaw-agent-db.generated.d.ts",
+    schemaOutFile: "src/state/merclaw-agent-schema.generated.ts",
+    schemaExport: "MERCLAW_AGENT_SCHEMA_SQL",
   },
 ];
 

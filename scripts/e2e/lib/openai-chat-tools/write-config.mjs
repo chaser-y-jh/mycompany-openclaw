@@ -21,16 +21,16 @@ function readPositiveIntEnv(name, fallback) {
   return value;
 }
 
-const configPath = requireEnv("OPENCLAW_CONFIG_PATH");
-const stateDir = requireEnv("OPENCLAW_STATE_DIR");
-const workspaceDir = requireEnv("OPENCLAW_TEST_WORKSPACE_DIR");
-const modelRef = requireEnv("OPENCLAW_OPENAI_CHAT_TOOLS_MODEL");
-const token = requireEnv("OPENCLAW_GATEWAY_TOKEN");
-const timeoutSeconds = readPositiveIntEnv("OPENCLAW_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS", 180);
+const configPath = requireEnv("MERCLAW_CONFIG_PATH");
+const stateDir = requireEnv("MERCLAW_STATE_DIR");
+const workspaceDir = requireEnv("MERCLAW_TEST_WORKSPACE_DIR");
+const modelRef = requireEnv("MERCLAW_OPENAI_CHAT_TOOLS_MODEL");
+const token = requireEnv("MERCLAW_GATEWAY_TOKEN");
+const timeoutSeconds = readPositiveIntEnv("MERCLAW_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS", 180);
 const gatewayPort = readPositiveIntEnv("PORT", 18789);
 const [providerId, modelId] = modelRef.split("/");
 if (providerId !== "openai" || !modelId) {
-  throw new Error(`OPENCLAW_OPENAI_CHAT_TOOLS_MODEL must be openai/*, got ${modelRef}`);
+  throw new Error(`MERCLAW_OPENAI_CHAT_TOOLS_MODEL must be openai/*, got ${modelRef}`);
 }
 
 const config = {
@@ -52,7 +52,7 @@ const config = {
         api: "openai-responses",
         apiKey: { source: "env", provider: "default", id: "OPENAI_API_KEY" },
         baseUrl: (process.env.OPENAI_BASE_URL || "https://api.openai.com/v1").trim(),
-        agentRuntime: { id: "openclaw" },
+        agentRuntime: { id: "merclaw" },
         timeoutSeconds,
         models: [
           {
@@ -75,7 +75,7 @@ const config = {
       model: { primary: modelRef, fallbacks: [] },
       models: {
         [modelRef]: {
-          agentRuntime: { id: "openclaw" },
+          agentRuntime: { id: "merclaw" },
           params: { transport: "sse", openaiWsWarmup: false },
         },
       },

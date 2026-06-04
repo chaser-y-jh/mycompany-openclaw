@@ -1,4 +1,4 @@
-import { asRecord } from "@openclaw/normalization-core/record-coerce";
+import { asRecord } from "@merclaw/normalization-core/record-coerce";
 import type { NodeListNode, PairedNode, PairingList, PendingRequest } from "./node-list-types.js";
 
 export function parsePairingList(value: unknown): PairingList {

@@ -70,7 +70,7 @@ async function withGatewayChatHarness(
   const tempDirs: string[] = [];
   const ws = await harness.openWs();
   const createSessionDir = async () => {
-    const sessionDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-gw-"));
+    const sessionDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-gw-"));
     tempDirs.push(sessionDir);
     testState.sessionStorePath = path.join(sessionDir, "sessions.json");
     return sessionDir;
@@ -80,8 +80,8 @@ async function withGatewayChatHarness(
     await run({ ws, createSessionDir });
   } finally {
     setMaxChatHistoryMessagesBytesForTest();
-    if (process.env.OPENCLAW_CONFIG_PATH) {
-      await fs.rm(process.env.OPENCLAW_CONFIG_PATH, { force: true });
+    if (process.env.MERCLAW_CONFIG_PATH) {
+      await fs.rm(process.env.MERCLAW_CONFIG_PATH, { force: true });
     }
     clearConfigCache();
     testState.sessionStorePath = undefined;
@@ -103,9 +103,9 @@ async function writeMainSessionStore() {
 }
 
 async function writeGatewayConfig(config: Record<string, unknown>) {
-  const configPath = process.env.OPENCLAW_CONFIG_PATH;
+  const configPath = process.env.MERCLAW_CONFIG_PATH;
   if (!configPath) {
-    throw new Error("OPENCLAW_CONFIG_PATH missing in gateway test environment");
+    throw new Error("MERCLAW_CONFIG_PATH missing in gateway test environment");
   }
   await fs.mkdir(path.dirname(configPath), { recursive: true });
   await fs.writeFile(configPath, JSON.stringify(config, null, 2), "utf-8");
@@ -193,7 +193,7 @@ async function prepareMainHistoryHarness(params: {
 
 describe("gateway server chat", () => {
   test("chat.history does not wait for model catalog discovery to return history", async () => {
-    const sessionDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-gw-"));
+    const sessionDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-gw-"));
     try {
       testState.sessionStorePath = path.join(sessionDir, "sessions.json");
       testState.agentConfig = {
@@ -259,7 +259,7 @@ describe("gateway server chat", () => {
   });
 
   test("chat.send returns in_flight when duplicate attachment send wins parsing race", async () => {
-    const sessionDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-gw-"));
+    const sessionDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-gw-"));
     const dispatchRelease = createDeferred<void>();
     try {
       testState.sessionStorePath = path.join(sessionDir, "sessions.json");
@@ -399,7 +399,7 @@ describe("gateway server chat", () => {
   test.each(configuredImageModelCases)(
     "chat.send preserves text-only image uploads as MediaPaths even with configured imageModel: $id",
     async ({ id, imageModel }) => {
-      const sessionDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-gw-"));
+      const sessionDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-gw-"));
       try {
         testState.sessionStorePath = path.join(sessionDir, "sessions.json");
         testState.agentConfig = {
@@ -550,7 +550,7 @@ describe("gateway server chat", () => {
   );
 
   test("chat.send reuses an active internal run for duplicate WebChat text sends", async () => {
-    const sessionDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-gw-"));
+    const sessionDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-gw-"));
     const dispatchRelease = createDeferred<void>();
     try {
       testState.sessionStorePath = path.join(sessionDir, "sessions.json");
@@ -671,7 +671,7 @@ describe("gateway server chat", () => {
   });
 
   test("chat.send starts the next WebChat turn after the prior internal run finishes", async () => {
-    const sessionDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-gw-"));
+    const sessionDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-gw-"));
     try {
       testState.sessionStorePath = path.join(sessionDir, "sessions.json");
       await writeSessionStore({
@@ -805,7 +805,7 @@ describe("gateway server chat", () => {
             message: {
               role: "user",
               content:
-                'Sender (untrusted metadata):\n```json\n{"label":"openclaw-control-ui"}\n```\n\n[Thu 2026-03-26 16:29 GMT] hi',
+                'Sender (untrusted metadata):\n```json\n{"label":"merclaw-control-ui"}\n```\n\n[Thu 2026-03-26 16:29 GMT] hi',
             },
           }),
           JSON.stringify({
@@ -1110,7 +1110,7 @@ describe("gateway server chat", () => {
       expect(bytes).toBeLessThanOrEqual(historyMaxBytes);
       expect(serialized).toContain("[chat.history omitted: message too large]");
       expect(messages[0]).toMatchObject({
-        __openclaw: { id: "msg-huge", truncated: true, reason: "oversized" },
+        __merclaw: { id: "msg-huge", truncated: true, reason: "oversized" },
       });
       expect(serialized.includes(hugeNestedText.slice(0, 256))).toBe(false);
     });

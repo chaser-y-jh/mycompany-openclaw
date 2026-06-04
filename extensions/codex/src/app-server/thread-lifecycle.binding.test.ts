@@ -736,7 +736,7 @@ describe("Codex app-server thread lifecycle bindings", () => {
       "features.hooks": true,
       "hooks.PreToolUse": [
         {
-          hooks: [{ type: "command", command: "openclaw-native-hook-relay", timeout: 5 }],
+          hooks: [{ type: "command", command: "merclaw-native-hook-relay", timeout: 5 }],
         },
       ],
     };

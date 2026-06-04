@@ -17,7 +17,7 @@ const mocks = vi.hoisted(() => ({
     ) => Promise<Record<string, unknown>>
   >(async (_opts: unknown, req: { path?: string }) =>
     req.path === "/wait/download" || req.path === "/download"
-      ? { download: { path: "/tmp/openclaw/downloads/file.txt" } }
+      ? { download: { path: "/tmp/merclaw/downloads/file.txt" } }
       : { ok: true },
   ),
 }));

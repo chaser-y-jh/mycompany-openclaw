@@ -6,7 +6,7 @@ import { DefaultResourceLoader } from "./resource-loader.js";
 
 describe("DefaultResourceLoader", () => {
   it("keeps deprecated SDK prompt override aliases wired to prompt transforms", async () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-resource-loader-"));
+    const root = mkdtempSync(join(tmpdir(), "merclaw-resource-loader-"));
     try {
       const loader = new DefaultResourceLoader({
         cwd: root,

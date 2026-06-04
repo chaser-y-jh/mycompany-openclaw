@@ -4,7 +4,7 @@ import {
   getRuntimeConfig,
   getRuntimeConfigSourceSnapshot,
   projectConfigOntoRuntimeSourceSnapshot,
-  type OpenClawConfig,
+  type MerClawConfig,
 } from "../config/config.js";
 import { createConfigRuntimeEnv } from "../config/env-vars.js";
 import { privateFileStore } from "../infra/private-file-store.js";
@@ -19,7 +19,7 @@ import {
   resolveDefaultAgentId,
 } from "./agent-scope.js";
 import { MODELS_JSON_STATE } from "./models-config-state.js";
-import { planOpenClawModelsJson } from "./models-config.plan.js";
+import { planMerClawModelsJson } from "./models-config.plan.js";
 import {
   decodePluginModelCatalogRelativePathPluginId,
   isGeneratedPluginModelCatalog,
@@ -53,8 +53,8 @@ async function readPluginCatalogMtimes(agentDir: string): Promise<Array<[string,
 }
 
 async function buildModelsJsonFingerprint(params: {
-  config: OpenClawConfig;
-  sourceConfigForSecrets: OpenClawConfig;
+  config: MerClawConfig;
+  sourceConfigForSecrets: MerClawConfig;
   agentDir: string;
   workspaceDir?: string;
   pluginMetadataSnapshot?: Pick<PluginMetadataSnapshot, "index">;
@@ -234,9 +234,9 @@ async function writePluginCatalogsForModelsJson(params: {
   return wrote || removedStale;
 }
 
-function resolveModelsConfigInput(config?: OpenClawConfig): {
-  config: OpenClawConfig;
-  sourceConfigForSecrets: OpenClawConfig;
+function resolveModelsConfigInput(config?: MerClawConfig): {
+  config: MerClawConfig;
+  sourceConfigForSecrets: MerClawConfig;
 } {
   const runtimeSource = getRuntimeConfigSourceSnapshot();
   if (!config) {
@@ -280,8 +280,8 @@ async function withModelsJsonWriteLock<T>(targetPath: string, run: () => Promise
   }
 }
 
-export async function ensureOpenClawModelsJson(
-  config?: OpenClawConfig,
+export async function ensureMerClawModelsJson(
+  config?: MerClawConfig,
   agentDirOverride?: string,
   options: {
     pluginMetadataSnapshot?: Pick<PluginMetadataSnapshot, "index" | "manifestRegistry" | "owners">;
@@ -343,7 +343,7 @@ export async function ensureOpenClawModelsJson(
       existingParsed: existingModelsFile.parsed,
       ...(pluginMetadataSnapshot ? { pluginMetadataSnapshot } : {}),
     });
-    const plan = await planOpenClawModelsJson({
+    const plan = await planMerClawModelsJson({
       cfg,
       sourceConfigForSecrets: resolved.sourceConfigForSecrets,
       agentDir,

@@ -28,7 +28,7 @@ When enabled, the plugin prepends concise usage guidance into system-prompt spac
 <Steps>
   <Step title="Install the plugin">
     ```bash
-    openclaw plugins install diffs
+    merclaw plugins install diffs
     ```
   </Step>
   <Step title="Enable the plugin">
@@ -204,7 +204,7 @@ All fields are optional unless noted.
 
 ## Syntax highlighting
 
-OpenClaw includes syntax highlighting for common source, config, and documentation languages:
+MerClaw includes syntax highlighting for common source, config, and documentation languages:
 
 `javascript`, `typescript`, `tsx`, `jsx`, `json`, `markdown`, `yaml`, `css`, `html`, `sh`, `python`, `go`, `rust`, `java`, `c`, `cpp`, `csharp`, `php`, `sql`, `docker`, `ruby`, `swift`, `kotlin`, `r`, `dart`, `lua`, `powershell`, `xml`, and `toml`.
 
@@ -213,10 +213,10 @@ Common aliases such as `js`, `ts`, `bash`, `md`, `yml`, `c++`, `dockerfile`, `rb
 Install the Diff Viewer Language Pack plugin to highlight other languages:
 
 ```bash
-openclaw plugins install clawhub:@openclaw/diffs-language-pack
+merclaw plugins install clawhub:@merclaw/diffs-language-pack
 ```
 
-With the language pack available, OpenClaw automatically uses it for languages outside the default list. Without it, those files stay readable as plain text.
+With the language pack available, MerClaw automatically uses it for languages outside the default list. Without it, those files stay readable as plain text.
 
 ## Output details contract
 
@@ -282,7 +282,7 @@ Mode behavior summary:
 
 ## Plugin defaults
 
-Set plugin-wide defaults in `~/.openclaw/openclaw.json`:
+Set plugin-wide defaults in `~/.merclaw/merclaw.json`:
 
 ```json5
 {
@@ -348,7 +348,7 @@ Explicit tool parameters override these defaults.
       diffs: {
         enabled: true,
         config: {
-          viewerBaseUrl: "https://gateway.example.com/openclaw",
+          viewerBaseUrl: "https://gateway.example.com/merclaw",
         },
       },
     },
@@ -381,7 +381,7 @@ Explicit tool parameters override these defaults.
 
 ## Artifact lifecycle and storage
 
-- Artifacts are stored under the temp subfolder: `$TMPDIR/openclaw-diffs`.
+- Artifacts are stored under the temp subfolder: `$TMPDIR/merclaw-diffs`.
 - Viewer artifact metadata contains:
   - random artifact ID (20 hex chars)
   - random token (48 hex chars)
@@ -451,10 +451,10 @@ Resolution order:
 
 <Steps>
   <Step title="Config">
-    `browser.executablePath` in OpenClaw config.
+    `browser.executablePath` in MerClaw config.
   </Step>
   <Step title="Environment variables">
-    - `OPENCLAW_BROWSER_EXECUTABLE_PATH`
+    - `MERCLAW_BROWSER_EXECUTABLE_PATH`
     - `BROWSER_EXECUTABLE_PATH`
     - `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`
 

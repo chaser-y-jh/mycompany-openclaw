@@ -3,8 +3,8 @@ import os from "node:os";
 import path from "node:path";
 import type {
   MemorySearchConfig,
-  OpenClawConfig,
-} from "openclaw/plugin-sdk/memory-core-host-engine-foundation";
+  MerClawConfig,
+} from "merclaw/plugin-sdk/memory-core-host-engine-foundation";
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 type WatchIgnoredFn = (watchPath: string, stats?: { isDirectory?: () => boolean }) => boolean;
@@ -20,8 +20,8 @@ const {
   // Symbols are also declared at module top-level (CHOKIDAR_FACTORY_KEY,
   // NATIVE_FACTORY_KEY) but vi.hoisted runs before those declarations
   // execute, so we resolve the same Symbol.for keys inline here.
-  const chokidarKey = Symbol.for("openclaw.test.memoryWatchFactory");
-  const nativeKey = Symbol.for("openclaw.test.memoryNativeWatchFactory");
+  const chokidarKey = Symbol.for("merclaw.test.memoryWatchFactory");
+  const nativeKey = Symbol.for("merclaw.test.memoryNativeWatchFactory");
   type ChokidarEvent = "add" | "change" | "unlink" | "unlinkDir" | "error";
   type ChokidarCallback = (...args: unknown[]) => void;
   function createMockChokidarWatcher() {
@@ -105,12 +105,12 @@ const {
   return result;
 });
 
-const CHOKIDAR_FACTORY_KEY = Symbol.for("openclaw.test.memoryWatchFactory");
-const NATIVE_FACTORY_KEY = Symbol.for("openclaw.test.memoryNativeWatchFactory");
+const CHOKIDAR_FACTORY_KEY = Symbol.for("merclaw.test.memoryWatchFactory");
+const NATIVE_FACTORY_KEY = Symbol.for("merclaw.test.memoryNativeWatchFactory");
 
-vi.mock("openclaw/plugin-sdk/memory-core-host-engine-foundation", async (importOriginal) => {
+vi.mock("merclaw/plugin-sdk/memory-core-host-engine-foundation", async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import("openclaw/plugin-sdk/memory-core-host-engine-foundation")>();
+    await importOriginal<typeof import("merclaw/plugin-sdk/memory-core-host-engine-foundation")>();
   return {
     ...actual,
     createSubsystemLogger: (subsystem: string) => ({
@@ -139,7 +139,7 @@ vi.mock("./embeddings.js", () => ({
 import {
   clearMemoryEmbeddingProviders as clearRegistry,
   registerMemoryEmbeddingProvider as registerAdapter,
-} from "openclaw/plugin-sdk/memory-core-host-engine-embeddings";
+} from "merclaw/plugin-sdk/memory-core-host-engine-embeddings";
 import {
   closeAllMemorySearchManagers,
   getMemorySearchManager,
@@ -189,15 +189,15 @@ describe("memory watcher config", () => {
   });
 
   async function setupWatcherWorkspace(seedFile: { name: string; contents: string }) {
-    workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-memory-watch-"));
+    workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-memory-watch-"));
     extraDir = path.join(workspaceDir, "extra");
     await fs.mkdir(path.join(workspaceDir, "memory"), { recursive: true });
     await fs.mkdir(extraDir, { recursive: true });
     await fs.writeFile(path.join(extraDir, seedFile.name), seedFile.contents);
   }
 
-  function createWatcherConfig(overrides?: Partial<MemorySearchConfig>): OpenClawConfig {
-    const defaults: NonNullable<NonNullable<OpenClawConfig["agents"]>["defaults"]> = {
+  function createWatcherConfig(overrides?: Partial<MemorySearchConfig>): MerClawConfig {
+    const defaults: NonNullable<NonNullable<MerClawConfig["agents"]>["defaults"]> = {
       workspace: workspaceDir,
       memorySearch: {
         provider: "openai",
@@ -215,10 +215,10 @@ describe("memory watcher config", () => {
         defaults,
         list: [{ id: "main", default: true }],
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
   }
 
-  async function expectWatcherManager(cfg: OpenClawConfig) {
+  async function expectWatcherManager(cfg: MerClawConfig) {
     const result = await getMemorySearchManager({ cfg, agentId: "main" });
     if (!result.manager) {
       throw new Error("manager missing");

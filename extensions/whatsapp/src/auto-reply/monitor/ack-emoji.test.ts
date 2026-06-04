@@ -1,20 +1,20 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
 import { describe, expect, it } from "vitest";
 import { resolveWhatsAppAckEmoji } from "./ack-emoji.js";
 
 function createConfig(
   ackReaction?: NonNullable<
-    NonNullable<NonNullable<OpenClawConfig["channels"]>["whatsapp"]>["ackReaction"]
+    NonNullable<NonNullable<MerClawConfig["channels"]>["whatsapp"]>["ackReaction"]
   >,
-): OpenClawConfig {
-  const cfg: OpenClawConfig = {
+): MerClawConfig {
+  const cfg: MerClawConfig = {
     agents: {
       list: [{ id: "agent", identity: { emoji: "🔥" } }],
     },
     channels: {
       whatsapp: {},
     },
-  } as OpenClawConfig;
+  } as MerClawConfig;
   if (ackReaction !== undefined) {
     cfg.channels!.whatsapp!.ackReaction = ackReaction;
   }
@@ -69,7 +69,7 @@ describe("resolveWhatsAppAckEmoji", () => {
   });
 
   it("uses normalized agent ids for the identity fallback", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: MerClawConfig = {
       agents: {
         list: [{ id: "Agent", identity: { emoji: "🔥" } }],
       },
@@ -78,7 +78,7 @@ describe("resolveWhatsAppAckEmoji", () => {
           ackReaction: { direct: true, group: "mentions" },
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
 
     expect(
       resolveWhatsAppAckEmoji({
@@ -90,13 +90,13 @@ describe("resolveWhatsAppAckEmoji", () => {
   });
 
   it("uses the default ack emoji when configured without an emoji or agent identity", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: MerClawConfig = {
       channels: {
         whatsapp: {
           ackReaction: { direct: true, group: "mentions" },
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
 
     expect(
       resolveWhatsAppAckEmoji({

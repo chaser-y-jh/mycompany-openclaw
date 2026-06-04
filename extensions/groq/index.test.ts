@@ -1,4 +1,4 @@
-import { capturePluginRegistration } from "openclaw/plugin-sdk/plugin-test-runtime";
+import { capturePluginRegistration } from "merclaw/plugin-sdk/plugin-test-runtime";
 import { describe, expect, it } from "vitest";
 import { resolveGroqReasoningCompatPatch } from "./api.js";
 import plugin from "./index.js";

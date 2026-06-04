@@ -12,12 +12,12 @@ struct OnboardingIntroStep: View {
                 .foregroundStyle(.tint)
                 .padding(.bottom, 18)
 
-            Text("Welcome to OpenClaw")
+            Text("Welcome to MerClaw")
                 .font(.largeTitle.weight(.bold))
                 .multilineTextAlignment(.center)
                 .padding(.bottom, 10)
 
-            Text("Turn this iPhone into a secure OpenClaw node for chat, voice, camera, and device tools.")
+            Text("Turn this iPhone into a secure MerClaw node for chat, voice, camera, and device tools.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -27,7 +27,7 @@ struct OnboardingIntroStep: View {
             VStack(alignment: .leading, spacing: 14) {
                 Label("Connect to your gateway", systemImage: "link")
                 Label("Choose device permissions", systemImage: "hand.raised")
-                Label("Use OpenClaw from your phone", systemImage: "message.fill")
+                Label("Use MerClaw from your phone", systemImage: "message.fill")
             }
             .font(.subheadline.weight(.semibold))
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -50,7 +50,7 @@ struct OnboardingIntroStep: View {
                     Text("Security notice")
                         .font(.headline)
                     Text(
-                        "The connected OpenClaw agent can use device capabilities you enable, "
+                        "The connected MerClaw agent can use device capabilities you enable, "
                             + "such as camera, microphone, photos, contacts, calendar, and location. "
                             + "Continue only if you trust the gateway and agent you connect to.")
                         .font(.footnote)
@@ -100,7 +100,7 @@ struct OnboardingWelcomeStep: View {
                 .font(.largeTitle.weight(.bold))
                 .padding(.bottom, 8)
 
-            Text("Scan a QR code from your OpenClaw gateway or continue with manual setup.")
+            Text("Scan a QR code from your MerClaw gateway or continue with manual setup.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -109,7 +109,7 @@ struct OnboardingWelcomeStep: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("How to pair")
                     .font(.headline)
-                Text("In your OpenClaw chat, run")
+                Text("In your MerClaw chat, run")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                 Text("/pair qr")

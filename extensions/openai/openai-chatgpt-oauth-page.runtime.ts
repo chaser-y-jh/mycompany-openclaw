@@ -1,1 +1,1 @@
-export { oauthErrorHtml, oauthSuccessHtml } from "openclaw/plugin-sdk/provider-oauth-runtime";
+export { oauthErrorHtml, oauthSuccessHtml } from "merclaw/plugin-sdk/provider-oauth-runtime";

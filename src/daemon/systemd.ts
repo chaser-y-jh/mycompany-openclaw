@@ -2,8 +2,8 @@ import * as fsSync from "node:fs";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
-import { normalizeStringEntries } from "@openclaw/normalization-core/string-normalization";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
+import { normalizeStringEntries } from "@merclaw/normalization-core/string-normalization";
 import { resolveStateDir } from "../config/paths.js";
 import { readStateDirDotEnvVarsFromStateDir } from "../config/state-dir-dotenv.js";
 import { formatErrorMessage } from "../infra/errors.js";
@@ -63,11 +63,11 @@ function resolveSystemdUnitPathForName(env: GatewayServiceEnv, name: string): st
 }
 
 function resolveSystemdServiceName(env: GatewayServiceEnv): string {
-  const override = env.OPENCLAW_SYSTEMD_UNIT?.trim();
+  const override = env.MERCLAW_SYSTEMD_UNIT?.trim();
   if (override) {
     return override.endsWith(".service") ? override.slice(0, -".service".length) : override;
   }
-  return resolveGatewaySystemdServiceName(env.OPENCLAW_PROFILE);
+  return resolveGatewaySystemdServiceName(env.MERCLAW_PROFILE);
 }
 
 function resolveSystemdUnitPath(env: GatewayServiceEnv): string {
@@ -284,7 +284,7 @@ function resolveSystemdEnvironmentFilePath(params: {
   stateDir: string;
   environment?: GatewayServiceEnv;
 }): string {
-  const serviceKind = params.environment?.OPENCLAW_SERVICE_KIND?.trim();
+  const serviceKind = params.environment?.MERCLAW_SERVICE_KIND?.trim();
   const filename =
     serviceKind === "node" ? SYSTEMD_NODE_DOTENV_FILENAME : SYSTEMD_GATEWAY_DOTENV_FILENAME;
   return path.join(params.stateDir, filename);
@@ -294,7 +294,7 @@ function resolveLegacyNodeSystemdEnvironmentFilePath(params: {
   stateDir: string;
   environment?: GatewayServiceEnv;
 }): string | null {
-  if (params.environment?.OPENCLAW_SERVICE_KIND?.trim() !== "node") {
+  if (params.environment?.MERCLAW_SERVICE_KIND?.trim() !== "node") {
     return null;
   }
   const legacyPath = path.join(params.stateDir, SYSTEMD_GATEWAY_DOTENV_FILENAME);
@@ -303,7 +303,7 @@ function resolveLegacyNodeSystemdEnvironmentFilePath(params: {
 }
 
 function isNodeSystemdEnvironment(env: GatewayServiceEnv): boolean {
-  return env.OPENCLAW_SERVICE_KIND?.trim() === "node";
+  return env.MERCLAW_SERVICE_KIND?.trim() === "node";
 }
 
 function expandSystemdSpecifier(input: string, env: GatewayServiceEnv): string {
@@ -804,7 +804,7 @@ async function writeSystemdUnit({
 async function writeSystemdGatewayEnvironmentFile(params: {
   stateDir: string;
   dotenvVars: Record<string, string>;
-  /** OpenClaw-managed keys that must not be preserved from an old env file; stale file values
+  /** MerClaw-managed keys that must not be preserved from an old env file; stale file values
    *  would override fresh inline Environment= entries because EnvironmentFile takes precedence. */
   inlineManagedKeys?: ReadonlySet<string>;
   /** File-managed keys that should be written from current environment values or removed when absent. */
@@ -828,7 +828,7 @@ async function writeSystemdGatewayEnvironmentFile(params: {
   // Read existing env files first so we can preserve operator-added secrets
   // (e.g. provider API keys) across upgrades and re-stages. Node units used
   // to share gateway.systemd.env, so migrate those entries into node.systemd.env.
-  // OpenClaw-managed keys (identified by inlineManagedKeys) are excluded: a stale
+  // MerClaw-managed keys (identified by inlineManagedKeys) are excluded: a stale
   // file copy would override the fresh inline Environment= value because systemd's
   // EnvironmentFile takes precedence over inline Environment= directives.
   const existing: Record<string, string> = {};
@@ -897,7 +897,7 @@ async function removeNodeSystemdManagedEnvironmentKeys(env: GatewayServiceEnv): 
   } catch {
     return;
   }
-  const managedKeys = new Set([normalizeSystemdEnvironmentKey("OPENCLAW_GATEWAY_TOKEN")]);
+  const managedKeys = new Set([normalizeSystemdEnvironmentKey("MERCLAW_GATEWAY_TOKEN")]);
   const remaining = Object.fromEntries(
     Object.entries(existing).filter(([key]) => {
       const normalized = normalizeSystemdEnvironmentKey(key);

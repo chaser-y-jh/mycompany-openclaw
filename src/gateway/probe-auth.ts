@@ -1,5 +1,5 @@
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { resolveGatewayCredentialsWithSecretInputs } from "./credentials-secret-inputs.js";
 import {
   type ExplicitGatewayAuth,
@@ -10,7 +10,7 @@ export { resolveGatewayProbeTarget } from "./probe-target.js";
 export type { GatewayProbeTargetResolution } from "./probe-target.js";
 
 function buildGatewayProbeCredentialPolicy(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   mode: "local" | "remote";
   env?: NodeJS.ProcessEnv;
   explicitAuth?: ExplicitGatewayAuth;
@@ -28,9 +28,9 @@ function buildGatewayProbeCredentialPolicy(params: {
 }
 
 function resolveGatewayProbeCredentialConfig(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   mode: "local" | "remote";
-}): OpenClawConfig {
+}): MerClawConfig {
   if (params.mode !== "local") {
     return params.cfg;
   }
@@ -77,7 +77,7 @@ function resolveGatewayProbeWarning(error: unknown): string | undefined {
 }
 
 export function resolveGatewayProbeAuth(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   mode: "local" | "remote";
   env?: NodeJS.ProcessEnv;
 }): { token?: string; password?: string } {
@@ -86,7 +86,7 @@ export function resolveGatewayProbeAuth(params: {
 }
 
 export async function resolveGatewayProbeAuthWithSecretInputs(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   mode: "local" | "remote";
   env?: NodeJS.ProcessEnv;
   explicitAuth?: ExplicitGatewayAuth;
@@ -102,7 +102,7 @@ export async function resolveGatewayProbeAuthWithSecretInputs(params: {
 }
 
 export async function resolveGatewayProbeAuthSafeWithSecretInputs(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   mode: "local" | "remote";
   env?: NodeJS.ProcessEnv;
   explicitAuth?: ExplicitGatewayAuth;
@@ -129,7 +129,7 @@ export async function resolveGatewayProbeAuthSafeWithSecretInputs(params: {
 }
 
 export function resolveGatewayProbeAuthSafe(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   mode: "local" | "remote";
   env?: NodeJS.ProcessEnv;
   explicitAuth?: ExplicitGatewayAuth;

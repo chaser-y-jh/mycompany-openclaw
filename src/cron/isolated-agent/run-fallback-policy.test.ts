@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import type { CronJob } from "../types.js";
 import {
   resolveCronFallbacksOverride,
@@ -18,7 +18,7 @@ function makeJob(payload: CronJob["payload"]): CronJob {
   } as CronJob;
 }
 
-function makeConfig(fallbacks?: string[]): OpenClawConfig {
+function makeConfig(fallbacks?: string[]): MerClawConfig {
   return {
     agents: {
       defaults: {

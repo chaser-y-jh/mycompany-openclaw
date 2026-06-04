@@ -1,8 +1,8 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import type { OpenClawPluginApi } from "../api.js";
+import type { MerClawPluginApi } from "../api.js";
 import { VIEWER_ASSET_PREFIX, getServedViewerAsset } from "./viewer-assets.js";
 
-export function registerDiffsLanguagePackPlugin(api: OpenClawPluginApi): void {
+export function registerDiffsLanguagePackPlugin(api: MerClawPluginApi): void {
   api.registerHttpRoute({
     path: "/plugins/diffs-language-pack",
     auth: "plugin",

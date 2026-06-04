@@ -15,7 +15,7 @@ import {
 
 describe("ensureDir", () => {
   it("creates nested directory", async () => {
-    await withTempDir({ prefix: "openclaw-test-" }, async (tmp) => {
+    await withTempDir({ prefix: "merclaw-test-" }, async (tmp) => {
       const target = path.join(tmp, "nested", "dir");
       await ensureDir(target);
       expect(fs.existsSync(target)).toBe(true);
@@ -53,40 +53,40 @@ describe("sleep", () => {
 });
 
 describe("resolveConfigDir", () => {
-  it("prefers ~/.openclaw when legacy dir is missing", async () => {
-    await withTempDir({ prefix: "openclaw-config-dir-" }, async (root) => {
-      const newDir = path.join(root, ".openclaw");
+  it("prefers ~/.merclaw when legacy dir is missing", async () => {
+    await withTempDir({ prefix: "merclaw-config-dir-" }, async (root) => {
+      const newDir = path.join(root, ".merclaw");
       await fs.promises.mkdir(newDir, { recursive: true });
       const resolved = resolveConfigDir({} as NodeJS.ProcessEnv, () => root);
       expect(resolved).toBe(newDir);
     });
   });
 
-  it("expands OPENCLAW_STATE_DIR using the provided env", () => {
+  it("expands MERCLAW_STATE_DIR using the provided env", () => {
     const env = {
-      HOME: "/tmp/openclaw-home",
-      OPENCLAW_STATE_DIR: "~/state",
+      HOME: "/tmp/merclaw-home",
+      MERCLAW_STATE_DIR: "~/state",
     } as NodeJS.ProcessEnv;
 
-    expect(resolveConfigDir(env)).toBe(path.resolve("/tmp/openclaw-home", "state"));
+    expect(resolveConfigDir(env)).toBe(path.resolve("/tmp/merclaw-home", "state"));
   });
 
-  it("falls back to the config file directory when only OPENCLAW_CONFIG_PATH is set", () => {
+  it("falls back to the config file directory when only MERCLAW_CONFIG_PATH is set", () => {
     const env = {
-      HOME: "/tmp/openclaw-home",
-      OPENCLAW_CONFIG_PATH: "~/profiles/dev/openclaw.json",
+      HOME: "/tmp/merclaw-home",
+      MERCLAW_CONFIG_PATH: "~/profiles/dev/merclaw.json",
     } as NodeJS.ProcessEnv;
 
-    expect(resolveConfigDir(env)).toBe(path.resolve("/tmp/openclaw-home", "profiles", "dev"));
+    expect(resolveConfigDir(env)).toBe(path.resolve("/tmp/merclaw-home", "profiles", "dev"));
   });
 });
 
 describe("resolveHomeDir", () => {
-  it("prefers OPENCLAW_HOME over HOME", () => {
-    vi.stubEnv("OPENCLAW_HOME", "/srv/openclaw-home");
+  it("prefers MERCLAW_HOME over HOME", () => {
+    vi.stubEnv("MERCLAW_HOME", "/srv/merclaw-home");
     vi.stubEnv("HOME", "/home/other");
     try {
-      expect(resolveHomeDir()).toBe(path.resolve("/srv/openclaw-home"));
+      expect(resolveHomeDir()).toBe(path.resolve("/srv/merclaw-home"));
     } finally {
       vi.unstubAllEnvs();
     }
@@ -94,12 +94,12 @@ describe("resolveHomeDir", () => {
 });
 
 describe("shortenHomePath", () => {
-  it("uses $OPENCLAW_HOME prefix when OPENCLAW_HOME is set", () => {
-    vi.stubEnv("OPENCLAW_HOME", "/srv/openclaw-home");
+  it("uses $MERCLAW_HOME prefix when MERCLAW_HOME is set", () => {
+    vi.stubEnv("MERCLAW_HOME", "/srv/merclaw-home");
     vi.stubEnv("HOME", "/home/other");
     try {
-      expect(shortenHomePath(`${path.resolve("/srv/openclaw-home")}/.openclaw/openclaw.json`)).toBe(
-        "$OPENCLAW_HOME/.openclaw/openclaw.json",
+      expect(shortenHomePath(`${path.resolve("/srv/merclaw-home")}/.merclaw/merclaw.json`)).toBe(
+        "$MERCLAW_HOME/.merclaw/merclaw.json",
       );
     } finally {
       vi.unstubAllEnvs();
@@ -108,15 +108,15 @@ describe("shortenHomePath", () => {
 });
 
 describe("shortenHomeInString", () => {
-  it("uses $OPENCLAW_HOME replacement when OPENCLAW_HOME is set", () => {
-    vi.stubEnv("OPENCLAW_HOME", "/srv/openclaw-home");
+  it("uses $MERCLAW_HOME replacement when MERCLAW_HOME is set", () => {
+    vi.stubEnv("MERCLAW_HOME", "/srv/merclaw-home");
     vi.stubEnv("HOME", "/home/other");
     try {
       expect(
         shortenHomeInString(
-          `config: ${path.resolve("/srv/openclaw-home")}/.openclaw/openclaw.json`,
+          `config: ${path.resolve("/srv/merclaw-home")}/.merclaw/merclaw.json`,
         ),
-      ).toBe("config: $OPENCLAW_HOME/.openclaw/openclaw.json");
+      ).toBe("config: $MERCLAW_HOME/.merclaw/merclaw.json");
     } finally {
       vi.unstubAllEnvs();
     }
@@ -129,8 +129,8 @@ describe("resolveUserPath", () => {
   });
 
   it("expands ~/ to home dir", () => {
-    expect(resolveUserPath("~/openclaw", {}, () => "/Users/thoffman")).toBe(
-      path.resolve("/Users/thoffman", "openclaw"),
+    expect(resolveUserPath("~/merclaw", {}, () => "/Users/thoffman")).toBe(
+      path.resolve("/Users/thoffman", "merclaw"),
     );
   });
 
@@ -138,11 +138,11 @@ describe("resolveUserPath", () => {
     expect(resolveUserPath("tmp/dir")).toBe(path.resolve("tmp/dir"));
   });
 
-  it("prefers OPENCLAW_HOME for tilde expansion", () => {
-    vi.stubEnv("OPENCLAW_HOME", "/srv/openclaw-home");
+  it("prefers MERCLAW_HOME for tilde expansion", () => {
+    vi.stubEnv("MERCLAW_HOME", "/srv/merclaw-home");
     vi.stubEnv("HOME", "/home/other");
     try {
-      expect(resolveUserPath("~/openclaw")).toBe(path.resolve("/srv/openclaw-home", "openclaw"));
+      expect(resolveUserPath("~/merclaw")).toBe(path.resolve("/srv/merclaw-home", "merclaw"));
     } finally {
       vi.unstubAllEnvs();
     }
@@ -150,11 +150,11 @@ describe("resolveUserPath", () => {
 
   it("uses the provided env for tilde expansion", () => {
     const env = {
-      HOME: "/tmp/openclaw-home",
-      OPENCLAW_HOME: "/srv/openclaw-home",
+      HOME: "/tmp/merclaw-home",
+      MERCLAW_HOME: "/srv/merclaw-home",
     } as NodeJS.ProcessEnv;
 
-    expect(resolveUserPath("~/openclaw", env)).toBe(path.resolve("/srv/openclaw-home", "openclaw"));
+    expect(resolveUserPath("~/merclaw", env)).toBe(path.resolve("/srv/merclaw-home", "merclaw"));
   });
 
   it("keeps blank paths blank", () => {

@@ -1,5 +1,5 @@
-import { parseBrowserHttpUrl, redactCdpUrl } from "openclaw/plugin-sdk/browser-config";
-import { fetchWithSsrFGuard } from "openclaw/plugin-sdk/ssrf-runtime";
+import { parseBrowserHttpUrl, redactCdpUrl } from "merclaw/plugin-sdk/browser-config";
+import { fetchWithSsrFGuard } from "merclaw/plugin-sdk/ssrf-runtime";
 import WebSocket from "ws";
 import { isLoopbackHost } from "../gateway/net.js";
 import {

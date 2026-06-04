@@ -1,6 +1,6 @@
-import type { NormalizedModelCatalogRow } from "@openclaw/model-catalog-core/model-catalog-types";
+import type { NormalizedModelCatalogRow } from "@merclaw/model-catalog-core/model-catalog-types";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import type { RuntimeEnv } from "../runtime.js";
 import type { WizardPrompter } from "../wizard/prompts.js";
 
@@ -9,7 +9,7 @@ const mocks = vi.hoisted(() => ({
   applyAuthChoice: vi.fn(),
   promptModelAllowlist: vi.fn(),
   promptDefaultModel: vi.fn(),
-  applyPrimaryModel: vi.fn((cfg: OpenClawConfig, model: string) => ({
+  applyPrimaryModel: vi.fn((cfg: MerClawConfig, model: string) => ({
     ...cfg,
     agents: {
       ...cfg.agents,
@@ -20,7 +20,7 @@ const mocks = vi.hoisted(() => ({
     },
   })),
   applyModelAllowlist: vi.fn(
-    (cfg: OpenClawConfig, models: string[], opts: { scopeKeys?: string[] } = {}) => {
+    (cfg: MerClawConfig, models: string[], opts: { scopeKeys?: string[] } = {}) => {
       const defaults = cfg.agents?.defaults;
       const normalized = normalizeTestModelKeys(models);
       const scopeKeys = opts.scopeKeys ? normalizeTestModelKeys(opts.scopeKeys) : [];
@@ -69,7 +69,7 @@ const mocks = vi.hoisted(() => ({
     },
   ),
   applyModelFallbacksFromSelection: vi.fn(
-    (cfg: OpenClawConfig, selection: string[], opts: { scopeKeys?: string[] } = {}) => {
+    (cfg: MerClawConfig, selection: string[], opts: { scopeKeys?: string[] } = {}) => {
       const defaults = cfg.agents?.defaults;
       const existingModel = defaults?.model;
       const primary =
@@ -476,7 +476,7 @@ describe("promptAuthConfig", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     mocks.applyAuthChoice.mockResolvedValue({ config: existingConfig });
     mocks.promptModelAllowlist.mockResolvedValue({ models: undefined });
     mocks.resolveProviderPluginChoice.mockReturnValue(null);
@@ -502,7 +502,7 @@ describe("promptAuthConfig", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     mocks.applyAuthChoice.mockResolvedValue({
       config: {
         ...existingConfig,

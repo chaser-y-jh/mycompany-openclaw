@@ -3,7 +3,7 @@ import { createAgentToolResultMiddlewareRunner } from "./tool-result-middleware.
 
 describe("createAgentToolResultMiddlewareRunner", () => {
   it("fails closed when middleware throws", async () => {
-    const runner = createAgentToolResultMiddlewareRunner({ runtime: "openclaw" }, [
+    const runner = createAgentToolResultMiddlewareRunner({ runtime: "merclaw" }, [
       () => {
         throw new Error("raw secret should not be logged or returned");
       },
@@ -47,7 +47,7 @@ describe("createAgentToolResultMiddlewareRunner", () => {
   });
 
   it("fails closed when middleware mutates the current result into an invalid shape", async () => {
-    const runner = createAgentToolResultMiddlewareRunner({ runtime: "openclaw" }, [
+    const runner = createAgentToolResultMiddlewareRunner({ runtime: "merclaw" }, [
       (event) => {
         event.result.content = "not an array" as never;
         return undefined;
@@ -122,7 +122,7 @@ describe("createAgentToolResultMiddlewareRunner", () => {
       content: [{ type: "text" as const, text: "delivered" }],
       details: cyclicDetails,
     };
-    const runner = createAgentToolResultMiddlewareRunner({ runtime: "openclaw" }, []);
+    const runner = createAgentToolResultMiddlewareRunner({ runtime: "merclaw" }, []);
 
     const result = await runner.applyToolResultMiddleware({
       toolCallId: "call-1",
@@ -147,7 +147,7 @@ describe("createAgentToolResultMiddlewareRunner", () => {
       client,
     };
     client.message = payload;
-    const runner = createAgentToolResultMiddlewareRunner({ runtime: "openclaw" }, [
+    const runner = createAgentToolResultMiddlewareRunner({ runtime: "merclaw" }, [
       () => undefined,
     ]);
 
@@ -478,7 +478,7 @@ describe("createAgentToolResultMiddlewareRunner", () => {
   });
 
   it("collapses oversized incoming details to a truncation marker", async () => {
-    const runner = createAgentToolResultMiddlewareRunner({ runtime: "openclaw" }, [
+    const runner = createAgentToolResultMiddlewareRunner({ runtime: "merclaw" }, [
       () => undefined,
     ]);
 

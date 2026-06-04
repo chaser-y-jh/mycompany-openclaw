@@ -1,4 +1,4 @@
-import { asOptionalRecord, readStringField } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { asOptionalRecord, readStringField } from "merclaw/plugin-sdk/string-coerce-runtime";
 import type { VoiceCallConfig } from "./config.js";
 import { VoiceCallConfigSchema } from "./config.js";
 

@@ -40,7 +40,7 @@ To set a provider explicitly:
 Without an embedding provider, only keyword search is available.
 
 To force the built-in local embedding provider, install the optional
-`node-llama-cpp` runtime package next to OpenClaw, then point `local.modelPath`
+`node-llama-cpp` runtime package next to MerClaw, then point `local.modelPath`
 at a GGUF file:
 
 ```json5
@@ -78,16 +78,16 @@ Set `memorySearch.provider` to switch away from OpenAI.
 
 ## How indexing works
 
-OpenClaw indexes `MEMORY.md` and `memory/*.md` into chunks (~400 tokens with
+MerClaw indexes `MEMORY.md` and `memory/*.md` into chunks (~400 tokens with
 80-token overlap) and stores them in a per-agent SQLite database.
 
-- **Index location:** `~/.openclaw/memory/<agentId>.sqlite`
+- **Index location:** `~/.merclaw/memory/<agentId>.sqlite`
 - **Storage maintenance:** SQLite WAL sidecars are bounded with periodic and
   shutdown checkpoints.
 - **File watching:** changes to memory files trigger a debounced reindex (1.5s).
 - **Auto-reindex:** when the embedding provider, model, or chunking config
   changes, the entire index is rebuilt automatically.
-- **Reindex on demand:** `openclaw memory index --force`
+- **Reindex on demand:** `merclaw memory index --force`
 
 <Info>
 You can also index Markdown files outside the workspace with
@@ -112,24 +112,24 @@ automatic user modeling.
 
 ## Troubleshooting
 
-**Memory search disabled?** Check `openclaw memory status`. If no provider is
+**Memory search disabled?** Check `merclaw memory status`. If no provider is
 detected, set one explicitly or add an API key.
 
 **Local provider not detected?** Confirm the local path exists and run:
 
 ```bash
-openclaw memory status --deep --agent main
-openclaw memory index --force --agent main
+merclaw memory status --deep --agent main
+merclaw memory index --force --agent main
 ```
 
 Both standalone CLI commands and the Gateway use the same `local` provider id.
 Set `memorySearch.provider: "local"` when you want local embeddings.
 
-**Stale results?** Run `openclaw memory index --force` to rebuild. The watcher
+**Stale results?** Run `merclaw memory index --force` to rebuild. The watcher
 may miss changes in rare edge cases.
 
-**sqlite-vec not loading?** OpenClaw falls back to in-process cosine similarity
-automatically. `openclaw memory status --deep` reports the local vector store
+**sqlite-vec not loading?** MerClaw falls back to in-process cosine similarity
+automatically. `merclaw memory status --deep` reports the local vector store
 separately from the embedding provider, so `Vector store: unavailable` points
 at sqlite-vec loading while `Embeddings: unavailable` points at provider/auth
 or model readiness. Check logs for the specific load error.

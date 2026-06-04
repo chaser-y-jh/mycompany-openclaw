@@ -17,7 +17,7 @@ import { writeManagedNpmPlugin } from "./test-helpers/managed-npm-plugin.js";
 const tempDirs: string[] = [];
 
 function makeTempDir() {
-  return makeTrackedTempDir("openclaw-plugin-status", tempDirs);
+  return makeTrackedTempDir("merclaw-plugin-status", tempDirs);
 }
 
 afterEach(() => {
@@ -73,8 +73,8 @@ describe("buildPluginRegistrySnapshotReport", () => {
         bundledPluginsDir: makeTempDir(),
         disablePersistedRegistry: false,
       }),
-      OPENCLAW_DISABLE_BUNDLED_PLUGINS: "1",
-      OPENCLAW_STATE_DIR: stateDir,
+      MERCLAW_DISABLE_BUNDLED_PLUGINS: "1",
+      MERCLAW_STATE_DIR: stateDir,
     };
     const config = {
       plugins: {
@@ -85,7 +85,7 @@ describe("buildPluginRegistrySnapshotReport", () => {
     };
     const whatsappDir = writeManagedNpmPlugin({
       stateDir,
-      packageName: "@openclaw/whatsapp",
+      packageName: "@merclaw/whatsapp",
       pluginId: "whatsapp",
       version: "2026.5.2",
       name: "WhatsApp",
@@ -121,7 +121,7 @@ describe("buildPluginRegistrySnapshotReport", () => {
     const fixture = createColdPluginFixture({
       rootDir: makeTempDir(),
       pluginId: "indexed-demo",
-      packageName: "@example/openclaw-indexed-demo",
+      packageName: "@example/merclaw-indexed-demo",
       packageVersion: "9.8.7",
       manifest: {
         id: "indexed-demo",
@@ -156,7 +156,7 @@ describe("buildPluginRegistrySnapshotReport", () => {
       name: "Indexed Demo",
       description: "Manifest-backed list metadata",
       version: "9.8.7",
-      format: "openclaw",
+      format: "merclaw",
       providerIds: ["indexed-provider"],
       speechProviderIds: ["indexed-speech-provider"],
       realtimeTranscriptionProviderIds: ["indexed-transcription-provider"],
@@ -236,7 +236,7 @@ describe("buildPluginRegistrySnapshotReport", () => {
     const fixture = createColdPluginFixture({
       rootDir: makeTempDir(),
       pluginId: "persisted-demo",
-      packageName: "@example/openclaw-persisted-demo",
+      packageName: "@example/merclaw-persisted-demo",
       packageVersion: "2.0.0",
       manifest: {
         id: "persisted-demo",

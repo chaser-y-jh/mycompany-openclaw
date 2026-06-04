@@ -1,12 +1,12 @@
-import type { NormalizedModelCatalogRow } from "@openclaw/model-catalog-core/model-catalog-types";
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
+import type { NormalizedModelCatalogRow } from "@merclaw/model-catalog-core/model-catalog-types";
+import { normalizeProviderId } from "@merclaw/model-catalog-core/provider-id";
 import { DEFAULT_CONTEXT_TOKENS } from "../../agents/defaults.js";
 import {
   shouldSuppressBuiltInModel,
   shouldSuppressBuiltInModelFromManifest,
 } from "../../agents/model-suppression.js";
 import type { ModelDefinitionConfig, ModelProviderConfig } from "../../config/types.models.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import type { ModelRegistry } from "../../llm/model-registry.js";
 import type { Model } from "../../llm/types.js";
 import type { PluginMetadataSnapshot } from "../../plugins/plugin-metadata-snapshot.types.js";
@@ -31,7 +31,7 @@ type RowFilter = {
 };
 
 export type RowBuilderContext = {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentDir: string;
   authIndex: ModelListAuthIndex;
   availableKeys?: Set<string>;
@@ -262,7 +262,7 @@ function shouldListConfiguredProviderModel(params: {
 }
 
 function findConfiguredProviderModel(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   provider: string;
   modelId: string;
 }): ListRowModel | undefined {
@@ -278,7 +278,7 @@ function findConfiguredProviderModel(params: {
   });
 }
 
-function toFallbackConfiguredListModel(entry: ConfiguredEntry, cfg: OpenClawConfig): ListRowModel {
+function toFallbackConfiguredListModel(entry: ConfiguredEntry, cfg: MerClawConfig): ListRowModel {
   return (
     findConfiguredProviderModel({
       cfg,

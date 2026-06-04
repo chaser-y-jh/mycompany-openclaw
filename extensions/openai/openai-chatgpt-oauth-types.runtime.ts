@@ -9,4 +9,4 @@ export type {
   OAuthProviderInterface,
   OAuthSelectOption,
   OAuthSelectPrompt,
-} from "openclaw/plugin-sdk/provider-oauth-runtime";
+} from "merclaw/plugin-sdk/provider-oauth-runtime";

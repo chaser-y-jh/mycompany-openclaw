@@ -44,7 +44,7 @@ function parseMode(argv) {
 }
 
 function resolveCompileConcurrency() {
-  const raw = process.env.OPENCLAW_EXTENSION_BOUNDARY_CONCURRENCY;
+  const raw = process.env.MERCLAW_EXTENSION_BOUNDARY_CONCURRENCY;
   const parsed = raw ? Number.parseInt(raw, 10) : Number.NaN;
   if (Number.isInteger(parsed) && parsed > 0) {
     return parsed;
@@ -659,7 +659,7 @@ async function runCompileCheck(extensionIds) {
   runNodeStep("plugin-sdk boundary prep", [prepareBoundaryArtifactsBin], 420_000);
   const prepElapsedMs = Date.now() - prepStartedAt;
   const concurrency = resolveCompileConcurrency();
-  const verboseFreshLogs = process.env.OPENCLAW_EXTENSION_BOUNDARY_VERBOSE_FRESH === "1";
+  const verboseFreshLogs = process.env.MERCLAW_EXTENSION_BOUNDARY_VERBOSE_FRESH === "1";
   const sharedNewestInputMtimeMs = Math.max(
     collectNewestMtime(resolve(repoRoot, "dist/plugin-sdk"), {
       skipDistDirectories: false,

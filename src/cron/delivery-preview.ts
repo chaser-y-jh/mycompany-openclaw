@@ -1,5 +1,5 @@
 import { resolveDefaultAgentId } from "../agents/agent-scope-config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { hasExplicitCronDeliveryTarget, resolveCronDeliveryPlan } from "./delivery-plan.js";
 import { resolveDeliveryTarget } from "./isolated-agent/delivery-target.js";
 import { resolveCronDeliverySessionKey } from "./session-target.js";
@@ -35,7 +35,7 @@ function formatDeliveryDetail(params: {
 }
 
 export async function resolveCronDeliveryPreview(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   defaultAgentId?: string;
   job: CronJob;
 }): Promise<CronDeliveryPreview> {
@@ -89,7 +89,7 @@ export async function resolveCronDeliveryPreview(params: {
 }
 
 export async function resolveCronDeliveryPreviews(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   defaultAgentId?: string;
   jobs: CronJob[];
 }): Promise<Record<string, CronDeliveryPreview>> {

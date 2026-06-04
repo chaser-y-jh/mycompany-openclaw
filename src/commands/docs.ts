@@ -3,7 +3,7 @@ import { isRich, theme } from "../../packages/terminal-core/src/theme.js";
 import { formatCliCommand } from "../cli/command-format.js";
 import type { RuntimeEnv } from "../runtime.js";
 
-const SEARCH_API = "https://docs.openclaw.ai/api/search";
+const SEARCH_API = "https://docs.merclaw.ai/api/search";
 const SEARCH_TIMEOUT_MS = 30_000;
 
 type DocResult = {
@@ -107,13 +107,13 @@ function parseDocsSearchResults(raw: unknown): DocResult[] {
 export async function docsSearchCommand(queryParts: string[], runtime: RuntimeEnv) {
   const query = queryParts.join(" ").trim();
   if (!query) {
-    const docs = formatDocsLink("/", "docs.openclaw.ai");
+    const docs = formatDocsLink("/", "docs.merclaw.ai");
     if (isRich()) {
       runtime.log(`${theme.muted("Docs:")} ${docs}`);
-      runtime.log(`${theme.muted("Search:")} ${formatCliCommand('openclaw docs "your query"')}`);
+      runtime.log(`${theme.muted("Search:")} ${formatCliCommand('merclaw docs "your query"')}`);
     } else {
-      runtime.log("Docs: https://docs.openclaw.ai/");
-      runtime.log(`Search: ${formatCliCommand('openclaw docs "your query"')}`);
+      runtime.log("Docs: https://docs.merclaw.ai/");
+      runtime.log(`Search: ${formatCliCommand('merclaw docs "your query"')}`);
     }
     return;
   }

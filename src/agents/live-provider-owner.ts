@@ -1,9 +1,9 @@
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { normalizeProviderId } from "@merclaw/model-catalog-core/provider-id";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { resolveOwningPluginIdsForProviderRef } from "../plugins/providers.js";
 
 type LiveProviderOwnerContext = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   ownerCache: Map<string, readonly string[]>;

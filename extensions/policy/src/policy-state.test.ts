@@ -22,7 +22,7 @@ describe("scanPolicyChannels", () => {
         enabled: true,
         id: "telegram",
         provider: "telegram",
-        source: "oc://openclaw.config/channels/telegram",
+        source: "oc://merclaw.config/channels/telegram",
       },
     ]);
   });

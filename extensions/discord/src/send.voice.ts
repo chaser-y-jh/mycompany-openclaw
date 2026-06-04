@@ -1,16 +1,16 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { recordChannelActivity } from "openclaw/plugin-sdk/channel-activity-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import { recordChannelActivity } from "merclaw/plugin-sdk/channel-activity-runtime";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
 import {
   extensionForMime,
   maxBytesForKind,
   unlinkIfExists,
-} from "openclaw/plugin-sdk/media-runtime";
-import { requireRuntimeConfig } from "openclaw/plugin-sdk/plugin-config-runtime";
-import type { RetryConfig } from "openclaw/plugin-sdk/retry-runtime";
-import { tempWorkspace, resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
-import { loadWebMediaRaw } from "openclaw/plugin-sdk/web-media";
+} from "merclaw/plugin-sdk/media-runtime";
+import { requireRuntimeConfig } from "merclaw/plugin-sdk/plugin-config-runtime";
+import type { RetryConfig } from "merclaw/plugin-sdk/retry-runtime";
+import { tempWorkspace, resolvePreferredMerClawTmpDir } from "merclaw/plugin-sdk/temp-path";
+import { loadWebMediaRaw } from "merclaw/plugin-sdk/web-media";
 import { resolveDiscordAccount } from "./accounts.js";
 import type { RequestClient } from "./internal/discord.js";
 import { parseAndResolveChannelRecipient } from "./recipient-resolution.js";
@@ -24,7 +24,7 @@ import {
 } from "./voice-message.js";
 
 type VoiceMessageOpts = {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   token?: string;
   accountId?: string;
   verbose?: boolean;
@@ -55,7 +55,7 @@ async function materializeVoiceMessageInput(
   const extFromMime = media.contentType ? extensionForMime(media.contentType) : "";
   const ext = extFromName || extFromMime || ".bin";
   const workspace = await tempWorkspace({
-    rootDir: resolvePreferredOpenClawTmpDir(),
+    rootDir: resolvePreferredMerClawTmpDir(),
     prefix: "voice-src-",
   });
   const filePath = await workspace.write(`input${ext}`, media.buffer);

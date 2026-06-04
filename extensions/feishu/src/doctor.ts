@@ -4,16 +4,16 @@ import path from "node:path";
 import type {
   ChannelDoctorAdapter,
   ChannelDoctorSequenceResult,
-} from "openclaw/plugin-sdk/channel-contract";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { normalizeAgentId } from "openclaw/plugin-sdk/routing";
+} from "merclaw/plugin-sdk/channel-contract";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { normalizeAgentId } from "merclaw/plugin-sdk/routing";
 import {
   loadSessionStore,
   resolveSessionFilePath,
   resolveStorePath,
   updateSessionStore,
-} from "openclaw/plugin-sdk/session-store-runtime";
-import { resolveStateDir } from "openclaw/plugin-sdk/state-paths";
+} from "merclaw/plugin-sdk/session-store-runtime";
+import { resolveStateDir } from "merclaw/plugin-sdk/state-paths";
 
 const FEISHU_STATE_DIR = "feishu";
 const BACKUP_PREFIX = "feishu-state-repair";
@@ -215,7 +215,7 @@ function isFeishuSessionEntry(key: string, value: unknown): boolean {
   );
 }
 
-function collectConfiguredAgentIds(cfg: OpenClawConfig): string[] {
+function collectConfiguredAgentIds(cfg: MerClawConfig): string[] {
   const ids = new Set<string>();
   ids.add(resolveConfiguredDefaultAgentId(cfg));
   for (const agent of cfg.agents?.list ?? []) {
@@ -226,14 +226,14 @@ function collectConfiguredAgentIds(cfg: OpenClawConfig): string[] {
   return [...ids].toSorted();
 }
 
-function resolveConfiguredDefaultAgentId(cfg: OpenClawConfig): string {
+function resolveConfiguredDefaultAgentId(cfg: MerClawConfig): string {
   const agents = cfg.agents?.list ?? [];
   const chosen = agents.find((agent) => agent?.default) ?? agents[0];
   return normalizeAgentId(typeof chosen?.id === "string" && chosen.id.trim() ? chosen.id : "main");
 }
 
 function collectFeishuSessionTargets(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env: NodeJS.ProcessEnv;
   stateDir: string;
 }): FeishuSessionTarget[] {
@@ -547,7 +547,7 @@ function collectRepairSessionEntries(
 }
 
 export function inspectFeishuDoctorState(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env?: NodeJS.ProcessEnv;
 }): FeishuDoctorInspection {
   const env = params.env ?? process.env;
@@ -680,7 +680,7 @@ function archiveSessionArtifacts(params: {
 }
 
 async function repairFeishuDoctorState(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env?: NodeJS.ProcessEnv;
   now?: Date;
   inspection?: FeishuDoctorInspection;
@@ -810,7 +810,7 @@ function formatPreviewWarning(inspection: FeishuDoctorInspection): string {
     ...previewFindings,
     ...(remaining > 0 ? [`- ...and ${remaining} more Feishu state finding(s).`] : []),
     `- Repair will ${repairSummary}, while preserving Feishu App ID/secret config and healthy session entries.`,
-    '- Run "openclaw doctor --fix" to rebuild Feishu local state.',
+    '- Run "merclaw doctor --fix" to rebuild Feishu local state.',
   ].join("\n");
 }
 
@@ -834,12 +834,12 @@ function formatRepairChange(report: FeishuDoctorRepairReport): string {
   ].join("\n");
 }
 
-function hasConfiguredFeishuChannel(cfg: OpenClawConfig): boolean {
+function hasConfiguredFeishuChannel(cfg: MerClawConfig): boolean {
   return Boolean(cfg.channels?.feishu);
 }
 
 export async function runFeishuDoctorSequence(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env: NodeJS.ProcessEnv;
   shouldRepair: boolean;
 }): Promise<ChannelDoctorSequenceResult> {

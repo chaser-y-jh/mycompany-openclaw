@@ -4,7 +4,7 @@ import path from "node:path";
 import {
   embeddedAgentLog,
   type HarnessContextEngine as ContextEngine,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "merclaw/plugin-sdk/agent-harness-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { CodexAppServerClientFactory } from "./client-factory.js";
 import type { CodexAppServerClient } from "./client.js";
@@ -96,7 +96,7 @@ function compactDetails(result: CompactResult): Record<string, unknown> {
 
 describe("maybeCompactCodexAppServerSession", () => {
   beforeEach(async () => {
-    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-compact-"));
+    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-compact-"));
   });
 
   afterEach(async () => {
@@ -183,7 +183,7 @@ describe("maybeCompactCodexAppServerSession", () => {
     });
   });
 
-  it("blocks native app-server compaction when the current OpenClaw session is sandboxed", async () => {
+  it("blocks native app-server compaction when the current MerClaw session is sandboxed", async () => {
     const fake = createFakeCodexClient();
     setCodexAppServerClientFactoryForTest(async () => fake.client);
     const sessionFile = await writeTestBinding();
@@ -193,7 +193,7 @@ describe("maybeCompactCodexAppServerSession", () => {
     expect(result.ok).toBe(false);
     expect(result.compacted).toBe(false);
     expect(result.reason).toContain(
-      "Codex-native native compaction is unavailable because OpenClaw sandboxing is active for this session.",
+      "Codex-native native compaction is unavailable because MerClaw sandboxing is active for this session.",
     );
     expect(fake.request).not.toHaveBeenCalled();
   });
@@ -208,7 +208,7 @@ describe("maybeCompactCodexAppServerSession", () => {
     expect(result.ok).toBe(false);
     expect(result.compacted).toBe(false);
     expect(result.reason).toContain(
-      "Codex-native native compaction is unavailable because OpenClaw exec host=node is active for this session.",
+      "Codex-native native compaction is unavailable because MerClaw exec host=node is active for this session.",
     );
     expect(fake.request).not.toHaveBeenCalled();
   });
@@ -304,7 +304,7 @@ describe("maybeCompactCodexAppServerSession", () => {
     expect(result.result).toBeUndefined();
   });
 
-  it("does not impose an OpenClaw timeout after Codex accepts native compaction", async () => {
+  it("does not impose an MerClaw timeout after Codex accepts native compaction", async () => {
     const fake = createFakeCodexClient();
     const factory = vi.fn(async () => fake.client);
     setCodexAppServerClientFactoryForTest(factory);
@@ -327,7 +327,7 @@ describe("maybeCompactCodexAppServerSession", () => {
     expect(await readCodexAppServerBinding(sessionFile)).toBeDefined();
   });
 
-  it("warns when stale OpenClaw compaction overrides are ignored", async () => {
+  it("warns when stale MerClaw compaction overrides are ignored", async () => {
     const warn = vi.spyOn(embeddedAgentLog, "warn").mockImplementation(() => undefined);
     const fake = createFakeCodexClient();
     setCodexAppServerClientFactoryForTest(async () => fake.client);
@@ -353,7 +353,7 @@ describe("maybeCompactCodexAppServerSession", () => {
 
     expect(fake.request).toHaveBeenCalledWith("thread/compact/start", { threadId: "thread-1" });
     expect(warn).toHaveBeenCalledWith(
-      "ignoring OpenClaw compaction overrides for Codex app-server compaction; Codex uses native server-side compaction",
+      "ignoring MerClaw compaction overrides for Codex app-server compaction; Codex uses native server-side compaction",
       {
         sessionId: "session-1",
         sessionKey: "agent:main:session-1",
@@ -392,7 +392,7 @@ describe("maybeCompactCodexAppServerSession", () => {
 
     expect(fake.request).toHaveBeenCalledWith("thread/compact/start", { threadId: "thread-1" });
     expect(warn).toHaveBeenCalledWith(
-      "ignoring OpenClaw compaction overrides for Codex app-server compaction; Codex uses native server-side compaction",
+      "ignoring MerClaw compaction overrides for Codex app-server compaction; Codex uses native server-side compaction",
       {
         sessionId: "session-1",
         sessionKey: "agent:sara:session-1",
@@ -438,7 +438,7 @@ describe("maybeCompactCodexAppServerSession", () => {
 
     expect(fake.request).toHaveBeenCalledWith("thread/compact/start", { threadId: "thread-1" });
     expect(warn).toHaveBeenCalledWith(
-      "ignoring OpenClaw compaction overrides for Codex app-server compaction; Codex uses native server-side compaction",
+      "ignoring MerClaw compaction overrides for Codex app-server compaction; Codex uses native server-side compaction",
       {
         sessionId: "session-1",
         sessionKey: "agent:nik:session-1",
@@ -489,7 +489,7 @@ describe("maybeCompactCodexAppServerSession", () => {
 
     expect(fake.request).toHaveBeenCalledWith("thread/compact/start", { threadId: "thread-1" });
     expect(warn).toHaveBeenCalledWith(
-      "ignoring OpenClaw compaction overrides for Codex app-server compaction; Codex uses native server-side compaction",
+      "ignoring MerClaw compaction overrides for Codex app-server compaction; Codex uses native server-side compaction",
       {
         sessionId: "session-1",
         sessionKey: "agent:lossless:session-1",
@@ -547,7 +547,7 @@ describe("maybeCompactCodexAppServerSession", () => {
 
     expect(fake.request).toHaveBeenCalledWith("thread/compact/start", { threadId: "thread-1" });
     expect(warn).toHaveBeenCalledWith(
-      "ignoring OpenClaw compaction overrides for Codex app-server compaction; Codex uses native server-side compaction",
+      "ignoring MerClaw compaction overrides for Codex app-server compaction; Codex uses native server-side compaction",
       {
         sessionId: "session-1",
         sessionKey: "agent:lossless-child:session-1",

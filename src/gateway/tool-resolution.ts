@@ -5,7 +5,7 @@ import {
   resolveInheritedToolPolicyForSession,
   resolveSubagentToolPolicyForSession,
 } from "../agents/agent-tools.policy.js";
-import { createOpenClawTools } from "../agents/openclaw-tools.js";
+import { createMerClawTools } from "../agents/merclaw-tools.js";
 import {
   isSubagentEnvelopeSession,
   resolveSubagentCapabilityStore,
@@ -25,7 +25,7 @@ import {
 import type { AnyAgentTool } from "../agents/tools/common.js";
 import type { SourceReplyDeliveryMode } from "../auto-reply/get-reply-options.types.js";
 import type { InboundEventKind } from "../channels/inbound-event/kind.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { logWarn } from "../logger.js";
 import { getPluginToolMeta } from "../plugins/tools.js";
 import { DEFAULT_GATEWAY_HTTP_TOOL_DENY } from "../security/dangerous-tools.js";
@@ -33,7 +33,7 @@ import { DEFAULT_GATEWAY_HTTP_TOOL_DENY } from "../security/dangerous-tools.js";
 type GatewayScopedToolSurface = "http" | "loopback";
 
 export function resolveGatewayScopedTools(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   sessionKey: string;
   messageProvider?: string;
   currentChannelId?: string;
@@ -145,7 +145,7 @@ export function resolveGatewayScopedTools(params: {
     gatewayRequestedTools.length > 0 ? { allow: gatewayRequestedTools } : undefined,
   ].some(hasRestrictiveAllowPolicy);
 
-  const allTools = createOpenClawTools({
+  const allTools = createMerClawTools({
     agentSessionKey: params.sessionKey,
     agentChannel: params.messageProvider ?? undefined,
     agentAccountId: params.accountId,

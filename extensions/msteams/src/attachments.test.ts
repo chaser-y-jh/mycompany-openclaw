@@ -20,7 +20,7 @@ const saveResponseMediaMock = vi.hoisted(() =>
   }),
 );
 
-vi.mock("openclaw/plugin-sdk/media-runtime", async () => ({
+vi.mock("merclaw/plugin-sdk/media-runtime", async () => ({
   saveResponseMedia: saveResponseMediaMock,
 }));
 

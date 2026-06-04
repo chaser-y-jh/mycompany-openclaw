@@ -1,11 +1,11 @@
 ---
 name: node-connect
-description: "Diagnose OpenClaw Android, iOS, or macOS node pairing, QR/setup code, route, auth, and connection failures."
+description: "Diagnose MerClaw Android, iOS, or macOS node pairing, QR/setup code, route, auth, and connection failures."
 ---
 
 # Node Connect
 
-Goal: find the one real route from node -> gateway, verify OpenClaw is advertising that route, then fix pairing/auth.
+Goal: find the one real route from node -> gateway, verify MerClaw is advertising that route, then fix pairing/auth.
 
 ## Topology first
 
@@ -30,31 +30,31 @@ Ask for:
 - which route they intend: same machine, same LAN, Tailscale tailnet, or public URL
 - whether they used QR/setup code or manual host/port
 - the exact app text/status/error, quoted exactly if possible
-- whether `openclaw devices list` shows a pending pairing request
+- whether `merclaw devices list` shows a pending pairing request
 
 Do not guess from `can't connect`.
 
 ## Canonical checks
 
-Prefer `openclaw qr --json`. It uses the same setup-code payload Android scans.
+Prefer `merclaw qr --json`. It uses the same setup-code payload Android scans.
 
 ```bash
-openclaw config get gateway.mode
-openclaw config get gateway.bind
-openclaw config get gateway.tailscale.mode
-openclaw config get gateway.remote.url
-openclaw config get gateway.auth.mode
-openclaw config get gateway.auth.allowTailscale
-openclaw config get plugins.entries.device-pair.config.publicUrl
-openclaw qr --json
-openclaw devices list
-openclaw nodes status
+merclaw config get gateway.mode
+merclaw config get gateway.bind
+merclaw config get gateway.tailscale.mode
+merclaw config get gateway.remote.url
+merclaw config get gateway.auth.mode
+merclaw config get gateway.auth.allowTailscale
+merclaw config get plugins.entries.device-pair.config.publicUrl
+merclaw qr --json
+merclaw devices list
+merclaw nodes status
 ```
 
-If this OpenClaw instance is pointed at a remote gateway, also run:
+If this MerClaw instance is pointed at a remote gateway, also run:
 
 ```bash
-openclaw qr --remote --json
+merclaw qr --remote --json
 ```
 
 If Tailscale is part of the story:
@@ -65,7 +65,7 @@ tailscale status --json
 
 ## Read the result, not guesses
 
-`openclaw qr --json` success means:
+`merclaw qr --json` success means:
 
 - `gatewayUrl`: this is the actual endpoint the app should use.
 - `urlSource`: this tells you which config path won.
@@ -80,7 +80,7 @@ Common good sources:
 
 ## Root-cause map
 
-If `openclaw qr --json` says `Gateway is only bound to loopback`:
+If `merclaw qr --json` says `Gateway is only bound to loopback`:
 
 - remote node cannot connect yet
 - fix the route, then generate a fresh setup code
@@ -103,9 +103,9 @@ If the app says `pairing required`:
 - approve the pending device
 
 ```bash
-openclaw devices list
-openclaw devices approve --latest   # preview only; copy the requestId from output
-openclaw devices approve <requestId>
+merclaw devices list
+merclaw devices approve --latest   # preview only; copy the requestId from output
+merclaw devices approve <requestId>
 ```
 
 If the app says `bootstrap token invalid or expired`:
@@ -126,7 +126,7 @@ If the app says `unauthorized`:
 - Remote setup + setup/manual uses private LAN IP: wrong.
 - Tailnet setup + gateway advertises LAN IP instead of MagicDNS / tailnet route: wrong.
 - Public URL set but QR still advertises something else: inspect `urlSource`; config is not what you think.
-- `openclaw devices list` shows pending requests: stop changing network config and approve first.
+- `merclaw devices list` shows pending requests: stop changing network config and approve first.
 
 ## Fix style
 
@@ -136,7 +136,7 @@ If there is not enough signal yet, ask for setup + exact app text instead of gue
 
 Good:
 
-- `The gateway is still loopback-only, so a node on another network can never reach it. Enable Tailscale Serve, restart the gateway, run openclaw qr again, rescan, then approve the pending device pairing.`
+- `The gateway is still loopback-only, so a node on another network can never reach it. Enable Tailscale Serve, restart the gateway, run merclaw qr again, rescan, then approve the pending device pairing.`
 
 Bad:
 

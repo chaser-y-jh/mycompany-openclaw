@@ -4,8 +4,8 @@ import path from "node:path";
 import {
   createPluginRuntimeMock,
   createStartAccountContext,
-} from "openclaw/plugin-sdk/channel-test-helpers";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+} from "merclaw/plugin-sdk/channel-test-helpers";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { readCachedTelegramBotInfo, writeCachedTelegramBotInfo } from "./bot-info-cache.js";
 import type { TelegramBotInfo } from "./bot-info.js";
@@ -31,8 +31,8 @@ const tempRoots: string[] = [];
 const startupBotInfo: TelegramBotInfo = {
   id: 123456,
   is_bot: true,
-  first_name: "OpenClaw",
-  username: "openclaw_bot",
+  first_name: "MerClaw",
+  username: "merclaw_bot",
   can_join_groups: true,
   can_read_all_group_messages: false,
   can_manage_bots: false,
@@ -44,9 +44,9 @@ const startupBotInfo: TelegramBotInfo = {
 };
 
 async function useTempStateDir(): Promise<string> {
-  const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-tg-channel-"));
+  const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-tg-channel-"));
   tempRoots.push(stateDir);
-  vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+  vi.stubEnv("MERCLAW_STATE_DIR", stateDir);
   return stateDir;
 }
 
@@ -159,7 +159,7 @@ function createRuntimeEnvMock() {
 function createTelegramConfig(
   accountId = "default",
   telegramOverrides: Record<string, unknown> = {},
-): OpenClawConfig {
+): MerClawConfig {
   if (accountId === "default") {
     return {
       channels: {
@@ -168,7 +168,7 @@ function createTelegramConfig(
           ...telegramOverrides,
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
   }
 
   return {
@@ -182,7 +182,7 @@ function createTelegramConfig(
         },
       },
     },
-  } as OpenClawConfig;
+  } as MerClawConfig;
 }
 
 function startTelegramAccount(
@@ -411,7 +411,7 @@ describe("telegramPlugin gateway startup", () => {
     installTelegramRuntime();
     const refreshedBotInfo = {
       ...startupBotInfo,
-      username: "fresh_openclaw_bot",
+      username: "fresh_merclaw_bot",
       has_topics_enabled: true,
     };
     await writeCachedTelegramBotInfo({

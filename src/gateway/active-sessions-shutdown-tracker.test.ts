@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import {
   clearActiveSessionsForShutdownTracker,
   forgetActiveSessionForShutdown,
@@ -13,7 +13,7 @@ import {
 // already been finalized through replace / reset / delete / compaction so
 // the shutdown drain never double-fires `session_end` for them.
 
-const cfg: OpenClawConfig = {};
+const cfg: MerClawConfig = {};
 
 afterEach(() => {
   clearActiveSessionsForShutdownTracker();

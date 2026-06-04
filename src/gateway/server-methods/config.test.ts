@@ -17,7 +17,7 @@ const { execFileMock, loadGatewayRuntimeConfigSchemaMock } = vi.hoisted(() => ({
 }));
 
 vi.mock("node:child_process", async () => {
-  const { mockNodeBuiltinModule } = await import("openclaw/plugin-sdk/test-node-mocks");
+  const { mockNodeBuiltinModule } = await import("merclaw/plugin-sdk/test-node-mocks");
   return mockNodeBuiltinModule(
     () => vi.importActual<typeof import("node:child_process")>("node:child_process"),
     {
@@ -48,16 +48,16 @@ afterEach(() => {
 
 describe("resolveConfigOpenCommand", () => {
   it("uses open on macOS", () => {
-    expect(resolveConfigOpenCommand("/tmp/openclaw.json", "darwin")).toEqual({
+    expect(resolveConfigOpenCommand("/tmp/merclaw.json", "darwin")).toEqual({
       command: "open",
-      args: ["/tmp/openclaw.json"],
+      args: ["/tmp/merclaw.json"],
     });
   });
 
   it("uses xdg-open on Linux", () => {
-    expect(resolveConfigOpenCommand("/tmp/openclaw.json", "linux")).toEqual({
+    expect(resolveConfigOpenCommand("/tmp/merclaw.json", "linux")).toEqual({
       command: "xdg-open",
-      args: ["/tmp/openclaw.json"],
+      args: ["/tmp/merclaw.json"],
     });
   });
 
@@ -76,11 +76,11 @@ describe("resolveConfigOpenCommand", () => {
 
 describe("config.openFile", () => {
   afterEach(() => {
-    delete process.env.OPENCLAW_CONFIG_PATH;
+    delete process.env.MERCLAW_CONFIG_PATH;
   });
 
   it("opens the configured file without shell interpolation", async () => {
-    process.env.OPENCLAW_CONFIG_PATH = "/tmp/config $(touch pwned).json";
+    process.env.MERCLAW_CONFIG_PATH = "/tmp/config $(touch pwned).json";
     execFileMock.mockImplementation((...args: unknown[]) => {
       expect(["open", "xdg-open", "powershell.exe"]).toContain(args[0]);
       expect(args[1]).toEqual(["/tmp/config $(touch pwned).json"]);
@@ -102,7 +102,7 @@ describe("config.openFile", () => {
   });
 
   it("returns a detailed error and logs details when the opener fails", async () => {
-    process.env.OPENCLAW_CONFIG_PATH = "/tmp/config.json";
+    process.env.MERCLAW_CONFIG_PATH = "/tmp/config.json";
     execFileMock.mockImplementation((...args: unknown[]) => {
       invokeExecFileCallback(
         args,
@@ -131,7 +131,7 @@ describe("config.openFile", () => {
   });
 
   it("returns actionable headless environment error when xdg-open reports no method available", async () => {
-    process.env.OPENCLAW_CONFIG_PATH = "/tmp/config.json";
+    process.env.MERCLAW_CONFIG_PATH = "/tmp/config.json";
     execFileMock.mockImplementation((...args: unknown[]) => {
       invokeExecFileCallback(
         args,

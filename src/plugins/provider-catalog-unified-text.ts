@@ -1,4 +1,4 @@
-import type { UnifiedModelCatalogEntry } from "@openclaw/model-catalog-core/model-catalog-types";
+import type { UnifiedModelCatalogEntry } from "@merclaw/model-catalog-core/model-catalog-types";
 import type { ProviderCatalogResult } from "./types.js";
 
 export function projectProviderCatalogResultToUnifiedTextRows(params: {

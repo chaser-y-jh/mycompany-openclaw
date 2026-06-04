@@ -10,7 +10,7 @@ import { normalizeProviderId, type ModelAliasIndex } from "../../agents/model-se
 import { resolveContextConfigProviderForRuntime } from "../../agents/openai-routing.js";
 import { updateSessionStore } from "../../config/sessions/store.js";
 import type { SessionEntry } from "../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { triggerSessionPatchHook } from "../../gateway/session-patch-hooks.js";
 import { enqueueSystemEvent } from "../../infra/system-events.js";
 import { applyTraceOverride, applyVerboseOverride } from "../../sessions/level-overrides.js";
@@ -37,7 +37,7 @@ const MODEL_RUNTIME_CLEAR_VALUES = new Set(["auto", "default"]);
 function resolveModelRuntimeOverride(params: {
   rawRuntime?: string;
   provider: string;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
 }):
   | { kind: "clear" }
   | { kind: "set"; runtime: string }
@@ -52,8 +52,8 @@ function resolveModelRuntimeOverride(params: {
   if (MODEL_RUNTIME_CLEAR_VALUES.has(runtime)) {
     return { kind: "clear" };
   }
-  if (runtime === "openclaw") {
-    return { kind: "set", runtime: "openclaw" };
+  if (runtime === "merclaw") {
+    return { kind: "set", runtime: "merclaw" };
   }
   if (normalizeProviderId(params.provider) === "openai" && runtime === "codex") {
     return { kind: "set", runtime: "codex" };
@@ -75,7 +75,7 @@ function resolveModelRuntimeOverride(params: {
 export async function persistInlineDirectives(params: {
   directives: InlineDirectives;
   effectiveModelDirective?: string;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentDir?: string;
   sessionEntry?: SessionEntry;
   sessionStore?: Record<string, SessionEntry>;
@@ -91,7 +91,7 @@ export async function persistInlineDirectives(params: {
   model: string;
   initialModelLabel: string;
   formatModelSwitchEvent: (label: string, alias?: string) => string;
-  agentCfg: NonNullable<OpenClawConfig["agents"]>["defaults"] | undefined;
+  agentCfg: NonNullable<MerClawConfig["agents"]>["defaults"] | undefined;
   messageProvider?: string;
   surface?: string;
   gatewayClientScopes?: string[];

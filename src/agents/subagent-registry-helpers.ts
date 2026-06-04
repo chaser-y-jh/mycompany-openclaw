@@ -1,6 +1,6 @@
 import fsSync, { promises as fs } from "node:fs";
 import path from "node:path";
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
 import { DEFAULT_SUBAGENT_ARCHIVE_AFTER_MINUTES } from "../config/agent-limits.js";
 import { getRuntimeConfig } from "../config/config.js";
 import {
@@ -10,7 +10,7 @@ import {
   updateSessionStore,
   type SessionEntry,
 } from "../config/sessions.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { defaultRuntime } from "../runtime.js";
 import { withSubagentOutcomeTiming } from "./subagent-announce-output.js";
 import { getDeliveryAttemptCount, getDeliveryLastError } from "./subagent-delivery-state.js";
@@ -354,7 +354,7 @@ export function reconcileOrphanedRestoredRuns(params: {
   return changed;
 }
 
-export function resolveArchiveAfterMs(cfg?: OpenClawConfig) {
+export function resolveArchiveAfterMs(cfg?: MerClawConfig) {
   const config = cfg ?? getRuntimeConfig();
   const minutes =
     config.agents?.defaults?.subagents?.archiveAfterMinutes ??

@@ -1,8 +1,8 @@
-import { formatReasoningMessage } from "openclaw/plugin-sdk/agent-runtime";
-import type { ReplyPayload } from "openclaw/plugin-sdk/reply-runtime";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { findCodeRegions, isInsideCode } from "openclaw/plugin-sdk/text-chunking";
-import { stripReasoningTagsFromText } from "openclaw/plugin-sdk/text-chunking";
+import { formatReasoningMessage } from "merclaw/plugin-sdk/agent-runtime";
+import type { ReplyPayload } from "merclaw/plugin-sdk/reply-runtime";
+import { normalizeLowercaseStringOrEmpty } from "merclaw/plugin-sdk/string-coerce-runtime";
+import { findCodeRegions, isInsideCode } from "merclaw/plugin-sdk/text-chunking";
+import { stripReasoningTagsFromText } from "merclaw/plugin-sdk/text-chunking";
 
 const REASONING_MESSAGE_RE = /^Thinking\.{0,3}\s*_/u;
 const LEGACY_REASONING_MESSAGE_PREFIX = "Reasoning:\n";

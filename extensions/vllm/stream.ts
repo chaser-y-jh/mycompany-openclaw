@@ -1,10 +1,10 @@
-import type { StreamFn } from "openclaw/plugin-sdk/agent-core";
-import type { ProviderWrapStreamFnContext } from "openclaw/plugin-sdk/plugin-entry";
-import { normalizeProviderId } from "openclaw/plugin-sdk/provider-model-shared";
+import type { StreamFn } from "merclaw/plugin-sdk/agent-core";
+import type { ProviderWrapStreamFnContext } from "merclaw/plugin-sdk/plugin-entry";
+import { normalizeProviderId } from "merclaw/plugin-sdk/provider-model-shared";
 import {
   createPayloadPatchStreamWrapper,
   isOpenAICompatibleThinkingEnabled,
-} from "openclaw/plugin-sdk/provider-stream-shared";
+} from "merclaw/plugin-sdk/provider-stream-shared";
 import {
   resolveVllmQwenThinkingFormatFromCompat,
   type VllmQwenThinkingFormat,

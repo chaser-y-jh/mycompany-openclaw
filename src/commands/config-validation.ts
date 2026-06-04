@@ -2,7 +2,7 @@ import { formatCliCommand } from "../cli/command-format.js";
 import { formatPluginPackagingRuntimeOutputRecoveryHint } from "../cli/config-recovery-hints.js";
 import {
   type ConfigFileSnapshot,
-  type OpenClawConfig,
+  type MerClawConfig,
   readConfigFileSnapshot,
 } from "../config/config.js";
 import { formatConfigIssueLines } from "../config/issue-format.js";
@@ -23,13 +23,13 @@ export async function requireValidConfigFileSnapshot(
       snapshot.issues.length > 0
         ? formatConfigIssueLines(snapshot.issues, "-").join("\n")
         : "Unknown validation issue.";
-    runtime.error(`OpenClaw config is invalid: ${snapshot.path}\n${issues}`);
+    runtime.error(`MerClaw config is invalid: ${snapshot.path}\n${issues}`);
     runtime.error(
       isPluginPackagingRuntimeOutputInvalidConfigSnapshot(snapshot)
         ? `Fix: ${formatPluginPackagingRuntimeOutputRecoveryHint()}`
-        : `Fix: ${formatCliCommand("openclaw doctor --fix")}`,
+        : `Fix: ${formatCliCommand("merclaw doctor --fix")}`,
     );
-    runtime.error(`Inspect: ${formatCliCommand("openclaw config validate")}`);
+    runtime.error(`Inspect: ${formatCliCommand("merclaw config validate")}`);
     runtime.exit(1);
     return null;
   }
@@ -45,7 +45,7 @@ export async function requireValidConfigFileSnapshot(
           .slice(0, 3)
           .map((notice) => `- ${formatPluginCompatibilityNotice(notice)}`),
         ...(compatibility.length > 3 ? [`- ... +${compatibility.length - 3} more`] : []),
-        `Review: ${formatCliCommand("openclaw doctor")}`,
+        `Review: ${formatCliCommand("merclaw doctor")}`,
       ].join("\n"),
     );
   }
@@ -55,6 +55,6 @@ export async function requireValidConfigFileSnapshot(
 export async function requireValidConfigSnapshot(
   runtime: RuntimeEnv,
   opts?: { includeCompatibilityAdvisory?: boolean },
-): Promise<OpenClawConfig | null> {
+): Promise<MerClawConfig | null> {
   return (await requireValidConfigFileSnapshot(runtime, opts))?.config ?? null;
 }

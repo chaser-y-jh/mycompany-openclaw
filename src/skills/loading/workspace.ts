@@ -1,13 +1,13 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import {
   normalizeTrimmedStringList,
   uniqueStrings,
-} from "@openclaw/normalization-core/string-normalization";
+} from "@merclaw/normalization-core/string-normalization";
 import { resolveSandboxPath } from "../../agents/sandbox-paths.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { walkDirectorySync } from "../../infra/fs-safe.js";
 import { resolveOsHomeDir } from "../../infra/home-dir.js";
 import { isPathInside } from "../../infra/path-guards.js";
@@ -20,7 +20,7 @@ import {
 import { normalizeSkillFilter } from "../discovery/filter.js";
 import { filterPromptVisibleSkillEntries } from "../discovery/skill-index.js";
 import type {
-  OpenClawSkillMetadata,
+  MerClawSkillMetadata,
   ParsedSkillFrontmatter,
   SkillEligibilityContext,
   SkillEntry,
@@ -28,7 +28,7 @@ import type {
 } from "../types.js";
 import { resolveBundledSkillsDir } from "./bundled-dir.js";
 import { resolveBundledAllowlist, shouldIncludeSkill } from "./config.js";
-import { resolveOpenClawMetadata, resolveSkillInvocationPolicy } from "./frontmatter.js";
+import { resolveMerClawMetadata, resolveSkillInvocationPolicy } from "./frontmatter.js";
 import { loadSkillsFromDirSafe, readSkillFrontmatterSafe } from "./local-loader.js";
 import { resolvePluginSkillDirs } from "./plugin-skills.js";
 import { serializeByKey } from "./serialize.js";
@@ -36,7 +36,7 @@ import { formatSkillsForPrompt, type Skill } from "./skill-contract.js";
 
 const fsp = fs.promises;
 const skillsLogger = createSubsystemLogger("skills");
-const SKILL_SOURCE_ORIGIN_RELATIVE_PATH = path.join(".openclaw", "source-origin.json");
+const SKILL_SOURCE_ORIGIN_RELATIVE_PATH = path.join(".merclaw", "source-origin.json");
 const MAX_SKILL_SOURCE_ORIGIN_BYTES = 16 * 1024;
 
 /**
@@ -112,7 +112,7 @@ function compactPathForConsoleMessage(filePath: string): string {
 
 function filterSkillEntries(
   entries: SkillEntry[],
-  config?: OpenClawConfig,
+  config?: MerClawConfig,
   skillFilter?: string[],
   eligibility?: SkillEligibilityContext,
 ): SkillEntry[] {
@@ -184,7 +184,7 @@ type SkillDiscoveryBudget = {
   truncated: boolean;
 };
 
-function resolveSkillsLimits(config?: OpenClawConfig, agentId?: string): ResolvedSkillsLimits {
+function resolveSkillsLimits(config?: MerClawConfig, agentId?: string): ResolvedSkillsLimits {
   const limits = config?.skills?.limits;
   const agentSkillsLimits = resolveEffectiveAgentSkillsLimits(config, agentId);
   return {
@@ -200,7 +200,7 @@ function resolveSkillsLimits(config?: OpenClawConfig, agentId?: string): Resolve
   };
 }
 
-export function resolveSkillRootScanLimit(config?: OpenClawConfig): number {
+export function resolveSkillRootScanLimit(config?: MerClawConfig): number {
   return config?.skills?.limits?.maxCandidatesPerRoot ?? DEFAULT_MAX_CANDIDATES_PER_ROOT;
 }
 
@@ -395,7 +395,7 @@ function buildEscapedSkillPathReason(params: { source: string; candidatePath: st
   consoleHint: string;
 } {
   const candidateIsSymlink = isSymlinkPath(params.candidatePath);
-  if (params.source === "openclaw-bundled" && candidateIsSymlink) {
+  if (params.source === "merclaw-bundled" && candidateIsSymlink) {
     return {
       reason: "bundled-symlink-escape",
       consoleHint:
@@ -408,7 +408,7 @@ function buildEscapedSkillPathReason(params: { source: string; candidatePath: st
       consoleHint: "reason=symlink-escape",
     };
   }
-  if (params.source === "openclaw-bundled") {
+  if (params.source === "merclaw-bundled") {
     return {
       reason: "bundled-root-escape",
       consoleHint:
@@ -609,8 +609,8 @@ function readSourceInstallSkillKey(skillDir: string): string | undefined {
 function resolveSkillEntryMetadata(params: {
   frontmatter: ParsedSkillFrontmatter;
   skillDir: string;
-}): OpenClawSkillMetadata | undefined {
-  const metadata = resolveOpenClawMetadata(params.frontmatter);
+}): MerClawSkillMetadata | undefined {
+  const metadata = resolveMerClawMetadata(params.frontmatter);
   if (metadata?.skillKey) {
     return metadata;
   }
@@ -678,13 +678,13 @@ function isPathInsideAnyRoot(rootRealPaths: readonly string[], candidateRealPath
 }
 
 function shouldEnforceConfiguredSkillRootContainment(source: string): boolean {
-  return source !== "openclaw-managed" && source !== "agents-skills-personal";
+  return source !== "merclaw-managed" && source !== "agents-skills-personal";
 }
 
 function shouldUseConfiguredSymlinkTargets(source: string): boolean {
   return (
-    source === "openclaw-workspace" ||
-    source === "openclaw-extra" ||
+    source === "merclaw-workspace" ||
+    source === "merclaw-extra" ||
     source === "agents-skills-project"
   );
 }
@@ -734,7 +734,7 @@ function resolvePluginSkillRootRealPaths(pluginSkillDirs: readonly string[]): st
   );
 }
 
-function resolveAllowedSymlinkTargetRealPaths(config?: OpenClawConfig): string[] {
+function resolveAllowedSymlinkTargetRealPaths(config?: MerClawConfig): string[] {
   const rawTargets = config?.skills?.load?.allowSymlinkTargets ?? [];
   const targetPaths = rawTargets
     .map((dir) => normalizeOptionalString(dir) ?? "")
@@ -814,7 +814,7 @@ function loadGeneratedPluginSkillRecords(params: {
       continue;
     }
 
-    // Plugin skills live as symlinks under ~/.openclaw/plugin-skills/, so
+    // Plugin skills live as symlinks under ~/.merclaw/plugin-skills/, so
     // skillDir is the symlink path while skillDirRealPath is the real target.
     // We set syncSourceDir to the real path so syncSkillsToWorkspace can copy
     // the actual skill directory into the sandbox workspace, but we preserve
@@ -847,7 +847,7 @@ function loadGeneratedPluginSkillRecords(params: {
 function loadSkillEntries(
   workspaceDir: string,
   opts?: {
-    config?: OpenClawConfig;
+    config?: MerClawConfig;
     agentId?: string;
     managedSkillsDir?: string;
     bundledSkillsDir?: string;
@@ -1033,7 +1033,7 @@ function loadSkillEntries(
 
       const candidatePath = path.resolve(candidate.skillDir);
       const maxGroupedDepth =
-        params.source === "openclaw-extra" &&
+        params.source === "merclaw-extra" &&
         !baseDirIsNestedSkillsRoot &&
         !baseDirLooksLikeSkillsRoot &&
         candidatePath !== nestedSkillsRootPath &&
@@ -1127,7 +1127,7 @@ function loadSkillEntries(
   const bundledSkills = bundledSkillsDir
     ? loadSkills({
         dir: bundledSkillsDir,
-        source: "openclaw-bundled",
+        source: "merclaw-bundled",
       })
     : [];
   const extraSkills = [
@@ -1135,19 +1135,19 @@ function loadSkillEntries(
       const resolved = resolveUserPath(dir);
       return loadSkills({
         dir: resolved,
-        source: "openclaw-extra",
+        source: "merclaw-extra",
       });
     }),
     ...loadGeneratedPluginSkillRecords({
       pluginSkillsDir,
       pluginSkillDirs,
-      source: "openclaw-extra",
+      source: "merclaw-extra",
       limits,
     }),
   ];
   const managedSkills = loadSkills({
     dir: managedSkillsDir,
-    source: "openclaw-managed",
+    source: "merclaw-managed",
   });
   const osHomeDir = resolveUserHomeDir();
   const personalAgentsSkillsDir = osHomeDir
@@ -1164,7 +1164,7 @@ function loadSkillEntries(
   });
   const workspaceSkills = loadSkills({
     dir: workspaceSkillsDir,
-    source: "openclaw-workspace",
+    source: "merclaw-workspace",
   });
 
   const merged = new Map<string, LoadedSkillRecord>();
@@ -1266,7 +1266,7 @@ const COMPACT_WARNING_OVERHEAD = 150;
 
 function applySkillsPromptLimits(params: {
   skills: Skill[];
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentId?: string;
 }): {
   skillsForPrompt: Skill[];
@@ -1347,7 +1347,7 @@ export const testing = {
 };
 
 type WorkspaceSkillBuildOptions = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   managedSkillsDir?: string;
   bundledSkillsDir?: string;
   entries?: SkillEntry[];
@@ -1404,9 +1404,9 @@ function resolveWorkspaceSkillPromptState(
     agentId: opts?.agentId,
   });
   const truncationNote = truncated
-    ? `⚠️ Skills truncated: included ${skillsForPrompt.length} of ${resolvedSkills.length}${compact ? " (compact format, descriptions omitted)" : ""}. Run \`openclaw skills check\` to audit.`
+    ? `⚠️ Skills truncated: included ${skillsForPrompt.length} of ${resolvedSkills.length}${compact ? " (compact format, descriptions omitted)" : ""}. Run \`merclaw skills check\` to audit.`
     : compact
-      ? `⚠️ Skills catalog using compact format (descriptions omitted). Run \`openclaw skills check\` to audit.`
+      ? `⚠️ Skills catalog using compact format (descriptions omitted). Run \`merclaw skills check\` to audit.`
       : "";
   const prompt = [
     remoteNote,
@@ -1421,7 +1421,7 @@ function resolveWorkspaceSkillPromptState(
 export function resolveSkillsPromptForRun(params: {
   skillsSnapshot?: SkillSnapshot;
   entries?: SkillEntry[];
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   workspaceDir: string;
   agentId?: string;
 }): string {
@@ -1443,7 +1443,7 @@ export function resolveSkillsPromptForRun(params: {
 export function loadWorkspaceSkillEntries(
   workspaceDir: string,
   opts?: {
-    config?: OpenClawConfig;
+    config?: MerClawConfig;
     managedSkillsDir?: string;
     bundledSkillsDir?: string;
     pluginSkillsDir?: string;
@@ -1463,7 +1463,7 @@ export function loadWorkspaceSkillEntries(
 export function loadVisibleWorkspaceSkillEntries(
   workspaceDir: string,
   opts?: {
-    config?: OpenClawConfig;
+    config?: MerClawConfig;
     managedSkillsDir?: string;
     bundledSkillsDir?: string;
     skillFilter?: string[];
@@ -1520,7 +1520,7 @@ function resolveSyncedSkillDestinationPath(params: {
 export async function syncSkillsToWorkspace(params: {
   sourceWorkspaceDir: string;
   targetWorkspaceDir: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   skillFilter?: string[];
   agentId?: string;
   eligibility?: SkillEligibilityContext;
@@ -1589,7 +1589,7 @@ export async function syncSkillsToWorkspace(params: {
 
 export function filterWorkspaceSkillEntries(
   entries: SkillEntry[],
-  config?: OpenClawConfig,
+  config?: MerClawConfig,
 ): SkillEntry[] {
   return filterSkillEntries(entries, config);
 }
@@ -1597,7 +1597,7 @@ export function filterWorkspaceSkillEntries(
 export function filterWorkspaceSkillEntriesWithOptions(
   entries: SkillEntry[],
   opts?: {
-    config?: OpenClawConfig;
+    config?: MerClawConfig;
     skillFilter?: string[];
     eligibility?: SkillEligibilityContext;
   },

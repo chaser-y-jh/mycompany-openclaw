@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { MerClawConfig } from "../config/config.js";
 import {
   collectMacLaunchAgentOverrideWarning,
   collectMacLaunchctlGatewayEnvOverrideWarning,
-  collectMacStaleOpenClawUpdateLaunchdJobsWarning,
+  collectMacStaleMerClawUpdateLaunchdJobsWarning,
   noteMacLaunchctlGatewayEnvOverrides,
-  noteMacStaleOpenClawUpdateLaunchdJobs,
+  noteMacStaleMerClawUpdateLaunchdJobs,
 } from "./doctor-platform-notes.js";
 
 function requireNoteCall(noteFn: { mock: { calls: unknown[][] } }, index = 0): unknown[] {
@@ -19,7 +19,7 @@ function requireNoteCall(noteFn: { mock: { calls: unknown[][] } }, index = 0): u
 describe("noteMacLaunchctlGatewayEnvOverrides", () => {
   it("collects clear unsetenv instructions for token override", async () => {
     const getenv = vi.fn(async (name: string) =>
-      name === "OPENCLAW_GATEWAY_TOKEN" ? "launchctl-token" : undefined,
+      name === "MERCLAW_GATEWAY_TOKEN" ? "launchctl-token" : undefined,
     );
     const cfg = {
       gateway: {
@@ -27,7 +27,7 @@ describe("noteMacLaunchctlGatewayEnvOverrides", () => {
           token: "config-token",
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
 
     const warning = await collectMacLaunchctlGatewayEnvOverrideWarning(cfg, {
       platform: "darwin",
@@ -35,15 +35,15 @@ describe("noteMacLaunchctlGatewayEnvOverrides", () => {
     });
 
     expect(warning).toContain("Host-wide launchctl gateway auth overrides detected");
-    expect(warning).toContain("OPENCLAW_GATEWAY_TOKEN");
-    expect(warning).toContain("launchctl unsetenv OPENCLAW_GATEWAY_TOKEN");
-    expect(warning).not.toContain("OPENCLAW_GATEWAY_PASSWORD");
+    expect(warning).toContain("MERCLAW_GATEWAY_TOKEN");
+    expect(warning).toContain("launchctl unsetenv MERCLAW_GATEWAY_TOKEN");
+    expect(warning).not.toContain("MERCLAW_GATEWAY_PASSWORD");
   });
 
   it("prints clear unsetenv instructions for token override", async () => {
     const noteFn = vi.fn();
     const getenv = vi.fn(async (name: string) =>
-      name === "OPENCLAW_GATEWAY_TOKEN" ? "launchctl-token" : undefined,
+      name === "MERCLAW_GATEWAY_TOKEN" ? "launchctl-token" : undefined,
     );
     const cfg = {
       gateway: {
@@ -51,7 +51,7 @@ describe("noteMacLaunchctlGatewayEnvOverrides", () => {
           token: "config-token",
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
 
     await noteMacLaunchctlGatewayEnvOverrides(cfg, { platform: "darwin", getenv, noteFn });
 
@@ -62,15 +62,15 @@ describe("noteMacLaunchctlGatewayEnvOverrides", () => {
     expect(title).toBe("Gateway (macOS)");
     expect(message).toContain("Host-wide launchctl gateway auth overrides detected");
     expect(message).toContain("Current managed Gateway installs do not need these values");
-    expect(message).toContain("OPENCLAW_GATEWAY_TOKEN");
-    expect(message).toContain("launchctl unsetenv OPENCLAW_GATEWAY_TOKEN");
-    expect(message).not.toContain("OPENCLAW_GATEWAY_PASSWORD");
+    expect(message).toContain("MERCLAW_GATEWAY_TOKEN");
+    expect(message).toContain("launchctl unsetenv MERCLAW_GATEWAY_TOKEN");
+    expect(message).not.toContain("MERCLAW_GATEWAY_PASSWORD");
   });
 
   it("does nothing when config has no gateway credentials", async () => {
     const noteFn = vi.fn();
     const getenv = vi.fn(async () => "launchctl-token");
-    const cfg = {} as OpenClawConfig;
+    const cfg = {} as MerClawConfig;
 
     await noteMacLaunchctlGatewayEnvOverrides(cfg, { platform: "darwin", getenv, noteFn });
 
@@ -81,12 +81,12 @@ describe("noteMacLaunchctlGatewayEnvOverrides", () => {
   it("treats SecretRef-backed credentials as configured", async () => {
     const noteFn = vi.fn();
     const getenv = vi.fn(async (name: string) =>
-      name === "OPENCLAW_GATEWAY_PASSWORD" ? "launchctl-password" : undefined,
+      name === "MERCLAW_GATEWAY_PASSWORD" ? "launchctl-password" : undefined,
     );
     const cfg = {
       gateway: {
         auth: {
-          password: { source: "env", provider: "default", id: "OPENCLAW_GATEWAY_PASSWORD" },
+          password: { source: "env", provider: "default", id: "MERCLAW_GATEWAY_PASSWORD" },
         },
       },
       secrets: {
@@ -94,13 +94,13 @@ describe("noteMacLaunchctlGatewayEnvOverrides", () => {
           default: { source: "env" },
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
 
     await noteMacLaunchctlGatewayEnvOverrides(cfg, { platform: "darwin", getenv, noteFn });
 
     expect(noteFn).toHaveBeenCalledTimes(1);
     const [message] = requireNoteCall(noteFn);
-    expect(message).toContain("OPENCLAW_GATEWAY_PASSWORD");
+    expect(message).toContain("MERCLAW_GATEWAY_PASSWORD");
   });
 
   it("does nothing on non-darwin platforms", async () => {
@@ -112,7 +112,7 @@ describe("noteMacLaunchctlGatewayEnvOverrides", () => {
           token: "config-token",
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
 
     await noteMacLaunchctlGatewayEnvOverrides(cfg, { platform: "linux", getenv, noteFn });
 
@@ -121,37 +121,37 @@ describe("noteMacLaunchctlGatewayEnvOverrides", () => {
   });
 });
 
-describe("noteMacStaleOpenClawUpdateLaunchdJobs", () => {
+describe("noteMacStaleMerClawUpdateLaunchdJobs", () => {
   it("collects stale updater job cleanup guidance on macOS", async () => {
     const findJobs = vi.fn(async () => [
       {
-        label: "ai.openclaw.update.2026.5.12",
+        label: "ai.merclaw.update.2026.5.12",
         lastExitStatus: 127,
       },
     ]);
 
-    const warning = await collectMacStaleOpenClawUpdateLaunchdJobsWarning({
+    const warning = await collectMacStaleMerClawUpdateLaunchdJobsWarning({
       platform: "darwin",
       findJobs,
     });
 
     expect(findJobs).toHaveBeenCalledTimes(1);
-    expect(warning).toContain("Stale OpenClaw updater launchd job(s) detected");
-    expect(warning).toContain("ai.openclaw.update.2026.5.12");
+    expect(warning).toContain("Stale MerClaw updater launchd job(s) detected");
+    expect(warning).toContain("ai.merclaw.update.2026.5.12");
     expect(warning).toContain("launchctl remove <label>");
-    expect(warning).toContain("openclaw gateway restart");
+    expect(warning).toContain("merclaw gateway restart");
   });
 
   it("prints stale updater job cleanup guidance on macOS", async () => {
     const noteFn = vi.fn();
     const findJobs = vi.fn(async () => [
       {
-        label: "ai.openclaw.update.2026.5.12",
+        label: "ai.merclaw.update.2026.5.12",
         lastExitStatus: 127,
       },
     ]);
 
-    await noteMacStaleOpenClawUpdateLaunchdJobs({
+    await noteMacStaleMerClawUpdateLaunchdJobs({
       platform: "darwin",
       findJobs,
       noteFn,
@@ -160,17 +160,17 @@ describe("noteMacStaleOpenClawUpdateLaunchdJobs", () => {
     expect(findJobs).toHaveBeenCalledTimes(1);
     const [message, title] = requireNoteCall(noteFn);
     expect(title).toBe("Gateway (macOS)");
-    expect(message).toContain("Stale OpenClaw updater launchd job(s) detected");
-    expect(message).toContain("ai.openclaw.update.2026.5.12");
+    expect(message).toContain("Stale MerClaw updater launchd job(s) detected");
+    expect(message).toContain("ai.merclaw.update.2026.5.12");
     expect(message).toContain("launchctl remove <label>");
-    expect(message).toContain("openclaw gateway restart");
+    expect(message).toContain("merclaw gateway restart");
   });
 
   it("does nothing when no stale updater jobs exist", async () => {
     const noteFn = vi.fn();
     const findJobs = vi.fn(async () => []);
 
-    await noteMacStaleOpenClawUpdateLaunchdJobs({
+    await noteMacStaleMerClawUpdateLaunchdJobs({
       platform: "darwin",
       findJobs,
       noteFn,

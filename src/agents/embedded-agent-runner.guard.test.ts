@@ -1,7 +1,7 @@
-import type { AgentMessage } from "openclaw/plugin-sdk/agent-core";
-import { SessionManager } from "openclaw/plugin-sdk/agent-sessions";
+import type { AgentMessage } from "merclaw/plugin-sdk/agent-core";
+import { SessionManager } from "merclaw/plugin-sdk/agent-sessions";
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { guardSessionManager } from "./session-tool-result-guard-wrapper.js";
 import { sanitizeToolUseResultPairing } from "./session-transcript-repair.js";
 
@@ -44,7 +44,7 @@ describe("guardSessionManager integration", () => {
     appendMessage(assistantToolCall("call_1"));
     appendMessage({
       role: "assistant",
-      provider: "openclaw",
+      provider: "merclaw",
       model: "delivery-mirror",
       content: [{ type: "text", text: "display copy" }],
     } as AgentMessage);
@@ -152,7 +152,7 @@ describe("guardSessionManager integration", () => {
       role: "user",
       content: [{ type: "text", text: "blocked" }],
       timestamp: 124,
-      __openclaw: { beforeAgentRunBlocked: { blockedBy: "test", blockedAt: 123 } },
+      __merclaw: { beforeAgentRunBlocked: { blockedBy: "test", blockedAt: 123 } },
     } as AgentMessage);
     appendMessage({ role: "user", content: "runtime prompt" } as AgentMessage);
 
@@ -164,7 +164,7 @@ describe("guardSessionManager integration", () => {
     expect(messages[0]).toMatchObject({
       role: "user",
       content: [{ type: "text", text: "blocked" }],
-      __openclaw: { beforeAgentRunBlocked: { blockedBy: "test", blockedAt: 123 } },
+      __merclaw: { beforeAgentRunBlocked: { blockedBy: "test", blockedAt: 123 } },
     });
     expect(messages[0]).not.toHaveProperty("MediaPath");
     expect(messages[1]).toMatchObject({
@@ -183,7 +183,7 @@ describe("guardSessionManager integration", () => {
         redactSensitive: "tools",
         redactPatterns: [String.raw`([\w]|[-.])+@([\w]|[-.])+\.\w+`],
       },
-    } satisfies OpenClawConfig;
+    } satisfies MerClawConfig;
     const sm = guardSessionManager(SessionManager.inMemory(), { config: cfg });
     const appendMessage = sm.appendMessage.bind(sm) as unknown as (message: AgentMessage) => void;
 

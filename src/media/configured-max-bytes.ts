@@ -1,9 +1,9 @@
-import { maxBytesForKind, type MediaKind } from "@openclaw/media-core/constants";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { maxBytesForKind, type MediaKind } from "@merclaw/media-core/constants";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 
 const MB = 1024 * 1024;
 
-export function resolveConfiguredMediaMaxBytes(cfg?: OpenClawConfig): number | undefined {
+export function resolveConfiguredMediaMaxBytes(cfg?: MerClawConfig): number | undefined {
   const configured = cfg?.agents?.defaults?.mediaMaxMb;
   if (typeof configured === "number" && Number.isFinite(configured) && configured > 0) {
     return Math.floor(configured * MB);
@@ -11,12 +11,12 @@ export function resolveConfiguredMediaMaxBytes(cfg?: OpenClawConfig): number | u
   return undefined;
 }
 
-export function resolveGeneratedMediaMaxBytes(cfg: OpenClawConfig | undefined, kind: MediaKind) {
+export function resolveGeneratedMediaMaxBytes(cfg: MerClawConfig | undefined, kind: MediaKind) {
   return resolveConfiguredMediaMaxBytes(cfg) ?? maxBytesForKind(kind);
 }
 
 export function resolveChannelAccountMediaMaxMb(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channel?: string | null;
   accountId?: string | null;
 }): number | undefined {

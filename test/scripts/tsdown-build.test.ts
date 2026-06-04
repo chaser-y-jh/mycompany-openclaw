@@ -19,7 +19,7 @@ import { createScriptTestHarness } from "./test-helpers.js";
 const { createTempDir } = createScriptTestHarness();
 const NO_MEMORY_LIMIT = {
   cgroupMemoryLimitPaths: [],
-  procMeminfoPath: "/openclaw-test-missing-proc-meminfo",
+  procMeminfoPath: "/merclaw-test-missing-proc-meminfo",
 };
 
 async function expectPathMissing(targetPath: string) {
@@ -73,7 +73,7 @@ describe("resolveTsdownBuildInvocation", () => {
   });
 
   it("routes Windows tsdown builds through the pnpm runner instead of shell=true", () => {
-    const rootDir = createTempDir("openclaw-pnpm-runner-");
+    const rootDir = createTempDir("merclaw-pnpm-runner-");
     const npmExecPath = path.join(rootDir, "pnpm.cjs");
     fs.writeFileSync(npmExecPath, "console.log('pnpm');\n");
 
@@ -188,7 +188,7 @@ describe("resolveTsdownBuildInvocation", () => {
   it("can run tsdown without invoking pnpm", () => {
     const result = resolveTsdownBuildInvocation({
       nodeExecPath: "/usr/bin/node",
-      env: { OPENCLAW_BUILD_ALL_NO_PNPM: "1" },
+      env: { MERCLAW_BUILD_ALL_NO_PNPM: "1" },
       ...NO_MEMORY_LIMIT,
     });
 
@@ -208,7 +208,7 @@ describe("resolveTsdownBuildInvocation", () => {
         windowsVerbatimArguments: undefined,
         env: {
           NODE_OPTIONS: "--max-old-space-size=8192",
-          OPENCLAW_BUILD_ALL_NO_PNPM: "1",
+          MERCLAW_BUILD_ALL_NO_PNPM: "1",
         },
       },
     });
@@ -237,7 +237,7 @@ describe("resolveTsdownBuildInvocation", () => {
   });
 
   it("prunes stale hashed root chunk files but keeps stable aliases and nested assets", async () => {
-    const rootDir = createTempDir("openclaw-tsdown-build-");
+    const rootDir = createTempDir("merclaw-tsdown-build-");
     const distDir = path.join(rootDir, "dist");
     const distRuntimeDir = path.join(rootDir, "dist-runtime");
     await fsPromises.mkdir(path.join(distDir, "control-ui"), { recursive: true });
@@ -273,7 +273,7 @@ describe("resolveTsdownBuildInvocation", () => {
   });
 
   it("cleans tsdown output roots before using tsdown --no-clean", async () => {
-    const rootDir = createTempDir("openclaw-tsdown-clean-");
+    const rootDir = createTempDir("merclaw-tsdown-clean-");
     const distFile = path.join(rootDir, "dist", "stale.js");
     const pluginGeneratedFile = path.join(rootDir, "dist", "extensions", "telegram", "index.js");
     const distRuntimeFile = path.join(rootDir, "dist-runtime", "stale.js");
@@ -321,7 +321,7 @@ describe("resolveTsdownBuildInvocation", () => {
   });
 
   it("removes CLI startup metadata during default tsdown clean", async () => {
-    const rootDir = createTempDir("openclaw-tsdown-clean-metadata-default-");
+    const rootDir = createTempDir("merclaw-tsdown-clean-metadata-default-");
     const metadataFile = path.join(rootDir, "dist", "cli-startup-metadata.json");
     await fsPromises.mkdir(path.dirname(metadataFile), { recursive: true });
     await fsPromises.writeFile(metadataFile, '{"generatedBy":"test"}\n');
@@ -332,7 +332,7 @@ describe("resolveTsdownBuildInvocation", () => {
   });
 
   it("preserves CLI startup metadata across opted-in build-all tsdown clean", async () => {
-    const rootDir = createTempDir("openclaw-tsdown-clean-metadata-");
+    const rootDir = createTempDir("merclaw-tsdown-clean-metadata-");
     const metadataFile = path.join(rootDir, "dist", "cli-startup-metadata.json");
     const staleFile = path.join(rootDir, "dist", "stale.js");
     const nestedStaleFile = path.join(rootDir, "dist", "nested", "stale.js");
@@ -343,7 +343,7 @@ describe("resolveTsdownBuildInvocation", () => {
 
     cleanTsdownOutputRoots({
       cwd: rootDir,
-      env: { OPENCLAW_PRESERVE_CLI_STARTUP_METADATA: "1" },
+      env: { MERCLAW_PRESERVE_CLI_STARTUP_METADATA: "1" },
     });
 
     await expect(fsPromises.readFile(metadataFile, "utf8")).resolves.toBe(
@@ -354,7 +354,7 @@ describe("resolveTsdownBuildInvocation", () => {
   });
 
   it("preserves existing package declarations when tsdown DTS output is skipped", async () => {
-    const rootDir = createTempDir("openclaw-tsdown-clean-skip-dts-");
+    const rootDir = createTempDir("merclaw-tsdown-clean-skip-dts-");
     const declarationFile = path.join(
       rootDir,
       "packages",
@@ -398,7 +398,7 @@ describe("resolveTsdownBuildInvocation", () => {
 
     cleanTsdownOutputRoots({
       cwd: rootDir,
-      env: { OPENCLAW_RUN_NODE_SKIP_DTS_BUILD: "1" },
+      env: { MERCLAW_RUN_NODE_SKIP_DTS_BUILD: "1" },
     });
 
     await expect(fsPromises.readFile(declarationFile, "utf8")).resolves.toBe("export {};\n");
@@ -409,7 +409,7 @@ describe("resolveTsdownBuildInvocation", () => {
   });
 
   it("prunes untracked generated declaration files that shadow source entries", async () => {
-    const rootDir = createTempDir("openclaw-tsdown-source-dts-");
+    const rootDir = createTempDir("merclaw-tsdown-source-dts-");
     const signalDir = path.join(rootDir, "extensions", "signal");
     const signalSrcDir = path.join(signalDir, "src");
     await fsPromises.mkdir(signalSrcDir, { recursive: true });
@@ -461,7 +461,7 @@ describe("createTsdownOutputScanner", () => {
     scanner.append("[UNRESOLVED_IMPORT] extensions/telegram/src/index.ts\n");
     scanner.append("[UNRESOLVED_IMPORT] node_modules/example/index.js\n");
     scanner.append(
-      "[UNRESOLVED_IMPORT] ../../../../tmp/openclaw-pnpm-node-modules/baileys/lib/Utils/messages-media.js\n",
+      "[UNRESOLVED_IMPORT] ../../../../tmp/merclaw-pnpm-node-modules/baileys/lib/Utils/messages-media.js\n",
     );
 
     expect(scanner.finish().fatalUnresolvedImport).toBeNull();
@@ -500,7 +500,7 @@ describe("runTsdownBuildInvocation", () => {
       {
         stdout: output.sink,
         stderr: output.sink,
-        env: { ...process.env, OPENCLAW_TSDOWN_HEARTBEAT_MS: "0" },
+        env: { ...process.env, MERCLAW_TSDOWN_HEARTBEAT_MS: "0" },
       },
     );
 
@@ -509,7 +509,7 @@ describe("runTsdownBuildInvocation", () => {
     expect(output.chunks.join("")).toContain("stdout-ok");
   });
 
-  it("terminates the child when OPENCLAW_TSDOWN_TIMEOUT_MS elapses", async () => {
+  it("terminates the child when MERCLAW_TSDOWN_TIMEOUT_MS elapses", async () => {
     const output = createWriteSink();
     const result = await runTsdownBuildInvocation(
       {
@@ -526,8 +526,8 @@ describe("runTsdownBuildInvocation", () => {
         stderr: output.sink,
         env: {
           ...process.env,
-          OPENCLAW_TSDOWN_HEARTBEAT_MS: "0",
-          OPENCLAW_TSDOWN_TIMEOUT_MS: "50",
+          MERCLAW_TSDOWN_HEARTBEAT_MS: "0",
+          MERCLAW_TSDOWN_TIMEOUT_MS: "50",
         },
       },
     );

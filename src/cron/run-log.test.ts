@@ -63,7 +63,7 @@ describe("cron run log", () => {
   });
 
   it("appends SQLite rows and prunes by line count", async () => {
-    await withRunLogDir("openclaw-cron-log-", async (dir) => {
+    await withRunLogDir("merclaw-cron-log-", async (dir) => {
       const storePath = storePathForDir(dir);
 
       for (let i = 0; i < 10; i++) {
@@ -88,7 +88,7 @@ describe("cron run log", () => {
   });
 
   it("reads run-log entries synchronously for task reconciliation", async () => {
-    await withRunLogDir("openclaw-cron-log-sync-", async (dir) => {
+    await withRunLogDir("merclaw-cron-log-sync-", async (dir) => {
       const storePath = storePathForDir(dir);
       await appendCronRunLog({
         storePath,
@@ -124,7 +124,7 @@ describe("cron run log", () => {
   it.skipIf(process.platform === "win32")(
     "does not create legacy run log files for new writes",
     async () => {
-      await withRunLogDir("openclaw-cron-log-perms-", async (dir) => {
+      await withRunLogDir("merclaw-cron-log-perms-", async (dir) => {
         const storePath = storePathForDir(dir);
         const logPath = path.join(dir, "runs", "job-1.jsonl");
 
@@ -146,7 +146,7 @@ describe("cron run log", () => {
   it.skipIf(process.platform === "win32")(
     "does not mutate legacy run-log directory permissions on SQLite writes",
     async () => {
-      await withRunLogDir("openclaw-cron-log-dir-perms-", async (dir) => {
+      await withRunLogDir("merclaw-cron-log-dir-perms-", async (dir) => {
         const storePath = storePathForDir(dir);
         const runDir = path.join(dir, "runs");
         await fs.mkdir(runDir, { recursive: true, mode: 0o755 });
@@ -169,7 +169,7 @@ describe("cron run log", () => {
   );
 
   it("reads newest entries and filters by jobId", async () => {
-    await withRunLogDir("openclaw-cron-log-read-", async (dir) => {
+    await withRunLogDir("merclaw-cron-log-read-", async (dir) => {
       const storePath = storePathForDir(dir);
 
       await appendCronRunLog({
@@ -228,7 +228,7 @@ describe("cron run log", () => {
   });
 
   it("filters run-log pages by runId", async () => {
-    await withRunLogDir("openclaw-cron-log-runid-", async (dir) => {
+    await withRunLogDir("merclaw-cron-log-runid-", async (dir) => {
       const storePath = storePathForDir(dir);
 
       await appendCronRunLog({
@@ -266,7 +266,7 @@ describe("cron run log", () => {
   });
 
   it("ignores invalid and non-finished lines while preserving delivery fields", async () => {
-    await withRunLogDir("openclaw-cron-log-filter-", async (dir) => {
+    await withRunLogDir("merclaw-cron-log-filter-", async (dir) => {
       const logPath = path.join(dir, "runs", "job-1.jsonl");
       await fs.mkdir(path.dirname(logPath), { recursive: true });
       await fs.writeFile(
@@ -321,7 +321,7 @@ describe("cron run log", () => {
   });
 
   it("dedupes legacy migration against all existing SQLite rows when archive is blocked", async () => {
-    await withRunLogDir("openclaw-cron-log-large-migration-", async (dir) => {
+    await withRunLogDir("merclaw-cron-log-large-migration-", async (dir) => {
       const logPath = path.join(dir, "runs", "job-1.jsonl");
       await fs.mkdir(path.dirname(logPath), { recursive: true });
       const lines = Array.from({ length: 5001 }, (_value, index) =>
@@ -350,7 +350,7 @@ describe("cron run log", () => {
   });
 
   it("does not include raw delivery targets in run-log search", async () => {
-    await withRunLogDir("openclaw-cron-log-target-query-", async (dir) => {
+    await withRunLogDir("merclaw-cron-log-target-query-", async (dir) => {
       const logPath = path.join(dir, "runs", "job-1.jsonl");
       await fs.mkdir(path.dirname(logPath), { recursive: true });
       await fs.writeFile(
@@ -396,7 +396,7 @@ describe("cron run log", () => {
   });
 
   it("reads and searches run diagnostics", async () => {
-    await withRunLogDir("openclaw-cron-log-diagnostics-", async (dir) => {
+    await withRunLogDir("merclaw-cron-log-diagnostics-", async (dir) => {
       const storePath = storePathForDir(dir);
 
       await appendCronRunLog({
@@ -442,7 +442,7 @@ describe("cron run log", () => {
   });
 
   it("reads telemetry fields", async () => {
-    await withRunLogDir("openclaw-cron-log-telemetry-", async (dir) => {
+    await withRunLogDir("merclaw-cron-log-telemetry-", async (dir) => {
       const storePath = storePathForDir(dir);
       const logPath = path.join(dir, "runs", "job-1.jsonl");
 
@@ -498,7 +498,7 @@ describe("cron run log", () => {
   });
 
   it("cleans up pending-write bookkeeping after appends complete", async () => {
-    await withRunLogDir("openclaw-cron-log-pending-", async (dir) => {
+    await withRunLogDir("merclaw-cron-log-pending-", async (dir) => {
       await appendCronRunLog({
         storePath: storePathForDir(dir),
         entry: {
@@ -514,7 +514,7 @@ describe("cron run log", () => {
   });
 
   it("read drains pending fire-and-forget writes", async () => {
-    await withRunLogDir("openclaw-cron-log-drain-", async (dir) => {
+    await withRunLogDir("merclaw-cron-log-drain-", async (dir) => {
       const storePath = storePathForDir(dir);
 
       // Fire-and-forget write (simulates the `void appendCronRunLog(...)` pattern

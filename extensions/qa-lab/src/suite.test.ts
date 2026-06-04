@@ -5,7 +5,7 @@ import { qaSuiteProgressTesting, runQaSuite } from "./suite.js";
 
 const fetchWithSsrFGuardMock = vi.hoisted(() => vi.fn());
 
-vi.mock("openclaw/plugin-sdk/ssrf-runtime", () => ({
+vi.mock("merclaw/plugin-sdk/ssrf-runtime", () => ({
   fetchWithSsrFGuard: fetchWithSsrFGuardMock,
 }));
 
@@ -100,53 +100,53 @@ describe("qa suite", () => {
     );
     expect(
       qaSuiteProgressTesting.resolveQaSuiteTransportReadyTimeoutMs(undefined, {
-        OPENCLAW_QA_TRANSPORT_READY_TIMEOUT_MS: "180000",
+        MERCLAW_QA_TRANSPORT_READY_TIMEOUT_MS: "180000",
       }),
     ).toBe(180_000);
     expect(
       qaSuiteProgressTesting.resolveQaSuiteTransportReadyTimeoutMs(undefined, {
-        OPENCLAW_QA_TRANSPORT_READY_TIMEOUT_MS: "bad",
+        MERCLAW_QA_TRANSPORT_READY_TIMEOUT_MS: "bad",
       }),
     ).toBe(120_000);
     for (const value of ["0x10", "1e3", "10.5"]) {
       expect(
         qaSuiteProgressTesting.resolveQaSuiteTransportReadyTimeoutMs(undefined, {
-          OPENCLAW_QA_TRANSPORT_READY_TIMEOUT_MS: value,
+          MERCLAW_QA_TRANSPORT_READY_TIMEOUT_MS: value,
         }),
       ).toBe(120_000);
     }
     expect(qaSuiteProgressTesting.resolveQaSuiteTransportReadyTimeoutMs(90_000, {})).toBe(90_000);
   });
 
-  it("applies OPENCLAW_QA_SUITE_PROGRESS override and falls back on invalid values", () => {
+  it("applies MERCLAW_QA_SUITE_PROGRESS override and falls back on invalid values", () => {
     expect(
       qaSuiteProgressTesting.shouldLogQaSuiteProgress({
         CI: "false",
-        OPENCLAW_QA_SUITE_PROGRESS: "true",
+        MERCLAW_QA_SUITE_PROGRESS: "true",
       }),
     ).toBe(true);
     expect(
       qaSuiteProgressTesting.shouldLogQaSuiteProgress({
         CI: "true",
-        OPENCLAW_QA_SUITE_PROGRESS: "false",
+        MERCLAW_QA_SUITE_PROGRESS: "false",
       }),
     ).toBe(false);
     expect(
       qaSuiteProgressTesting.shouldLogQaSuiteProgress({
         CI: "false",
-        OPENCLAW_QA_SUITE_PROGRESS: "on",
+        MERCLAW_QA_SUITE_PROGRESS: "on",
       }),
     ).toBe(true);
     expect(
       qaSuiteProgressTesting.shouldLogQaSuiteProgress({
         CI: "true",
-        OPENCLAW_QA_SUITE_PROGRESS: "off",
+        MERCLAW_QA_SUITE_PROGRESS: "off",
       }),
     ).toBe(false);
     expect(
       qaSuiteProgressTesting.shouldLogQaSuiteProgress({
         CI: "true",
-        OPENCLAW_QA_SUITE_PROGRESS: "definitely",
+        MERCLAW_QA_SUITE_PROGRESS: "definitely",
       }),
     ).toBe(true);
   });
@@ -224,12 +224,12 @@ describe("qa suite", () => {
   it("arms gateway heap checkpoint env only when requested", () => {
     expect(
       qaSuiteProgressTesting.buildQaGatewayHeapCheckpointRuntimeEnvPatch({
-        OPENCLAW_QA_GATEWAY_HEAP_CHECKPOINTS: "0",
+        MERCLAW_QA_GATEWAY_HEAP_CHECKPOINTS: "0",
       }),
     ).toBeUndefined();
     expect(
       qaSuiteProgressTesting.buildQaGatewayHeapCheckpointRuntimeEnvPatch({
-        OPENCLAW_QA_GATEWAY_HEAP_CHECKPOINTS: "1",
+        MERCLAW_QA_GATEWAY_HEAP_CHECKPOINTS: "1",
         NODE_OPTIONS: "--max-old-space-size=4096",
       }),
     ).toEqual({
@@ -254,9 +254,9 @@ describe("qa suite", () => {
         mockBaseUrl: "http://127.0.0.1:44080",
       }),
     ).toEqual({
-      OPENCLAW_BUILD_PRIVATE_QA: "1",
-      OPENCLAW_QA_FORCE_RUNTIME: "codex",
-      OPENCLAW_CODEX_APP_SERVER_ARGS:
+      MERCLAW_BUILD_PRIVATE_QA: "1",
+      MERCLAW_QA_FORCE_RUNTIME: "codex",
+      MERCLAW_CODEX_APP_SERVER_ARGS:
         "app-server -c openai_base_url=http://127.0.0.1:44080/v1 --listen stdio://",
       OPENAI_API_KEY: "qa-mock-openai-key",
       CODEX_API_KEY: "qa-mock-openai-key",
@@ -267,12 +267,12 @@ describe("qa suite", () => {
     expect(
       qaSuiteProgressTesting.buildQaRuntimeEnvPatch({
         providerMode: "mock-openai",
-        forcedRuntime: "openclaw",
+        forcedRuntime: "merclaw",
         mockBaseUrl: "http://127.0.0.1:44080",
       }),
     ).toEqual({
-      OPENCLAW_BUILD_PRIVATE_QA: "1",
-      OPENCLAW_QA_FORCE_RUNTIME: "openclaw",
+      MERCLAW_BUILD_PRIVATE_QA: "1",
+      MERCLAW_QA_FORCE_RUNTIME: "merclaw",
     });
   });
 
@@ -390,7 +390,7 @@ describe("qa suite", () => {
       qaSuiteProgressTesting.remapModelRefForForcedRuntime({
         modelRef: "mock-openai/gpt-5.5",
         providerMode: "mock-openai",
-        forcedRuntime: "openclaw",
+        forcedRuntime: "merclaw",
       }),
     ).toBe("mock-openai/gpt-5.5");
   });

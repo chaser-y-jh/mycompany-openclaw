@@ -1,4 +1,4 @@
-import { uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { uniqueStrings } from "merclaw/plugin-sdk/string-coerce-runtime";
 
 export type QaScenarioPackDefinition = {
   id: string;

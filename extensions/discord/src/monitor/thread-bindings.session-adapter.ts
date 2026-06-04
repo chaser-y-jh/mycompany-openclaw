@@ -3,9 +3,9 @@ import {
   type BindingTargetKind,
   type SessionBindingAdapter,
   type SessionBindingRecord,
-} from "openclaw/plugin-sdk/conversation-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/runtime-config-snapshot";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/conversation-runtime";
+import type { MerClawConfig } from "merclaw/plugin-sdk/runtime-config-snapshot";
+import { normalizeOptionalString } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { resolveDiscordChannelId } from "../target-parsing.js";
 import { resolveChannelIdForBinding } from "./thread-bindings.discord-api.js";
 import { resolveBindingRecordKey } from "./thread-bindings.state.js";
@@ -111,7 +111,7 @@ export function createThreadBindingSessionAdapter(params: {
   accountId: string;
   manager: ThreadBindingManager;
   defaults: ThreadBindingDefaults;
-  resolveCurrentCfg: () => OpenClawConfig;
+  resolveCurrentCfg: () => MerClawConfig;
   resolveCurrentToken: () => string | undefined;
 }): SessionBindingAdapter {
   const toRecord = (entry: ThreadBindingRecord) => toSessionBindingRecord(entry, params.defaults);

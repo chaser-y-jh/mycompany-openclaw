@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { PluginDiscoveryResult } from "./discovery.js";
 
-const discoverOpenClawPluginsMock = vi.fn();
+const discoverMerClawPluginsMock = vi.fn();
 
 vi.mock("./discovery.js", async (importOriginal) => {
   const actual = await importOriginal<typeof import("./discovery.js")>();
   return {
     ...actual,
-    discoverOpenClawPlugins: (...args: unknown[]) => discoverOpenClawPluginsMock(...args),
+    discoverMerClawPlugins: (...args: unknown[]) => discoverMerClawPluginsMock(...args),
   };
 });
 
@@ -19,38 +19,38 @@ const emptyDiscovery: PluginDiscoveryResult = { candidates: [], diagnostics: [] 
 
 describe("discovery threading", () => {
   beforeEach(() => {
-    discoverOpenClawPluginsMock.mockReset();
-    discoverOpenClawPluginsMock.mockReturnValue(emptyDiscovery);
+    discoverMerClawPluginsMock.mockReset();
+    discoverMerClawPluginsMock.mockReturnValue(emptyDiscovery);
   });
 
-  it("skips internal discoverOpenClawPlugins when discovery is supplied", () => {
+  it("skips internal discoverMerClawPlugins when discovery is supplied", () => {
     loadPluginManifestRegistry({ discovery: emptyDiscovery });
-    expect(discoverOpenClawPluginsMock).not.toHaveBeenCalled();
+    expect(discoverMerClawPluginsMock).not.toHaveBeenCalled();
 
-    discoverOpenClawPluginsMock.mockClear();
+    discoverMerClawPluginsMock.mockClear();
     resolveInstalledPluginIndexRegistry({ discovery: emptyDiscovery, installRecords: {} });
-    expect(discoverOpenClawPluginsMock).not.toHaveBeenCalled();
+    expect(discoverMerClawPluginsMock).not.toHaveBeenCalled();
   });
 
-  it("calls discoverOpenClawPlugins when neither discovery nor candidates supplied", () => {
+  it("calls discoverMerClawPlugins when neither discovery nor candidates supplied", () => {
     loadPluginManifestRegistry({});
-    expect(discoverOpenClawPluginsMock).toHaveBeenCalledTimes(1);
+    expect(discoverMerClawPluginsMock).toHaveBeenCalledTimes(1);
 
-    discoverOpenClawPluginsMock.mockClear();
+    discoverMerClawPluginsMock.mockClear();
     resolveInstalledPluginIndexRegistry({ installRecords: {} });
-    expect(discoverOpenClawPluginsMock).toHaveBeenCalledTimes(1);
+    expect(discoverMerClawPluginsMock).toHaveBeenCalledTimes(1);
   });
 
   it("prefers explicit candidates over discovery when both are supplied", () => {
     loadPluginManifestRegistry({ candidates: [], diagnostics: [], discovery: emptyDiscovery });
-    expect(discoverOpenClawPluginsMock).not.toHaveBeenCalled();
+    expect(discoverMerClawPluginsMock).not.toHaveBeenCalled();
 
-    discoverOpenClawPluginsMock.mockClear();
+    discoverMerClawPluginsMock.mockClear();
     resolveInstalledPluginIndexRegistry({
       candidates: [],
       discovery: emptyDiscovery,
       installRecords: {},
     });
-    expect(discoverOpenClawPluginsMock).not.toHaveBeenCalled();
+    expect(discoverMerClawPluginsMock).not.toHaveBeenCalled();
   });
 });

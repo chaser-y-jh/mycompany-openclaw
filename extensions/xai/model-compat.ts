@@ -1,7 +1,7 @@
 import {
   applyModelCompatPatch,
   type ModelCompatConfig,
-} from "openclaw/plugin-sdk/provider-model-shared";
+} from "merclaw/plugin-sdk/provider-model-shared";
 
 export { normalizeXaiModelId as normalizeNativeXaiModelId } from "./model-id.js";
 

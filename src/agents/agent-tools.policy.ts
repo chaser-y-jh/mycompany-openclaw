@@ -1,17 +1,17 @@
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
+import { normalizeProviderId } from "@merclaw/model-catalog-core/provider-id";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalLowercaseString,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/normalization-core/string-coerce";
 import {
   normalizeUniqueSingleOrTrimmedStringList,
   uniqueStrings,
-} from "@openclaw/normalization-core/string-normalization";
+} from "@merclaw/normalization-core/string-normalization";
 import { getLoadedChannelPlugin } from "../channels/plugins/index.js";
 import { resolveSessionConversation } from "../channels/plugins/session-conversation.js";
 import { DEFAULT_SUBAGENT_MAX_SPAWN_DEPTH } from "../config/agent-limits.js";
 import { resolveChannelGroupToolsPolicy } from "../config/group-policy.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import type { AgentToolsConfig } from "../config/types.tools.js";
 import { logWarn } from "../logger.js";
 import { normalizeAgentId } from "../routing/session-key.js";
@@ -97,7 +97,7 @@ function mergeConfiguredSubagentAllow(
   return allow && alsoAllow ? uniqueStrings([...allow, ...alsoAllow]) : allow;
 }
 
-export function resolveSubagentToolPolicy(cfg?: OpenClawConfig, depth?: number): SandboxToolPolicy {
+export function resolveSubagentToolPolicy(cfg?: MerClawConfig, depth?: number): SandboxToolPolicy {
   const configured = cfg?.tools?.subagents?.tools;
   const maxSpawnDepth =
     cfg?.agents?.defaults?.subagents?.maxSpawnDepth ?? DEFAULT_SUBAGENT_MAX_SPAWN_DEPTH;
@@ -117,7 +117,7 @@ export function resolveSubagentToolPolicy(cfg?: OpenClawConfig, depth?: number):
 }
 
 export function resolveSubagentToolPolicyForSession(
-  cfg: OpenClawConfig | undefined,
+  cfg: MerClawConfig | undefined,
   sessionKey: string,
   opts?: {
     store?: SessionCapabilityStore;
@@ -148,7 +148,7 @@ export function resolveSubagentToolPolicyForSession(
 }
 
 export function resolveInheritedToolPolicyForSession(
-  cfg: OpenClawConfig | undefined,
+  cfg: MerClawConfig | undefined,
   sessionKey: string | undefined | null,
   opts?: {
     store?: SessionCapabilityStore;
@@ -389,7 +389,7 @@ export function resolveProviderToolPolicy(params: {
   return undefined;
 }
 
-function resolveExplicitProfileAlsoAllow(tools?: OpenClawConfig["tools"]): string[] | undefined {
+function resolveExplicitProfileAlsoAllow(tools?: MerClawConfig["tools"]): string[] | undefined {
   return Array.isArray(tools?.alsoAllow) ? tools.alsoAllow : undefined;
 }
 
@@ -404,7 +404,7 @@ type ImplicitProfileGrantDetection = {
 };
 
 function detectImplicitProfileGrants(params: {
-  globalTools?: OpenClawConfig["tools"];
+  globalTools?: MerClawConfig["tools"];
   agentTools?: AgentToolsConfig;
   includeGlobalSections: boolean;
 }): ImplicitProfileGrantDetection | undefined {
@@ -436,7 +436,7 @@ function formatToolListForWarning(toolNames: string[]): string {
 }
 
 export function resolveEffectiveToolPolicy(params: {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   sessionKey?: string;
   agentId?: string;
   modelProvider?: string;
@@ -524,7 +524,7 @@ export function resolveEffectiveToolPolicy(params: {
 }
 
 export function resolveGroupToolPolicy(params: {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   sessionKey?: string;
   spawnedBy?: string | null;
   messageProvider?: string;

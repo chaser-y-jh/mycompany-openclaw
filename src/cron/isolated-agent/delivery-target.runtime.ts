@@ -1,5 +1,5 @@
 import type { ChannelId } from "../../channels/plugins/types.public.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { resolveOutboundChannelPlugin } from "../../infra/outbound/channel-resolution.js";
 import {
   resolveOutboundSessionRoute,
@@ -14,7 +14,7 @@ export { mapAllowFromEntries } from "../../plugin-sdk/channel-config-helpers.js"
 export { resolveFirstBoundAccountId } from "../../routing/bound-account-read.js";
 
 export async function resolveChannelTargetForDelivery(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channel: ChannelId;
   input: string;
   accountId?: string | null;
@@ -41,7 +41,7 @@ export async function resolveChannelTargetForDelivery(params: {
 }
 
 export async function resolveOutboundSessionRouteForDelivery(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channel: ChannelId;
   agentId: string;
   accountId?: string | null;
@@ -59,7 +59,7 @@ export async function resolveOutboundSessionRouteForDelivery(params: {
 }
 
 export function channelCanResolveOutboundSessionRoute(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channel: ChannelId;
 }): boolean {
   return Boolean(

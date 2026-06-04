@@ -1,6 +1,6 @@
 import { EventEmitter } from "node:events";
 import { describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { MerClawConfig } from "../config/config.js";
 import { MALFORMED_STREAMING_FRAGMENT_ERROR_MESSAGE } from "../shared/assistant-error-format.js";
 import { getSlashCommands, parseCommand } from "./commands.js";
 import {
@@ -160,29 +160,29 @@ describe("resolveTuiShutdownHardExitMs", () => {
   });
 
   it("adds local run shutdown grace before forcing embedded shutdown", () => {
-    const previous = process.env.OPENCLAW_TUI_LOCAL_RUN_SHUTDOWN_GRACE_MS;
-    process.env.OPENCLAW_TUI_LOCAL_RUN_SHUTDOWN_GRACE_MS = "3456";
+    const previous = process.env.MERCLAW_TUI_LOCAL_RUN_SHUTDOWN_GRACE_MS;
+    process.env.MERCLAW_TUI_LOCAL_RUN_SHUTDOWN_GRACE_MS = "3456";
     try {
       expect(resolveTuiShutdownHardExitMs({ localMode: true })).toBe(5456);
     } finally {
       if (previous === undefined) {
-        delete process.env.OPENCLAW_TUI_LOCAL_RUN_SHUTDOWN_GRACE_MS;
+        delete process.env.MERCLAW_TUI_LOCAL_RUN_SHUTDOWN_GRACE_MS;
       } else {
-        process.env.OPENCLAW_TUI_LOCAL_RUN_SHUTDOWN_GRACE_MS = previous;
+        process.env.MERCLAW_TUI_LOCAL_RUN_SHUTDOWN_GRACE_MS = previous;
       }
     }
   });
 
   it("ignores partial local run shutdown grace values", () => {
-    const previous = process.env.OPENCLAW_TUI_LOCAL_RUN_SHUTDOWN_GRACE_MS;
-    process.env.OPENCLAW_TUI_LOCAL_RUN_SHUTDOWN_GRACE_MS = "3456abc";
+    const previous = process.env.MERCLAW_TUI_LOCAL_RUN_SHUTDOWN_GRACE_MS;
+    process.env.MERCLAW_TUI_LOCAL_RUN_SHUTDOWN_GRACE_MS = "3456abc";
     try {
       expect(resolveTuiShutdownHardExitMs({ localMode: true })).toBe(122000);
     } finally {
       if (previous === undefined) {
-        delete process.env.OPENCLAW_TUI_LOCAL_RUN_SHUTDOWN_GRACE_MS;
+        delete process.env.MERCLAW_TUI_LOCAL_RUN_SHUTDOWN_GRACE_MS;
       } else {
-        process.env.OPENCLAW_TUI_LOCAL_RUN_SHUTDOWN_GRACE_MS = previous;
+        process.env.MERCLAW_TUI_LOCAL_RUN_SHUTDOWN_GRACE_MS = previous;
       }
     }
   });
@@ -242,11 +242,11 @@ describe("resolveTuiSessionKey", () => {
 });
 
 describe("resolveInitialTuiAgentId", () => {
-  const cfg: OpenClawConfig = {
+  const cfg: MerClawConfig = {
     agents: {
       list: [
-        { id: "main", workspace: "/tmp/openclaw" },
-        { id: "ops", workspace: "/tmp/openclaw/projects/ops" },
+        { id: "main", workspace: "/tmp/merclaw" },
+        { id: "ops", workspace: "/tmp/merclaw/projects/ops" },
       ],
     },
   };
@@ -257,7 +257,7 @@ describe("resolveInitialTuiAgentId", () => {
         cfg,
         fallbackAgentId: "main",
         initialSessionInput: "",
-        cwd: "/tmp/openclaw/projects/ops/src",
+        cwd: "/tmp/merclaw/projects/ops/src",
       }),
     ).toBe("ops");
   });
@@ -268,7 +268,7 @@ describe("resolveInitialTuiAgentId", () => {
         cfg,
         fallbackAgentId: "main",
         initialSessionInput: "agent:main:incident",
-        cwd: "/tmp/openclaw/projects/ops/src",
+        cwd: "/tmp/merclaw/projects/ops/src",
       }),
     ).toBe("main");
   });
@@ -289,8 +289,8 @@ describe("resolveGatewayDisconnectState", () => {
   it("returns pairing recovery guidance when disconnect reason requires pairing", () => {
     const state = resolveGatewayDisconnectState("gateway closed (1008): pairing required");
     expect(state.connectionStatus).toContain("pairing required");
-    expect(state.activityStatus).toBe("pairing required: run openclaw devices list");
-    expect(state.pairingHint).toContain("openclaw devices list");
+    expect(state.activityStatus).toBe("pairing required: run merclaw devices list");
+    expect(state.pairingHint).toContain("merclaw devices list");
   });
 
   it("falls back to idle for generic disconnect reasons", () => {
@@ -534,7 +534,7 @@ describe("TUI shutdown safety", () => {
     expect(setTimeoutFn).toHaveBeenCalledOnce();
     expect(unref).toHaveBeenCalledOnce();
     callback?.();
-    expect(writeStderr).toHaveBeenCalledWith("openclaw tui forcing process exit after return\n");
+    expect(writeStderr).toHaveBeenCalledWith("merclaw tui forcing process exit after return\n");
     expect(exit).toHaveBeenCalledWith(0);
   });
 });
@@ -565,7 +565,7 @@ describe("resolveLocalAuthCliInvocation", () => {
     expect(
       resolveLocalAuthCliInvocation({
         execPath: "/usr/bin/node",
-        wrapperPath: "/repo/openclaw.mjs",
+        wrapperPath: "/repo/merclaw.mjs",
         runNodePath: "/repo/scripts/run-node.mjs",
         hasDistEntry: false,
         hasRunNodeScript: true,
@@ -580,14 +580,14 @@ describe("resolveLocalAuthCliInvocation", () => {
     expect(
       resolveLocalAuthCliInvocation({
         execPath: "/usr/bin/node",
-        wrapperPath: "/repo/openclaw.mjs",
+        wrapperPath: "/repo/merclaw.mjs",
         runNodePath: "/repo/scripts/run-node.mjs",
         hasDistEntry: true,
         hasRunNodeScript: true,
       }),
     ).toEqual({
       command: "/usr/bin/node",
-      args: ["/repo/openclaw.mjs", "models", "auth", "login"],
+      args: ["/repo/merclaw.mjs", "models", "auth", "login"],
     });
   });
 });
@@ -631,7 +631,7 @@ describe("resolveLocalAuthSpawnCwd", () => {
   it("runs the packaged wrapper from the repo root", () => {
     expect(
       resolveLocalAuthSpawnCwd({
-        args: ["/repo/openclaw.mjs", "models", "auth", "login"],
+        args: ["/repo/merclaw.mjs", "models", "auth", "login"],
         defaultCwd: "/worktree/subdir",
       }),
     ).toBe("/repo");

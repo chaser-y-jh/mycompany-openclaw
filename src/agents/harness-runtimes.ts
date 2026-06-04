@@ -1,7 +1,7 @@
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { normalizeProviderId } from "@merclaw/model-catalog-core/provider-id";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { isRecord } from "../utils.js";
-import { OPENCLAW_AGENT_RUNTIME_ID, isDefaultAgentRuntimeId } from "./agent-runtime-id.js";
+import { MERCLAW_AGENT_RUNTIME_ID, isDefaultAgentRuntimeId } from "./agent-runtime-id.js";
 import { normalizeOptionalAgentRuntimeId } from "./agent-runtime-id.js";
 import { resolveAgentHarnessPolicy } from "./harness/policy.js";
 
@@ -13,7 +13,7 @@ function isSelectablePluginRuntime(runtime: string | undefined): runtime is stri
   return (
     Boolean(runtime) &&
     !isDefaultAgentRuntimeId(runtime) &&
-    normalizeOptionalAgentRuntimeId(runtime) !== OPENCLAW_AGENT_RUNTIME_ID
+    normalizeOptionalAgentRuntimeId(runtime) !== MERCLAW_AGENT_RUNTIME_ID
   );
 }
 
@@ -62,7 +62,7 @@ function parseConfiguredModelRef(
 }
 
 function resolveConfiguredModelHarnessRuntime(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   includeImplicitRuntimePreferences: boolean;
   modelRef: string;
   agentId?: string;
@@ -84,7 +84,7 @@ function resolveConfiguredModelHarnessRuntime(params: {
   return isSelectablePluginRuntime(runtime) ? runtime : undefined;
 }
 
-function pushConfiguredModelRuntimeIds(config: OpenClawConfig, runtimes: Set<string>): void {
+function pushConfiguredModelRuntimeIds(config: MerClawConfig, runtimes: Set<string>): void {
   for (const providerConfig of Object.values(config.models?.providers ?? {})) {
     const providerRuntime = normalizeConfiguredRuntimeId(providerConfig?.agentRuntime?.id);
     if (isSelectablePluginRuntime(providerRuntime)) {
@@ -121,7 +121,7 @@ function pushConfiguredModelRuntimeIds(config: OpenClawConfig, runtimes: Set<str
 }
 
 function pushConfiguredAgentModelRuntimeIds(
-  config: OpenClawConfig,
+  config: MerClawConfig,
   runtimes: Set<string>,
   includeImplicitRuntimePreferences: boolean,
 ): void {
@@ -171,7 +171,7 @@ export type ConfiguredAgentHarnessRuntimeOptions = {
 };
 
 export function collectConfiguredAgentHarnessRuntimes(
-  config: OpenClawConfig,
+  config: MerClawConfig,
   options: ConfiguredAgentHarnessRuntimeOptions = {},
 ): string[] {
   const runtimes = new Set<string>();

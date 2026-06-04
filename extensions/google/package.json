@@ -1,17 +1,17 @@
 {
-  "name": "@openclaw/google-plugin",
+  "name": "@merclaw/google-plugin",
   "version": "2026.5.31",
   "private": true,
-  "description": "OpenClaw Google plugin",
+  "description": "MerClaw Google plugin",
   "type": "module",
   "dependencies": {
     "@google/genai": "2.7.0",
     "google-auth-library": "10.6.2"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@merclaw/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ]

@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { formatErrorMessage } from "../../infra/errors.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
 import { parseAgentSessionKey } from "../../routing/session-key.js";
@@ -23,7 +23,7 @@ import {
   resolveSubagentCapabilityStore,
 } from "../subagent-capabilities.js";
 import { expandToolGroups, normalizeToolName } from "../tool-policy.js";
-import { createOpenClawAgentHarness } from "./builtin-openclaw.js";
+import { createMerClawAgentHarness } from "./builtin-merclaw.js";
 import { MissingAgentHarnessError } from "./errors.js";
 import {
   resolveAgentHarnessPolicy as resolveConfiguredAgentHarnessPolicy,
@@ -58,16 +58,16 @@ type AgentHarnessSelectionDecision = {
   policy: AgentHarnessPolicy;
   selectedHarnessId: string;
   selectedReason:
-    | "forced_openclaw"
+    | "forced_merclaw"
     | "forced_plugin"
-    // Implicit Codex preference found no registered Codex harness, so OpenClaw handled the run.
-    | "implicit_plugin_unavailable_openclaw"
+    // Implicit Codex preference found no registered Codex harness, so MerClaw handled the run.
+    | "implicit_plugin_unavailable_merclaw"
     // Provider-owned CLI runtime aliases have no agent harness plugin counterpart.
-    | "cli_runtime_passthrough_openclaw"
+    | "cli_runtime_passthrough_merclaw"
     // Auto mode chose a registered plugin harness that supports the provider/model.
     | "auto_plugin"
-    // Auto mode found no supporting plugin harness, so OpenClaw handled the run.
-    | "auto_openclaw";
+    // Auto mode found no supporting plugin harness, so MerClaw handled the run.
+    | "auto_merclaw";
   candidates: AgentHarnessSelectionCandidate[];
 };
 
@@ -78,7 +78,7 @@ function listPluginAgentHarnesses(): AgentHarness[] {
 export function resolveAvailableAgentHarnessPolicy(params: {
   provider?: string;
   modelId?: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentId?: string;
   sessionKey?: string;
   env?: NodeJS.ProcessEnv;
@@ -94,7 +94,7 @@ function applyAgentHarnessAvailabilityPolicy(policy: AgentHarnessPolicy): AgentH
   ) {
     return {
       ...policy,
-      runtime: "openclaw",
+      runtime: "merclaw",
     };
   }
   return policy;
@@ -114,7 +114,7 @@ function compareHarnessSupport(
 export function selectAgentHarness(params: {
   provider: string;
   modelId?: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentId?: string;
   sessionKey?: string;
   agentHarnessId?: string;
@@ -126,7 +126,7 @@ export function selectAgentHarness(params: {
 function selectAgentHarnessDecision(params: {
   provider: string;
   modelId?: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentId?: string;
   sessionKey?: string;
   agentHarnessId?: string;
@@ -142,16 +142,16 @@ function selectAgentHarnessDecision(params: {
           runtimeSource: "model",
         } as AgentHarnessPolicy)
       : resolvedPolicy;
-  // OpenClaw's built-in harness is intentionally not part of the plugin candidate list. Explicit plugin
-  // runtimes fail closed; only `auto` may route an unmatched turn to OpenClaw.
+  // MerClaw's built-in harness is intentionally not part of the plugin candidate list. Explicit plugin
+  // runtimes fail closed; only `auto` may route an unmatched turn to MerClaw.
   const pluginHarnesses = listPluginAgentHarnesses();
-  const openClawHarness = createOpenClawAgentHarness();
+  const merClawHarness = createMerClawAgentHarness();
   const runtime = policy.runtime;
-  if (runtime === "openclaw") {
+  if (runtime === "merclaw") {
     return buildSelectionDecision({
-      harness: openClawHarness,
+      harness: merClawHarness,
       policy,
-      selectedReason: "forced_openclaw",
+      selectedReason: "forced_merclaw",
       candidates: listHarnessCandidates(pluginHarnesses),
     });
   }
@@ -173,12 +173,12 @@ function selectAgentHarnessDecision(params: {
       }
       if (isCliRuntimeAliasForProvider({ runtime, provider: params.provider })) {
         return buildSelectionDecision({
-          harness: openClawHarness,
+          harness: merClawHarness,
           policy: {
             ...policy,
-            runtime: "openclaw",
+            runtime: "merclaw",
           },
-          selectedReason: "cli_runtime_passthrough_openclaw",
+          selectedReason: "cli_runtime_passthrough_merclaw",
           candidates: listHarnessCandidates(pluginHarnesses),
         });
       }
@@ -190,12 +190,12 @@ function selectAgentHarnessDecision(params: {
     }
     if (runtime === "codex" && policy.runtimeSource === "implicit") {
       return buildSelectionDecision({
-        harness: openClawHarness,
+        harness: merClawHarness,
         policy: {
           ...policy,
-          runtime: "openclaw",
+          runtime: "merclaw",
         },
-        selectedReason: "implicit_plugin_unavailable_openclaw",
+        selectedReason: "implicit_plugin_unavailable_merclaw",
         candidates: listHarnessCandidates(pluginHarnesses),
       });
     }
@@ -207,12 +207,12 @@ function selectAgentHarnessDecision(params: {
       })
     ) {
       return buildSelectionDecision({
-        harness: openClawHarness,
+        harness: merClawHarness,
         policy: {
           ...policy,
-          runtime: "openclaw",
+          runtime: "merclaw",
         },
-        selectedReason: "cli_runtime_passthrough_openclaw",
+        selectedReason: "cli_runtime_passthrough_merclaw",
         candidates: listHarnessCandidates(pluginHarnesses),
       });
     }
@@ -248,9 +248,9 @@ function selectAgentHarnessDecision(params: {
     });
   }
   return buildSelectionDecision({
-    harness: openClawHarness,
+    harness: merClawHarness,
     policy,
-    selectedReason: "auto_openclaw",
+    selectedReason: "auto_merclaw",
     candidates: candidates.map(toSelectionCandidate),
   });
 }
@@ -269,7 +269,7 @@ export async function runAgentHarnessAttempt(
   });
   const harness = selection.harness;
   const attemptParams =
-    harness.id === "openclaw" ? params : applyPluginHarnessDenyAllToolPolicy(params);
+    harness.id === "merclaw" ? params : applyPluginHarnessDenyAllToolPolicy(params);
   logAgentHarnessSelection(selection, {
     provider: params.provider,
     modelId: params.modelId,
@@ -277,14 +277,14 @@ export async function runAgentHarnessAttempt(
     agentId: params.agentId,
   });
   const v2Harness = adaptAgentHarnessToV2(harness);
-  if (harness.id === "openclaw") {
+  if (harness.id === "merclaw") {
     return await runAgentHarnessV2LifecycleAttempt(v2Harness, attemptParams);
   }
 
   try {
     return await runAgentHarnessV2LifecycleAttempt(v2Harness, attemptParams);
   } catch (error) {
-    log.warn(`${harness.label} failed; not falling back to embedded OpenClaw backend`, {
+    log.warn(`${harness.label} failed; not falling back to embedded MerClaw backend`, {
       harnessId: harness.id,
       provider: params.provider,
       modelId: params.modelId,
@@ -529,7 +529,7 @@ export async function maybeCompactAgentHarnessSession(
     throw err;
   }
   if (!harness.compact) {
-    if (harness.id !== "openclaw") {
+    if (harness.id !== "merclaw") {
       return {
         ok: false,
         compacted: false,

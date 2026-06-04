@@ -1,5 +1,5 @@
-import { formatAllowlistMatchMeta } from "openclaw/plugin-sdk/allow-from";
-import { recordChannelActivity } from "openclaw/plugin-sdk/channel-activity-runtime";
+import { formatAllowlistMatchMeta } from "merclaw/plugin-sdk/allow-from";
+import { recordChannelActivity } from "merclaw/plugin-sdk/channel-activity-runtime";
 import {
   buildMentionRegexes,
   classifyChannelInboundEvent,
@@ -8,16 +8,16 @@ import {
   resolveUnmentionedGroupInboundPolicy,
   recordDroppedChannelInboundHistory,
   toInboundMediaFacts,
-} from "openclaw/plugin-sdk/channel-inbound";
-import { hasControlCommand } from "openclaw/plugin-sdk/command-detection";
-import { isAbortRequestText } from "openclaw/plugin-sdk/command-primitives-runtime";
-import { shouldHandleTextCommands } from "openclaw/plugin-sdk/command-surface";
-import { isDangerousNameMatchingEnabled } from "openclaw/plugin-sdk/dangerous-name-runtime";
-import { logDebug } from "openclaw/plugin-sdk/logging-core";
-import { mimeTypeFromFilePath } from "openclaw/plugin-sdk/media-mime";
-import type { HistoryEntry } from "openclaw/plugin-sdk/reply-history";
-import { getChildLogger, logVerbose } from "openclaw/plugin-sdk/runtime-env";
-import { enqueueSystemEvent } from "openclaw/plugin-sdk/system-event-runtime";
+} from "merclaw/plugin-sdk/channel-inbound";
+import { hasControlCommand } from "merclaw/plugin-sdk/command-detection";
+import { isAbortRequestText } from "merclaw/plugin-sdk/command-primitives-runtime";
+import { shouldHandleTextCommands } from "merclaw/plugin-sdk/command-surface";
+import { isDangerousNameMatchingEnabled } from "merclaw/plugin-sdk/dangerous-name-runtime";
+import { logDebug } from "merclaw/plugin-sdk/logging-core";
+import { mimeTypeFromFilePath } from "merclaw/plugin-sdk/media-mime";
+import type { HistoryEntry } from "merclaw/plugin-sdk/reply-history";
+import { getChildLogger, logVerbose } from "merclaw/plugin-sdk/runtime-env";
+import { enqueueSystemEvent } from "merclaw/plugin-sdk/system-event-runtime";
 import { resolveDefaultDiscordAccountId } from "../accounts.js";
 import { ChannelType, MessageType, type User } from "../internal/discord.js";
 import {

@@ -1,12 +1,12 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { EmbeddedRunAttemptParams } from "openclaw/plugin-sdk/agent-harness";
+import type { EmbeddedRunAttemptParams } from "merclaw/plugin-sdk/agent-harness";
 import {
   createParameterFreeTool,
   createPermissiveTool,
   normalizedParameterFreeSchema,
-} from "openclaw/plugin-sdk/agent-runtime-test-contracts";
+} from "merclaw/plugin-sdk/agent-runtime-test-contracts";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { CodexThreadStartParams } from "./protocol.js";
 import { createCodexTestModel } from "./test-support.js";
@@ -88,7 +88,7 @@ function threadStartResult(threadId = "thread-1", serviceTier: string | null = n
 
 describe("Codex app-server dynamic tool schema boundary contract", () => {
   beforeEach(async () => {
-    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-schema-contract-"));
+    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-schema-contract-"));
   });
 
   afterEach(async () => {
@@ -133,11 +133,11 @@ describe("Codex app-server dynamic tool schema boundary contract", () => {
     expect(startPayload?.approvalPolicy).toBe("never");
     expect(startPayload?.approvalsReviewer).toBe("user");
     expect(startPayload?.sandbox).toBe("workspace-write");
-    expect(startPayload?.serviceName).toBe("OpenClaw");
+    expect(startPayload?.serviceName).toBe("MerClaw");
     expect(startPayload?.experimentalRawEvents).toBe(true);
     expect(startPayload?.persistExtendedHistory).toBe(true);
     expect(typeof startPayload?.developerInstructions).toBe("string");
-    expect(startPayload?.developerInstructions).toContain("OpenClaw");
+    expect(startPayload?.developerInstructions).toContain("MerClaw");
   });
 
   it("accepts Codex app-server priority service tier responses", async () => {

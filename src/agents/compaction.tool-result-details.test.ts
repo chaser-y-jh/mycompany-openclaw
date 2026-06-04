@@ -1,5 +1,5 @@
-import type { AgentMessage } from "openclaw/plugin-sdk/agent-core";
-import type { AssistantMessage, ToolResultMessage } from "openclaw/plugin-sdk/llm";
+import type { AgentMessage } from "merclaw/plugin-sdk/agent-core";
+import type { AssistantMessage, ToolResultMessage } from "merclaw/plugin-sdk/llm";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { makeAgentAssistantMessage } from "./test-helpers/agent-message-fixtures.js";
 
@@ -121,7 +121,7 @@ describe("compaction toolResult details stripping", () => {
       { role: "user", content: "visible ask", timestamp: 1 },
       {
         role: "custom",
-        customType: "openclaw.runtime-context",
+        customType: "merclaw.runtime-context",
         content: "secret runtime context",
         display: false,
         timestamp: 2,
@@ -149,7 +149,7 @@ describe("compaction toolResult details stripping", () => {
     ]);
     const serialized = JSON.stringify(chunk);
     expect(serialized).toContain("visible ask");
-    expect(serialized).not.toContain("openclaw.runtime-context");
+    expect(serialized).not.toContain("merclaw.runtime-context");
     expect(serialized).not.toContain("secret runtime context");
   });
 

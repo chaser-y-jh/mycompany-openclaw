@@ -1,14 +1,14 @@
-import type { ProviderAuthContext } from "openclaw/plugin-sdk/plugin-entry";
+import type { ProviderAuthContext } from "merclaw/plugin-sdk/plugin-entry";
 import {
   createRuntimeEnv,
   createTestWizardPrompter,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
-import type { OAuthCredential } from "openclaw/plugin-sdk/provider-auth";
+} from "merclaw/plugin-sdk/plugin-test-runtime";
+import type { OAuthCredential } from "merclaw/plugin-sdk/provider-auth";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const waitForLocalOAuthCallbackMock = vi.hoisted(() => vi.fn());
 
-vi.mock("openclaw/plugin-sdk/provider-auth-runtime", () => ({
+vi.mock("merclaw/plugin-sdk/provider-auth-runtime", () => ({
   waitForLocalOAuthCallback: waitForLocalOAuthCallbackMock,
 }));
 
@@ -104,7 +104,7 @@ describe("xAI OAuth", () => {
     expect([...XAI_OAUTH_CALLBACK_CORS_ORIGIN_ALLOWLIST]).toEqual(["auth.x.ai", "accounts.x.ai"]);
   });
 
-  it("builds the xAI authorize URL for OpenClaw", () => {
+  it("builds the xAI authorize URL for MerClaw", () => {
     const url = new URL(
       buildXaiOAuthAuthorizeUrl({
         authorizationEndpoint: "https://auth.x.ai/oauth2/authorize",
@@ -124,7 +124,7 @@ describe("xAI OAuth", () => {
     expect(url.searchParams.get("state")).toBe("state-1");
     expect(url.searchParams.get("nonce")).toBe("nonce-1");
     expect(url.searchParams.get("plan")).toBe("generic");
-    expect(url.searchParams.get("referrer")).toBe("openclaw");
+    expect(url.searchParams.get("referrer")).toBe("merclaw");
     expect(XAI_OAUTH_REDIRECT_URI).toContain(`:${XAI_OAUTH_CALLBACK_PORT}/`);
   });
 
@@ -147,7 +147,7 @@ describe("xAI OAuth", () => {
   });
 
   it("validates discovered endpoints before using them", async () => {
-    vi.stubEnv("OPENCLAW_VERSION", "2026.3.22");
+    vi.stubEnv("MERCLAW_VERSION", "2026.3.22");
     const fetchImpl = vi.fn<typeof fetch>(async () =>
       jsonResponse({
         authorization_endpoint: "https://auth.x.ai/oauth2/authorize",
@@ -162,7 +162,7 @@ describe("xAI OAuth", () => {
 
     const discoveryInit = fetchImpl.mock.calls.at(0)?.[1];
     const discoveryHeaders = new Headers(discoveryInit?.headers ?? {});
-    expect(discoveryHeaders.get("user-agent")).toBe("openclaw/2026.3.22");
+    expect(discoveryHeaders.get("user-agent")).toBe("merclaw/2026.3.22");
     vi.unstubAllEnvs();
 
     const poisonedFetch = vi.fn<typeof fetch>(async () =>
@@ -178,7 +178,7 @@ describe("xAI OAuth", () => {
   });
 
   it("refreshes with the cached token endpoint and preserves refresh fallback", async () => {
-    vi.stubEnv("OPENCLAW_VERSION", "2026.3.22");
+    vi.stubEnv("MERCLAW_VERSION", "2026.3.22");
     const fetchImpl = vi.fn<typeof fetch>(async (_url, init) => {
       expect(init?.method).toBe("POST");
       expect(typeof init?.body).toBe("string");
@@ -187,7 +187,7 @@ describe("xAI OAuth", () => {
       expect(body).toContain(`client_id=${encodeURIComponent(XAI_OAUTH_CLIENT_ID)}`);
       expect(body).toContain("refresh_token=refresh-1");
       const headers = new Headers(init?.headers ?? {});
-      expect(headers.get("user-agent")).toBe("openclaw/2026.3.22");
+      expect(headers.get("user-agent")).toBe("merclaw/2026.3.22");
       return jsonResponse({
         access_token: "access-2",
         expires_in: 120,
@@ -352,7 +352,7 @@ describe("xAI OAuth", () => {
   });
 
   it("logs in with xAI device code without a localhost callback", async () => {
-    vi.stubEnv("OPENCLAW_VERSION", "2026.3.22");
+    vi.stubEnv("MERCLAW_VERSION", "2026.3.22");
     const progress = {
       update: vi.fn(),
       stop: vi.fn(),

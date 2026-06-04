@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
-import type { StreamFn } from "openclaw/plugin-sdk/agent-core";
-import type { Model } from "openclaw/plugin-sdk/llm";
+import type { StreamFn } from "merclaw/plugin-sdk/agent-core";
+import type { Model } from "merclaw/plugin-sdk/llm";
 import { describe, expect, it, vi } from "vitest";
 import { prepareGooglePromptCacheStreamFn } from "./google-prompt-cache.js";
 import { EmbeddedAttemptSessionTakeoverError } from "./run/attempt.session-lock.js";
@@ -229,7 +229,7 @@ describe("google prompt cache", () => {
         id: "entry-1",
         parentId: null,
         timestamp: new Date(1_000).toISOString(),
-        customType: "openclaw.google-prompt-cache",
+        customType: "merclaw.google-prompt-cache",
         data: {
           status: "ready",
           timestamp: now,
@@ -338,7 +338,7 @@ describe("google prompt cache", () => {
         parentId: null,
         timestamp: new Date(now - 5_000).toISOString(),
         type: "custom",
-        customType: "openclaw.google-prompt-cache",
+        customType: "merclaw.google-prompt-cache",
         data: {
           status: "ready",
           timestamp: now - 5_000,
@@ -393,7 +393,7 @@ describe("google prompt cache", () => {
         parentId: null,
         timestamp: new Date(1_000).toISOString(),
         type: "custom",
-        customType: "openclaw.google-prompt-cache",
+        customType: "merclaw.google-prompt-cache",
         data: {
           status: "failed",
           timestamp: 1_000,

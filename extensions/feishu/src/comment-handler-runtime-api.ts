@@ -1,3 +1,3 @@
-export type { OpenClawConfig as ClawdbotConfig } from "openclaw/plugin-sdk/config-contracts";
-export type { RuntimeEnv } from "openclaw/plugin-sdk/runtime";
-export { createChannelPairingController } from "openclaw/plugin-sdk/channel-pairing";
+export type { MerClawConfig as ClawdbotConfig } from "merclaw/plugin-sdk/config-contracts";
+export type { RuntimeEnv } from "merclaw/plugin-sdk/runtime";
+export { createChannelPairingController } from "merclaw/plugin-sdk/channel-pairing";

@@ -1,5 +1,5 @@
-import type { AgentToolResult } from "openclaw/plugin-sdk/agent-core";
-import { normalizeOptionalLowercaseString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { AgentToolResult } from "merclaw/plugin-sdk/agent-core";
+import { normalizeOptionalLowercaseString } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { resolveMatrixAccountConfig } from "./matrix/accounts.js";
 import {
   bootstrapMatrixVerification,

@@ -25,27 +25,27 @@ export async function packageBuildCommitFromTgz(tgzPath: string): Promise<string
   return info.commit ?? "";
 }
 
-export function resolveOpenClawRegistryVersion(specOrAlias: string): string {
+export function resolveMerClawRegistryVersion(specOrAlias: string): string {
   const rawValue = specOrAlias.trim();
-  const value = rawValue.startsWith("openclaw@") ? rawValue.slice("openclaw@".length) : rawValue;
+  const value = rawValue.startsWith("merclaw@") ? rawValue.slice("merclaw@".length) : rawValue;
   if (!value) {
     return "";
   }
   if (value === "latest" || value === "beta" || /^\d/.test(value)) {
-    return npmViewVersion(`openclaw@${value}`);
+    return npmViewVersion(`merclaw@${value}`);
   }
   const betaMatch = /^beta(\d+)$/u.exec(value);
   if (betaMatch) {
     const betaSuffix = `-beta.${betaMatch[1]}`;
     const versions = JSON.parse(
-      run("npm", ["view", "openclaw", "versions", "--json"], { quiet: true }).stdout,
+      run("npm", ["view", "merclaw", "versions", "--json"], { quiet: true }).stdout,
     ) as string[];
     const match = versions
       .filter((version) => version.endsWith(betaSuffix))
       .toSorted((a, b) => a.localeCompare(b, undefined, { numeric: true }))
       .at(-1);
     if (!match) {
-      die(`no openclaw registry version found for alias ${value}`);
+      die(`no merclaw registry version found for alias ${value}`);
     }
     return match;
   }
@@ -118,7 +118,7 @@ async function ensureCurrentBuildUnlocked(input: {
   }
 }
 
-export async function packOpenClaw(input: {
+export async function packMerClaw(input: {
   destination: string;
   packageSpec?: string;
   requireControlUi?: boolean;
@@ -149,7 +149,7 @@ export async function packOpenClaw(input: {
     return { path: tgzPath, version };
   }
 
-  return await withPackageLock(path.join(tmpdir(), "openclaw-parallels-build.lock"), async () => {
+  return await withPackageLock(path.join(tmpdir(), "merclaw-parallels-build.lock"), async () => {
     await ensureCurrentBuildUnlocked({
       checkDirty: true,
       requireControlUi: input.requireControlUi,
@@ -173,7 +173,7 @@ export async function packOpenClaw(input: {
     if (!packed) {
       die("npm pack did not report a filename");
     }
-    const tgzPath = path.join(input.destination, `openclaw-main-${shortHead}.tgz`);
+    const tgzPath = path.join(input.destination, `merclaw-main-${shortHead}.tgz`);
     await copyFile(path.join(input.destination, packed), tgzPath);
     const buildCommit = await packageBuildCommitFromTgz(tgzPath);
     if (!buildCommit) {
@@ -195,8 +195,8 @@ async function withPackageLock<T>(lockDir: string, fn: () => Promise<T>): Promis
 }
 
 async function acquirePackageLock(lockDir: string, ownerToken: string): Promise<void> {
-  const timeoutMs = readPositiveIntEnv("OPENCLAW_PARALLELS_PACKAGE_LOCK_TIMEOUT_MS", 30 * 60_000);
-  const staleMs = readPositiveIntEnv("OPENCLAW_PARALLELS_PACKAGE_LOCK_STALE_MS", 2 * 60 * 60_000);
+  const timeoutMs = readPositiveIntEnv("MERCLAW_PARALLELS_PACKAGE_LOCK_TIMEOUT_MS", 30 * 60_000);
+  const staleMs = readPositiveIntEnv("MERCLAW_PARALLELS_PACKAGE_LOCK_STALE_MS", 2 * 60 * 60_000);
   const startedAt = Date.now();
   let announcedWait = false;
   while (Date.now() - startedAt < timeoutMs) {

@@ -10,8 +10,8 @@
  * Separated from gateway.ts for testability and to keep handleMessage thin.
  */
 
-import { buildChannelInboundEventContext } from "openclaw/plugin-sdk/channel-inbound";
-import type { FinalizedMsgContext } from "openclaw/plugin-sdk/reply-runtime";
+import { buildChannelInboundEventContext } from "merclaw/plugin-sdk/channel-inbound";
+import type { FinalizedMsgContext } from "merclaw/plugin-sdk/reply-runtime";
 import {
   parseAndSendMediaTags,
   sendPlainReply,

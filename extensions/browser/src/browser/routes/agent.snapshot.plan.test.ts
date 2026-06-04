@@ -3,9 +3,9 @@ import type { ResolvedBrowserProfile } from "../config.js";
 import { DEFAULT_AI_SNAPSHOT_MAX_CHARS } from "../constants.js";
 import { resolveSnapshotPlan } from "./agent.snapshot.plan.js";
 
-function profile(driver: "existing-session" | "openclaw"): ResolvedBrowserProfile {
+function profile(driver: "existing-session" | "merclaw"): ResolvedBrowserProfile {
   return {
-    name: driver === "existing-session" ? "user" : "openclaw",
+    name: driver === "existing-session" ? "user" : "merclaw",
     driver,
     cdpPort: driver === "existing-session" ? 0 : 18792,
     cdpUrl: driver === "existing-session" ? "" : "http://127.0.0.1:18792",
@@ -30,7 +30,7 @@ describe("resolveSnapshotPlan", () => {
 
   it("keeps ai snapshots for managed browsers when Playwright is available", () => {
     const plan = resolveSnapshotPlan({
-      profile: profile("openclaw"),
+      profile: profile("merclaw"),
       query: {},
       hasPlaywright: true,
     });
@@ -40,7 +40,7 @@ describe("resolveSnapshotPlan", () => {
 
   it("treats urls as a role snapshot feature", () => {
     const plan = resolveSnapshotPlan({
-      profile: profile("openclaw"),
+      profile: profile("merclaw"),
       query: { urls: "1" },
       hasPlaywright: true,
     });
@@ -51,7 +51,7 @@ describe("resolveSnapshotPlan", () => {
 
   it("parses timeoutMs from the snapshot query string", () => {
     const plan = resolveSnapshotPlan({
-      profile: profile("openclaw"),
+      profile: profile("merclaw"),
       query: { timeoutMs: "12345" },
       hasPlaywright: true,
     });
@@ -61,7 +61,7 @@ describe("resolveSnapshotPlan", () => {
 
   it("caps timeoutMs from the snapshot query string to Node's safe timer range", () => {
     const plan = resolveSnapshotPlan({
-      profile: profile("openclaw"),
+      profile: profile("merclaw"),
       query: { timeoutMs: "3000000000" },
       hasPlaywright: true,
     });
@@ -71,7 +71,7 @@ describe("resolveSnapshotPlan", () => {
 
   it("parses snapshot numeric query options as strict integers", () => {
     const plan = resolveSnapshotPlan({
-      profile: profile("openclaw"),
+      profile: profile("merclaw"),
       query: {
         limit: "25",
         maxChars: "5000",
@@ -89,7 +89,7 @@ describe("resolveSnapshotPlan", () => {
 
   it("accepts structured numeric snapshot query options from proxy dispatch", () => {
     const plan = resolveSnapshotPlan({
-      profile: profile("openclaw"),
+      profile: profile("merclaw"),
       query: {
         limit: 25,
         maxChars: 5000,
@@ -107,7 +107,7 @@ describe("resolveSnapshotPlan", () => {
 
   it("rejects loose snapshot numeric query tokens", () => {
     const plan = resolveSnapshotPlan({
-      profile: profile("openclaw"),
+      profile: profile("merclaw"),
       query: {
         limit: "0x10",
         maxChars: "1.5",
@@ -125,7 +125,7 @@ describe("resolveSnapshotPlan", () => {
 
   it("keeps maxChars zero as an explicit uncapped snapshot request", () => {
     const plan = resolveSnapshotPlan({
-      profile: profile("openclaw"),
+      profile: profile("merclaw"),
       query: { maxChars: "0" },
       hasPlaywright: true,
     });
@@ -136,14 +136,14 @@ describe("resolveSnapshotPlan", () => {
   it("ignores non-positive timeoutMs values", () => {
     expect(
       resolveSnapshotPlan({
-        profile: profile("openclaw"),
+        profile: profile("merclaw"),
         query: { timeoutMs: "0" },
         hasPlaywright: true,
       }).timeoutMs,
     ).toBeUndefined();
     expect(
       resolveSnapshotPlan({
-        profile: profile("openclaw"),
+        profile: profile("merclaw"),
         query: { timeoutMs: "not-a-number" },
         hasPlaywright: true,
       }).timeoutMs,

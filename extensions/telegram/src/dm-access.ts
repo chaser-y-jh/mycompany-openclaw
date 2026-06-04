@@ -1,9 +1,9 @@
 import type { Bot } from "grammy";
 import type { Message } from "grammy/types";
-import { createChannelPairingChallengeIssuer } from "openclaw/plugin-sdk/channel-pairing";
-import type { DmPolicy } from "openclaw/plugin-sdk/config-contracts";
-import { upsertChannelPairingRequest } from "openclaw/plugin-sdk/conversation-runtime";
-import { logVerbose } from "openclaw/plugin-sdk/runtime-env";
+import { createChannelPairingChallengeIssuer } from "merclaw/plugin-sdk/channel-pairing";
+import type { DmPolicy } from "merclaw/plugin-sdk/config-contracts";
+import { upsertChannelPairingRequest } from "merclaw/plugin-sdk/conversation-runtime";
+import { logVerbose } from "merclaw/plugin-sdk/runtime-env";
 import { withTelegramApiErrorLogging } from "./api-logging.js";
 import type { NormalizedAllowFrom } from "./bot-access.js";
 import { renderTelegramHtmlText } from "./format.js";

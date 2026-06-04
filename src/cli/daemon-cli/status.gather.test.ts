@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { StaleOpenClawUpdateLaunchdJob } from "../../daemon/launchd.js";
+import type { StaleMerClawUpdateLaunchdJob } from "../../daemon/launchd.js";
 import { createMockGatewayService } from "../../daemon/service.test-helpers.js";
 import type { PortConnections } from "../../infra/ports.js";
 import type { GatewayRestartHandoff } from "../../infra/restart-handoff.js";
@@ -31,7 +31,7 @@ const loadGatewayTlsRuntime = vi.fn(async (_cfg?: unknown) => ({
   fingerprintSha256: "sha256:11:22:33:44",
 }));
 const findExtraGatewayServices = vi.fn(async (_env?: unknown, _opts?: unknown) => []);
-const findStaleOpenClawUpdateLaunchdJobs = vi.fn<() => Promise<StaleOpenClawUpdateLaunchdJob[]>>(
+const findStaleMerClawUpdateLaunchdJobs = vi.fn<() => Promise<StaleMerClawUpdateLaunchdJob[]>>(
   async () => [],
 );
 const inspectPortUsage = vi.fn(async (port: number) => ({
@@ -69,8 +69,8 @@ const serviceReadCommand = vi.fn<
 >(async (_env?: NodeJS.ProcessEnv) => ({
   programArguments: ["/bin/node", "cli", "gateway", "--port", "19001"],
   environment: {
-    OPENCLAW_STATE_DIR: "/tmp/openclaw-daemon",
-    OPENCLAW_CONFIG_PATH: "/tmp/openclaw-daemon/openclaw.json",
+    MERCLAW_STATE_DIR: "/tmp/merclaw-daemon",
+    MERCLAW_CONFIG_PATH: "/tmp/merclaw-daemon/merclaw.json",
   },
 }));
 const resolveGatewayBindHost = vi.fn(
@@ -79,10 +79,10 @@ const resolveGatewayBindHost = vi.fn(
 const pickPrimaryTailnetIPv4 = vi.fn(() => "100.64.0.9");
 const resolveGatewayPort = vi.fn((_cfg?: unknown, _env?: unknown) => 18789);
 const resolveStateDir = vi.fn(
-  (env: NodeJS.ProcessEnv) => env.OPENCLAW_STATE_DIR ?? "/tmp/openclaw-cli",
+  (env: NodeJS.ProcessEnv) => env.MERCLAW_STATE_DIR ?? "/tmp/merclaw-cli",
 );
 const resolveConfigPath = vi.fn((env: NodeJS.ProcessEnv, stateDir: string) => {
-  return env.OPENCLAW_CONFIG_PATH ?? `${stateDir}/openclaw.json`;
+  return env.MERCLAW_CONFIG_PATH ?? `${stateDir}/merclaw.json`;
 });
 const createConfigIOCalls = vi.fn((configPath: string, pluginValidation?: "full" | "skip") => ({
   configPath,
@@ -113,7 +113,7 @@ vi.mock("../../config/config.js", () => ({
     configPath: string;
     pluginValidation?: "full" | "skip";
   }) => {
-    const isDaemon = configPath.includes("/openclaw-daemon/");
+    const isDaemon = configPath.includes("/merclaw-daemon/");
     const runtimeConfig = isDaemon ? daemonLoadedConfig : cliLoadedConfig;
     const warnings = isDaemon ? daemonConfigWarnings : cliConfigWarnings;
     createConfigIOCalls(configPath, pluginValidation);
@@ -152,7 +152,7 @@ vi.mock("../../daemon/inspect.js", () => ({
 }));
 
 vi.mock("../../daemon/launchd.js", () => ({
-  findStaleOpenClawUpdateLaunchdJobs: () => findStaleOpenClawUpdateLaunchdJobs(),
+  findStaleMerClawUpdateLaunchdJobs: () => findStaleMerClawUpdateLaunchdJobs(),
 }));
 
 vi.mock("../../daemon/service-audit.js", () => ({
@@ -212,23 +212,23 @@ describe("gatherDaemonStatus", () => {
 
   beforeEach(() => {
     envSnapshot = captureEnv([
-      "OPENCLAW_STATE_DIR",
-      "OPENCLAW_CONFIG_PATH",
-      "OPENCLAW_GATEWAY_TOKEN",
-      "OPENCLAW_GATEWAY_PASSWORD",
+      "MERCLAW_STATE_DIR",
+      "MERCLAW_CONFIG_PATH",
+      "MERCLAW_GATEWAY_TOKEN",
+      "MERCLAW_GATEWAY_PASSWORD",
       "DAEMON_GATEWAY_TOKEN",
       "DAEMON_GATEWAY_PASSWORD",
     ]);
-    process.env.OPENCLAW_STATE_DIR = "/tmp/openclaw-cli";
-    process.env.OPENCLAW_CONFIG_PATH = "/tmp/openclaw-cli/openclaw.json";
-    delete process.env.OPENCLAW_GATEWAY_TOKEN;
-    delete process.env.OPENCLAW_GATEWAY_PASSWORD;
+    process.env.MERCLAW_STATE_DIR = "/tmp/merclaw-cli";
+    process.env.MERCLAW_CONFIG_PATH = "/tmp/merclaw-cli/merclaw.json";
+    delete process.env.MERCLAW_GATEWAY_TOKEN;
+    delete process.env.MERCLAW_GATEWAY_PASSWORD;
     delete process.env.DAEMON_GATEWAY_TOKEN;
     delete process.env.DAEMON_GATEWAY_PASSWORD;
     callGatewayStatusProbe.mockClear();
     createConfigIOCalls.mockClear();
-    findStaleOpenClawUpdateLaunchdJobs.mockReset();
-    findStaleOpenClawUpdateLaunchdJobs.mockResolvedValue([]);
+    findStaleMerClawUpdateLaunchdJobs.mockReset();
+    findStaleMerClawUpdateLaunchdJobs.mockResolvedValue([]);
     loadGatewayTlsRuntime.mockClear();
     inspectGatewayRestart.mockClear();
     inspectPortConnections.mockClear();
@@ -316,7 +316,7 @@ describe("gatherDaemonStatus", () => {
       configPath?: string;
     };
     expect(probeInput.requireRpc).toBe(true);
-    expect(probeInput.configPath).toBe("/tmp/openclaw-daemon/openclaw.json");
+    expect(probeInput.configPath).toBe("/tmp/merclaw-daemon/merclaw.json");
   });
 
   it("uses configured handshake timeout as the default daemon probe budget", async () => {
@@ -357,7 +357,7 @@ describe("gatherDaemonStatus", () => {
     });
 
     expect(readConfigFileSnapshotCalls).toHaveBeenCalledTimes(1);
-    expect(readConfigFileSnapshotCalls).toHaveBeenCalledWith("/tmp/openclaw-cli/openclaw.json");
+    expect(readConfigFileSnapshotCalls).toHaveBeenCalledWith("/tmp/merclaw-cli/merclaw.json");
     expect(loadConfigCalls).not.toHaveBeenCalled();
   });
 
@@ -429,14 +429,14 @@ describe("gatherDaemonStatus", () => {
     serviceReadCommand.mockResolvedValueOnce({
       programArguments: ["/bin/node", "cli", "gateway", "--port", "19001"],
       environment: {
-        OPENCLAW_GATEWAY_PORT: "19001",
-        OPENCLAW_CONFIG_PATH: "/tmp/openclaw-daemon/openclaw.json",
-        OPENCLAW_STATE_DIR: "/tmp/openclaw-daemon",
+        MERCLAW_GATEWAY_PORT: "19001",
+        MERCLAW_CONFIG_PATH: "/tmp/merclaw-daemon/merclaw.json",
+        MERCLAW_STATE_DIR: "/tmp/merclaw-daemon",
       } as Record<string, string>,
     });
     serviceReadRuntime.mockImplementationOnce(async (env?: NodeJS.ProcessEnv) => ({
-      status: env?.OPENCLAW_GATEWAY_PORT === "19001" ? "running" : "unknown",
-      detail: env?.OPENCLAW_GATEWAY_PORT ?? "missing-port",
+      status: env?.MERCLAW_GATEWAY_PORT === "19001" ? "running" : "unknown",
+      detail: env?.MERCLAW_GATEWAY_PORT ?? "missing-port",
     }));
 
     const status = await gatherDaemonStatus({
@@ -446,7 +446,7 @@ describe("gatherDaemonStatus", () => {
     });
 
     expect(
-      serviceReadRuntime.mock.calls.some(([env]) => env?.OPENCLAW_GATEWAY_PORT === "19001"),
+      serviceReadRuntime.mock.calls.some(([env]) => env?.MERCLAW_GATEWAY_PORT === "19001"),
     ).toBe(true);
     expect(status.service.runtime?.status).toBe("running");
     expect((status.service.runtime as { detail?: string }).detail).toBe("19001");
@@ -473,8 +473,8 @@ describe("gatherDaemonStatus", () => {
     });
 
     const handoffInput = callArg(readGatewayRestartHandoffSync) as NodeJS.ProcessEnv;
-    expect(handoffInput.OPENCLAW_STATE_DIR).toBe("/tmp/openclaw-daemon");
-    expect(handoffInput.OPENCLAW_CONFIG_PATH).toBe("/tmp/openclaw-daemon/openclaw.json");
+    expect(handoffInput.MERCLAW_STATE_DIR).toBe("/tmp/merclaw-daemon");
+    expect(handoffInput.MERCLAW_CONFIG_PATH).toBe("/tmp/merclaw-daemon/merclaw.json");
     expect(status.service.restartHandoff?.reason).toBe("plugin source changed");
     expect(status.service.restartHandoff?.restartKind).toBe("full-process");
     expect(status.service.restartHandoff?.supervisorMode).toBe("launchd");
@@ -483,9 +483,9 @@ describe("gatherDaemonStatus", () => {
   it.runIf(process.platform === "darwin")(
     "surfaces stale updater launchd jobs only during deep status",
     async () => {
-      findStaleOpenClawUpdateLaunchdJobs.mockResolvedValueOnce([
+      findStaleMerClawUpdateLaunchdJobs.mockResolvedValueOnce([
         {
-          label: "ai.openclaw.update.2026.5.12",
+          label: "ai.merclaw.update.2026.5.12",
           lastExitStatus: 127,
         },
       ]);
@@ -498,7 +498,7 @@ describe("gatherDaemonStatus", () => {
 
       expect(status.service.staleUpdateLaunchdJobs).toEqual([
         {
-          label: "ai.openclaw.update.2026.5.12",
+          label: "ai.merclaw.update.2026.5.12",
           lastExitStatus: 127,
         },
       ]);
@@ -513,7 +513,7 @@ describe("gatherDaemonStatus", () => {
     });
 
     expect(readGatewayRestartHandoffSync).not.toHaveBeenCalled();
-    expect(findStaleOpenClawUpdateLaunchdJobs).not.toHaveBeenCalled();
+    expect(findStaleMerClawUpdateLaunchdJobs).not.toHaveBeenCalled();
     expect(inspectPortConnections).not.toHaveBeenCalled();
   });
 
@@ -525,7 +525,7 @@ describe("gatherDaemonStatus", () => {
           pid: 4242,
           ppid: 1,
           command: "node",
-          commandLine: "node /tmp/newer-openclaw/dist/index.js logs --follow",
+          commandLine: "node /tmp/newer-merclaw/dist/index.js logs --follow",
           address: "TCP 127.0.0.1:50123->127.0.0.1:19001 (ESTABLISHED)",
           direction: "client",
         },
@@ -544,7 +544,7 @@ describe("gatherDaemonStatus", () => {
         pid: 4242,
         ppid: 1,
         command: "node",
-        commandLine: "node /tmp/newer-openclaw/dist/index.js logs --follow",
+        commandLine: "node /tmp/newer-merclaw/dist/index.js logs --follow",
         address: "TCP 127.0.0.1:50123->127.0.0.1:19001 (ESTABLISHED)",
         direction: "client",
       },
@@ -570,8 +570,8 @@ describe("gatherDaemonStatus", () => {
   });
 
   it("uses the fast config path for plain same-file status reads", async () => {
-    const tmp = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-status-config-"));
-    const configPath = path.join(tmp, "openclaw.json");
+    const tmp = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-status-config-"));
+    const configPath = path.join(tmp, "merclaw.json");
     await fs.writeFile(
       configPath,
       JSON.stringify({
@@ -582,13 +582,13 @@ describe("gatherDaemonStatus", () => {
         },
       }),
     );
-    process.env.OPENCLAW_STATE_DIR = tmp;
-    process.env.OPENCLAW_CONFIG_PATH = configPath;
+    process.env.MERCLAW_STATE_DIR = tmp;
+    process.env.MERCLAW_CONFIG_PATH = configPath;
     serviceReadCommand.mockResolvedValueOnce({
       programArguments: ["/bin/node", "cli", "gateway", "--port", "19001"],
       environment: {
-        OPENCLAW_STATE_DIR: tmp,
-        OPENCLAW_CONFIG_PATH: configPath,
+        MERCLAW_STATE_DIR: tmp,
+        MERCLAW_CONFIG_PATH: configPath,
       },
     });
 
@@ -614,8 +614,8 @@ describe("gatherDaemonStatus", () => {
   });
 
   it("uses full plugin-aware config validation for deep status", async () => {
-    const tmp = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-status-config-"));
-    const configPath = path.join(tmp, "openclaw.json");
+    const tmp = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-status-config-"));
+    const configPath = path.join(tmp, "merclaw.json");
     await fs.writeFile(
       configPath,
       JSON.stringify({
@@ -624,8 +624,8 @@ describe("gatherDaemonStatus", () => {
         },
       }),
     );
-    process.env.OPENCLAW_STATE_DIR = tmp;
-    process.env.OPENCLAW_CONFIG_PATH = configPath;
+    process.env.MERCLAW_STATE_DIR = tmp;
+    process.env.MERCLAW_CONFIG_PATH = configPath;
     cliLoadedConfig = {
       gateway: {
         bind: "loopback",
@@ -823,8 +823,8 @@ describe("gatherDaemonStatus", () => {
         },
       },
     };
-    process.env.OPENCLAW_GATEWAY_TOKEN = "env-token";
-    process.env.OPENCLAW_GATEWAY_PASSWORD = "env-password"; // pragma: allowlist secret
+    process.env.MERCLAW_GATEWAY_TOKEN = "env-token";
+    process.env.MERCLAW_GATEWAY_PASSWORD = "env-password"; // pragma: allowlist secret
 
     await gatherDaemonStatus({
       rpc: {},
@@ -860,7 +860,7 @@ describe("gatherDaemonStatus", () => {
       portUsage: {
         port: 19001,
         status: "busy",
-        listeners: [{ pid: 9000, ppid: 8999, commandLine: "openclaw-gateway" }],
+        listeners: [{ pid: 9000, ppid: 8999, commandLine: "merclaw-gateway" }],
         hints: [],
       },
       healthy: false,

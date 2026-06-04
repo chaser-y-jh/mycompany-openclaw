@@ -1,5 +1,5 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { resolveSandboxRuntimeStatus } from "openclaw/plugin-sdk/sandbox";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { resolveSandboxRuntimeStatus } from "merclaw/plugin-sdk/sandbox";
 import {
   formatCodexNativeNodeExecBlock,
   resolveCodexNativeExecutionPolicy,
@@ -8,7 +8,7 @@ import {
 type DirectMethodPolicy =
   | "allowed-control-plane"
   | "blocked-native-bypass"
-  | "requires-openclaw-environment";
+  | "requires-merclaw-environment";
 
 const DIRECT_METHOD_POLICIES = new Map<string, DirectMethodPolicy>([
   ["account/rateLimits/read", "allowed-control-plane"],
@@ -34,7 +34,7 @@ const DIRECT_METHOD_POLICIES = new Map<string, DirectMethodPolicy>([
   ["thread/name/update", "allowed-control-plane"],
   ["thread/read", "allowed-control-plane"],
   ["thread/rollback", "allowed-control-plane"],
-  ["thread/start", "requires-openclaw-environment"],
+  ["thread/start", "requires-merclaw-environment"],
   ["thread/unarchive", "allowed-control-plane"],
   ["thread/unsubscribe", "allowed-control-plane"],
   ["turn/interrupt", "allowed-control-plane"],
@@ -68,7 +68,7 @@ const NODE_EXEC_BLOCKED_CONTROL_PLANE_METHODS = new Set<string>([
 export function resolveCodexAppServerDirectSandboxBypassBlock(params: {
   method: string;
   requestParams?: unknown;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   sessionKey?: string;
   sessionId?: string;
 }): string | undefined {
@@ -109,8 +109,8 @@ export function resolveCodexAppServerDirectSandboxBypassBlock(params: {
     return undefined;
   }
   if (
-    policy === "requires-openclaw-environment" &&
-    hasOpenClawSandboxEnvironmentSelection(params.requestParams)
+    policy === "requires-merclaw-environment" &&
+    hasMerClawSandboxEnvironmentSelection(params.requestParams)
   ) {
     return undefined;
   }
@@ -118,7 +118,7 @@ export function resolveCodexAppServerDirectSandboxBypassBlock(params: {
 }
 
 export function resolveCodexNativeExecutionBlock(params: {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   sessionKey?: string;
   sessionId?: string;
   surface: string;
@@ -127,7 +127,7 @@ export function resolveCodexNativeExecutionBlock(params: {
 }
 
 export function resolveCodexNativeSandboxBlock(params: {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   sessionKey?: string;
   sessionId?: string;
   surface: string;
@@ -157,7 +157,7 @@ function resolveDirectMethodPolicy(method: string): DirectMethodPolicy {
   return "blocked-native-bypass";
 }
 
-function hasOpenClawSandboxEnvironmentSelection(value: unknown): boolean {
+function hasMerClawSandboxEnvironmentSelection(value: unknown): boolean {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     return false;
   }
@@ -172,7 +172,7 @@ function hasOpenClawSandboxEnvironmentSelection(value: unknown): boolean {
       const environment = entry as { environmentId?: unknown; cwd?: unknown };
       return (
         typeof environment.environmentId === "string" &&
-        environment.environmentId.startsWith("openclaw-sandbox-") &&
+        environment.environmentId.startsWith("merclaw-sandbox-") &&
         typeof environment.cwd === "string" &&
         environment.cwd.trim().length > 0
       );
@@ -182,14 +182,14 @@ function hasOpenClawSandboxEnvironmentSelection(value: unknown): boolean {
 
 function formatCodexNativeSandboxBlock(params: { surface: string }): string {
   return [
-    `Codex-native ${params.surface} is unavailable because OpenClaw sandboxing is active for this session.`,
-    "This mode cannot route execution through the OpenClaw sandbox backend.",
+    `Codex-native ${params.surface} is unavailable because MerClaw sandboxing is active for this session.`,
+    "This mode cannot route execution through the MerClaw sandbox backend.",
     "Use a normal Codex harness turn, or run an intentionally unsandboxed session.",
   ].join(" ");
 }
 
 function resolveCodexNativeNodeExecBlock(params: {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   sessionKey?: string;
   sessionId?: string;
   surface: string;

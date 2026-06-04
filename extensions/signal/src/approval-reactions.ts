@@ -1,4 +1,4 @@
-import { matchesApprovalRequestFilters } from "openclaw/plugin-sdk/approval-client-runtime";
+import { matchesApprovalRequestFilters } from "merclaw/plugin-sdk/approval-client-runtime";
 import {
   buildApprovalReactionHint,
   createApprovalReactionTargetStore,
@@ -6,15 +6,15 @@ import {
   resolveApprovalReactionTarget,
   type ApprovalReactionDecisionBinding,
   type ApprovalReactionTargetRecord,
-} from "openclaw/plugin-sdk/approval-reaction-runtime";
-import type { ExecApprovalReplyDecision } from "openclaw/plugin-sdk/approval-reply-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { normalizeAccountId } from "openclaw/plugin-sdk/routing";
+} from "merclaw/plugin-sdk/approval-reaction-runtime";
+import type { ExecApprovalReplyDecision } from "merclaw/plugin-sdk/approval-reply-runtime";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { normalizeAccountId } from "merclaw/plugin-sdk/routing";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
-import { normalizeE164 } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "merclaw/plugin-sdk/string-coerce-runtime";
+import { normalizeE164 } from "merclaw/plugin-sdk/text-utility-runtime";
 import { getSignalApprovalApprovers, signalApprovalAuth } from "./approval-auth.js";
 import { looksLikeUuid } from "./identity.js";
 import { normalizeSignalMessagingTarget } from "./normalize.js";
@@ -34,7 +34,7 @@ type SignalApprovalReactionResolution = {
 };
 
 type ApprovalKind = "exec" | "plugin";
-type ApprovalForwardingConfig = NonNullable<NonNullable<OpenClawConfig["approvals"]>["exec"]>;
+type ApprovalForwardingConfig = NonNullable<NonNullable<MerClawConfig["approvals"]>["exec"]>;
 type ApprovalForwardingMode = NonNullable<ApprovalForwardingConfig["mode"]>;
 
 type SignalApprovalReactionRoute =
@@ -79,7 +79,7 @@ function resolveApprovalKindFromId(approvalId: string): ApprovalKind {
 }
 
 function resolveApprovalForwardingConfig(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   approvalKind: ApprovalKind;
 }): ApprovalForwardingConfig | undefined {
   return params.approvalKind === "plugin"
@@ -151,7 +151,7 @@ function hasMatchingSignalApprovalReactionTarget(params: {
 }
 
 function isSignalApprovalReactionRouteStillEnabled(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   target: Pick<SignalApprovalReactionTarget, "approvalKind" | "route">;
 }): boolean {
   const config = resolveApprovalForwardingConfig({
@@ -365,7 +365,7 @@ export function extractSignalApprovalPromptBinding(text: string): {
 }
 
 function buildTargetRoute(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   accountId?: string | null;
   to: string;
   approvalId: string;
@@ -401,7 +401,7 @@ function buildTargetRoute(params: {
 }
 
 export function shouldAppendSignalApprovalReactionHintForOutboundMessage(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   accountId?: string | null;
   to: string;
   text: string;
@@ -433,7 +433,7 @@ export function shouldAppendSignalApprovalReactionHintForOutboundMessage(params:
 }
 
 export function appendSignalApprovalReactionHintForOutboundMessage(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   accountId?: string | null;
   to: string;
   text: string;
@@ -459,7 +459,7 @@ export function appendSignalApprovalReactionHintForOutboundMessage(params: {
 }
 
 export function hasSignalApprovalReactionApprovers(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   accountId?: string | null;
 }): boolean {
   return getSignalApprovalApprovers(params).length > 0;
@@ -530,7 +530,7 @@ export function registerSignalApprovalReactionTarget(params: {
 }
 
 export function registerSignalApprovalReactionTargetForOutboundMessage(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   accountId: string;
   to: string;
   messageId: string;
@@ -641,7 +641,7 @@ export async function resolveSignalApprovalReactionTargetWithPersistence(params:
 }
 
 export async function maybeResolveSignalApprovalReaction(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   accountId: string;
   conversationKey: string;
   messageId: string;

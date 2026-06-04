@@ -1,9 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
-import { isRecord } from "@openclaw/normalization-core/record-coerce";
+import { normalizeProviderId } from "@merclaw/model-catalog-core/provider-id";
+import { isRecord } from "@merclaw/normalization-core/record-coerce";
 import { resolveIsNixMode } from "../config/paths.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import {
   getActiveDiagnosticsTimelineSpan,
   measureDiagnosticsTimelineSpanSync,
@@ -62,15 +62,15 @@ registerPluginMetadataProcessMemoLifecycleClear(clearLoadPluginMetadataSnapshotM
 const MEMO_RELEVANT_ENV_KEYS = [
   "APPDATA",
   "HOME",
-  "OPENCLAW_BUNDLED_PLUGINS_DIR",
-  "OPENCLAW_COMPATIBILITY_HOST_VERSION",
-  "OPENCLAW_CONFIG_PATH",
-  "OPENCLAW_DISABLE_BUNDLED_PLUGINS",
-  "OPENCLAW_DISABLE_BUNDLED_SOURCE_OVERLAYS",
-  "OPENCLAW_DISABLE_PERSISTED_PLUGIN_REGISTRY",
-  "OPENCLAW_HOME",
-  "OPENCLAW_NIX_MODE",
-  "OPENCLAW_STATE_DIR",
+  "MERCLAW_BUNDLED_PLUGINS_DIR",
+  "MERCLAW_COMPATIBILITY_HOST_VERSION",
+  "MERCLAW_CONFIG_PATH",
+  "MERCLAW_DISABLE_BUNDLED_PLUGINS",
+  "MERCLAW_DISABLE_BUNDLED_SOURCE_OVERLAYS",
+  "MERCLAW_DISABLE_PERSISTED_PLUGIN_REGISTRY",
+  "MERCLAW_HOME",
+  "MERCLAW_NIX_MODE",
+  "MERCLAW_STATE_DIR",
   "USERPROFILE",
   "XDG_CONFIG_HOME",
 ] as const;
@@ -197,7 +197,7 @@ function resolvePersistedRegistryFastMemoFingerprint(params: {
   preferPersisted?: boolean;
   stateDir?: string;
 }): Record<string, unknown> {
-  const disabledByEnv = params.env.OPENCLAW_DISABLE_PERSISTED_PLUGIN_REGISTRY?.trim().toLowerCase();
+  const disabledByEnv = params.env.MERCLAW_DISABLE_PERSISTED_PLUGIN_REGISTRY?.trim().toLowerCase();
   const disabled =
     params.preferPersisted === false ||
     (Boolean(disabledByEnv) &&
@@ -444,7 +444,7 @@ export function isPluginMetadataSnapshotCompatible(params: {
     PluginMetadataSnapshot,
     "configFingerprint" | "index" | "pluginIds" | "policyHash" | "workspaceDir"
   >;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   env?: NodeJS.ProcessEnv;
   allowScopedSnapshot?: boolean;
   pluginIds?: readonly string[];

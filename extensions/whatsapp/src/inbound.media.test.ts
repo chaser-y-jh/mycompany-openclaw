@@ -80,10 +80,10 @@ let currentMockSocket:
     }
   | undefined;
 
-vi.mock("openclaw/plugin-sdk/runtime-config-snapshot", async () => {
+vi.mock("merclaw/plugin-sdk/runtime-config-snapshot", async () => {
   const actual = await vi.importActual<
-    typeof import("openclaw/plugin-sdk/runtime-config-snapshot")
-  >("openclaw/plugin-sdk/runtime-config-snapshot");
+    typeof import("merclaw/plugin-sdk/runtime-config-snapshot")
+  >("merclaw/plugin-sdk/runtime-config-snapshot");
   return {
     ...actual,
     getRuntimeConfig: vi.fn().mockReturnValue({
@@ -100,9 +100,9 @@ vi.mock("openclaw/plugin-sdk/runtime-config-snapshot", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/conversation-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/conversation-runtime")>(
-    "openclaw/plugin-sdk/conversation-runtime",
+vi.mock("merclaw/plugin-sdk/conversation-runtime", async () => {
+  const actual = await vi.importActual<typeof import("merclaw/plugin-sdk/conversation-runtime")>(
+    "merclaw/plugin-sdk/conversation-runtime",
   );
   return {
     ...actual,
@@ -115,9 +115,9 @@ vi.mock("openclaw/plugin-sdk/conversation-runtime", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/channel-pairing", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/channel-pairing")>(
-    "openclaw/plugin-sdk/channel-pairing",
+vi.mock("merclaw/plugin-sdk/channel-pairing", async () => {
+  const actual = await vi.importActual<typeof import("merclaw/plugin-sdk/channel-pairing")>(
+    "merclaw/plugin-sdk/channel-pairing",
   );
   return {
     ...actual,
@@ -127,9 +127,9 @@ vi.mock("openclaw/plugin-sdk/channel-pairing", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/media-store", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/media-store")>(
-    "openclaw/plugin-sdk/media-store",
+vi.mock("merclaw/plugin-sdk/media-store", async () => {
+  const actual = await vi.importActual<typeof import("merclaw/plugin-sdk/media-store")>(
+    "merclaw/plugin-sdk/media-store",
   );
   return {
     ...actual,
@@ -150,7 +150,7 @@ vi.mock("./runtime.js", () => ({
   setWhatsAppRuntime: vi.fn(),
 }));
 
-const HOME = path.join(os.tmpdir(), `openclaw-inbound-media-${crypto.randomUUID()}`);
+const HOME = path.join(os.tmpdir(), `merclaw-inbound-media-${crypto.randomUUID()}`);
 const ORIGINAL_HOME = process.env.HOME;
 process.env.HOME = HOME;
 

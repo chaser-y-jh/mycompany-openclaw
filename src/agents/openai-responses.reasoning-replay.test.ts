@@ -1,5 +1,5 @@
-import type { AssistantMessage, Model, ToolResultMessage } from "openclaw/plugin-sdk/llm";
-import { stream } from "openclaw/plugin-sdk/llm";
+import type { AssistantMessage, Model, ToolResultMessage } from "merclaw/plugin-sdk/llm";
+import { stream } from "merclaw/plugin-sdk/llm";
 import { Type } from "typebox";
 import { describe, expect, it } from "vitest";
 

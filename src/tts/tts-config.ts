@@ -1,11 +1,11 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
-import { isRecord as isPlainObject } from "@openclaw/normalization-core/record-coerce";
+import { isRecord as isPlainObject } from "@merclaw/normalization-core/record-coerce";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.js";
+} from "@merclaw/normalization-core/string-coerce";
+import type { MerClawConfig } from "../config/types.js";
 import type { TtsAutoMode, TtsConfig, TtsMode } from "../config/types.tts.js";
 import { normalizeAccountId, normalizeAgentId } from "../routing/session-key.js";
 import { resolveConfigDir, resolveUserPath } from "../utils.js";
@@ -37,7 +37,7 @@ function deepMergeDefined(base: unknown, override: unknown): unknown {
 }
 
 function resolveAgentTtsOverride(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   agentId: string | undefined,
 ): TtsConfig | undefined {
   if (!agentId || !Array.isArray(cfg.agents?.list)) {
@@ -82,7 +82,7 @@ function asObjectRecord(value: unknown): Record<string, unknown> | undefined {
 }
 
 function resolveChannelConfig(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   channelId: string | undefined,
 ): Record<string, unknown> | undefined {
   if (!isPlainObject(cfg.channels)) {
@@ -102,14 +102,14 @@ function resolveChannelConfig(
 }
 
 function resolveChannelTtsOverride(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   context: TtsConfigResolutionContext,
 ): TtsConfig | undefined {
   return asTtsConfig(resolveChannelConfig(cfg, context.channelId)?.tts);
 }
 
 function resolveAccountTtsOverride(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   context: TtsConfigResolutionContext,
 ): TtsConfig | undefined {
   const channelConfig = resolveChannelConfig(cfg, context.channelId);
@@ -119,7 +119,7 @@ function resolveAccountTtsOverride(
 }
 
 export function resolveEffectiveTtsConfig(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   contextOrAgentId?: string | TtsConfigResolutionContext,
 ): TtsConfig {
   const context = resolveTtsConfigContext(contextOrAgentId);
@@ -135,7 +135,7 @@ export function resolveEffectiveTtsConfig(
 }
 
 export function resolveConfiguredTtsMode(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   contextOrAgentId?: string | TtsConfigResolutionContext,
 ): TtsMode {
   return resolveEffectiveTtsConfig(cfg, contextOrAgentId).mode ?? "final";
@@ -145,7 +145,7 @@ function resolveTtsPrefsPathValue(prefsPath: string | undefined): string {
   if (prefsPath?.trim()) {
     return resolveUserPath(prefsPath.trim());
   }
-  const envPath = process.env.OPENCLAW_TTS_PREFS?.trim();
+  const envPath = process.env.MERCLAW_TTS_PREFS?.trim();
   if (envPath) {
     return resolveUserPath(envPath);
   }
@@ -174,7 +174,7 @@ function readTtsPrefsAutoMode(prefsPath: string): TtsAutoMode | undefined {
 }
 
 export function shouldAttemptTtsPayload(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   ttsAuto?: string;
   agentId?: string;
   channelId?: string;
@@ -199,7 +199,7 @@ export function shouldAttemptTtsPayload(params: {
 }
 
 export function shouldCleanTtsDirectiveText(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   ttsAuto?: string;
   agentId?: string;
   channelId?: string;

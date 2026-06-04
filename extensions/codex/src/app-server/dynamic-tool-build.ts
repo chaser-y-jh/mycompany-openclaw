@@ -9,9 +9,9 @@ import {
   resolveSandboxContext,
   supportsModelTools,
   type EmbeddedRunAttemptParams,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import { resolveAgentDir } from "openclaw/plugin-sdk/agent-runtime";
-import { isToolAllowed } from "openclaw/plugin-sdk/sandbox";
+} from "merclaw/plugin-sdk/agent-harness-runtime";
+import { resolveAgentDir } from "merclaw/plugin-sdk/agent-runtime";
+import { isToolAllowed } from "merclaw/plugin-sdk/sandbox";
 import { readCodexPluginConfig, type CodexPluginConfig } from "./config.js";
 import {
   filterCodexDynamicTools,
@@ -23,13 +23,13 @@ import type { CodexSandboxPolicy, CodexTurnEnvironmentParams } from "./protocol.
 import type { CodexSandboxExecEnvironment } from "./sandbox-exec-server.js";
 import { filterToolsForVisionInputs } from "./vision-tools.js";
 
-type OpenClawCodingToolsOptions = NonNullable<
-  Parameters<(typeof import("openclaw/plugin-sdk/agent-harness"))["createOpenClawCodingTools"]>[0]
+type MerClawCodingToolsOptions = NonNullable<
+  Parameters<(typeof import("merclaw/plugin-sdk/agent-harness"))["createMerClawCodingTools"]>[0]
 >;
-export type OpenClawCodingToolsFactory =
-  (typeof import("openclaw/plugin-sdk/agent-harness"))["createOpenClawCodingTools"];
-type OpenClawDynamicTool = ReturnType<OpenClawCodingToolsFactory>[number];
-type OpenClawSandboxContext = Awaited<ReturnType<typeof resolveSandboxContext>>;
+export type MerClawCodingToolsFactory =
+  (typeof import("merclaw/plugin-sdk/agent-harness"))["createMerClawCodingTools"];
+type MerClawDynamicTool = ReturnType<MerClawCodingToolsFactory>[number];
+type MerClawSandboxContext = Awaited<ReturnType<typeof resolveSandboxContext>>;
 type CodexDynamicToolBuildEvent = Parameters<
   NonNullable<EmbeddedRunAttemptParams["onAgentEvent"]>
 >[0];
@@ -50,7 +50,7 @@ export type DynamicToolBuildParams = {
   effectiveWorkspace: string;
   effectiveCwd?: string;
   sandboxSessionKey: string;
-  sandbox: OpenClawSandboxContext;
+  sandbox: MerClawSandboxContext;
   nativeToolSurfaceEnabled?: boolean;
   runAbortController: AbortController;
   sessionAgentId: string;
@@ -62,20 +62,20 @@ export type DynamicToolBuildParams = {
   onCodexAppServerEvent?: (event: CodexDynamicToolBuildEvent) => void;
 };
 
-let openClawCodingToolsFactoryForTests: OpenClawCodingToolsFactory | undefined;
+let merClawCodingToolsFactoryForTests: MerClawCodingToolsFactory | undefined;
 
-export function setOpenClawCodingToolsFactoryForTests(factory: OpenClawCodingToolsFactory): void {
-  openClawCodingToolsFactoryForTests = factory;
+export function setMerClawCodingToolsFactoryForTests(factory: MerClawCodingToolsFactory): void {
+  merClawCodingToolsFactoryForTests = factory;
 }
 
-export function resetOpenClawCodingToolsFactoryForTests(): void {
-  openClawCodingToolsFactoryForTests = undefined;
+export function resetMerClawCodingToolsFactoryForTests(): void {
+  merClawCodingToolsFactoryForTests = undefined;
 }
 
-export function resolveOpenClawCodingToolsSessionKeys(
+export function resolveMerClawCodingToolsSessionKeys(
   params: EmbeddedRunAttemptParams,
   sandboxSessionKey: string,
-): Pick<OpenClawCodingToolsOptions, "sessionKey" | "runSessionKey"> {
+): Pick<MerClawCodingToolsOptions, "sessionKey" | "runSessionKey"> {
   return {
     sessionKey: sandboxSessionKey,
     runSessionKey:
@@ -177,12 +177,12 @@ export async function buildDynamicTools(input: DynamicToolBuildParams) {
   });
   const modelHasVision = params.model.input?.includes("image") ?? false;
   const agentDir = params.agentDir ?? resolveAgentDir(params.config ?? {}, input.sessionAgentId);
-  const createOpenClawCodingTools =
-    openClawCodingToolsFactoryForTests ??
-    (await import("openclaw/plugin-sdk/agent-harness")).createOpenClawCodingTools;
+  const createMerClawCodingTools =
+    merClawCodingToolsFactoryForTests ??
+    (await import("merclaw/plugin-sdk/agent-harness")).createMerClawCodingTools;
   toolBuildStages.mark("load-agent-harness-tools");
-  const sessionKeys = resolveOpenClawCodingToolsSessionKeys(params, input.sandboxSessionKey);
-  const allTools = createOpenClawCodingTools({
+  const sessionKeys = resolveMerClawCodingToolsSessionKeys(params, input.sandboxSessionKey);
+  const allTools = createMerClawCodingTools({
     agentId: input.sessionAgentId,
     ...buildEmbeddedAttemptToolRunContext(params),
     exec: {
@@ -226,7 +226,7 @@ export async function buildDynamicTools(input: DynamicToolBuildParams) {
     modelId: params.modelId,
     modelCompat:
       params.model.compat && typeof params.model.compat === "object"
-        ? (params.model.compat as OpenClawCodingToolsOptions["modelCompat"])
+        ? (params.model.compat as MerClawCodingToolsOptions["modelCompat"])
         : undefined,
     modelApi: params.model.api,
     modelContextWindowTokens: params.model.contextWindow,
@@ -264,7 +264,7 @@ export async function buildDynamicTools(input: DynamicToolBuildParams) {
       toolBuildStages.mark(name);
     },
   });
-  toolBuildStages.mark("create-openclaw-coding-tools");
+  toolBuildStages.mark("create-merclaw-coding-tools");
   const codexFilteredTools = addNodeShellDynamicToolsIfNeeded(
     addSandboxShellDynamicToolsIfAvailable(
       isCodexMemoryFlushRun(params)
@@ -345,7 +345,7 @@ export function includeForcedCodexDynamicToolAllow(
 
 export function shouldEnableCodexAppServerNativeToolSurface(
   params: EmbeddedRunAttemptParams,
-  sandbox?: OpenClawSandboxContext,
+  sandbox?: MerClawSandboxContext,
   options: {
     agentId?: string;
     runtimeSessionKey?: string;
@@ -369,7 +369,7 @@ export function shouldEnableCodexAppServerNativeToolSurface(
     return canCodexAppServerNativeToolSurfaceHonorSandbox(sandbox, options);
   }
   // Codex native code mode exposes its shell/file surface as one app-server
-  // capability, so narrow OpenClaw allowlists must fail closed rather than
+  // capability, so narrow MerClaw allowlists must fail closed rather than
   // widening `message` or `web_search` into shell access.
   return (
     hasWildcardCodexToolsAllow(toolsAllow) &&
@@ -382,7 +382,7 @@ export function isCodexNativeExecutionBlockedByNodeExecHost(
   options: {
     agentId?: string;
     runtimeSessionKey?: string;
-    sandbox?: OpenClawSandboxContext;
+    sandbox?: MerClawSandboxContext;
   } = {},
 ): boolean {
   return !resolveCodexNativeExecutionPolicy({
@@ -409,7 +409,7 @@ function resolveCodexRuntimePolicySessionKey(
 }
 
 function canCodexAppServerNativeToolSurfaceHonorSandbox(
-  sandbox: OpenClawSandboxContext | undefined,
+  sandbox: MerClawSandboxContext | undefined,
   options: { sandboxExecServerEnabled?: boolean } = {},
 ): boolean {
   if (!sandbox?.enabled) {
@@ -424,7 +424,7 @@ function canCodexAppServerNativeToolSurfaceHonorSandbox(
   }
   // Codex app-server native shell, filesystem, and user MCP execution are owned
   // by the app-server process. Without the explicit exec-server integration,
-  // active OpenClaw sandboxing must disable the native surface and route shell
+  // active MerClaw sandboxing must disable the native surface and route shell
   // access through sandbox-backed dynamic tools instead.
   return false;
 }
@@ -450,7 +450,7 @@ function filterCodexMemoryFlushDynamicTools<T extends { name: string }>(tools: T
 }
 
 export function shouldRequireCodexSandboxExecServerEnvironment(params: {
-  sandbox?: OpenClawSandboxContext;
+  sandbox?: MerClawSandboxContext;
   nativeToolSurfaceEnabled: boolean;
   sandboxExecServerEnabled: boolean;
 }): boolean {
@@ -476,17 +476,17 @@ export function resolveCodexAppServerExecutionCwd(params: {
     : params.effectiveCwd;
 }
 
-export function resolveCodexExternalSandboxPolicyForOpenClawSandbox(
-  sandbox: OpenClawSandboxContext | undefined,
+export function resolveCodexExternalSandboxPolicyForMerClawSandbox(
+  sandbox: MerClawSandboxContext | undefined,
 ): CodexSandboxPolicy {
   return {
     type: "externalSandbox",
-    networkAccess: codexNetworkAccessForOpenClawSandbox(sandbox) ? "enabled" : "restricted",
+    networkAccess: codexNetworkAccessForMerClawSandbox(sandbox) ? "enabled" : "restricted",
   };
 }
 
-function codexNetworkAccessForOpenClawSandbox(
-  sandbox: OpenClawSandboxContext | undefined,
+function codexNetworkAccessForMerClawSandbox(
+  sandbox: MerClawSandboxContext | undefined,
 ): boolean {
   if (sandbox?.backendId !== "docker") {
     return true;
@@ -507,10 +507,10 @@ export function disableCodexPluginThreadConfig(pluginConfig?: unknown): CodexPlu
 }
 
 export function addSandboxShellDynamicToolsIfAvailable(
-  filteredTools: OpenClawDynamicTool[],
-  allTools: OpenClawDynamicTool[],
+  filteredTools: MerClawDynamicTool[],
+  allTools: MerClawDynamicTool[],
   input: DynamicToolBuildParams,
-): OpenClawDynamicTool[] {
+): MerClawDynamicTool[] {
   if (
     !shouldExposeSandboxExecDynamicTool(input) ||
     isSandboxShellDynamicToolExcluded(input.pluginConfig)
@@ -524,11 +524,11 @@ export function addSandboxShellDynamicToolsIfAvailable(
   if (!execTool || !processTool) {
     return filteredTools;
   }
-  const sandboxExecTool: OpenClawDynamicTool = {
+  const sandboxExecTool: MerClawDynamicTool = {
     ...execTool,
     name: "sandbox_exec",
     description:
-      "Run a shell command through OpenClaw's configured sandbox backend for this session. Use when OpenClaw sandboxing is active or when a command must execute in the sandbox backend, such as an SSH-backed sandbox or Docker container-path bind layout. Use Codex's native shell only when no OpenClaw sandbox is active and native Code Mode is available.",
+      "Run a shell command through MerClaw's configured sandbox backend for this session. Use when MerClaw sandboxing is active or when a command must execute in the sandbox backend, such as an SSH-backed sandbox or Docker container-path bind layout. Use Codex's native shell only when no MerClaw sandbox is active and native Code Mode is available.",
     execute: async (toolCallId, args, signal, onUpdate) => {
       const result = await execTool.execute(toolCallId, args, signal, onUpdate);
       return {
@@ -546,11 +546,11 @@ export function addSandboxShellDynamicToolsIfAvailable(
       };
     },
   };
-  const sandboxProcessTool: OpenClawDynamicTool = {
+  const sandboxProcessTool: MerClawDynamicTool = {
     ...processTool,
     name: "sandbox_process",
     description:
-      "Manage sandbox_exec sessions that were started through OpenClaw's configured sandbox backend for this session: list, poll, log, write, send-keys, submit, paste, kill, clear, or remove. Use only for sandbox_exec follow-up; use Codex's native shell session handling only when no OpenClaw sandbox is active and native Code Mode is available.",
+      "Manage sandbox_exec sessions that were started through MerClaw's configured sandbox backend for this session: list, poll, log, write, send-keys, submit, paste, kill, clear, or remove. Use only for sandbox_exec follow-up; use Codex's native shell session handling only when no MerClaw sandbox is active and native Code Mode is available.",
   };
   return [...filteredTools, sandboxExecTool, sandboxProcessTool];
 }
@@ -585,10 +585,10 @@ function isSandboxShellDynamicToolExcluded(config: CodexPluginConfig): boolean {
 }
 
 function addNodeShellDynamicToolsIfNeeded(
-  filteredTools: OpenClawDynamicTool[],
-  allTools: OpenClawDynamicTool[],
+  filteredTools: MerClawDynamicTool[],
+  allTools: MerClawDynamicTool[],
   input: DynamicToolBuildParams,
-): OpenClawDynamicTool[] {
+): MerClawDynamicTool[] {
   if (
     isCodexMemoryFlushRun(input.params) ||
     !isCodexNativeExecutionBlockedByNodeExecHost(input.params, {

@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import type { EventSessionRoutingPolicy } from "../infra/event-session-routing.js";
 import type { ExecApprovalDecision } from "../infra/exec-approvals.js";
 import type {
@@ -29,7 +29,7 @@ export type ExecToolDefaults = {
   safeBinTrustedDirs?: string[];
   safeBinProfiles?: Record<string, SafeBinProfileFixture>;
   reviewer?: ExecReviewerConfig;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   autoReviewer?: ExecAutoReviewer;
   agentId?: string;
   backgroundMs?: number;

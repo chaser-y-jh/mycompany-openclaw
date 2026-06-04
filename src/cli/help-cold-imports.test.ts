@@ -222,7 +222,7 @@ vi.mock("../secrets/plan.js", () => {
 
 function makeProgram(): Command {
   const program = new Command();
-  program.name("openclaw");
+  program.name("merclaw");
   program.exitOverride();
   return program;
 }

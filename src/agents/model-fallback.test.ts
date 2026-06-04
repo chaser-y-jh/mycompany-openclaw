@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import path from "node:path";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { MerClawConfig } from "../config/config.js";
 import { resetLogger, setLoggerOverride } from "../logging/logger.js";
 import { createWarnLogCapture } from "../logging/test-helpers/warn-log-capture.js";
 import {
@@ -209,7 +209,7 @@ function createModelNormalizerSnapshot(params: {
     plugins: [
       {
         pluginId: "fallback-normalizer",
-        manifestPath: `/tmp/fallback-normalizer-${params.manifestHash}/openclaw.plugin.json`,
+        manifestPath: `/tmp/fallback-normalizer-${params.manifestHash}/merclaw.plugin.json`,
         manifestHash: params.manifestHash,
         source: `/tmp/fallback-normalizer-${params.manifestHash}/index.ts`,
         rootDir: `/tmp/fallback-normalizer-${params.manifestHash}`,
@@ -274,7 +274,7 @@ async function runModelFallbackCase(name: string, run: () => Promise<void>): Pro
   }
 }
 
-function makeFallbacksOnlyCfg(): OpenClawConfig {
+function makeFallbacksOnlyCfg(): MerClawConfig {
   return {
     agents: {
       defaults: {
@@ -283,10 +283,10 @@ function makeFallbacksOnlyCfg(): OpenClawConfig {
         },
       },
     },
-  } as OpenClawConfig;
+  } as MerClawConfig;
 }
 
-function makeProviderFallbackCfg(provider: string): OpenClawConfig {
+function makeProviderFallbackCfg(provider: string): MerClawConfig {
   return makeCfg({
     agents: {
       defaults: {
@@ -301,7 +301,7 @@ function makeProviderFallbackCfg(provider: string): OpenClawConfig {
 
 function makeProviderOrderFallbackCfg(
   entries: Array<[provider: string, model: string]>,
-): OpenClawConfig {
+): MerClawConfig {
   return {
     agents: {
       defaults: {
@@ -321,7 +321,7 @@ function makeProviderOrderFallbackCfg(
         ]),
       ),
     },
-  } as unknown as OpenClawConfig;
+  } as unknown as MerClawConfig;
 }
 
 async function withTempAuthStore<T>(
@@ -334,12 +334,12 @@ async function withTempAuthStore<T>(
 }
 
 async function makeAuthTempDir(): Promise<string> {
-  authTempRoot ||= path.join("/tmp", "openclaw-auth-suite-mock");
+  authTempRoot ||= path.join("/tmp", "merclaw-auth-suite-mock");
   return path.join(authTempRoot, `case-${++authTempCounter}`);
 }
 
 async function runWithStoredAuth(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   store: AuthProfileStore;
   provider: string;
   run: (provider: string, model: string) => Promise<string>;
@@ -509,7 +509,7 @@ async function expectSkippedUnavailableProvider(params: {
 }
 
 // Issue-backed Anthropic/OpenAI-compatible insufficient_quota payload under HTTP 400:
-// https://github.com/openclaw/openclaw/issues/23440
+// https://github.com/merclaw/merclaw/issues/23440
 const INSUFFICIENT_QUOTA_PAYLOAD =
   '{"type":"error","error":{"type":"insufficient_quota","message":"Your account has insufficient quota balance to run this request."}}';
 
@@ -522,13 +522,13 @@ describe("runWithModelFallback", () => {
       cfg: makeCfg(),
       provider: "openai",
       model: "gpt-4.1-mini",
-      agentDir: "/tmp/openclaw-no-auth-profiles",
+      agentDir: "/tmp/merclaw-no-auth-profiles",
       run,
     });
 
     expect(result.result).toBe("ok");
     expect(authSourceCheckMock.hasAnyAuthProfileStoreSource).toHaveBeenCalledWith(
-      "/tmp/openclaw-no-auth-profiles",
+      "/tmp/merclaw-no-auth-profiles",
     );
     expect(authRuntimeMock.runtime.ensureAuthProfileStore).not.toHaveBeenCalled();
     expect(run).toHaveBeenCalledWith("openai", "gpt-4.1-mini");
@@ -603,7 +603,7 @@ describe("runWithModelFallback", () => {
       },
     ] satisfies Array<{
       name: string;
-      cfg: OpenClawConfig;
+      cfg: MerClawConfig;
       provider: string;
       model: string;
       expected: [string, string];
@@ -640,20 +640,20 @@ describe("runWithModelFallback", () => {
     expect(result.attempts[0].reason).toBe("unknown");
   });
 
-  it("does not prepare agent harness plugins for forced OpenClaw candidates", async () => {
+  it("does not prepare agent harness plugins for forced MerClaw candidates", async () => {
     const cfg = makeCfg({
       models: {
         providers: {
           openai: {
             baseUrl: "https://api.openai.com/v1",
-            agentRuntime: { id: "openclaw" },
+            agentRuntime: { id: "merclaw" },
             models: [],
           },
         },
       },
     });
     const prepareAgentHarnessRuntime = vi.fn(() => {
-      throw new Error("OpenClaw candidates should not prepare plugin harnesses");
+      throw new Error("MerClaw candidates should not prepare plugin harnesses");
     });
     const run = vi.fn().mockResolvedValueOnce("ok");
 
@@ -670,20 +670,20 @@ describe("runWithModelFallback", () => {
     expect(run).toHaveBeenCalledTimes(1);
   });
 
-  it("does not prepare agent harness plugins for forced OpenClaw runtime candidates", async () => {
+  it("does not prepare agent harness plugins for forced MerClaw runtime candidates", async () => {
     const cfg = makeCfg({
       models: {
         providers: {
           openai: {
             baseUrl: "https://api.openai.com/v1",
-            agentRuntime: { id: "openclaw" },
+            agentRuntime: { id: "merclaw" },
             models: [],
           },
         },
       },
     });
     const prepareAgentHarnessRuntime = vi.fn(() => {
-      throw new Error("OpenClaw candidates should not prepare plugin harnesses");
+      throw new Error("MerClaw candidates should not prepare plugin harnesses");
     });
     const run = vi.fn().mockResolvedValueOnce("ok");
 
@@ -1005,7 +1005,7 @@ describe("runWithModelFallback", () => {
     const lockError = new SessionWriteLockTimeoutError({
       timeoutMs: 10_000,
       owner: "pid=37121",
-      lockPath: "/tmp/openclaw/session.jsonl.lock",
+      lockPath: "/tmp/merclaw/session.jsonl.lock",
     });
     const run = vi.fn().mockRejectedValue(lockError);
 
@@ -1034,7 +1034,7 @@ describe("runWithModelFallback", () => {
     const lockError = new SessionWriteLockTimeoutError({
       timeoutMs: 10_000,
       owner: "pid=37121",
-      lockPath: "/tmp/openclaw/session.jsonl.lock",
+      lockPath: "/tmp/merclaw/session.jsonl.lock",
     });
     const providerError = {
       status: 429,
@@ -1884,7 +1884,7 @@ describe("runWithModelFallback", () => {
   });
 
   it("warns when falling back due to model_not_found", async () => {
-    const warnLogs = createWarnLogCapture("openclaw-model-fallback-test");
+    const warnLogs = createWarnLogCapture("merclaw-model-fallback-test");
     try {
       const cfg = makeCfg();
       const run = vi
@@ -1911,7 +1911,7 @@ describe("runWithModelFallback", () => {
   });
 
   it("sanitizes model identifiers in model_not_found warnings", async () => {
-    const warnLogs = createWarnLogCapture("openclaw-model-fallback-test");
+    const warnLogs = createWarnLogCapture("merclaw-model-fallback-test");
     try {
       const cfg = makeCfg();
       const run = vi
@@ -2512,7 +2512,7 @@ describe("runWithModelFallback", () => {
         },
       ] satisfies Array<{
         name: string;
-        cfg: OpenClawConfig;
+        cfg: MerClawConfig;
         provider: string;
         model: string;
         calls: Array<[string, string]>;
@@ -2822,7 +2822,7 @@ describe("runWithImageModelFallback", () => {
       },
     ] satisfies Array<{
       name: string;
-      cfg: OpenClawConfig;
+      cfg: MerClawConfig;
       modelOverride: string;
       expected: Array<[string, string]>;
     }>;

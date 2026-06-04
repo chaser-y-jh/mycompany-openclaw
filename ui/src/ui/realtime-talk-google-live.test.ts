@@ -380,7 +380,7 @@ describe("GoogleLiveRealtimeTalkTransport", () => {
           mode: "status",
           sessionKey: "main",
           active: true,
-          message: "OpenClaw is working in read (running).",
+          message: "MerClaw is working in read (running).",
           speak: true,
           show: true,
           suppress: false,
@@ -439,7 +439,7 @@ describe("GoogleLiveRealtimeTalkTransport", () => {
             role: "user",
             parts: [
               {
-                text: expect.stringContaining('Status: "OpenClaw is working in read (running)."'),
+                text: expect.stringContaining('Status: "MerClaw is working in read (running)."'),
               },
             ],
           },
@@ -546,7 +546,7 @@ describe("GoogleLiveRealtimeTalkTransport", () => {
           sessionKey: "main",
           active: true,
           aborted: true,
-          message: "Cancelled the active OpenClaw run.",
+          message: "Cancelled the active MerClaw run.",
           speak: true,
           show: true,
           suppress: false,

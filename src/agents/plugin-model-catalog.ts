@@ -1,10 +1,10 @@
 import { existsSync, readdirSync } from "node:fs";
 import path from "node:path";
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
+import { normalizeProviderId } from "@merclaw/model-catalog-core/provider-id";
 import type { PluginMetadataSnapshot } from "../plugins/plugin-metadata-snapshot.types.js";
 
 export const PLUGIN_MODEL_CATALOG_FILE = "catalog.json";
-export const PLUGIN_MODEL_CATALOG_GENERATED_BY = "openclaw-plugin-model-catalog-v1";
+export const PLUGIN_MODEL_CATALOG_GENERATED_BY = "merclaw-plugin-model-catalog-v1";
 
 export type PluginModelCatalogMetadataSnapshot = Pick<PluginMetadataSnapshot, "owners"> & {
   index?: {

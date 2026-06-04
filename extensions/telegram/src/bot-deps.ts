@@ -1,24 +1,24 @@
-import { recordChannelActivity } from "openclaw/plugin-sdk/channel-activity-runtime";
-import { buildChannelInboundEventContext } from "openclaw/plugin-sdk/channel-inbound";
+import { recordChannelActivity } from "merclaw/plugin-sdk/channel-activity-runtime";
+import { buildChannelInboundEventContext } from "merclaw/plugin-sdk/channel-inbound";
 import {
   createChannelMessageReplyPipeline,
   deliverInboundReplyWithMessageSendContext,
-} from "openclaw/plugin-sdk/channel-outbound";
-import { readChannelAllowFromStore } from "openclaw/plugin-sdk/conversation-runtime";
+} from "merclaw/plugin-sdk/channel-outbound";
+import { readChannelAllowFromStore } from "merclaw/plugin-sdk/conversation-runtime";
 import {
   recordInboundSession,
   upsertChannelPairingRequest,
-} from "openclaw/plugin-sdk/conversation-runtime";
-import { buildModelsProviderData } from "openclaw/plugin-sdk/models-provider-runtime";
-import { dispatchReplyWithBufferedBlockDispatcher } from "openclaw/plugin-sdk/reply-dispatch-runtime";
-import { resolveInboundLastRouteSessionKey } from "openclaw/plugin-sdk/routing";
-import { getRuntimeConfig } from "openclaw/plugin-sdk/runtime-config-snapshot";
-import { resolvePinnedMainDmOwnerFromAllowlist } from "openclaw/plugin-sdk/security-runtime";
-import { readSessionUpdatedAt, resolveStorePath } from "openclaw/plugin-sdk/session-store-runtime";
-import { loadSessionStore } from "openclaw/plugin-sdk/session-store-runtime";
-import { listSkillCommandsForAgents } from "openclaw/plugin-sdk/skill-commands-runtime";
-import { enqueueSystemEvent } from "openclaw/plugin-sdk/system-event-runtime";
-import { loadWebMedia } from "openclaw/plugin-sdk/web-media";
+} from "merclaw/plugin-sdk/conversation-runtime";
+import { buildModelsProviderData } from "merclaw/plugin-sdk/models-provider-runtime";
+import { dispatchReplyWithBufferedBlockDispatcher } from "merclaw/plugin-sdk/reply-dispatch-runtime";
+import { resolveInboundLastRouteSessionKey } from "merclaw/plugin-sdk/routing";
+import { getRuntimeConfig } from "merclaw/plugin-sdk/runtime-config-snapshot";
+import { resolvePinnedMainDmOwnerFromAllowlist } from "merclaw/plugin-sdk/security-runtime";
+import { readSessionUpdatedAt, resolveStorePath } from "merclaw/plugin-sdk/session-store-runtime";
+import { loadSessionStore } from "merclaw/plugin-sdk/session-store-runtime";
+import { listSkillCommandsForAgents } from "merclaw/plugin-sdk/skill-commands-runtime";
+import { enqueueSystemEvent } from "merclaw/plugin-sdk/system-event-runtime";
+import { loadWebMedia } from "merclaw/plugin-sdk/web-media";
 import { syncTelegramMenuCommands } from "./bot-native-command-menu.js";
 import { deliverReplies, emitInternalMessageSentHook } from "./bot/delivery.js";
 import { createTelegramDraftStream } from "./draft-stream.js";

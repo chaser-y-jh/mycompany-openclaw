@@ -15,7 +15,7 @@ import {
   type EmbeddedRunAttemptParams,
   type NativeHookRelayEvent,
   type NativeHookRelayRegistrationHandle,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "merclaw/plugin-sdk/agent-harness-runtime";
 import { handleCodexAppServerApprovalRequest } from "./approval-bridge.js";
 import { refreshCodexAppServerAuthTokens } from "./auth-bridge.js";
 import { isCodexAppServerApprovalRequest, type CodexAppServerClient } from "./client.js";
@@ -531,8 +531,8 @@ async function createCodexSideToolBridge(input: {
     ({ id: input.params.model, provider: input.params.provider } as never);
   let tools: AnyAgentTool[] = [];
   if (supportsModelTools(runtimeModel)) {
-    const createOpenClawCodingTools = (await import("openclaw/plugin-sdk/agent-harness"))
-      .createOpenClawCodingTools;
+    const createMerClawCodingTools = (await import("merclaw/plugin-sdk/agent-harness"))
+      .createMerClawCodingTools;
     const sandboxSessionKey =
       input.params.sessionKey?.trim() || input.params.sessionId || input.sessionAgentId;
     const sandbox = await resolveSandboxContext({
@@ -540,7 +540,7 @@ async function createCodexSideToolBridge(input: {
       sessionKey: sandboxSessionKey,
       workspaceDir: input.cwd,
     });
-    const allTools = createOpenClawCodingTools({
+    const allTools = createMerClawCodingTools({
       agentId: input.sessionAgentId,
       sessionKey: sandboxSessionKey,
       runSessionKey:
@@ -618,14 +618,14 @@ async function handleSideDynamicToolCallWithTimeout(params: {
   timeoutMs: number;
 }): Promise<CodexDynamicToolCallResponse> {
   if (params.signal.aborted) {
-    return failedSideDynamicToolResponse("OpenClaw dynamic tool call aborted before execution.");
+    return failedSideDynamicToolResponse("MerClaw dynamic tool call aborted before execution.");
   }
 
   const controller = new AbortController();
   let timeout: ReturnType<typeof setTimeout> | undefined;
   let resolveAbort: ((response: CodexDynamicToolCallResponse) => void) | undefined;
   const abortFromRun = () => {
-    const message = "OpenClaw dynamic tool call aborted.";
+    const message = "MerClaw dynamic tool call aborted.";
     controller.abort(params.signal.reason ?? new Error(message));
     resolveAbort?.(failedSideDynamicToolResponse(message));
   };
@@ -635,9 +635,9 @@ async function handleSideDynamicToolCallWithTimeout(params: {
   const timeoutPromise = new Promise<CodexDynamicToolCallResponse>((resolve) => {
     const timeoutMs = clampSideDynamicToolTimeoutMs(params.timeoutMs);
     timeout = setTimeout(() => {
-      controller.abort(new Error(`OpenClaw dynamic tool call timed out after ${timeoutMs}ms.`));
+      controller.abort(new Error(`MerClaw dynamic tool call timed out after ${timeoutMs}ms.`));
       resolve(
-        failedSideDynamicToolResponse(`OpenClaw dynamic tool call timed out after ${timeoutMs}ms.`),
+        failedSideDynamicToolResponse(`MerClaw dynamic tool call timed out after ${timeoutMs}ms.`),
       );
     }, timeoutMs);
     timeout.unref?.();
@@ -662,7 +662,7 @@ async function handleSideDynamicToolCallWithTimeout(params: {
     params.signal.removeEventListener("abort", abortFromRun);
     resolveAbort = undefined;
     if (!controller.signal.aborted) {
-      controller.abort(new Error("OpenClaw dynamic tool call finished."));
+      controller.abort(new Error("MerClaw dynamic tool call finished."));
     }
   }
 }

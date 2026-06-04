@@ -1,5 +1,5 @@
 import type { AnyMessageContent } from "baileys";
-import { getImageMetadata, resizeToJpeg } from "openclaw/plugin-sdk/media-runtime";
+import { getImageMetadata, resizeToJpeg } from "merclaw/plugin-sdk/media-runtime";
 
 const WHATSAPP_IMAGE_THUMBNAIL_SIDE = 32;
 const WHATSAPP_IMAGE_THUMBNAIL_QUALITY = 50;

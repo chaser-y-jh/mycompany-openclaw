@@ -428,20 +428,20 @@ function resolveCliShardSpec(args, env) {
   if (inlineShard) {
     return inlineShard.slice("--shard=".length);
   }
-  return env.OPENCLAW_ADDITIONAL_BOUNDARY_SHARD ?? "";
+  return env.MERCLAW_ADDITIONAL_BOUNDARY_SHARD ?? "";
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const concurrency = resolveConcurrency(
-    process.env.OPENCLAW_ADDITIONAL_BOUNDARY_CONCURRENCY ??
-      process.env.OPENCLAW_EXTENSION_BOUNDARY_CONCURRENCY,
+    process.env.MERCLAW_ADDITIONAL_BOUNDARY_CONCURRENCY ??
+      process.env.MERCLAW_EXTENSION_BOUNDARY_CONCURRENCY,
   );
   const checkTimeoutMs = resolvePositiveInteger(
-    process.env.OPENCLAW_ADDITIONAL_BOUNDARY_TIMEOUT_MS,
+    process.env.MERCLAW_ADDITIONAL_BOUNDARY_TIMEOUT_MS,
     DEFAULT_CHECK_TIMEOUT_MS,
   );
   const outputMaxBytes = resolvePositiveInteger(
-    process.env.OPENCLAW_ADDITIONAL_BOUNDARY_OUTPUT_MAX_BYTES,
+    process.env.MERCLAW_ADDITIONAL_BOUNDARY_OUTPUT_MAX_BYTES,
     DEFAULT_OUTPUT_MAX_BYTES,
   );
   const shards = parseShardSelection(resolveCliShardSpec(process.argv.slice(2), process.env));

@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { loadAuthProfileStoreWithoutExternalProfiles } from "../agents/auth-profiles.js";
-import type { ConfigFileSnapshot, OpenClawConfig } from "../config/types.js";
+import type { ConfigFileSnapshot, MerClawConfig } from "../config/types.js";
 import { measureDiagnosticsTimelineSpan } from "../infra/diagnostics-timeline.js";
 import type { PreparedSecretsRuntimeSnapshot, SecretResolverWarning } from "../secrets/runtime.js";
 import { KNOWN_WEAK_GATEWAY_TOKEN_PLACEHOLDERS } from "./known-weak-gateway-secrets.js";
@@ -24,7 +24,7 @@ type GatewayStartupSecretsRuntimeMock = {
   activateRuntimeSecretsSnapshot: ActivateRuntimeSecretsSnapshotForTest;
 };
 
-function gatewayTokenConfig(config: OpenClawConfig): OpenClawConfig {
+function gatewayTokenConfig(config: MerClawConfig): MerClawConfig {
   return {
     ...config,
     gateway: {
@@ -38,14 +38,14 @@ function gatewayTokenConfig(config: OpenClawConfig): OpenClawConfig {
   };
 }
 
-function asConfig(value: unknown): OpenClawConfig {
-  return value as OpenClawConfig;
+function asConfig(value: unknown): MerClawConfig {
+  return value as MerClawConfig;
 }
 
-function buildSnapshot(config: OpenClawConfig): ConfigFileSnapshot {
+function buildSnapshot(config: MerClawConfig): ConfigFileSnapshot {
   const raw = `${JSON.stringify(config, null, 2)}\n`;
   return buildTestConfigSnapshot({
-    path: "/tmp/openclaw-startup-secrets-test.json",
+    path: "/tmp/merclaw-startup-secrets-test.json",
     exists: true,
     raw,
     parsed: config,
@@ -56,7 +56,7 @@ function buildSnapshot(config: OpenClawConfig): ConfigFileSnapshot {
   });
 }
 
-function preparedSnapshot(config: OpenClawConfig): PreparedSecretsRuntimeSnapshot {
+function preparedSnapshot(config: MerClawConfig): PreparedSecretsRuntimeSnapshot {
   return {
     sourceConfig: config,
     config,
@@ -164,19 +164,19 @@ function cleanupGatewayStartupSecretsRuntimeMock(): void {
 }
 
 describe("gateway startup config secret preflight", () => {
-  const previousSkipChannels = process.env.OPENCLAW_SKIP_CHANNELS;
-  const previousSkipProviders = process.env.OPENCLAW_SKIP_PROVIDERS;
+  const previousSkipChannels = process.env.MERCLAW_SKIP_CHANNELS;
+  const previousSkipProviders = process.env.MERCLAW_SKIP_PROVIDERS;
 
   afterEach(() => {
     if (previousSkipChannels === undefined) {
-      delete process.env.OPENCLAW_SKIP_CHANNELS;
+      delete process.env.MERCLAW_SKIP_CHANNELS;
     } else {
-      process.env.OPENCLAW_SKIP_CHANNELS = previousSkipChannels;
+      process.env.MERCLAW_SKIP_CHANNELS = previousSkipChannels;
     }
     if (previousSkipProviders === undefined) {
-      delete process.env.OPENCLAW_SKIP_PROVIDERS;
+      delete process.env.MERCLAW_SKIP_PROVIDERS;
     } else {
-      process.env.OPENCLAW_SKIP_PROVIDERS = previousSkipProviders;
+      process.env.MERCLAW_SKIP_PROVIDERS = previousSkipProviders;
     }
   });
 
@@ -216,12 +216,12 @@ describe("gateway startup config secret preflight", () => {
   });
 
   it("emits sanitized diagnostics timeline spans for secrets preparation", async () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-startup-secrets-timeline-"));
+    const root = mkdtempSync(path.join(tmpdir(), "merclaw-startup-secrets-timeline-"));
     const timelinePath = path.join(root, "timeline.jsonl");
-    const previousDiagnostics = process.env.OPENCLAW_DIAGNOSTICS;
-    const previousTimelinePath = process.env.OPENCLAW_DIAGNOSTICS_TIMELINE_PATH;
-    process.env.OPENCLAW_DIAGNOSTICS = "timeline";
-    process.env.OPENCLAW_DIAGNOSTICS_TIMELINE_PATH = timelinePath;
+    const previousDiagnostics = process.env.MERCLAW_DIAGNOSTICS;
+    const previousTimelinePath = process.env.MERCLAW_DIAGNOSTICS_TIMELINE_PATH;
+    process.env.MERCLAW_DIAGNOSTICS = "timeline";
+    process.env.MERCLAW_DIAGNOSTICS_TIMELINE_PATH = timelinePath;
     try {
       const config = gatewaySecretRefSnapshot().config;
       const prepareRuntimeSecretsSnapshot = vi.fn(async ({ config }) => preparedSnapshot(config));
@@ -254,26 +254,26 @@ describe("gateway startup config secret preflight", () => {
       expect(JSON.stringify(events)).not.toContain("GATEWAY_TOKEN_REF");
     } finally {
       if (previousDiagnostics === undefined) {
-        delete process.env.OPENCLAW_DIAGNOSTICS;
+        delete process.env.MERCLAW_DIAGNOSTICS;
       } else {
-        process.env.OPENCLAW_DIAGNOSTICS = previousDiagnostics;
+        process.env.MERCLAW_DIAGNOSTICS = previousDiagnostics;
       }
       if (previousTimelinePath === undefined) {
-        delete process.env.OPENCLAW_DIAGNOSTICS_TIMELINE_PATH;
+        delete process.env.MERCLAW_DIAGNOSTICS_TIMELINE_PATH;
       } else {
-        process.env.OPENCLAW_DIAGNOSTICS_TIMELINE_PATH = previousTimelinePath;
+        process.env.MERCLAW_DIAGNOSTICS_TIMELINE_PATH = previousTimelinePath;
       }
       rmSync(root, { force: true, recursive: true });
     }
   });
 
   it("omits secret preparation error messages from diagnostics timeline spans", async () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-startup-secrets-timeline-"));
+    const root = mkdtempSync(path.join(tmpdir(), "merclaw-startup-secrets-timeline-"));
     const timelinePath = path.join(root, "timeline.jsonl");
-    const previousDiagnostics = process.env.OPENCLAW_DIAGNOSTICS;
-    const previousTimelinePath = process.env.OPENCLAW_DIAGNOSTICS_TIMELINE_PATH;
-    process.env.OPENCLAW_DIAGNOSTICS = "timeline";
-    process.env.OPENCLAW_DIAGNOSTICS_TIMELINE_PATH = timelinePath;
+    const previousDiagnostics = process.env.MERCLAW_DIAGNOSTICS;
+    const previousTimelinePath = process.env.MERCLAW_DIAGNOSTICS_TIMELINE_PATH;
+    process.env.MERCLAW_DIAGNOSTICS = "timeline";
+    process.env.MERCLAW_DIAGNOSTICS_TIMELINE_PATH = timelinePath;
     try {
       const prepareRuntimeSecretsSnapshot = vi.fn(async () => {
         throw new Error('Secret provider "default" is not configured for GATEWAY_TOKEN_REF.');
@@ -318,14 +318,14 @@ describe("gateway startup config secret preflight", () => {
       expect(JSON.stringify(events)).not.toContain("default");
     } finally {
       if (previousDiagnostics === undefined) {
-        delete process.env.OPENCLAW_DIAGNOSTICS;
+        delete process.env.MERCLAW_DIAGNOSTICS;
       } else {
-        process.env.OPENCLAW_DIAGNOSTICS = previousDiagnostics;
+        process.env.MERCLAW_DIAGNOSTICS = previousDiagnostics;
       }
       if (previousTimelinePath === undefined) {
-        delete process.env.OPENCLAW_DIAGNOSTICS_TIMELINE_PATH;
+        delete process.env.MERCLAW_DIAGNOSTICS_TIMELINE_PATH;
       } else {
-        process.env.OPENCLAW_DIAGNOSTICS_TIMELINE_PATH = previousTimelinePath;
+        process.env.MERCLAW_DIAGNOSTICS_TIMELINE_PATH = previousTimelinePath;
       }
       rmSync(root, { force: true, recursive: true });
     }
@@ -556,7 +556,7 @@ describe("gateway startup config secret preflight", () => {
   );
 
   it("prunes channel refs from startup secret preflight when channels are skipped", async () => {
-    process.env.OPENCLAW_SKIP_CHANNELS = "1";
+    process.env.MERCLAW_SKIP_CHANNELS = "1";
     const prepareRuntimeSecretsSnapshot = vi.fn(async ({ config }) => preparedSnapshot(config));
     const activateRuntimeSecrets = createRuntimeSecretsActivator({
       logSecrets: {
@@ -584,7 +584,7 @@ describe("gateway startup config secret preflight", () => {
     });
     expect(typeof result.config.gateway).toBe("object");
     const preflightInput = callArg<{
-      config?: OpenClawConfig;
+      config?: MerClawConfig;
       loadAuthStore?: unknown;
     }>(prepareRuntimeSecretsSnapshot);
     expect(preflightInput.config?.channels).toBeUndefined();
@@ -627,7 +627,7 @@ describe("gateway startup config secret preflight", () => {
     expect(result.auth.mode).toBe("password");
     expect(result.auth.password).toBe("override-password");
     const preflightInput = callArg<{
-      config?: OpenClawConfig;
+      config?: MerClawConfig;
       loadAuthStore?: unknown;
     }>(prepareRuntimeSecretsSnapshot);
     expect(preflightInput.config?.gateway?.auth?.mode).toBe("password");
@@ -656,7 +656,7 @@ describe("gateway startup config secret preflight", () => {
     expect(result.auth.token).toBe("startup-test-token");
     expect(prepareRuntimeSecretsSnapshot).toHaveBeenCalledTimes(1);
     const preflightInput = callArg<{
-      config?: OpenClawConfig;
+      config?: MerClawConfig;
       loadAuthStore?: unknown;
     }>(prepareRuntimeSecretsSnapshot);
     expect(preflightInput.config?.gateway?.auth?.token).toBe("startup-test-token");
@@ -746,7 +746,7 @@ describe("gateway startup config secret preflight", () => {
 
   it("activates no-SecretRef startup config without importing the full secrets runtime", async () => {
     vi.resetModules();
-    const agentDir = mkdtempSync(path.join(tmpdir(), "openclaw-startup-fast-path-"));
+    const agentDir = mkdtempSync(path.join(tmpdir(), "merclaw-startup-fast-path-"));
     const runtimeImport = vi.fn();
     const prepareRuntimeSecretsSnapshot = vi.fn(async ({ config }) => preparedSnapshot(config));
     const activateRuntimeSecretsSnapshot = vi.fn();
@@ -859,7 +859,7 @@ describe("gateway startup config secret preflight", () => {
 
   it("keeps the full secrets runtime path when startup config has a SecretRef", async () => {
     vi.resetModules();
-    const agentDir = mkdtempSync(path.join(tmpdir(), "openclaw-startup-secret-ref-"));
+    const agentDir = mkdtempSync(path.join(tmpdir(), "merclaw-startup-secret-ref-"));
     const runtimeImport = vi.fn();
     const prepareRuntimeSecretsSnapshot = vi.fn(async ({ config }) => preparedSnapshot(config));
     const activateRuntimeSecretsSnapshot = vi.fn();
@@ -913,7 +913,7 @@ describe("gateway startup config secret preflight", () => {
 
   it("keeps the full secrets runtime path when auth profile files are present", async () => {
     vi.resetModules();
-    const agentDir = mkdtempSync(path.join(tmpdir(), "openclaw-startup-auth-store-"));
+    const agentDir = mkdtempSync(path.join(tmpdir(), "merclaw-startup-auth-store-"));
     writeFileSync(
       path.join(agentDir, "auth-profiles.json"),
       `${JSON.stringify({

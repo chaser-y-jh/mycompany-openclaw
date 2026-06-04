@@ -1,4 +1,4 @@
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
 
 export function buildNodeShellCommand(command: string, platform?: string | null) {
   const normalized = normalizeLowercaseStringOrEmpty((platform ?? "").trim());

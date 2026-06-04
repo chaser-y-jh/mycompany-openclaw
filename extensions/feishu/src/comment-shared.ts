@@ -3,7 +3,7 @@ import {
   normalizeOptionalString,
   normalizeStringEntries,
   readStringValue,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/string-coerce-runtime";
 import { FEISHU_COMMENT_FILE_TYPES, type CommentFileType } from "./comment-target.js";
 
 export function encodeQuery(params: Record<string, string | undefined>): string {

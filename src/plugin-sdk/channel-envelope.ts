@@ -1,4 +1,4 @@
-/** @deprecated Compatibility subpath. Use `openclaw/plugin-sdk/channel-inbound`. */
+/** @deprecated Compatibility subpath. Use `merclaw/plugin-sdk/channel-inbound`. */
 export {
   formatInboundEnvelope,
   resolveEnvelopeFormatOptions,

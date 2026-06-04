@@ -97,7 +97,7 @@ describe("prepare-extension-package-boundary-artifacts", () => {
   });
 
   it("runs boundary prep steps serially for local checks", async () => {
-    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-boundary-serial-"));
+    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-boundary-serial-"));
     tempRoots.add(rootDir);
     const logPath = path.join(rootDir, "steps.log");
     const appendScript = (label: string) =>
@@ -111,7 +111,7 @@ describe("prepare-extension-package-boundary-artifacts", () => {
         { label: "first", args: ["--eval", appendScript("first")], timeoutMs: 5_000 },
         { label: "second", args: ["--eval", appendScript("second")], timeoutMs: 5_000 },
       ],
-      { OPENCLAW_LOCAL_CHECK: "1" },
+      { MERCLAW_LOCAL_CHECK: "1" },
     );
 
     expect(fs.readFileSync(logPath, "utf8").trim().split("\n")).toEqual([
@@ -123,18 +123,18 @@ describe("prepare-extension-package-boundary-artifacts", () => {
   });
 
   it("passes step-specific environment overrides to child steps", async () => {
-    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-boundary-env-"));
+    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-boundary-env-"));
     tempRoots.add(rootDir);
     const outputPath = path.join(rootDir, "env.txt");
     const writeEnvScript =
       `const fs=require("node:fs");` +
-      `fs.writeFileSync(${JSON.stringify(outputPath)}, process.env.OPENCLAW_TEST_ENV || "", "utf8");`;
+      `fs.writeFileSync(${JSON.stringify(outputPath)}, process.env.MERCLAW_TEST_ENV || "", "utf8");`;
 
     await runNodeStepsInParallel([
       {
         label: "env-step",
         args: ["--eval", writeEnvScript],
-        env: { OPENCLAW_TEST_ENV: "passed" },
+        env: { MERCLAW_TEST_ENV: "passed" },
         timeoutMs: 5_000,
       },
     ]);
@@ -143,7 +143,7 @@ describe("prepare-extension-package-boundary-artifacts", () => {
   });
 
   it("treats artifacts as fresh only when outputs are newer than inputs", () => {
-    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-boundary-prep-"));
+    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-boundary-prep-"));
     tempRoots.add(rootDir);
     const inputPath = path.join(rootDir, "src", "demo.ts");
     const outputPath = path.join(rootDir, "dist", "demo.tsbuildinfo");
@@ -184,12 +184,12 @@ describe("prepare-extension-package-boundary-artifacts", () => {
     expect(resolveBoundaryRootShimsTimeoutMs({})).toBe(300_000);
     expect(
       resolveBoundaryRootShimsTimeoutMs({
-        OPENCLAW_PLUGIN_SDK_BOUNDARY_ROOT_SHIMS_TIMEOUT_MS: "450000",
+        MERCLAW_PLUGIN_SDK_BOUNDARY_ROOT_SHIMS_TIMEOUT_MS: "450000",
       }),
     ).toBe(450_000);
     expect(
       resolveBoundaryRootShimsTimeoutMs({
-        OPENCLAW_PLUGIN_SDK_BOUNDARY_ROOT_SHIMS_TIMEOUT_MS: "120s",
+        MERCLAW_PLUGIN_SDK_BOUNDARY_ROOT_SHIMS_TIMEOUT_MS: "120s",
       }),
     ).toBe(300_000);
   });

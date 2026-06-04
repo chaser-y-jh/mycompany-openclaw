@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import type { PluginInstallRecord } from "../config/types.plugins.js";
 import {
   clearLoadInstalledPluginIndexInstallRecordsCache,
@@ -67,9 +67,9 @@ export function writePersistedInstalledPluginIndexInstallRecordsSync(
 }
 
 export function withPluginInstallRecords(
-  config: OpenClawConfig,
+  config: MerClawConfig,
   records: Record<string, PluginInstallRecord>,
-): OpenClawConfig {
+): MerClawConfig {
   return {
     ...config,
     plugins: {
@@ -79,7 +79,7 @@ export function withPluginInstallRecords(
   };
 }
 
-export function withoutPluginInstallRecords(config: OpenClawConfig): OpenClawConfig {
+export function withoutPluginInstallRecords(config: MerClawConfig): MerClawConfig {
   if (!config.plugins?.installs) {
     return config;
   }

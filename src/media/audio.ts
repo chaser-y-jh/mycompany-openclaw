@@ -1,5 +1,5 @@
-import { getFileExtension, normalizeMimeType } from "@openclaw/media-core/mime";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { getFileExtension, normalizeMimeType } from "@merclaw/media-core/mime";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 
 export const VOICE_MESSAGE_AUDIO_EXTENSIONS = new Set([".oga", ".ogg", ".opus", ".mp3", ".m4a"]);
 

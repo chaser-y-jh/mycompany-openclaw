@@ -4,45 +4,45 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-npm-telegram-rtt-e2e" OPENCLAW_NPM_TELEGRAM_RTT_E2E_IMAGE)"
-DOCKER_TARGET="${OPENCLAW_NPM_TELEGRAM_DOCKER_TARGET:-build}"
-PACKAGE_SPEC="${OPENCLAW_NPM_TELEGRAM_PACKAGE_SPEC:-openclaw@beta}"
-PACKAGE_TGZ="${OPENCLAW_NPM_TELEGRAM_PACKAGE_TGZ:-${OPENCLAW_CURRENT_PACKAGE_TGZ:-}}"
-PACKAGE_LABEL="${OPENCLAW_NPM_TELEGRAM_PACKAGE_LABEL:-}"
-OUTPUT_DIR="${OPENCLAW_NPM_TELEGRAM_OUTPUT_DIR:-.artifacts/qa-e2e/npm-telegram-rtt}"
+IMAGE_NAME="$(docker_e2e_resolve_image "merclaw-npm-telegram-rtt-e2e" MERCLAW_NPM_TELEGRAM_RTT_E2E_IMAGE)"
+DOCKER_TARGET="${MERCLAW_NPM_TELEGRAM_DOCKER_TARGET:-build}"
+PACKAGE_SPEC="${MERCLAW_NPM_TELEGRAM_PACKAGE_SPEC:-merclaw@beta}"
+PACKAGE_TGZ="${MERCLAW_NPM_TELEGRAM_PACKAGE_TGZ:-${MERCLAW_CURRENT_PACKAGE_TGZ:-}}"
+PACKAGE_LABEL="${MERCLAW_NPM_TELEGRAM_PACKAGE_LABEL:-}"
+OUTPUT_DIR="${MERCLAW_NPM_TELEGRAM_OUTPUT_DIR:-.artifacts/qa-e2e/npm-telegram-rtt}"
 
 resolve_credential_source() {
-  if [ -n "${OPENCLAW_NPM_TELEGRAM_CREDENTIAL_SOURCE:-}" ]; then
-    printf "%s" "$OPENCLAW_NPM_TELEGRAM_CREDENTIAL_SOURCE"
+  if [ -n "${MERCLAW_NPM_TELEGRAM_CREDENTIAL_SOURCE:-}" ]; then
+    printf "%s" "$MERCLAW_NPM_TELEGRAM_CREDENTIAL_SOURCE"
     return 0
   fi
-  if [ -n "${OPENCLAW_QA_CREDENTIAL_SOURCE:-}" ]; then
-    printf "%s" "$OPENCLAW_QA_CREDENTIAL_SOURCE"
+  if [ -n "${MERCLAW_QA_CREDENTIAL_SOURCE:-}" ]; then
+    printf "%s" "$MERCLAW_QA_CREDENTIAL_SOURCE"
     return 0
   fi
-  if [ -n "${CI:-}" ] && [ -n "${OPENCLAW_QA_CONVEX_SITE_URL:-}" ]; then
-    if [ -n "${OPENCLAW_QA_CONVEX_SECRET_CI:-}" ] || [ -n "${OPENCLAW_QA_CONVEX_SECRET_MAINTAINER:-}" ]; then
+  if [ -n "${CI:-}" ] && [ -n "${MERCLAW_QA_CONVEX_SITE_URL:-}" ]; then
+    if [ -n "${MERCLAW_QA_CONVEX_SECRET_CI:-}" ] || [ -n "${MERCLAW_QA_CONVEX_SECRET_MAINTAINER:-}" ]; then
       printf "convex"
     fi
   fi
 }
 
 resolve_credential_role() {
-  if [ -n "${OPENCLAW_NPM_TELEGRAM_CREDENTIAL_ROLE:-}" ]; then
-    printf "%s" "$OPENCLAW_NPM_TELEGRAM_CREDENTIAL_ROLE"
+  if [ -n "${MERCLAW_NPM_TELEGRAM_CREDENTIAL_ROLE:-}" ]; then
+    printf "%s" "$MERCLAW_NPM_TELEGRAM_CREDENTIAL_ROLE"
     return 0
   fi
-  if [ -n "${OPENCLAW_QA_CREDENTIAL_ROLE:-}" ]; then
-    printf "%s" "$OPENCLAW_QA_CREDENTIAL_ROLE"
+  if [ -n "${MERCLAW_QA_CREDENTIAL_ROLE:-}" ]; then
+    printf "%s" "$MERCLAW_QA_CREDENTIAL_ROLE"
   fi
 }
 
-validate_openclaw_package_spec() {
+validate_merclaw_package_spec() {
   local spec="$1"
-  if [[ "$spec" =~ ^openclaw@(main|alpha|beta|latest|[0-9]{4}\.[1-9][0-9]*\.[1-9][0-9]*(-[1-9][0-9]*|-(alpha|beta)\.[1-9][0-9]*)?)$ ]]; then
+  if [[ "$spec" =~ ^merclaw@(main|alpha|beta|latest|[0-9]{4}\.[1-9][0-9]*\.[1-9][0-9]*(-[1-9][0-9]*|-(alpha|beta)\.[1-9][0-9]*)?)$ ]]; then
     return 0
   fi
-  echo "OPENCLAW_NPM_TELEGRAM_PACKAGE_SPEC must be openclaw@main, openclaw@alpha, openclaw@beta, openclaw@latest, or an exact OpenClaw release version; got: $spec" >&2
+  echo "MERCLAW_NPM_TELEGRAM_PACKAGE_SPEC must be merclaw@main, merclaw@alpha, merclaw@beta, merclaw@latest, or an exact MerClaw release version; got: $spec" >&2
   exit 1
 }
 
@@ -52,13 +52,13 @@ resolve_package_tgz() {
     return 0
   fi
   if [ ! -f "$candidate" ]; then
-    echo "OPENCLAW_NPM_TELEGRAM_PACKAGE_TGZ must point to an existing .tgz file; got: $candidate" >&2
+    echo "MERCLAW_NPM_TELEGRAM_PACKAGE_TGZ must point to an existing .tgz file; got: $candidate" >&2
     exit 1
   fi
   case "$candidate" in
     *.tgz) ;;
     *)
-      echo "OPENCLAW_NPM_TELEGRAM_PACKAGE_TGZ must point to a .tgz file; got: $candidate" >&2
+      echo "MERCLAW_NPM_TELEGRAM_PACKAGE_TGZ must point to a .tgz file; got: $candidate" >&2
       exit 1
       ;;
   esac
@@ -76,7 +76,7 @@ if [ -n "$resolved_package_tgz" ]; then
   package_install_source="/package-under-test/$(basename "$resolved_package_tgz")"
   package_mount_args=(-v "$resolved_package_tgz:$package_install_source:ro")
 else
-  validate_openclaw_package_spec "$PACKAGE_SPEC"
+  validate_merclaw_package_spec "$PACKAGE_SPEC"
 fi
 if [ -z "$PACKAGE_LABEL" ]; then
   if [ -n "$resolved_package_tgz" ]; then
@@ -100,7 +100,7 @@ validate_credential_source() {
   case "$credential_source" in
     "" | env | convex) ;;
     *)
-      echo "OPENCLAW_NPM_TELEGRAM_CREDENTIAL_SOURCE must be env or convex; got: $credential_source" >&2
+      echo "MERCLAW_NPM_TELEGRAM_CREDENTIAL_SOURCE must be env or convex; got: $credential_source" >&2
       exit 1
       ;;
   esac
@@ -110,7 +110,7 @@ validate_credential_role() {
   case "$credential_role" in
     "" | maintainer | ci) ;;
     *)
-      echo "OPENCLAW_NPM_TELEGRAM_CREDENTIAL_ROLE must be maintainer or ci; got: $credential_role" >&2
+      echo "MERCLAW_NPM_TELEGRAM_CREDENTIAL_ROLE must be maintainer or ci; got: $credential_role" >&2
       exit 1
       ;;
   esac
@@ -121,35 +121,35 @@ validate_credential_role
 
 validate_credential_preflight() {
   if [ "$credential_source" = "convex" ]; then
-    if [ -z "${OPENCLAW_QA_CONVEX_SITE_URL:-}" ]; then
-      echo "Missing required env for Convex credential mode: OPENCLAW_QA_CONVEX_SITE_URL" >&2
+    if [ -z "${MERCLAW_QA_CONVEX_SITE_URL:-}" ]; then
+      echo "Missing required env for Convex credential mode: MERCLAW_QA_CONVEX_SITE_URL" >&2
       exit 1
     fi
     if [ "$credential_role" = "ci" ]; then
-      if [ -z "${OPENCLAW_QA_CONVEX_SECRET_CI:-}" ]; then
-        echo "Missing required env for Convex ci credential mode: OPENCLAW_QA_CONVEX_SECRET_CI" >&2
+      if [ -z "${MERCLAW_QA_CONVEX_SECRET_CI:-}" ]; then
+        echo "Missing required env for Convex ci credential mode: MERCLAW_QA_CONVEX_SECRET_CI" >&2
         exit 1
       fi
       return 0
     fi
     if [ "$credential_role" = "maintainer" ]; then
-      if [ -z "${OPENCLAW_QA_CONVEX_SECRET_MAINTAINER:-}" ]; then
-        echo "Missing required env for Convex maintainer credential mode: OPENCLAW_QA_CONVEX_SECRET_MAINTAINER" >&2
+      if [ -z "${MERCLAW_QA_CONVEX_SECRET_MAINTAINER:-}" ]; then
+        echo "Missing required env for Convex maintainer credential mode: MERCLAW_QA_CONVEX_SECRET_MAINTAINER" >&2
         exit 1
       fi
       return 0
     fi
-    if [ -z "${OPENCLAW_QA_CONVEX_SECRET_CI:-}" ] && [ -z "${OPENCLAW_QA_CONVEX_SECRET_MAINTAINER:-}" ]; then
-      echo "Missing required env for Convex credential mode: OPENCLAW_QA_CONVEX_SECRET_CI or OPENCLAW_QA_CONVEX_SECRET_MAINTAINER" >&2
+    if [ -z "${MERCLAW_QA_CONVEX_SECRET_CI:-}" ] && [ -z "${MERCLAW_QA_CONVEX_SECRET_MAINTAINER:-}" ]; then
+      echo "Missing required env for Convex credential mode: MERCLAW_QA_CONVEX_SECRET_CI or MERCLAW_QA_CONVEX_SECRET_MAINTAINER" >&2
       exit 1
     fi
     return 0
   fi
 
   for key in \
-    OPENCLAW_QA_TELEGRAM_GROUP_ID \
-    OPENCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN \
-    OPENCLAW_QA_TELEGRAM_SUT_BOT_TOKEN; do
+    MERCLAW_QA_TELEGRAM_GROUP_ID \
+    MERCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN \
+    MERCLAW_QA_TELEGRAM_SUT_BOT_TOKEN; do
     if [ -z "${!key:-}" ]; then
       echo "Missing required env: $key" >&2
       exit 1
@@ -160,17 +160,17 @@ validate_credential_preflight() {
 validate_credential_preflight
 
 if [ -n "$credential_source" ]; then
-  export OPENCLAW_QA_CREDENTIAL_SOURCE="$credential_source"
+  export MERCLAW_QA_CREDENTIAL_SOURCE="$credential_source"
 fi
 if [ -n "$credential_role" ]; then
-  export OPENCLAW_QA_CREDENTIAL_ROLE="$credential_role"
+  export MERCLAW_QA_CREDENTIAL_ROLE="$credential_role"
 fi
 
 if [ -z "$credential_source" ] || [ "$credential_source" = "env" ]; then
   for key in \
-    OPENCLAW_QA_TELEGRAM_GROUP_ID \
-    OPENCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN \
-    OPENCLAW_QA_TELEGRAM_SUT_BOT_TOKEN; do
+    MERCLAW_QA_TELEGRAM_GROUP_ID \
+    MERCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN \
+    MERCLAW_QA_TELEGRAM_SUT_BOT_TOKEN; do
     if [ -z "${!key:-}" ]; then
       echo "Missing required env: $key" >&2
       exit 1
@@ -188,26 +188,26 @@ done
 docker_e2e_build_or_reuse "$IMAGE_NAME" npm-telegram-rtt "$ROOT_DIR/scripts/e2e/Dockerfile" "$ROOT_DIR" "$DOCKER_TARGET"
 
 mkdir -p "$ROOT_DIR/.artifacts/qa-e2e"
-run_log="$(mktemp "${TMPDIR:-/tmp}/openclaw-npm-telegram-rtt.XXXXXX")"
+run_log="$(mktemp "${TMPDIR:-/tmp}/merclaw-npm-telegram-rtt.XXXXXX")"
 npm_prefix_host="$(mktemp -d "$ROOT_DIR/.artifacts/qa-e2e/npm-telegram-rtt-prefix.XXXXXX")"
 trap 'rm -f "$run_log"; rm -rf "$npm_prefix_host"' EXIT
 
 docker_env=(
   -e COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-  -e OPENCLAW_NPM_TELEGRAM_INSTALL_SOURCE="$package_install_source"
-  -e OPENCLAW_NPM_TELEGRAM_PACKAGE_LABEL="$PACKAGE_LABEL"
-  -e OPENCLAW_NPM_TELEGRAM_OUTPUT_DIR="$OUTPUT_DIR"
-  -e OPENCLAW_QA_TELEGRAM_GROUP_ID
-  -e OPENCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN
-  -e OPENCLAW_QA_TELEGRAM_SUT_BOT_TOKEN
-  -e OPENCLAW_QA_TELEGRAM_CANARY_TIMEOUT_MS="${OPENCLAW_QA_TELEGRAM_CANARY_TIMEOUT_MS:-180000}"
-  -e OPENCLAW_QA_TELEGRAM_SCENARIO_TIMEOUT_MS="${OPENCLAW_QA_TELEGRAM_SCENARIO_TIMEOUT_MS:-180000}"
-  -e OPENCLAW_NPM_TELEGRAM_SCENARIOS="${OPENCLAW_NPM_TELEGRAM_SCENARIOS:-telegram-mentioned-message-reply}"
-  -e OPENCLAW_NPM_TELEGRAM_PROVIDER_MODE="${OPENCLAW_NPM_TELEGRAM_PROVIDER_MODE:-mock-openai}"
-  -e OPENCLAW_NPM_TELEGRAM_WARM_SAMPLES="${OPENCLAW_NPM_TELEGRAM_WARM_SAMPLES:-20}"
-  -e OPENCLAW_NPM_TELEGRAM_SAMPLE_TIMEOUT_MS="${OPENCLAW_NPM_TELEGRAM_SAMPLE_TIMEOUT_MS:-30000}"
-  -e OPENCLAW_NPM_TELEGRAM_MAX_FAILURES="${OPENCLAW_NPM_TELEGRAM_MAX_FAILURES:-${OPENCLAW_NPM_TELEGRAM_WARM_SAMPLES:-20}}"
-  -e OPENCLAW_E2E_NPM_INSTALL_TIMEOUT="${OPENCLAW_E2E_NPM_INSTALL_TIMEOUT:-600s}"
+  -e MERCLAW_NPM_TELEGRAM_INSTALL_SOURCE="$package_install_source"
+  -e MERCLAW_NPM_TELEGRAM_PACKAGE_LABEL="$PACKAGE_LABEL"
+  -e MERCLAW_NPM_TELEGRAM_OUTPUT_DIR="$OUTPUT_DIR"
+  -e MERCLAW_QA_TELEGRAM_GROUP_ID
+  -e MERCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN
+  -e MERCLAW_QA_TELEGRAM_SUT_BOT_TOKEN
+  -e MERCLAW_QA_TELEGRAM_CANARY_TIMEOUT_MS="${MERCLAW_QA_TELEGRAM_CANARY_TIMEOUT_MS:-180000}"
+  -e MERCLAW_QA_TELEGRAM_SCENARIO_TIMEOUT_MS="${MERCLAW_QA_TELEGRAM_SCENARIO_TIMEOUT_MS:-180000}"
+  -e MERCLAW_NPM_TELEGRAM_SCENARIOS="${MERCLAW_NPM_TELEGRAM_SCENARIOS:-telegram-mentioned-message-reply}"
+  -e MERCLAW_NPM_TELEGRAM_PROVIDER_MODE="${MERCLAW_NPM_TELEGRAM_PROVIDER_MODE:-mock-openai}"
+  -e MERCLAW_NPM_TELEGRAM_WARM_SAMPLES="${MERCLAW_NPM_TELEGRAM_WARM_SAMPLES:-20}"
+  -e MERCLAW_NPM_TELEGRAM_SAMPLE_TIMEOUT_MS="${MERCLAW_NPM_TELEGRAM_SAMPLE_TIMEOUT_MS:-30000}"
+  -e MERCLAW_NPM_TELEGRAM_MAX_FAILURES="${MERCLAW_NPM_TELEGRAM_MAX_FAILURES:-${MERCLAW_NPM_TELEGRAM_WARM_SAMPLES:-20}}"
+  -e MERCLAW_E2E_NPM_INSTALL_TIMEOUT="${MERCLAW_E2E_NPM_INSTALL_TIMEOUT:-600s}"
 )
 
 forward_env_if_set() {
@@ -217,27 +217,27 @@ forward_env_if_set() {
   fi
 }
 
-if [ -n "${OPENCLAW_QA_CREDENTIAL_SOURCE:-}" ]; then
-  docker_env+=(-e OPENCLAW_QA_CREDENTIAL_SOURCE="$OPENCLAW_QA_CREDENTIAL_SOURCE")
+if [ -n "${MERCLAW_QA_CREDENTIAL_SOURCE:-}" ]; then
+  docker_env+=(-e MERCLAW_QA_CREDENTIAL_SOURCE="$MERCLAW_QA_CREDENTIAL_SOURCE")
 fi
-if [ -n "${OPENCLAW_QA_CREDENTIAL_ROLE:-}" ]; then
-  docker_env+=(-e OPENCLAW_QA_CREDENTIAL_ROLE="$OPENCLAW_QA_CREDENTIAL_ROLE")
+if [ -n "${MERCLAW_QA_CREDENTIAL_ROLE:-}" ]; then
+  docker_env+=(-e MERCLAW_QA_CREDENTIAL_ROLE="$MERCLAW_QA_CREDENTIAL_ROLE")
 fi
 
 install_env=("${docker_env[@]}")
 
 for key in \
-  OPENCLAW_QA_CONVEX_SITE_URL \
-  OPENCLAW_QA_CONVEX_SECRET_CI \
-  OPENCLAW_QA_CONVEX_SECRET_MAINTAINER \
-  OPENCLAW_QA_CREDENTIAL_LEASE_TTL_MS \
-  OPENCLAW_QA_CREDENTIAL_HEARTBEAT_INTERVAL_MS \
-  OPENCLAW_QA_CREDENTIAL_ACQUIRE_TIMEOUT_MS \
-  OPENCLAW_QA_CREDENTIAL_HTTP_TIMEOUT_MS \
-  OPENCLAW_QA_CREDENTIAL_HTTP_MAX_BODY_BYTES \
-  OPENCLAW_QA_CONVEX_ENDPOINT_PREFIX \
-  OPENCLAW_QA_CREDENTIAL_OWNER_ID \
-  OPENCLAW_QA_ALLOW_INSECURE_HTTP; do
+  MERCLAW_QA_CONVEX_SITE_URL \
+  MERCLAW_QA_CONVEX_SECRET_CI \
+  MERCLAW_QA_CONVEX_SECRET_MAINTAINER \
+  MERCLAW_QA_CREDENTIAL_LEASE_TTL_MS \
+  MERCLAW_QA_CREDENTIAL_HEARTBEAT_INTERVAL_MS \
+  MERCLAW_QA_CREDENTIAL_ACQUIRE_TIMEOUT_MS \
+  MERCLAW_QA_CREDENTIAL_HTTP_TIMEOUT_MS \
+  MERCLAW_QA_CREDENTIAL_HTTP_MAX_BODY_BYTES \
+  MERCLAW_QA_CONVEX_ENDPOINT_PREFIX \
+  MERCLAW_QA_CREDENTIAL_OWNER_ID \
+  MERCLAW_QA_ALLOW_INSECURE_HTTP; do
   forward_env_if_set "$key"
 done
 
@@ -261,10 +261,10 @@ set -euo pipefail
 export NPM_CONFIG_PREFIX="/npm-global"
 export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
 
-install_source="${OPENCLAW_NPM_TELEGRAM_INSTALL_SOURCE:?missing OPENCLAW_NPM_TELEGRAM_INSTALL_SOURCE}"
-package_label="${OPENCLAW_NPM_TELEGRAM_PACKAGE_LABEL:-$install_source}"
+install_source="${MERCLAW_NPM_TELEGRAM_INSTALL_SOURCE:?missing MERCLAW_NPM_TELEGRAM_INSTALL_SOURCE}"
+package_label="${MERCLAW_NPM_TELEGRAM_PACKAGE_LABEL:-$install_source}"
 
-npm_install_timeout="${OPENCLAW_E2E_NPM_INSTALL_TIMEOUT:-600s}"
+npm_install_timeout="${MERCLAW_E2E_NPM_INSTALL_TIMEOUT:-600s}"
 run_npm_install() {
   if [ -z "$npm_install_timeout" ] || [ "$npm_install_timeout" = "0" ]; then
     npm install -g "$install_source" --no-fund --no-audit
@@ -278,7 +278,7 @@ run_npm_install() {
     timeout_bin="gtimeout"
   fi
   if [ -z "$timeout_bin" ]; then
-    echo "timeout or gtimeout is required for OPENCLAW_E2E_NPM_INSTALL_TIMEOUT=$npm_install_timeout" >&2
+    echo "timeout or gtimeout is required for MERCLAW_E2E_NPM_INSTALL_TIMEOUT=$npm_install_timeout" >&2
     return 127
   fi
 
@@ -289,9 +289,9 @@ run_npm_install() {
   fi
 }
 run_npm_install
-command -v openclaw
-openclaw --version
-node -p "require('/npm-global/lib/node_modules/openclaw/package.json').version"
+command -v merclaw
+merclaw --version
+node -p "require('/npm-global/lib/node_modules/merclaw/package.json').version"
 EOF
 
 echo "Running package Telegram RTT Docker E2E ($PACKAGE_LABEL)..."
@@ -303,19 +303,19 @@ run_logged docker_e2e_docker_run_cmd run --rm \
   -i "$IMAGE_NAME" bash -s <<'EOF'
 set -euo pipefail
 
-export HOME="$(mktemp -d "/tmp/openclaw-npm-telegram-rtt.XXXXXX")"
+export HOME="$(mktemp -d "/tmp/merclaw-npm-telegram-rtt.XXXXXX")"
 export NPM_CONFIG_PREFIX="/npm-global"
 export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
-export OPENAI_API_KEY="sk-openclaw-rtt"
-export GATEWAY_AUTH_TOKEN_REF="openclaw-rtt"
-export OPENCLAW_DISABLE_BONJOUR="1"
+export OPENAI_API_KEY="sk-merclaw-rtt"
+export GATEWAY_AUTH_TOKEN_REF="merclaw-rtt"
+export MERCLAW_DISABLE_BONJOUR="1"
 
-install_source="${OPENCLAW_NPM_TELEGRAM_INSTALL_SOURCE:?missing OPENCLAW_NPM_TELEGRAM_INSTALL_SOURCE}"
-package_label="${OPENCLAW_NPM_TELEGRAM_PACKAGE_LABEL:-$install_source}"
-mock_port="${OPENCLAW_NPM_TELEGRAM_MOCK_PORT:-44080}"
-config_path="$HOME/.openclaw/openclaw.json"
-gateway_log="/tmp/openclaw-npm-telegram-rtt-gateway.log"
-mock_log="/tmp/openclaw-npm-telegram-rtt-mock.log"
+install_source="${MERCLAW_NPM_TELEGRAM_INSTALL_SOURCE:?missing MERCLAW_NPM_TELEGRAM_INSTALL_SOURCE}"
+package_label="${MERCLAW_NPM_TELEGRAM_PACKAGE_LABEL:-$install_source}"
+mock_port="${MERCLAW_NPM_TELEGRAM_MOCK_PORT:-44080}"
+config_path="$HOME/.merclaw/merclaw.json"
+gateway_log="/tmp/merclaw-npm-telegram-rtt-gateway.log"
+mock_log="/tmp/merclaw-npm-telegram-rtt-mock.log"
 export MOCK_PORT="$mock_port"
 credential_env_file=""
 credential_lease_file=""
@@ -367,9 +367,9 @@ start_credential_heartbeat() {
 trap cleanup EXIT
 trap 'exit 1' TERM INT
 
-if [ "${OPENCLAW_QA_CREDENTIAL_SOURCE:-}" = "convex" ]; then
-  credential_env_file="$(mktemp "/tmp/openclaw-npm-telegram-rtt-credential-env.XXXXXX")"
-  credential_lease_file="$(mktemp "/tmp/openclaw-npm-telegram-rtt-credential-lease.XXXXXX")"
+if [ "${MERCLAW_QA_CREDENTIAL_SOURCE:-}" = "convex" ]; then
+  credential_env_file="$(mktemp "/tmp/merclaw-npm-telegram-rtt-credential-env.XXXXXX")"
+  credential_lease_file="$(mktemp "/tmp/merclaw-npm-telegram-rtt-credential-lease.XXXXXX")"
   rm -f "$credential_env_file" "$credential_lease_file"
   node /app/scripts/e2e/npm-telegram-rtt-credentials.mjs acquire \
     --credential-env-file "$credential_env_file" \
@@ -379,11 +379,11 @@ if [ "${OPENCLAW_QA_CREDENTIAL_SOURCE:-}" = "convex" ]; then
   start_credential_heartbeat
 fi
 
-export TELEGRAM_BOT_TOKEN="${OPENCLAW_QA_TELEGRAM_SUT_BOT_TOKEN:?missing OPENCLAW_QA_TELEGRAM_SUT_BOT_TOKEN}"
+export TELEGRAM_BOT_TOKEN="${MERCLAW_QA_TELEGRAM_SUT_BOT_TOKEN:?missing MERCLAW_QA_TELEGRAM_SUT_BOT_TOKEN}"
 
-command -v openclaw
-openclaw --version
-installed_version="$(node -p "require('/npm-global/lib/node_modules/openclaw/package.json').version")"
+command -v merclaw
+merclaw --version
+installed_version="$(node -p "require('/npm-global/lib/node_modules/merclaw/package.json').version")"
 
 node /app/scripts/e2e/mock-openai-server.mjs >"$mock_log" 2>&1 &
 mock_pid="$!"
@@ -394,17 +394,17 @@ for _ in $(seq 1 60); do
   sleep 1
 done
 
-mkdir -p "$(dirname "$config_path")" "$HOME/.openclaw/workspace" "$HOME/.openclaw/agents/main/sessions" "$HOME/workspace"
+mkdir -p "$(dirname "$config_path")" "$HOME/.merclaw/workspace" "$HOME/.merclaw/agents/main/sessions" "$HOME/workspace"
 
 node /app/scripts/e2e/npm-telegram-rtt-config.mjs \
   "$config_path" \
   "$mock_port" \
-  "$OPENCLAW_QA_TELEGRAM_GROUP_ID" \
-  "$OPENCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN" \
-  "$OPENCLAW_QA_TELEGRAM_SUT_BOT_TOKEN" \
+  "$MERCLAW_QA_TELEGRAM_GROUP_ID" \
+  "$MERCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN" \
+  "$MERCLAW_QA_TELEGRAM_SUT_BOT_TOKEN" \
   "$installed_version"
 
-openclaw gateway run --verbose >"$gateway_log" 2>&1 &
+merclaw gateway run --verbose >"$gateway_log" 2>&1 &
 gateway_pid="$!"
 for _ in $(seq 1 120); do
   if ! kill -0 "$gateway_pid" 2>/dev/null; then

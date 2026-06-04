@@ -1,7 +1,7 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { CommandArgValues } from "openclaw/plugin-sdk/native-command-registry";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import type { CommandArgValues } from "merclaw/plugin-sdk/native-command-registry";
 
-export type DiscordConfig = NonNullable<OpenClawConfig["channels"]>["discord"];
+export type DiscordConfig = NonNullable<MerClawConfig["channels"]>["discord"];
 
 export type DiscordCommandArgs = {
   raw?: string;

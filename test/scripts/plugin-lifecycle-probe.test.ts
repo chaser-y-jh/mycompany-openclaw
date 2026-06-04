@@ -8,7 +8,7 @@ const probePath = "scripts/e2e/lib/plugin-lifecycle-matrix/probe.mjs";
 const tempDirs: string[] = [];
 
 function makeTempDir(): string {
-  const dir = mkdtempSync(path.join(tmpdir(), "openclaw-plugin-lifecycle-probe-"));
+  const dir = mkdtempSync(path.join(tmpdir(), "merclaw-plugin-lifecycle-probe-"));
   tempDirs.push(dir);
   return dir;
 }
@@ -20,7 +20,7 @@ function runProbe(args: string[], home = makeTempDir()) {
     env: {
       ...process.env,
       HOME: home,
-      OPENCLAW_CONFIG_PATH: path.join(home, ".openclaw", "openclaw.json"),
+      MERCLAW_CONFIG_PATH: path.join(home, ".merclaw", "merclaw.json"),
       USERPROFILE: home,
     },
   });

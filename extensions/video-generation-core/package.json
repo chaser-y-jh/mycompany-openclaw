@@ -1,10 +1,10 @@
 {
-  "name": "@openclaw/video-generation-core",
+  "name": "@merclaw/video-generation-core",
   "version": "2026.5.31",
   "private": true,
-  "description": "OpenClaw video generation runtime package",
+  "description": "MerClaw video generation runtime package",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@merclaw/plugin-sdk": "workspace:*"
   }
 }

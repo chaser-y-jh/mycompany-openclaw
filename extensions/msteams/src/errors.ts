@@ -1,5 +1,5 @@
-import { asFiniteNumberInRange, parseStrictFiniteNumber } from "openclaw/plugin-sdk/number-runtime";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { asFiniteNumberInRange, parseStrictFiniteNumber } from "merclaw/plugin-sdk/number-runtime";
+import { isRecord } from "merclaw/plugin-sdk/string-coerce-runtime";
 
 const MAX_SAFE_RETRY_AFTER_SECONDS = Number.MAX_SAFE_INTEGER / 1000;
 

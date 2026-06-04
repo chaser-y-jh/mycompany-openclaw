@@ -1,7 +1,7 @@
 import { type Bot, GrammyError } from "grammy";
-import { createTelegramRetryRunner } from "openclaw/plugin-sdk/retry-runtime";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
-import { formatErrorMessage } from "openclaw/plugin-sdk/ssrf-runtime";
+import { createTelegramRetryRunner } from "merclaw/plugin-sdk/retry-runtime";
+import type { RuntimeEnv } from "merclaw/plugin-sdk/runtime-env";
+import { formatErrorMessage } from "merclaw/plugin-sdk/ssrf-runtime";
 import { withTelegramApiErrorLogging } from "../api-logging.js";
 import { markdownToTelegramHtml } from "../format.js";
 import { isSafeToRetrySendError, isTelegramRateLimitError } from "../network-errors.js";

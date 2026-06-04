@@ -2,9 +2,9 @@ import {
   verifyChannelMessageAdapterCapabilityProofs,
   verifyChannelMessageLiveCapabilityAdapterProofs,
   verifyChannelMessageLiveFinalizerProofs,
-} from "openclaw/plugin-sdk/channel-outbound";
+} from "merclaw/plugin-sdk/channel-outbound";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../runtime-api.js";
+import type { MerClawConfig } from "../runtime-api.js";
 
 const mocks = vi.hoisted(() => ({
   sendMessageMatrix: vi.fn(),
@@ -34,7 +34,7 @@ const cfg = {
       accessToken: "resolved-token",
     },
   },
-} as OpenClawConfig;
+} as MerClawConfig;
 
 function lastMatrixSendOptions() {
   const options = mocks.sendMessageMatrix.mock.lastCall?.[2];
@@ -102,7 +102,7 @@ describe("matrix channel message adapter", () => {
         to: "room:!room:example",
         text: "caption",
         mediaUrl: "file:///tmp/cat.png",
-        mediaLocalRoots: ["/tmp/openclaw"],
+        mediaLocalRoots: ["/tmp/merclaw"],
         accountId: "default",
         audioAsVoice: true,
       });
@@ -112,7 +112,7 @@ describe("matrix channel message adapter", () => {
       const options = lastMatrixSendOptions();
       expect(options.cfg).toBe(cfg);
       expect(options.mediaUrl).toBe("file:///tmp/cat.png");
-      expect(options.mediaLocalRoots).toEqual(["/tmp/openclaw"]);
+      expect(options.mediaLocalRoots).toEqual(["/tmp/merclaw"]);
       expect(options.audioAsVoice).toBe(true);
       expect(result.receipt.parts[0]?.kind).toBe("voice");
     };
@@ -184,7 +184,7 @@ describe("matrix channel message adapter", () => {
       | { extraContent?: Record<string, unknown> }
       | undefined;
     expect(matrixChannelData?.extraContent).toEqual({
-      "com.openclaw.presentation": {
+      "com.merclaw.presentation": {
         ...presentation,
         version: 1,
         type: "message.presentation",
@@ -208,7 +208,7 @@ describe("matrix channel message adapter", () => {
     expect(options.accountId).toBe("default");
     expect(options.threadId).toBe("$thread");
     expect(options.extraContent).toEqual({
-      "com.openclaw.presentation": {
+      "com.merclaw.presentation": {
         ...presentation,
         version: 1,
         type: "message.presentation",

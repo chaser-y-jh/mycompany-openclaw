@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { ErrorCodes } from "../../../packages/gateway-protocol/src/index.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { modelsHandlers } from "./models.js";
 
 type Deferred<T> = {
@@ -53,7 +53,7 @@ describe("models.list", () => {
                 },
               },
             };
-            return config as unknown as OpenClawConfig;
+            return config as unknown as MerClawConfig;
           },
           loadGatewayModelCatalog,
           logGateway: {
@@ -103,7 +103,7 @@ describe("models.list", () => {
         client: null,
         isWebchatConnect: () => false,
         context: {
-          getRuntimeConfig: () => ({}) as OpenClawConfig,
+          getRuntimeConfig: () => ({}) as MerClawConfig,
           loadGatewayModelCatalog,
           logGateway: {
             debug: vi.fn(),
@@ -142,7 +142,7 @@ describe("models.list", () => {
       client: null,
       isWebchatConnect: () => false,
       context: {
-        getRuntimeConfig: () => ({}) as OpenClawConfig,
+        getRuntimeConfig: () => ({}) as MerClawConfig,
         loadGatewayModelCatalog: vi.fn(() =>
           Promise.resolve([
             {
@@ -189,7 +189,7 @@ describe("models.list", () => {
           vllm: { apiKey: "test-key" },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
 
     const configuredRespond = vi.fn();
     const loadConfiguredCatalog = vi.fn(() => Promise.resolve(catalog));
@@ -266,7 +266,7 @@ describe("models.list", () => {
       client: null,
       isWebchatConnect: () => false,
       context: {
-        getRuntimeConfig: () => ({}) as OpenClawConfig,
+        getRuntimeConfig: () => ({}) as MerClawConfig,
         loadGatewayModelCatalog: vi.fn(() => Promise.reject(new Error("catalog failed"))),
         logGateway: {
           debug: vi.fn(),

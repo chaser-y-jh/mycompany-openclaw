@@ -1,10 +1,10 @@
-import { embeddedAgentLog } from "openclaw/plugin-sdk/agent-harness-runtime";
+import { embeddedAgentLog } from "merclaw/plugin-sdk/agent-harness-runtime";
 import {
   isFutureDateTimestampMs,
   resolveDateTimestampMs,
   resolveExpiresAtMsFromDurationMs,
-} from "openclaw/plugin-sdk/number-runtime";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/number-runtime";
+import { isRecord } from "merclaw/plugin-sdk/string-coerce-runtime";
 import type { JsonValue, v2 } from "./protocol.js";
 
 export const CODEX_APP_INVENTORY_CACHE_TTL_MS = 60 * 60 * 1_000;

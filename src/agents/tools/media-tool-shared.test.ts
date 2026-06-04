@@ -1,7 +1,7 @@
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { MerClawConfig } from "../../config/config.js";
 import {
   hasGenerationToolAvailability,
   isCapabilityProviderConfigured,
@@ -15,7 +15,7 @@ import {
 // tests cover the real bundled contract loader.
 vi.mock("../../media/channel-inbound-roots.js", () => ({
   resolveChannelInboundAttachmentRootsForChannel: (params: {
-    cfg?: OpenClawConfig;
+    cfg?: MerClawConfig;
     channelId?: string | null;
     accountId?: string | null;
   }) => {
@@ -62,13 +62,13 @@ describe("resolveMediaToolLocalRoots", () => {
   });
 
   it("does not widen default local roots from media sources", () => {
-    const stateDir = path.join("/tmp", "openclaw-media-tool-roots-state");
+    const stateDir = path.join("/tmp", "merclaw-media-tool-roots-state");
     const picturesDir =
       process.platform === "win32" ? "C:\\Users\\peter\\Pictures" : "/Users/peter/Pictures";
     const moviesDir =
       process.platform === "win32" ? "C:\\Users\\peter\\Movies" : "/Users/peter/Movies";
 
-    vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+    vi.stubEnv("MERCLAW_STATE_DIR", stateDir);
 
     const roots = resolveMediaToolLocalRoots(path.join(stateDir, "workspace-agent"), undefined, [
       path.join(picturesDir, "photo.png"),
@@ -85,8 +85,8 @@ describe("resolveMediaToolLocalRoots", () => {
   });
 
   it("keeps channel inbound attachment roots separate from local roots", () => {
-    const accountRoot = path.join("/tmp", "openclaw-imessage-work");
-    const sharedRoot = path.join("/tmp", "openclaw-imessage-shared");
+    const accountRoot = path.join("/tmp", "merclaw-imessage-work");
+    const sharedRoot = path.join("/tmp", "merclaw-imessage-shared");
     const cfg = {
       channels: {
         imessage: {

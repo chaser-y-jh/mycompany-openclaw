@@ -1,5 +1,5 @@
-import { resolveIntegerOption } from "openclaw/plugin-sdk/number-runtime";
-import { chunkMarkdownTextWithMode, type ChunkMode } from "openclaw/plugin-sdk/reply-chunking";
+import { resolveIntegerOption } from "merclaw/plugin-sdk/number-runtime";
+import { chunkMarkdownTextWithMode, type ChunkMode } from "merclaw/plugin-sdk/reply-chunking";
 
 type ChunkDiscordTextOpts = {
   /** Max characters per Discord message. Default: 2000. */

@@ -1,8 +1,8 @@
 import {
   buildMentionRegexes,
   normalizeMentionText,
-} from "openclaw/plugin-sdk/channel-mention-gating";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+} from "merclaw/plugin-sdk/channel-mention-gating";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
 import {
   getComparableIdentityValues,
   getMentionIdentities,
@@ -26,7 +26,7 @@ export type MentionTargets = {
 };
 
 export function buildMentionConfig(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   agentId?: string,
   options?: Parameters<typeof buildMentionRegexes>[2],
 ): MentionConfig {

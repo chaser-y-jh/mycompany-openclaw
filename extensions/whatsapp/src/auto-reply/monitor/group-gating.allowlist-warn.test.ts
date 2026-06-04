@@ -17,7 +17,7 @@ function makeUnregisteredGroupMsg(conversationId: string, accountId = "default")
     id: `msg-${conversationId}`,
     from: conversationId,
     to: "+15550000001",
-    body: "@openclaw hello",
+    body: "@merclaw hello",
     chatId: conversationId,
     chatType: "group",
     conversationId,
@@ -52,7 +52,7 @@ function makeParams(
     },
     messages: {
       groupChat: {
-        mentionPatterns: ["\\bopenclaw\\b"],
+        mentionPatterns: ["\\bmerclaw\\b"],
       },
     },
   } as never,
@@ -64,7 +64,7 @@ function makeParams(
     groupHistoryKey: `whatsapp:group:${msg.conversationId}`,
     agentId: "main",
     sessionKey: `agent:main:whatsapp:group:${msg.conversationId}`,
-    baseMentionConfig: { mentionRegexes: [/\bopenclaw\b/i] } satisfies MentionConfig,
+    baseMentionConfig: { mentionRegexes: [/\bmerclaw\b/i] } satisfies MentionConfig,
     groupHistories: new Map<string, GroupHistoryEntry[]>(),
     groupHistoryLimit: 20,
     groupMemberNames: new Map<string, Map<string, string>>(),
@@ -135,7 +135,7 @@ describe("applyGroupGating allowlist drop warning", () => {
       },
       messages: {
         groupChat: {
-          mentionPatterns: ["\\bopenclaw\\b"],
+          mentionPatterns: ["\\bmerclaw\\b"],
         },
       },
     } as ApplyGroupGatingParams["cfg"];

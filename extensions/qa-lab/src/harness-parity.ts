@@ -460,7 +460,7 @@ function formatPercent(value: number) {
 
 export function renderHarnessParityMarkdownReport(report: HarnessParityReport): string {
   const lines = [
-    `# OpenClaw Harness Parity - ${report.left.label} vs ${report.right.label}`,
+    `# MerClaw Harness Parity - ${report.left.label} vs ${report.right.label}`,
     "",
     `- Generated at: ${report.generatedAt}`,
     `- Provider mode: ${report.providerMode}`,

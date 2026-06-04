@@ -1,13 +1,13 @@
 import { randomUUID } from "node:crypto";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import type { PluginApprovalRequestPayload } from "../infra/plugin-approvals.js";
 import { resolvePluginApprovalTimeoutMs } from "../infra/plugin-approvals.js";
 import { getActiveRuntimePluginRegistry } from "../plugins/active-runtime-registry.js";
 import type { PluginRegistry } from "../plugins/registry-types.js";
 import type {
-  OpenClawPluginNodeInvokePolicyContext,
-  OpenClawPluginNodeInvokePolicyResult,
-  OpenClawPluginNodeInvokeTransportResult,
+  MerClawPluginNodeInvokePolicyContext,
+  MerClawPluginNodeInvokePolicyResult,
+  MerClawPluginNodeInvokeTransportResult,
 } from "../plugins/types.js";
 import type { NodeSession } from "./node-registry.js";
 import { resolveApprovalRequestRecipientConnIds } from "./server-methods/approval-shared.js";
@@ -47,7 +47,7 @@ function createApprovalRuntime(params: {
   context: GatewayRequestContext;
   client: GatewayClient | null;
   pluginId: string;
-}): OpenClawPluginNodeInvokePolicyContext["approvals"] | undefined {
+}): MerClawPluginNodeInvokePolicyContext["approvals"] | undefined {
   const manager = params.context.pluginApprovalManager;
   if (!manager) {
     return undefined;
@@ -118,7 +118,7 @@ export async function applyPluginNodeInvokePolicy(params: {
   params: unknown;
   timeoutMs?: number;
   idempotencyKey?: string;
-}): Promise<OpenClawPluginNodeInvokePolicyResult | null> {
+}): Promise<MerClawPluginNodeInvokePolicyResult | null> {
   const registry = getActiveRuntimePluginRegistry();
   const entry = registry?.nodeInvokePolicies?.find((candidate) =>
     candidate.policy.commands.includes(params.command),
@@ -135,9 +135,9 @@ export async function applyPluginNodeInvokePolicy(params: {
     return null;
   }
 
-  const invokeNode: OpenClawPluginNodeInvokePolicyContext["invokeNode"] = async (
+  const invokeNode: MerClawPluginNodeInvokePolicyContext["invokeNode"] = async (
     override = {},
-  ): Promise<OpenClawPluginNodeInvokeTransportResult> => {
+  ): Promise<MerClawPluginNodeInvokeTransportResult> => {
     const res = await params.context.nodeRegistry.invoke({
       nodeId: params.nodeSession.nodeId,
       command: params.command,

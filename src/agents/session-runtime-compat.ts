@@ -1,4 +1,4 @@
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
 import type { SessionEntry } from "../config/sessions.js";
 import { isDefaultAgentRuntimeId } from "./agent-runtime-id.js";
 import { normalizeOptionalAgentRuntimeId } from "./agent-runtime-id.js";
@@ -29,8 +29,8 @@ export function resolveSessionRuntimeOverrideForProvider(params: {
   if (!runtime || isDefaultAgentRuntimeId(runtime)) {
     return undefined;
   }
-  if (runtime === "openclaw") {
-    return "openclaw";
+  if (runtime === "merclaw") {
+    return "merclaw";
   }
   if (provider === "openai" && runtime === "codex") {
     return "codex";

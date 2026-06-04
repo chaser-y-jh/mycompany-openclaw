@@ -3,8 +3,8 @@ import path from "node:path";
 import {
   replaceManagedMarkdownBlock,
   withTrailingNewline,
-} from "openclaw/plugin-sdk/memory-host-markdown";
-import { FsSafeError, pathExists, root as fsRoot } from "openclaw/plugin-sdk/security-runtime";
+} from "merclaw/plugin-sdk/memory-host-markdown";
+import { FsSafeError, pathExists, root as fsRoot } from "merclaw/plugin-sdk/security-runtime";
 import type { ResolvedMemoryWikiConfig } from "./config.js";
 import { appendMemoryWikiLog } from "./log.js";
 import { resolveMemoryWikiTimestamp } from "./time.js";
@@ -17,9 +17,9 @@ export const WIKI_VAULT_DIRECTORIES = [
   "reports",
   "_attachments",
   "_views",
-  ".openclaw-wiki",
-  ".openclaw-wiki/locks",
-  ".openclaw-wiki/cache",
+  ".merclaw-wiki",
+  ".merclaw-wiki/locks",
+  ".merclaw-wiki/cache",
 ] as const;
 
 type InitializeMemoryWikiVaultResult = {
@@ -34,8 +34,8 @@ function buildIndexMarkdown(): string {
     replaceManagedMarkdownBlock({
       original: "# Wiki Index\n",
       heading: "## Generated",
-      startMarker: "<!-- openclaw:wiki:index:start -->",
-      endMarker: "<!-- openclaw:wiki:index:end -->",
+      startMarker: "<!-- merclaw:wiki:index:start -->",
+      endMarker: "<!-- merclaw:wiki:index:end -->",
       body: "- No compiled pages yet.",
     }),
   );
@@ -49,7 +49,7 @@ function buildAgentsMarkdown(): string {
 - Preserve human notes outside managed markers.
 - Prefer source-backed claims over wiki-to-wiki citation loops.
 - Prefer structured \`claims\` with evidence over burying key beliefs only in prose.
-- Use \`.openclaw-wiki/cache/agent-digest.json\` and \`claims.jsonl\` for machine reads; markdown pages are the human view.
+- Use \`.merclaw-wiki/cache/agent-digest.json\` and \`claims.jsonl\` for machine reads; markdown pages are the human view.
 `);
 }
 
@@ -57,7 +57,7 @@ function buildWikiOverviewMarkdown(config: ResolvedMemoryWikiConfig): string {
   return withTrailingNewline(`\
 # Memory Wiki
 
-This vault is maintained by the OpenClaw memory-wiki plugin.
+This vault is maintained by the MerClaw memory-wiki plugin.
 
 - Vault mode: \`${config.vaultMode}\`
 - Render mode: \`${config.vault.renderMode}\`
@@ -66,11 +66,11 @@ This vault is maintained by the OpenClaw memory-wiki plugin.
 ## Architecture
 - Raw sources remain the evidence layer.
 - Wiki pages are the human-readable synthesis layer.
-- \`.openclaw-wiki/cache/agent-digest.json\` is the agent-facing compiled digest.
+- \`.merclaw-wiki/cache/agent-digest.json\` is the agent-facing compiled digest.
 
 ## Notes
-<!-- openclaw:human:start -->
-<!-- openclaw:human:end -->
+<!-- merclaw:human:start -->
+<!-- merclaw:human:end -->
 `);
 }
 
@@ -124,7 +124,7 @@ export async function initializeMemoryWikiVault(
   );
   await writeFileIfMissing(
     rootDir,
-    ".openclaw-wiki/state.json",
+    ".merclaw-wiki/state.json",
     withTrailingNewline(
       JSON.stringify(
         {
@@ -138,7 +138,7 @@ export async function initializeMemoryWikiVault(
     ),
     createdFiles,
   );
-  await writeFileIfMissing(rootDir, ".openclaw-wiki/log.jsonl", "", createdFiles);
+  await writeFileIfMissing(rootDir, ".merclaw-wiki/log.jsonl", "", createdFiles);
 
   if (createdDirectories.length > 0 || createdFiles.length > 0) {
     await appendMemoryWikiLog(rootDir, {

@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../../config/types.merclaw.js";
 import { generateSecureToken } from "../../../infra/secure-random.js";
 import type { AssistantMessage } from "../../../llm/types.js";
 import { extractAssistantTextForPhase } from "../../../shared/chat-message-content.js";
@@ -34,15 +34,15 @@ const DEFAULT_OVERLOAD_FAILOVER_BACKOFF_MS = 0;
 const DEFAULT_MAX_OVERLOAD_PROFILE_ROTATIONS = 1;
 const DEFAULT_MAX_RATE_LIMIT_PROFILE_ROTATIONS = 1;
 
-export function resolveOverloadFailoverBackoffMs(cfg?: OpenClawConfig): number {
+export function resolveOverloadFailoverBackoffMs(cfg?: MerClawConfig): number {
   return cfg?.auth?.cooldowns?.overloadedBackoffMs ?? DEFAULT_OVERLOAD_FAILOVER_BACKOFF_MS;
 }
 
-export function resolveOverloadProfileRotationLimit(cfg?: OpenClawConfig): number {
+export function resolveOverloadProfileRotationLimit(cfg?: MerClawConfig): number {
   return cfg?.auth?.cooldowns?.overloadedProfileRotations ?? DEFAULT_MAX_OVERLOAD_PROFILE_ROTATIONS;
 }
 
-export function resolveRateLimitProfileRotationLimit(cfg?: OpenClawConfig): number {
+export function resolveRateLimitProfileRotationLimit(cfg?: MerClawConfig): number {
   return (
     cfg?.auth?.cooldowns?.rateLimitedProfileRotations ?? DEFAULT_MAX_RATE_LIMIT_PROFILE_ROTATIONS
   );
@@ -74,7 +74,7 @@ const MAX_RUN_RETRY_ITERATIONS = 160;
 // Defensive guard for the outer run loop across all retry branches.
 export function resolveMaxRunRetryIterations(
   profileCandidateCount: number,
-  cfg?: OpenClawConfig,
+  cfg?: MerClawConfig,
   agentId?: string,
 ): number {
   const configRetries =
@@ -116,7 +116,7 @@ export function isAssistantForModelRef(
 }
 
 function isEmbeddedHarnessProvider(provider: string): boolean {
-  return provider.trim().toLowerCase() === "openclaw";
+  return provider.trim().toLowerCase() === "merclaw";
 }
 
 export function resolveReportedModelRef(params: {

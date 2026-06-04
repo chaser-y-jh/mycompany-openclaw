@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import {
   emitTrustedDiagnosticEventWithPrivateData,
   type DiagnosticModelCallContent,
-} from "openclaw/plugin-sdk/diagnostic-runtime";
+} from "merclaw/plugin-sdk/diagnostic-runtime";
 import type { CodexAppServerRuntimeOptions, resolveCodexPluginsPolicy } from "./config.js";
 
 type TrustedDiagnosticEventInput = Parameters<typeof emitTrustedDiagnosticEventWithPrivateData>[0];
@@ -66,7 +66,7 @@ export function buildCodexPluginThreadConfigEligibilityLogData(params: {
       .toSorted(),
     enabledPluginConfigKeys: params.enabledPluginConfigKeys,
     appCacheKeyFingerprint: fingerprintCodexLogValue(
-      "openclaw:codex:plugin-app-cache-key:v1",
+      "merclaw:codex:plugin-app-cache-key:v1",
       params.pluginAppCacheKey,
     ),
     authProfileId: params.startupAuthProfileId,

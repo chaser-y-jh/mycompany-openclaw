@@ -1,5 +1,5 @@
-import { optionalPositiveIntegerSchema } from "openclaw/plugin-sdk/channel-actions";
-import { defineToolPlugin } from "openclaw/plugin-sdk/tool-plugin";
+import { optionalPositiveIntegerSchema } from "merclaw/plugin-sdk/channel-actions";
+import { defineToolPlugin } from "merclaw/plugin-sdk/tool-plugin";
 import { Type } from "typebox";
 import type { AnyAgentTool } from "./api.js";
 import { createLlmTaskTool, llmTaskToolDefinition } from "./src/llm-task-tool.js";

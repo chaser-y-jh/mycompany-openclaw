@@ -5,7 +5,7 @@ import type {
   SetSessionConfigOptionRequest,
   SetSessionModeRequest,
 } from "@agentclientprotocol/sdk";
-import { createInMemorySessionStore } from "@openclaw/acp-core/session";
+import { createInMemorySessionStore } from "@merclaw/acp-core/session";
 import { describe, expect, it, vi } from "vitest";
 import type { EventFrame } from "../../packages/gateway-protocol/src/index.js";
 import type { GatewayClient } from "../gateway/client.js";
@@ -722,7 +722,7 @@ describe("acp setSessionConfigOption bridge behavior", () => {
     sessionStore.clearAllSessionsForTest();
   });
 
-  it("accepts forwarded timeout config options without failing OpenClaw ACP bridge turns", async () => {
+  it("accepts forwarded timeout config options without failing MerClaw ACP bridge turns", async () => {
     const sessionStore = createInMemorySessionStore();
     const connection = createAcpConnection();
     const requestMock = vi.fn(async (method: string) => {

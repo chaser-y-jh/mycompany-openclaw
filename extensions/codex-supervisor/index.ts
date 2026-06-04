@@ -1,4 +1,4 @@
-import { buildJsonPluginConfigSchema, definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
+import { buildJsonPluginConfigSchema, definePluginEntry } from "merclaw/plugin-sdk/plugin-entry";
 import {
   CodexSupervisorPluginConfigSchema,
   resolveCodexSupervisorPluginConfig,
@@ -9,7 +9,7 @@ import { CodexSupervisor } from "./src/supervisor.js";
 export default definePluginEntry({
   id: "codex-supervisor",
   name: "Codex Supervisor",
-  description: "Supervise Codex app-server sessions from OpenClaw.",
+  description: "Supervise Codex app-server sessions from MerClaw.",
   configSchema: buildJsonPluginConfigSchema(
     CodexSupervisorPluginConfigSchema as unknown as Parameters<
       typeof buildJsonPluginConfigSchema

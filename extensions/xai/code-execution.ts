@@ -1,5 +1,5 @@
-import { jsonResult, readStringParam } from "openclaw/plugin-sdk/provider-web-search";
-import { getRuntimeConfigSnapshot } from "openclaw/plugin-sdk/runtime-config-snapshot";
+import { jsonResult, readStringParam } from "merclaw/plugin-sdk/provider-web-search";
+import { getRuntimeConfigSnapshot } from "merclaw/plugin-sdk/runtime-config-snapshot";
 import {
   buildMissingCodeExecutionApiKeyPayload,
   createCodeExecutionToolDefinition,

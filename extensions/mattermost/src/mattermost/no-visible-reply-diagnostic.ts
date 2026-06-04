@@ -1,5 +1,5 @@
-import { countOutboundMedia } from "openclaw/plugin-sdk/reply-payload";
-import type { ReplyPayload } from "openclaw/plugin-sdk/reply-runtime";
+import { countOutboundMedia } from "merclaw/plugin-sdk/reply-payload";
+import type { ReplyPayload } from "merclaw/plugin-sdk/reply-runtime";
 import type { MattermostReplyDeliveryOutcome } from "./reply-delivery.js";
 
 export type MattermostNoVisibleReplyViolation = {

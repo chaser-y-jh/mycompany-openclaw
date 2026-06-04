@@ -183,7 +183,7 @@ pr_contributor_allows_human_trailers() {
   normalized=$(printf '%s' "$contrib" | tr '[:upper:]' '[:lower:]')
 
   case "$normalized" in
-    ""|"null"|"app/"*|"codex"|"openclaw"|"clawsweeper"|"openclaw-clawsweeper"|"clawsweeper[bot]"|"openclaw-clawsweeper[bot]"|"steipete")
+    ""|"null"|"app/"*|"codex"|"merclaw"|"clawsweeper"|"merclaw-clawsweeper"|"clawsweeper[bot]"|"merclaw-clawsweeper[bot]"|"steipete")
       return 1
       ;;
   esac

@@ -1,12 +1,12 @@
 import os from "node:os";
 import path from "node:path";
-import { MAX_TIMER_TIMEOUT_MS } from "openclaw/plugin-sdk/number-runtime";
+import { MAX_TIMER_TIMEOUT_MS } from "merclaw/plugin-sdk/number-runtime";
 import { describe, expect, it } from "vitest";
 import type { BrowserConfig } from "../config/config.js";
 import { resolveUserPath } from "../utils.js";
 import {
   getManagedBrowserMissingDisplayError,
-  OPENCLAW_BROWSER_HEADLESS_ENV,
+  MERCLAW_BROWSER_HEADLESS_ENV,
   resolveBrowserConfig,
   resolveManagedBrowserHeadlessMode,
   resolveProfile,
@@ -50,15 +50,15 @@ describe("browser config", () => {
     expect(resolved.cdpHost).toBe("127.0.0.1");
     expect(resolved.cdpProtocol).toBe("http");
     const profile = resolveProfile(resolved, resolved.defaultProfile);
-    expect(profile?.name).toBe("openclaw");
-    expect(profile?.driver).toBe("openclaw");
+    expect(profile?.name).toBe("merclaw");
+    expect(profile?.driver).toBe("merclaw");
     expect(profile?.cdpPort).toBe(18800);
     expect(profile?.cdpUrl).toBe("http://127.0.0.1:18800");
 
-    const openclaw = resolveProfile(resolved, "openclaw");
-    expect(openclaw?.driver).toBe("openclaw");
-    expect(openclaw?.cdpPort).toBe(18800);
-    expect(openclaw?.cdpUrl).toBe("http://127.0.0.1:18800");
+    const merclaw = resolveProfile(resolved, "merclaw");
+    expect(merclaw?.driver).toBe("merclaw");
+    expect(merclaw?.cdpPort).toBe(18800);
+    expect(merclaw?.cdpUrl).toBe("http://127.0.0.1:18800");
     const user = resolveProfile(resolved, "user");
     expect(user?.driver).toBe("existing-session");
     expect(user?.cdpPort).toBe(0);
@@ -77,27 +77,27 @@ describe("browser config", () => {
     });
   });
 
-  it("derives default ports from OPENCLAW_GATEWAY_PORT when unset", () => {
-    withEnv({ OPENCLAW_GATEWAY_PORT: "19001" }, () => {
+  it("derives default ports from MERCLAW_GATEWAY_PORT when unset", () => {
+    withEnv({ MERCLAW_GATEWAY_PORT: "19001" }, () => {
       const resolved = resolveBrowserConfig(undefined);
       expect(resolved.controlPort).toBe(19003);
       expect(resolveProfile(resolved, "chrome-relay")).toBe(null);
 
-      const openclaw = resolveProfile(resolved, "openclaw");
-      expect(openclaw?.cdpPort).toBe(19012);
-      expect(openclaw?.cdpUrl).toBe("http://127.0.0.1:19012");
+      const merclaw = resolveProfile(resolved, "merclaw");
+      expect(merclaw?.cdpPort).toBe(19012);
+      expect(merclaw?.cdpUrl).toBe("http://127.0.0.1:19012");
     });
   });
 
   it("derives default ports from gateway.port when env is unset", () => {
-    withEnv({ OPENCLAW_GATEWAY_PORT: undefined }, () => {
+    withEnv({ MERCLAW_GATEWAY_PORT: undefined }, () => {
       const resolved = resolveBrowserConfig(undefined, { gateway: { port: 19011 } });
       expect(resolved.controlPort).toBe(19013);
       expect(resolveProfile(resolved, "chrome-relay")).toBe(null);
 
-      const openclaw = resolveProfile(resolved, "openclaw");
-      expect(openclaw?.cdpPort).toBe(19022);
-      expect(openclaw?.cdpUrl).toBe("http://127.0.0.1:19022");
+      const merclaw = resolveProfile(resolved, "merclaw");
+      expect(merclaw?.cdpPort).toBe(19022);
+      expect(merclaw?.cdpUrl).toBe("http://127.0.0.1:19022");
     });
   });
 
@@ -105,10 +105,10 @@ describe("browser config", () => {
     const resolved = resolveBrowserConfig({
       cdpPortRangeStart: 19000,
     });
-    const openclaw = resolveProfile(resolved, "openclaw");
+    const merclaw = resolveProfile(resolved, "merclaw");
     expect(resolved.cdpPortRangeStart).toBe(19000);
-    expect(openclaw?.cdpPort).toBe(19000);
-    expect(openclaw?.cdpUrl).toBe("http://127.0.0.1:19000");
+    expect(merclaw?.cdpPort).toBe(19000);
+    expect(merclaw?.cdpUrl).toBe("http://127.0.0.1:19000");
   });
 
   it("rejects cdpPortRangeStart values that overflow the CDP range window", () => {
@@ -249,7 +249,7 @@ describe("browser config", () => {
     const resolved = resolveBrowserConfig({
       cdpUrl: "http://example.com:9222",
     });
-    const profile = resolveProfile(resolved, "openclaw");
+    const profile = resolveProfile(resolved, "merclaw");
     expect(profile?.cdpIsLoopback).toBe(false);
   });
 
@@ -257,7 +257,7 @@ describe("browser config", () => {
     const resolved = resolveBrowserConfig({
       cdpUrl: "http://example.com:9222",
     });
-    const profile = resolveProfile(resolved, "openclaw");
+    const profile = resolveProfile(resolved, "merclaw");
     expect(profile?.cdpPort).toBe(9222);
     expect(profile?.cdpUrl).toBe("http://example.com:9222");
     expect(profile?.cdpIsLoopback).toBe(false);
@@ -340,12 +340,12 @@ describe("browser config", () => {
     const noDisplayEnv = {
       DISPLAY: undefined,
       WAYLAND_DISPLAY: undefined,
-      [OPENCLAW_BROWSER_HEADLESS_ENV]: undefined,
+      [MERCLAW_BROWSER_HEADLESS_ENV]: undefined,
     };
 
     it("falls back to headless for local managed Linux profiles without display", () => {
       const resolved = resolveBrowserConfig({});
-      const profile = resolveProfile(resolved, "openclaw")!;
+      const profile = resolveProfile(resolved, "merclaw")!;
 
       expect(
         resolveManagedBrowserHeadlessMode(resolved, profile, {
@@ -375,10 +375,10 @@ describe("browser config", () => {
       const resolved = resolveBrowserConfig({
         headless: true,
         profiles: {
-          openclaw: { cdpPort: 18800, color: "#FF4500", headless: false },
+          merclaw: { cdpPort: 18800, color: "#FF4500", headless: false },
         },
       });
-      const profile = resolveProfile(resolved, "openclaw")!;
+      const profile = resolveProfile(resolved, "merclaw")!;
 
       expect(
         resolveManagedBrowserHeadlessMode(resolved, profile, {
@@ -390,7 +390,7 @@ describe("browser config", () => {
 
     it("lets explicit global headless=false beat the Linux no-display fallback", () => {
       const resolved = resolveBrowserConfig({ headless: false });
-      const profile = resolveProfile(resolved, "openclaw")!;
+      const profile = resolveProfile(resolved, "merclaw")!;
 
       expect(
         resolveManagedBrowserHeadlessMode(resolved, profile, {
@@ -400,18 +400,18 @@ describe("browser config", () => {
       ).toEqual({ headless: false, source: "config" });
     });
 
-    it("lets OPENCLAW_BROWSER_HEADLESS override profile/global config", () => {
+    it("lets MERCLAW_BROWSER_HEADLESS override profile/global config", () => {
       const resolved = resolveBrowserConfig({
         profiles: {
-          openclaw: { cdpPort: 18800, color: "#FF4500", headless: false },
+          merclaw: { cdpPort: 18800, color: "#FF4500", headless: false },
         },
       });
-      const profile = resolveProfile(resolved, "openclaw")!;
+      const profile = resolveProfile(resolved, "merclaw")!;
 
       expect(
         resolveManagedBrowserHeadlessMode(resolved, profile, {
           platform: "linux",
-          env: { ...noDisplayEnv, [OPENCLAW_BROWSER_HEADLESS_ENV]: "1" },
+          env: { ...noDisplayEnv, [MERCLAW_BROWSER_HEADLESS_ENV]: "1" },
         }),
       ).toEqual({ headless: true, source: "env" });
     });
@@ -420,23 +420,23 @@ describe("browser config", () => {
       const resolved = resolveBrowserConfig({
         headless: false,
         profiles: {
-          openclaw: { cdpPort: 18800, color: "#FF4500", headless: false },
+          merclaw: { cdpPort: 18800, color: "#FF4500", headless: false },
         },
       });
-      const profile = resolveProfile(resolved, "openclaw")!;
+      const profile = resolveProfile(resolved, "merclaw")!;
 
       expect(
         resolveManagedBrowserHeadlessMode(resolved, profile, {
           headlessOverride: true,
           platform: "linux",
-          env: { ...noDisplayEnv, [OPENCLAW_BROWSER_HEADLESS_ENV]: "0" },
+          env: { ...noDisplayEnv, [MERCLAW_BROWSER_HEADLESS_ENV]: "0" },
         }),
       ).toEqual({ headless: true, source: "request" });
     });
 
     it("returns an actionable error only when headed mode is explicitly selected", () => {
       const defaultResolved = resolveBrowserConfig({});
-      const defaultProfile = resolveProfile(defaultResolved, "openclaw")!;
+      const defaultProfile = resolveProfile(defaultResolved, "merclaw")!;
       expect(
         getManagedBrowserMissingDisplayError(defaultResolved, defaultProfile, {
           platform: "linux",
@@ -446,16 +446,16 @@ describe("browser config", () => {
 
       const profileResolved = resolveBrowserConfig({
         profiles: {
-          openclaw: { cdpPort: 18800, color: "#FF4500", headless: false },
+          merclaw: { cdpPort: 18800, color: "#FF4500", headless: false },
         },
       });
-      const profile = resolveProfile(profileResolved, "openclaw")!;
+      const profile = resolveProfile(profileResolved, "merclaw")!;
       expect(
         getManagedBrowserMissingDisplayError(profileResolved, profile, {
           platform: "linux",
           env: noDisplayEnv,
         }),
-      ).toContain("browser.profiles.openclaw.headless=false");
+      ).toContain("browser.profiles.merclaw.headless=false");
     });
   });
 
@@ -548,7 +548,7 @@ describe("browser config", () => {
     const resolved = resolveBrowserConfig({
       cdpUrl: "wss://connect.browserbase.com?apiKey=test-key",
     });
-    const profile = resolveProfile(resolved, "openclaw");
+    const profile = resolveProfile(resolved, "merclaw");
     expect(profile?.cdpUrl).toBe("wss://connect.browserbase.com/?apiKey=test-key");
     expect(profile?.cdpHost).toBe("connect.browserbase.com");
     expect(profile?.cdpPort).toBe(443);
@@ -574,15 +574,15 @@ describe("browser config", () => {
     it("URL with non-default port wins over cdpPort", () => {
       const resolved = resolveBrowserConfig({
         profiles: {
-          openclaw: {
+          merclaw: {
             cdpPort: 18800,
             cdpUrl: "http://127.0.0.1:9222",
             color: "#FF4500",
-            driver: "openclaw",
+            driver: "merclaw",
           },
         },
       });
-      const profile = resolveProfile(resolved, "openclaw");
+      const profile = resolveProfile(resolved, "merclaw");
       expect(profile?.cdpPort).toBe(9222);
       expect(profile?.cdpUrl).toBe("http://127.0.0.1:9222");
     });
@@ -590,15 +590,15 @@ describe("browser config", () => {
     it("URL with explicit default port :80 wins over cdpPort", () => {
       const resolved = resolveBrowserConfig({
         profiles: {
-          openclaw: {
+          merclaw: {
             cdpPort: 18800,
             cdpUrl: "http://127.0.0.1:80",
             color: "#FF4500",
-            driver: "openclaw",
+            driver: "merclaw",
           },
         },
       });
-      const profile = resolveProfile(resolved, "openclaw");
+      const profile = resolveProfile(resolved, "merclaw");
       expect(profile?.cdpPort).toBe(80);
       expect(profile?.cdpUrl).toBe("http://127.0.0.1:80");
     });
@@ -610,19 +610,19 @@ describe("browser config", () => {
             cdpPort: 18800,
             cdpUrl: "https://user:pass@remote-browser.example.com:443/json/version?token=abc#frag",
             color: "#0066CC",
-            driver: "openclaw",
+            driver: "merclaw",
           },
           websocket: {
             cdpPort: 18800,
             cdpUrl: "wss://remote-browser.example.com:443/json/version?token=abc",
             color: "#0066CC",
-            driver: "openclaw",
+            driver: "merclaw",
           },
           ipv6: {
             cdpPort: 18800,
             cdpUrl: "http://[::1]:80/json/version?token=abc",
             color: "#0066CC",
-            driver: "openclaw",
+            driver: "merclaw",
           },
         },
       });
@@ -645,15 +645,15 @@ describe("browser config", () => {
     it("userinfo colons without a URL port defer to cdpPort", () => {
       const resolved = resolveBrowserConfig({
         profiles: {
-          openclaw: {
+          merclaw: {
             cdpPort: 18800,
             cdpUrl: "http://user:pass@127.0.0.1/json/version",
             color: "#FF4500",
-            driver: "openclaw",
+            driver: "merclaw",
           },
         },
       });
-      const profile = resolveProfile(resolved, "openclaw");
+      const profile = resolveProfile(resolved, "merclaw");
       expect(profile?.cdpPort).toBe(18800);
       expect(profile?.cdpUrl).toBe("http://user:pass@127.0.0.1:18800/json/version");
     });
@@ -661,15 +661,15 @@ describe("browser config", () => {
     it("URL without port defers to cdpPort", () => {
       const resolved = resolveBrowserConfig({
         profiles: {
-          openclaw: {
+          merclaw: {
             cdpPort: 18800,
             cdpUrl: "http://127.0.0.1",
             color: "#FF4500",
-            driver: "openclaw",
+            driver: "merclaw",
           },
         },
       });
-      const profile = resolveProfile(resolved, "openclaw");
+      const profile = resolveProfile(resolved, "merclaw");
       expect(profile?.cdpPort).toBe(18800);
       expect(profile?.cdpUrl).toBe("http://127.0.0.1:18800");
     });
@@ -677,14 +677,14 @@ describe("browser config", () => {
     it("URL with non-default port, no cdpPort configured", () => {
       const resolved = resolveBrowserConfig({
         profiles: {
-          openclaw: {
+          merclaw: {
             cdpUrl: "http://127.0.0.1:9222",
             color: "#FF4500",
-            driver: "openclaw",
+            driver: "merclaw",
           },
         },
       });
-      const profile = resolveProfile(resolved, "openclaw");
+      const profile = resolveProfile(resolved, "merclaw");
       expect(profile?.cdpPort).toBe(9222);
       expect(profile?.cdpUrl).toBe("http://127.0.0.1:9222");
     });
@@ -692,14 +692,14 @@ describe("browser config", () => {
     it("URL without port and no cdpPort falls back to protocol default", () => {
       const resolved = resolveBrowserConfig({
         profiles: {
-          openclaw: {
+          merclaw: {
             cdpUrl: "https://remote-browser.example.com",
             color: "#FF4500",
-            driver: "openclaw",
+            driver: "merclaw",
           },
         },
       });
-      const profile = resolveProfile(resolved, "openclaw");
+      const profile = resolveProfile(resolved, "merclaw");
       expect(profile?.cdpPort).toBe(443);
       expect(profile?.cdpUrl).toBe("https://remote-browser.example.com");
     });
@@ -707,14 +707,14 @@ describe("browser config", () => {
     it("no URL + cdpPort constructs URL from defaults", () => {
       const resolved = resolveBrowserConfig({
         profiles: {
-          openclaw: {
+          merclaw: {
             cdpPort: 9222,
             color: "#FF4500",
-            driver: "openclaw",
+            driver: "merclaw",
           },
         },
       });
-      const profile = resolveProfile(resolved, "openclaw");
+      const profile = resolveProfile(resolved, "merclaw");
       expect(profile?.cdpPort).toBe(9222);
       expect(profile?.cdpUrl).toContain(":9222");
     });
@@ -724,7 +724,7 @@ describe("browser config", () => {
         profiles: {
           bad: {
             color: "#FF4500",
-            driver: "openclaw",
+            driver: "merclaw",
           },
         },
       });
@@ -752,15 +752,15 @@ describe("browser config", () => {
     it("IPv6 URL without port defers to cdpPort", () => {
       const resolved = resolveBrowserConfig({
         profiles: {
-          openclaw: {
+          merclaw: {
             cdpPort: 18800,
             cdpUrl: "http://[::1]",
             color: "#FF4500",
-            driver: "openclaw",
+            driver: "merclaw",
           },
         },
       });
-      const profile = resolveProfile(resolved, "openclaw");
+      const profile = resolveProfile(resolved, "merclaw");
       expect(profile?.cdpPort).toBe(18800);
       expect(profile?.cdpUrl).toBe("http://[::1]:18800");
     });
@@ -768,15 +768,15 @@ describe("browser config", () => {
     it("IPv6 URL with explicit port wins over cdpPort", () => {
       const resolved = resolveBrowserConfig({
         profiles: {
-          openclaw: {
+          merclaw: {
             cdpPort: 18800,
             cdpUrl: "http://[::1]:9222",
             color: "#FF4500",
-            driver: "openclaw",
+            driver: "merclaw",
           },
         },
       });
-      const profile = resolveProfile(resolved, "openclaw");
+      const profile = resolveProfile(resolved, "merclaw");
       expect(profile?.cdpPort).toBe(9222);
       expect(profile?.cdpUrl).toBe("http://[::1]:9222");
     });
@@ -1002,7 +1002,7 @@ describe("browser config", () => {
     const existingSession = resolveProfile(resolved, "chrome-live")!;
     expect(getBrowserProfileCapabilities(existingSession).usesChromeMcp).toBe(true);
 
-    const managed = resolveProfile(resolved, "openclaw")!;
+    const managed = resolveProfile(resolved, "merclaw")!;
     expect(getBrowserProfileCapabilities(managed).usesChromeMcp).toBe(false);
 
     const work = resolveProfile(resolved, "work")!;
@@ -1010,34 +1010,34 @@ describe("browser config", () => {
   });
 
   describe("default profile preference", () => {
-    it("defaults to openclaw profile when defaultProfile is not configured", () => {
+    it("defaults to merclaw profile when defaultProfile is not configured", () => {
       const resolved = resolveBrowserConfig({
         headless: false,
         noSandbox: false,
       });
-      expect(resolved.defaultProfile).toBe("openclaw");
+      expect(resolved.defaultProfile).toBe("merclaw");
     });
 
-    it("keeps openclaw default when headless=true", () => {
+    it("keeps merclaw default when headless=true", () => {
       const resolved = resolveBrowserConfig({
         headless: true,
       });
-      expect(resolved.defaultProfile).toBe("openclaw");
+      expect(resolved.defaultProfile).toBe("merclaw");
     });
 
-    it("keeps openclaw default when noSandbox=true", () => {
+    it("keeps merclaw default when noSandbox=true", () => {
       const resolved = resolveBrowserConfig({
         noSandbox: true,
       });
-      expect(resolved.defaultProfile).toBe("openclaw");
+      expect(resolved.defaultProfile).toBe("merclaw");
     });
 
-    it("keeps openclaw default when both headless and noSandbox are true", () => {
+    it("keeps merclaw default when both headless and noSandbox are true", () => {
       const resolved = resolveBrowserConfig({
         headless: true,
         noSandbox: true,
       });
-      expect(resolved.defaultProfile).toBe("openclaw");
+      expect(resolved.defaultProfile).toBe("merclaw");
     });
 
     it("explicit defaultProfile config overrides defaults in headless mode", () => {

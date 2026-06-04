@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import { formatErrorMessage } from "merclaw/plugin-sdk/error-runtime";
 import {
   formatGatewayLogSentinelSummary,
   type GatewayLogSentinelFinding,
@@ -893,7 +893,7 @@ function escapeTableCell(value: string): string {
 
 export function renderQaConfidenceMarkdownReport(report: QaConfidenceReport): string {
   const lines = [
-    `# OpenClaw QA Confidence Report - ${report.profile}`,
+    `# MerClaw QA Confidence Report - ${report.profile}`,
     "",
     `- Generated at: ${report.generatedAt}`,
     `- Verdict: ${report.pass ? "pass" : "fail"}`,
@@ -946,7 +946,7 @@ function syntheticRuntimeCell(
 
 function syntheticToolCall(overrides: Partial<RuntimeParityToolCall> = {}): RuntimeParityToolCall {
   return {
-    tool: "openclaw.synthetic",
+    tool: "merclaw.synthetic",
     argsHash: "args-a",
     resultHash: "result-a",
     ...overrides,
@@ -955,7 +955,7 @@ function syntheticToolCall(overrides: Partial<RuntimeParityToolCall> = {}): Runt
 
 async function detectRuntimeDrift(params: {
   scenarioId: string;
-  openclaw: RuntimeParityCell;
+  merclaw: RuntimeParityCell;
   codex: RuntimeParityCell;
   expectedDrift: RuntimeParityDrift;
 }): Promise<boolean> {
@@ -963,7 +963,7 @@ async function detectRuntimeDrift(params: {
     scenarioId: params.scenarioId,
     runCell: async (runtime) => ({
       scenarioStatus: "pass",
-      cell: runtime === "openclaw" ? params.openclaw : params.codex,
+      cell: runtime === "merclaw" ? params.merclaw : params.codex,
     }),
   });
   return result.drift === params.expectedDrift;
@@ -988,7 +988,7 @@ function syntheticPromptReport(
       schemaChars: 40,
       entries: [
         {
-          name: "openclaw.synthetic",
+          name: "merclaw.synthetic",
           summaryChars: 12,
           summaryHash: "summary-a",
           schemaChars: 18,
@@ -1008,7 +1008,7 @@ function detectHarnessDrift(params: {
 }): boolean {
   const left = buildHarnessParityCell({
     variant: { id: "left", label: "Left" },
-    cell: syntheticRuntimeCell("openclaw", { systemPromptReport: params.leftReport }),
+    cell: syntheticRuntimeCell("merclaw", { systemPromptReport: params.leftReport }),
     tokenUsageSource: "mock-estimate",
   });
   const right = buildHarnessParityCell({
@@ -1026,7 +1026,7 @@ function detectHarnessDrift(params: {
 }
 
 function detectTokenEfficiencyRegression(): boolean {
-  const openclaw = syntheticRuntimeCell("openclaw", {
+  const merclaw = syntheticRuntimeCell("merclaw", {
     usage: { inputTokens: 100, outputTokens: 20, totalTokens: 120 },
   });
   const codex = syntheticRuntimeCell("codex", {
@@ -1034,14 +1034,14 @@ function detectTokenEfficiencyRegression(): boolean {
   });
   const runtimeParity: RuntimeParityResult = {
     scenarioId: "token-efficiency-regression",
-    cells: { openclaw, codex },
+    cells: { merclaw, codex },
     drift: "none",
   };
   const report = buildTokenEfficiencyReport({
     summary: {
       run: {
         providerMode: "live-frontier",
-        runtimePair: ["openclaw", "codex"],
+        runtimePair: ["merclaw", "codex"],
       },
       scenarios: [
         {
@@ -1093,7 +1093,7 @@ export async function buildQaConfidenceSelfTestSummary(
         schemaChars: 40,
         entries: [
           {
-            name: "openclaw.synthetic",
+            name: "merclaw.synthetic",
             summaryChars: 12,
             summaryHash: "summary-b",
             schemaChars: 18,
@@ -1113,7 +1113,7 @@ export async function buildQaConfidenceSelfTestSummary(
         schemaChars: 40,
         entries: [
           {
-            name: "openclaw.synthetic",
+            name: "merclaw.synthetic",
             summaryChars: 12,
             summaryHash: "summary-a",
             schemaChars: 18,
@@ -1127,13 +1127,13 @@ export async function buildQaConfidenceSelfTestSummary(
   });
   const runtimeToolCallDropDetected = await detectRuntimeDrift({
     scenarioId: "runtime-tool-call-drop",
-    openclaw: syntheticRuntimeCell("openclaw", { toolCalls: [syntheticToolCall()] }),
+    merclaw: syntheticRuntimeCell("merclaw", { toolCalls: [syntheticToolCall()] }),
     codex: syntheticRuntimeCell("codex", { toolCalls: [] }),
     expectedDrift: "tool-call-shape",
   });
   const toolResultMismatchDetected = await detectRuntimeDrift({
     scenarioId: "tool-result-mismatch",
-    openclaw: syntheticRuntimeCell("openclaw", { toolCalls: [syntheticToolCall()] }),
+    merclaw: syntheticRuntimeCell("merclaw", { toolCalls: [syntheticToolCall()] }),
     codex: syntheticRuntimeCell("codex", {
       toolCalls: [syntheticToolCall({ resultHash: "result-b" })],
     }),
@@ -1141,7 +1141,7 @@ export async function buildQaConfidenceSelfTestSummary(
   });
   const failureModeDriftDetected = await detectRuntimeDrift({
     scenarioId: "failure-mode-drift",
-    openclaw: syntheticRuntimeCell("openclaw"),
+    merclaw: syntheticRuntimeCell("merclaw"),
     codex: syntheticRuntimeCell("codex", { transportErrorClass: "synthetic-transport" }),
     expectedDrift: "failure-mode",
   });
@@ -1207,7 +1207,7 @@ export function renderQaConfidenceSelfTestMarkdownReport(
   summary: QaConfidenceSelfTestSummary,
 ): string {
   const lines = [
-    "# OpenClaw QA Confidence Self-Test",
+    "# MerClaw QA Confidence Self-Test",
     "",
     `- Generated at: ${summary.generatedAt}`,
     `- Verdict: ${summary.pass ? "pass" : "fail"}`,

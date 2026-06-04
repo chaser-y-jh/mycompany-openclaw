@@ -1,18 +1,18 @@
 import { rmSync } from "node:fs";
 import path from "node:path";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { MAX_TIMER_TIMEOUT_MS } from "openclaw/plugin-sdk/number-runtime";
-import type { ReplyPayload } from "openclaw/plugin-sdk/reply-payload";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { MAX_TIMER_TIMEOUT_MS } from "merclaw/plugin-sdk/number-runtime";
+import type { ReplyPayload } from "merclaw/plugin-sdk/reply-payload";
 import {
   clearRuntimeConfigSnapshot,
   setRuntimeConfigSnapshot,
-} from "openclaw/plugin-sdk/runtime-config-snapshot";
+} from "merclaw/plugin-sdk/runtime-config-snapshot";
 import type {
   SpeechProviderPlugin,
   SpeechProviderPrepareSynthesisContext,
   SpeechSynthesisRequest,
   SpeechTelephonySynthesisRequest,
-} from "openclaw/plugin-sdk/speech-core";
+} from "merclaw/plugin-sdk/speech-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 type MockSpeechSynthesisResult = Awaited<ReturnType<SpeechProviderPlugin["synthesize"]>>;
@@ -56,11 +56,11 @@ const transcodeAudioBufferMock = vi.hoisted(() =>
   >(async () => ({ ok: false, reason: "platform-unsupported" })),
 );
 
-vi.mock("openclaw/plugin-sdk/media-runtime", () => ({
+vi.mock("merclaw/plugin-sdk/media-runtime", () => ({
   transcodeAudioBuffer: transcodeAudioBufferMock,
 }));
 
-vi.mock("openclaw/plugin-sdk/channel-targets", () => ({
+vi.mock("merclaw/plugin-sdk/channel-targets", () => ({
   normalizeChannelId: (channel: string | undefined) => channel?.trim().toLowerCase() ?? null,
   resolveChannelTtsVoiceDelivery: (channel: string | undefined) => {
     const normalized = channel?.trim().toLowerCase();
@@ -142,7 +142,7 @@ function installSpeechProviders(providers: SpeechProviderPlugin[]): void {
   );
 }
 
-function createTtsConfig(prefsName: string): OpenClawConfig {
+function createTtsConfig(prefsName: string): MerClawConfig {
   return {
     messages: {
       tts: {
@@ -242,7 +242,7 @@ describe("speech-core native voice-note routing", () => {
   });
 
   it("tells generic TTS guidance to defer to MEMORY voice-delivery instructions", () => {
-    const hint = buildTtsSystemPromptHint(createTtsConfig("openclaw-speech-core-tts-hint-test"));
+    const hint = buildTtsSystemPromptHint(createTtsConfig("merclaw-speech-core-tts-hint-test"));
 
     expect(hint).toContain("Voice (TTS) is enabled.");
     expect(hint).toContain(
@@ -256,7 +256,7 @@ describe("speech-core native voice-note routing", () => {
   it("marks Discord auto TTS replies as native voice messages", async () => {
     await expectTtsPayloadResult({
       channel: "discord",
-      prefsName: "openclaw-speech-core-tts-test",
+      prefsName: "merclaw-speech-core-tts-test",
       text: "This Discord reply should be delivered as a native voice note.",
       target: "voice-note",
       audioAsVoice: true,
@@ -266,7 +266,7 @@ describe("speech-core native voice-note routing", () => {
   it("keeps compatible audio-file synthesis deliverable as a voice memo", async () => {
     await expectTtsPayloadResult({
       channel: "voice-memo-chat",
-      prefsName: "openclaw-speech-core-tts-voice-memo-mp3-test",
+      prefsName: "merclaw-speech-core-tts-voice-memo-mp3-test",
       text: "This reply should be delivered as a native voice memo.",
       target: "audio-file",
       audioAsVoice: true,
@@ -283,7 +283,7 @@ describe("speech-core native voice-note routing", () => {
   it("does not mark unsupported audio-file output as a voice memo", async () => {
     await expectTtsPayloadResult({
       channel: "voice-memo-chat",
-      prefsName: "openclaw-speech-core-tts-voice-memo-ogg-test",
+      prefsName: "merclaw-speech-core-tts-voice-memo-ogg-test",
       text: "This reply should stay a regular audio attachment.",
       target: "audio-file",
       audioAsVoice: undefined,
@@ -297,7 +297,7 @@ describe("speech-core native voice-note routing", () => {
     });
     await expectTtsPayloadResult({
       channel: "voice-memo-chat",
-      prefsName: "openclaw-speech-core-tts-voice-memo-caf-transcode-test",
+      prefsName: "merclaw-speech-core-tts-voice-memo-caf-transcode-test",
       text: "This reply should be pre-transcoded to a native voice-memo CAF.",
       target: "audio-file",
       audioAsVoice: true,
@@ -330,7 +330,7 @@ describe("speech-core native voice-note routing", () => {
     // of a regression. The failure is logged via the call site in tts.ts.
     await expectTtsPayloadResult({
       channel: "voice-memo-chat",
-      prefsName: "openclaw-speech-core-tts-voice-memo-caf-fallback-test",
+      prefsName: "merclaw-speech-core-tts-voice-memo-caf-fallback-test",
       text: "This reply should fall back to the original mp3.",
       target: "audio-file",
       audioAsVoice: true,
@@ -357,7 +357,7 @@ describe("speech-core native voice-note routing", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
     const runtimeConfig = {
       messages: {
         tts: {
@@ -370,7 +370,7 @@ describe("speech-core native voice-note routing", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
     installSpeechProviders([
       createMockSpeechProvider("mock", {
         isConfigured: ({ providerConfig }) => providerConfig.apiKey === "resolved-minimax-key",
@@ -410,7 +410,7 @@ describe("speech-core native voice-note routing", () => {
             provider: "mock",
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       disableFallback: true,
     });
 
@@ -433,7 +433,7 @@ describe("speech-core native voice-note routing", () => {
             provider: "mock",
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       disableFallback: true,
     });
 
@@ -454,7 +454,7 @@ describe("speech-core native voice-note routing", () => {
             provider: "mock",
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       disableFallback: true,
     });
 
@@ -476,7 +476,7 @@ describe("speech-core native voice-note routing", () => {
             timeoutMs: 45_000,
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       disableFallback: true,
     });
 
@@ -503,7 +503,7 @@ describe("speech-core native voice-note routing", () => {
             provider: "mock",
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       disableFallback: true,
     });
 
@@ -540,10 +540,10 @@ describe("speech-core native voice-note routing", () => {
         messages: {
           tts: {
             enabled: true,
-            prefsPath: "/tmp/openclaw-speech-core-voice-model-default-test.json",
+            prefsPath: "/tmp/merclaw-speech-core-voice-model-default-test.json",
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       disableFallback: true,
     });
 
@@ -581,7 +581,7 @@ describe("speech-core native voice-note routing", () => {
           tts: {
             enabled: true,
             provider: "openrouter",
-            prefsPath: "/tmp/openclaw-speech-core-explicit-model-alias-test.json",
+            prefsPath: "/tmp/merclaw-speech-core-explicit-model-alias-test.json",
             providers: {
               openrouter: {
                 modelId: "explicit-model",
@@ -589,7 +589,7 @@ describe("speech-core native voice-note routing", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       disableFallback: true,
     });
 
@@ -630,10 +630,10 @@ describe("speech-core native voice-note routing", () => {
         messages: {
           tts: {
             enabled: true,
-            prefsPath: "/tmp/openclaw-speech-core-voice-model-fallback-test.json",
+            prefsPath: "/tmp/merclaw-speech-core-voice-model-fallback-test.json",
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
     });
 
     expect(result.success).toBe(true);
@@ -676,10 +676,10 @@ describe("speech-core native voice-note routing", () => {
         messages: {
           tts: {
             enabled: true,
-            prefsPath: "/tmp/openclaw-speech-core-same-provider-voice-model-fallback-test.json",
+            prefsPath: "/tmp/merclaw-speech-core-same-provider-voice-model-fallback-test.json",
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
     });
 
     expect(result.success).toBe(true);
@@ -721,10 +721,10 @@ describe("speech-core native voice-note routing", () => {
           tts: {
             enabled: true,
             provider: "openai",
-            prefsPath: "/tmp/openclaw-speech-core-realtime-voice-model-ignored-test.json",
+            prefsPath: "/tmp/merclaw-speech-core-realtime-voice-model-ignored-test.json",
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       disableFallback: true,
     });
 
@@ -764,10 +764,10 @@ describe("speech-core native voice-note routing", () => {
         messages: {
           tts: {
             enabled: true,
-            prefsPath: "/tmp/openclaw-speech-core-supported-voice-model-provider-test.json",
+            prefsPath: "/tmp/merclaw-speech-core-supported-voice-model-provider-test.json",
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
     });
 
     expect(result.success).toBe(true);
@@ -795,7 +795,7 @@ describe("speech-core native voice-note routing", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       disableFallback: true,
     });
 
@@ -834,7 +834,7 @@ describe("speech-core native voice-note routing", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       disableFallback: true,
     });
 
@@ -863,7 +863,7 @@ describe("speech-core native voice-note routing", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       disableFallback: true,
     });
 
@@ -883,7 +883,7 @@ describe("speech-core native voice-note routing", () => {
       expect(testApi.supportsTranscodedVoiceNoteTts(channel)).toBe(true);
       await expectTtsPayloadResult({
         channel,
-        prefsName: `openclaw-speech-core-tts-${channel}-mp3-test`,
+        prefsName: `merclaw-speech-core-tts-${channel}-mp3-test`,
         text: `This ${channel} reply should be transcoded by the channel.`,
         target: "voice-note",
         audioAsVoice: true,
@@ -901,7 +901,7 @@ describe("speech-core native voice-note routing", () => {
   it("keeps non-native voice-note channels as regular audio files", async () => {
     await expectTtsPayloadResult({
       channel: "slack",
-      prefsName: "openclaw-speech-core-tts-slack-test",
+      prefsName: "merclaw-speech-core-tts-slack-test",
       text: "Slack replies should be delivered as regular audio attachments.",
       target: "audio-file",
       audioAsVoice: undefined,
@@ -909,7 +909,7 @@ describe("speech-core native voice-note routing", () => {
   });
 
   it("synthesizes explicitly tagged short hidden TTS text", async () => {
-    const cfg = createTtsConfig("openclaw-speech-core-short-hidden-tts-test");
+    const cfg = createTtsConfig("merclaw-speech-core-short-hidden-tts-test");
     let mediaDir: string | undefined;
     try {
       const result = await maybeApplyTtsToPayload({
@@ -939,7 +939,7 @@ describe("speech-core native voice-note routing", () => {
 
   it("skips block delivery kind in final mode (accumulated final tail synthesizes instead)", async () => {
     synthesizeMock.mockClear();
-    const cfg = createTtsConfig("openclaw-speech-core-block-kind-tts-test");
+    const cfg = createTtsConfig("merclaw-speech-core-block-kind-tts-test");
     const result = await maybeApplyTtsToPayload({
       payload: { text: "WebChat block stream chunks defer TTS to the final tail." },
       cfg,
@@ -954,7 +954,7 @@ describe("speech-core native voice-note routing", () => {
 
   it("skips tool delivery kind in final mode", async () => {
     synthesizeMock.mockClear();
-    const cfg = createTtsConfig("openclaw-speech-core-tool-kind-tts-test");
+    const cfg = createTtsConfig("merclaw-speech-core-tool-kind-tts-test");
     const result = await maybeApplyTtsToPayload({
       payload: { text: "Intermediate tool output should not be spoken." },
       cfg,
@@ -968,7 +968,7 @@ describe("speech-core native voice-note routing", () => {
   });
 
   it("keeps skipping untagged short TTS text", async () => {
-    const cfg = createTtsConfig("openclaw-speech-core-short-plain-tts-test");
+    const cfg = createTtsConfig("merclaw-speech-core-short-plain-tts-test");
     const result = await maybeApplyTtsToPayload({
       payload: {
         text: "hello",
@@ -988,7 +988,7 @@ describe("speech-core native voice-note routing", () => {
 
   it("skips auto TTS for legacy final media directives", async () => {
     synthesizeMock.mockClear();
-    const cfg = createTtsConfig("openclaw-speech-core-media-directive-tts-test");
+    const cfg = createTtsConfig("merclaw-speech-core-media-directive-tts-test");
     const result = await maybeApplyTtsToPayload({
       payload: { text: "Here is the render.\nMEDIA:/tmp/render.png" },
       cfg,
@@ -1001,7 +1001,7 @@ describe("speech-core native voice-note routing", () => {
   });
 
   it("keeps skipping explicit tagged TTS text that strips to empty markdown", async () => {
-    const cfg = createTtsConfig("openclaw-speech-core-empty-hidden-tts-test");
+    const cfg = createTtsConfig("merclaw-speech-core-empty-hidden-tts-test");
     const result = await maybeApplyTtsToPayload({
       payload: {
         text: "[[tts:text]]***[[/tts:text]]",
@@ -1019,7 +1019,7 @@ describe("speech-core native voice-note routing", () => {
   });
 
   it("selects persona preferred provider before config fallback", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: MerClawConfig = {
       messages: {
         tts: {
           enabled: true,
@@ -1040,19 +1040,19 @@ describe("speech-core native voice-note routing", () => {
       },
     };
     const config = resolveTtsConfig(cfg);
-    const prefsPath = "/tmp/openclaw-speech-core-persona-provider.json";
+    const prefsPath = "/tmp/merclaw-speech-core-persona-provider.json";
 
     expect(getTtsPersona(config, prefsPath)?.id).toBe("alfred");
     expect(getTtsProvider(config, prefsPath)).toBe("mock");
   });
 
   it("merges active persona provider binding into synthesis config", async () => {
-    const cfg: OpenClawConfig = {
+    const cfg: MerClawConfig = {
       messages: {
         tts: {
           enabled: true,
           provider: "mock",
-          prefsPath: "/tmp/openclaw-speech-core-persona-merge.json",
+          prefsPath: "/tmp/merclaw-speech-core-persona-merge.json",
           providers: {
             mock: {
               model: "base-model",
@@ -1356,7 +1356,7 @@ describe("speech-core per-agent TTS config", () => {
           },
         ],
       },
-    } satisfies OpenClawConfig;
+    } satisfies MerClawConfig;
 
     const resolved = resolveTtsConfig(cfg, "reader");
 
@@ -1418,7 +1418,7 @@ describe("speech-core per-agent TTS config", () => {
           },
         ],
       },
-    } satisfies OpenClawConfig;
+    } satisfies MerClawConfig;
 
     let mediaDir: string | undefined;
     try {
@@ -1467,7 +1467,7 @@ describe("speech-core per-agent TTS config", () => {
           },
         ],
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
 
     const resolved = resolveTtsConfig(cfg, "reader");
 

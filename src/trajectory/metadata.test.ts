@@ -50,16 +50,16 @@ describe("trajectory metadata", () => {
     const originalArgv = process.argv;
     process.argv = [
       "node",
-      "/Users/tester/project/openclaw.js",
+      "/Users/tester/project/merclaw.js",
       "--api-key",
       "super-secret",
-      "--config=/Users/tester/.openclaw/openclaw.json",
+      "--config=/Users/tester/.merclaw/merclaw.json",
     ];
     try {
       const metadata = buildTrajectoryRunMetadata({
         env: {
           HOME: "/Users/tester",
-          OPENCLAW_STATE_DIR: "/Users/tester/.openclaw",
+          MERCLAW_STATE_DIR: "/Users/tester/.merclaw",
         },
         workspaceDir: "/Users/tester/project",
         sessionFile: "/Users/tester/project/session.jsonl",
@@ -74,12 +74,12 @@ describe("trajectory metadata", () => {
       };
       expect(harness.invocation).toEqual([
         "node",
-        "~/project/openclaw.js",
+        "~/project/merclaw.js",
         "--api-key",
         "<redacted>",
-        "--config=$OPENCLAW_STATE_DIR/openclaw.json",
+        "--config=$MERCLAW_STATE_DIR/merclaw.json",
       ]);
-      expect(harness.entrypoint).toBe("~/project/openclaw.js");
+      expect(harness.entrypoint).toBe("~/project/merclaw.js");
       expect(harness.workspaceDir).toBe("~/project");
       expect(harness.sessionFile).toBe("~/project/session.jsonl");
     } finally {
@@ -117,7 +117,7 @@ describe("trajectory metadata", () => {
       webSearchProviderIds: [],
       migrationProviderIds: [],
       memoryEmbeddingProviderIds: [],
-      agentHarnessIds: ["openclaw"],
+      agentHarnessIds: ["merclaw"],
       cliCommands: [],
       services: [],
       gatewayDiscoveryServiceIds: [],
@@ -253,7 +253,7 @@ describe("trajectory metadata", () => {
   });
 
   it("redactPathForSupport returns empty string for null/undefined input", () => {
-    const ctx: SupportRedactionContext = { env: {}, stateDir: "/tmp/.openclaw" };
+    const ctx: SupportRedactionContext = { env: {}, stateDir: "/tmp/.merclaw" };
     expect(redactPathForSupport(undefined, ctx)).toBe("");
     expect(redactPathForSupport(null, ctx)).toBe("");
   });

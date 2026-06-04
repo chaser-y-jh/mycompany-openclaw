@@ -13,13 +13,13 @@ title: "TUI"
 1. Start the Gateway.
 
 ```bash
-openclaw gateway
+merclaw gateway
 ```
 
 2. Open the TUI.
 
 ```bash
-openclaw tui
+merclaw tui
 ```
 
 3. Type a message and press Enter.
@@ -27,7 +27,7 @@ openclaw tui
 Remote Gateway:
 
 ```bash
-openclaw tui --url ws://<host>:<port> --token <gateway-token>
+merclaw tui --url ws://<host>:<port> --token <gateway-token>
 ```
 
 Use `--password` if your Gateway uses password auth.
@@ -37,17 +37,17 @@ Use `--password` if your Gateway uses password auth.
 Run the TUI without a Gateway:
 
 ```bash
-openclaw chat
+merclaw chat
 # or
-openclaw tui --local
+merclaw tui --local
 ```
 
 Notes:
 
-- `openclaw chat` and `openclaw terminal` are aliases for `openclaw tui --local`.
+- `merclaw chat` and `merclaw terminal` are aliases for `merclaw tui --local`.
 - `--local` cannot be combined with `--url`, `--token`, or `--password`.
 - Local mode uses the embedded agent runtime directly. Most local tools work, but Gateway-only features are unavailable.
-- After a config file has authored settings, `openclaw` and `openclaw crestodian` also use this TUI shell, with Crestodian as the local setup and repair chat backend.
+- After a config file has authored settings, `merclaw` and `merclaw crestodian` also use this TUI shell, with Crestodian as the local setup and repair chat backend.
 
 ## What you see
 
@@ -80,7 +80,7 @@ Notes:
 - Turn delivery on:
   - `/deliver on`
   - or the Settings panel
-  - or start with `openclaw tui --deliver`
+  - or start with `merclaw tui --deliver`
 
 ## Pickers + overlays
 
@@ -142,7 +142,7 @@ Other Gateway slash commands (for example, `/context`) are forwarded to the Gate
 - Prefix a line with `!` to run a local shell command on the TUI host.
 - The TUI prompts once per session to allow local execution; declining keeps `!` disabled for the session.
 - Commands run in a fresh, non-interactive shell in the TUI working directory (no persistent `cd`/env).
-- Local shell commands receive `OPENCLAW_SHELL=tui-local` in their environment.
+- Local shell commands receive `MERCLAW_SHELL=tui-local` in their environment.
 - A lone `!` is sent as a normal message; leading spaces do not trigger local exec.
 
 ## Repair configs from the local TUI
@@ -151,8 +151,8 @@ Use local mode when the current config already validates and you want the
 embedded agent to inspect it on the same machine, compare it against the docs,
 and help repair drift without depending on a running Gateway.
 
-If `openclaw config validate` is already failing, start with `openclaw configure`
-or `openclaw doctor --fix` first. `openclaw chat` does not bypass the invalid-
+If `merclaw config validate` is already failing, start with `merclaw configure`
+or `merclaw doctor --fix` first. `merclaw chat` does not bypass the invalid-
 config guard.
 
 Typical loop:
@@ -160,7 +160,7 @@ Typical loop:
 1. Start local mode:
 
 ```bash
-openclaw chat
+merclaw chat
 ```
 
 2. Ask the agent what you want checked, for example:
@@ -172,20 +172,20 @@ Compare my gateway auth config with the docs and suggest the smallest fix.
 3. Use local shell commands for exact evidence and validation:
 
 ```text
-!openclaw config file
-!openclaw docs gateway auth token secretref
-!openclaw config validate
-!openclaw doctor
+!merclaw config file
+!merclaw docs gateway auth token secretref
+!merclaw config validate
+!merclaw doctor
 ```
 
-4. Apply narrow changes with `openclaw config set` or `openclaw configure`, then rerun `!openclaw config validate`.
-5. If Doctor recommends an automatic migration or repair, review it and run `!openclaw doctor --fix`.
+4. Apply narrow changes with `merclaw config set` or `merclaw configure`, then rerun `!merclaw config validate`.
+5. If Doctor recommends an automatic migration or repair, review it and run `!merclaw doctor --fix`.
 
 Tips:
 
-- Prefer `openclaw config set` or `openclaw configure` over hand-editing `openclaw.json`.
-- `openclaw docs "<query>"` searches the live docs index from the same machine.
-- `openclaw config validate --json` is useful when you want structured schema and SecretRef/resolvability errors.
+- Prefer `merclaw config set` or `merclaw configure` over hand-editing `merclaw.json`.
+- `merclaw docs "<query>"` searches the live docs index from the same machine.
+- `merclaw config validate --json` is useful when you want structured schema and SecretRef/resolvability errors.
 
 ## Tool output
 
@@ -196,8 +196,8 @@ Tips:
 ## Terminal colors
 
 - The TUI keeps assistant body text in your terminal's default foreground so dark and light terminals both stay readable.
-- If your terminal uses a light background and auto-detection is wrong, set `OPENCLAW_THEME=light` before launching `openclaw tui`.
-- To force the original dark palette instead, set `OPENCLAW_THEME=dark`.
+- If your terminal uses a light background and auto-detection is wrong, set `MERCLAW_THEME=light` before launching `merclaw tui`.
+- To force the original dark palette instead, set `MERCLAW_THEME=dark`.
 
 ## History + streaming
 
@@ -232,19 +232,19 @@ When you set `--url`, the TUI does not fall back to config or environment creden
 No output after sending a message:
 
 - Run `/status` in the TUI to confirm the Gateway is connected and idle/busy.
-- Check the Gateway logs: `openclaw logs --follow`.
-- Confirm the agent can run: `openclaw status` and `openclaw models status`.
+- Check the Gateway logs: `merclaw logs --follow`.
+- Confirm the agent can run: `merclaw status` and `merclaw models status`.
 - If you expect messages in a chat channel, enable delivery (`/deliver on` or `--deliver`).
 
 ## Connection troubleshooting
 
 - `disconnected`: ensure the Gateway is running and your `--url/--token/--password` are correct.
-- No agents in picker: check `openclaw agents list` and your routing config.
+- No agents in picker: check `merclaw agents list` and your routing config.
 - Empty session picker: you might be in global scope or have no sessions yet.
 
 ## Related
 
 - [Control UI](/web/control-ui) — web-based control interface
-- [Config](/cli/config) — inspect, validate, and edit `openclaw.json`
+- [Config](/cli/config) — inspect, validate, and edit `merclaw.json`
 - [Doctor](/cli/doctor) — guided repair and migration checks
 - [CLI Reference](/cli) — full CLI command reference

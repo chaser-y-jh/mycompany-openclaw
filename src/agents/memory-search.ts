@@ -3,16 +3,16 @@ import path from "node:path";
 import {
   findNormalizedProviderValue,
   normalizeProviderId,
-} from "@openclaw/model-catalog-core/provider-id";
+} from "@merclaw/model-catalog-core/provider-id";
 import {
   MAX_TIMER_TIMEOUT_MS,
   resolvePositiveTimerTimeoutMs,
-} from "@openclaw/normalization-core/number-coercion";
+} from "@merclaw/normalization-core/number-coercion";
 import {
   normalizeStringEntries,
   uniqueStrings,
-} from "@openclaw/normalization-core/string-normalization";
-import type { OpenClawConfig, MemorySearchConfig } from "../config/config.js";
+} from "@merclaw/normalization-core/string-normalization";
+import type { MerClawConfig, MemorySearchConfig } from "../config/config.js";
 import { resolveStateDir } from "../config/paths.js";
 import type { SecretInput } from "../config/types.secrets.js";
 import {
@@ -186,7 +186,7 @@ function resolveStorePath(agentId: string, raw?: string): string {
 
 function getConfiguredMemoryEmbeddingProvider(
   providerId: string,
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
 ): ReturnType<typeof getMemoryEmbeddingProvider> {
   const directAdapter = getMemoryEmbeddingProvider(providerId);
   if (directAdapter) {
@@ -206,7 +206,7 @@ function getConfiguredMemoryEmbeddingProvider(
 }
 
 function mergeConfig(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   defaults: MemorySearchConfig | undefined,
   overrides: MemorySearchConfig | undefined,
   agentId: string,
@@ -466,7 +466,7 @@ function resolveSyncConfig(
 }
 
 export function resolveMemorySearchConfig(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   agentId: string,
 ): ResolvedMemorySearchConfig | null {
   const defaults = cfg.agents?.defaults?.memorySearch;
@@ -498,7 +498,7 @@ export function resolveMemorySearchConfig(
 }
 
 export function resolveMemorySearchSyncConfig(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   agentId: string,
 ): ResolvedMemorySearchSyncConfig | null {
   const defaults = cfg.agents?.defaults?.memorySearch;

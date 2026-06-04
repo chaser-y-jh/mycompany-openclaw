@@ -1,10 +1,10 @@
 import type { DatabaseSync } from "node:sqlite";
 import type { Insertable, Selectable } from "kysely";
 import { getNodeSqliteKysely } from "../../infra/kysely-sync.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../../state/openclaw-state-db.generated.js";
+import type { DB as MerClawStateKyselyDatabase } from "../../state/merclaw-state-db.generated.js";
 
-type CronJobsTable = OpenClawStateKyselyDatabase["cron_jobs"];
-type CronStoreDatabase = Pick<OpenClawStateKyselyDatabase, "cron_jobs">;
+type CronJobsTable = MerClawStateKyselyDatabase["cron_jobs"];
+type CronStoreDatabase = Pick<MerClawStateKyselyDatabase, "cron_jobs">;
 
 export type CronJobRow = Selectable<CronJobsTable>;
 export type CronJobInsert = Insertable<CronJobsTable>;

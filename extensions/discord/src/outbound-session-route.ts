@@ -1,10 +1,10 @@
-import { buildThreadAwareOutboundSessionRoute } from "openclaw/plugin-sdk/channel-core";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { buildOutboundBaseSessionKey, type RoutePeer } from "openclaw/plugin-sdk/routing";
+import { buildThreadAwareOutboundSessionRoute } from "merclaw/plugin-sdk/channel-core";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { buildOutboundBaseSessionKey, type RoutePeer } from "merclaw/plugin-sdk/routing";
 import { parseDiscordTarget } from "./target-parsing.js";
 
 export type ResolveDiscordOutboundSessionRouteParams = {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentId: string;
   accountId?: string | null;
   target: string;

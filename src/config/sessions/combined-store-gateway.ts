@@ -4,7 +4,7 @@ import {
   resolveStoredSessionKeyForAgentStore,
 } from "../../gateway/session-store-key.js";
 import { normalizeAgentId } from "../../routing/session-key.js";
-import type { OpenClawConfig } from "../types.openclaw.js";
+import type { MerClawConfig } from "../types.merclaw.js";
 import { resolveStorePath } from "./paths.js";
 import { loadSessionStore } from "./store-load.js";
 import {
@@ -19,7 +19,7 @@ function isStorePathTemplate(store?: string): boolean {
 }
 
 function mergeSessionEntryIntoCombined(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   combined: Record<string, SessionEntry>;
   entry: SessionEntry;
   agentId: string;
@@ -59,7 +59,7 @@ function mergeSessionEntryIntoCombined(params: {
 }
 
 export function loadCombinedSessionStoreForGateway(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   opts: { agentId?: string; configuredAgentsOnly?: boolean } = {},
 ): {
   storePath: string;

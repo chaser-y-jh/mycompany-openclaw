@@ -1,1 +1,1 @@
-Deploying OpenClaw on Fly.io
+Deploying MerClaw on Fly.io

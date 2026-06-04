@@ -1,6 +1,6 @@
-import type { AgentMessage } from "openclaw/plugin-sdk/agent-core";
-import type { ExtensionAPI, ExtensionContext } from "openclaw/plugin-sdk/agent-sessions";
-import type { ToolResultMessage } from "openclaw/plugin-sdk/llm";
+import type { AgentMessage } from "merclaw/plugin-sdk/agent-core";
+import type { ExtensionAPI, ExtensionContext } from "merclaw/plugin-sdk/agent-sessions";
+import type { ToolResultMessage } from "merclaw/plugin-sdk/llm";
 import { describe, expect, it } from "vitest";
 import {
   computeEffectiveSettings,

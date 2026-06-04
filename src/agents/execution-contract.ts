@@ -1,5 +1,5 @@
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { resolveAgentExecutionContract, resolveSessionAgentIds } from "./agent-scope.js";
 
 /**
@@ -57,7 +57,7 @@ export function isStrictAgenticSupportedProviderModel(params: {
 }
 
 /**
- * Returns the effective execution contract for an embedded OpenClaw run.
+ * Returns the effective execution contract for an embedded MerClaw run.
  *
  * strict-agentic is a GPT-5-family OpenAI-only runtime contract,
  * so an unsupported provider/model pair always collapses to `"default"`
@@ -82,7 +82,7 @@ export function isStrictAgenticSupportedProviderModel(params: {
  * installations, not only users who opted in manually.
  */
 export function resolveEffectiveExecutionContract(params: {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   sessionKey?: string;
   agentId?: string | null;
   provider?: string | null;
@@ -113,7 +113,7 @@ export function resolveEffectiveExecutionContract(params: {
 }
 
 export function isStrictAgenticExecutionContractActive(params: {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   sessionKey?: string;
   agentId?: string | null;
   provider?: string | null;

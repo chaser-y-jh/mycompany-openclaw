@@ -1,8 +1,8 @@
 import { resolveDefaultModelForAgent } from "../agents/model-selection.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { MerClawConfig } from "../config/config.js";
 
 export function resolveCommitmentDefaultModelRef(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentId?: string;
 }): { provider: string; model: string } {
   return resolveDefaultModelForAgent(params);

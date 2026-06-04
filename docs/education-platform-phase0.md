@@ -1,6 +1,6 @@
 # K12 AI 教育机器人 — Phase 0 阶段性报告
 
-> **项目**：基于 OpenClaw 改造的 K12 全功能 AI 教育平台  
+> **项目**：基于 MerClaw 改造的 K12 全功能 AI 教育平台  
 > **阶段**：Phase 0 — 用户系统、角色权限、多租户隔离  
 > **日期**：2026-06-02  
 > **状态**：✅ 完成
@@ -9,10 +9,10 @@
 
 ## 一、项目概述
 
-将 OpenClaw（开源个人 AI 助手）改造为面向 K12 中小学的 AI 教育机器人，支持单校/小机构本地部署。
+将 MerClaw（开源个人 AI 助手）改造为面向 K12 中小学的 AI 教育机器人，支持单校/小机构本地部署。
 
 **目标用户**：学生、教师、家长、管理员  
-**核心原则**：插件化改造，尽可能不动 OpenClaw 核心代码
+**核心原则**：插件化改造，尽可能不动 MerClaw 核心代码
 
 ---
 
@@ -23,7 +23,7 @@
 ```
 extensions/education-auth/
 ├── package.json              # 包定义
-├── openclaw.plugin.json      # 插件清单 + 配置 schema
+├── merclaw.plugin.json      # 插件清单 + 配置 schema
 ├── index.ts                  # 主入口（注册 tool/hook/route/service）
 ├── src/
 │   ├── roles.ts              # 角色定义 + 权限矩阵
@@ -85,7 +85,7 @@ extensions/education-auth/
 | `lookup_edu_user` | 根据渠道 ID 查找教育用户身份 |
 | `check_edu_permission` | 校验用户是否拥有某项权限 |
 
-### 2.6 配置（`openclaw.json`）
+### 2.6 配置（`merclaw.json`）
 
 ```json5
 {
@@ -114,7 +114,7 @@ extensions/education-auth/
 | **多租户隔离** | `TenantScope` 封装所有查询，自动添加 `WHERE school_id = ?` |
 | **本地优先** | SQLite 数据库，无需外部依赖 |
 | **软删除** | 用户停用标记，数据可恢复 |
-| **可配置性** | 通过 `openclaw.plugin.json` 的 configSchema 暴露所有关键选项 |
+| **可配置性** | 通过 `merclaw.plugin.json` 的 configSchema 暴露所有关键选项 |
 
 ---
 
@@ -132,7 +132,7 @@ extensions/education-auth/
 
 ## 五、如何启用
 
-1. 在 `openclaw.json` 中添加 education-auth 插件配置
+1. 在 `merclaw.json` 中添加 education-auth 插件配置
 2. 通过 API 创建学校和管理员：
 ```bash
 curl -X POST http://localhost:18789/edu/users \

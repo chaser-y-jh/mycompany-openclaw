@@ -6,10 +6,10 @@ import type {
   AgentHarnessCompactParams,
   AgentHarnessCompactResult,
   AgentHarnessResetParams,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import type { PluginStateSyncKeyedStore } from "openclaw/plugin-sdk/plugin-state-runtime";
+} from "merclaw/plugin-sdk/agent-harness-runtime";
+import type { PluginStateSyncKeyedStore } from "merclaw/plugin-sdk/plugin-state-runtime";
 import { resolveCopilotAuth } from "./src/auth-bridge.js";
-import { writeOpenClawCompactionMarker } from "./src/compaction-bridge.js";
+import { writeMerClawCompactionMarker } from "./src/compaction-bridge.js";
 import type { CopilotClientPool, CopilotClientPoolOptions, PooledClient } from "./src/runtime.js";
 
 export type { CopilotClientPool, CopilotClientPoolOptions };
@@ -210,7 +210,7 @@ export function createCopilotAgentHarness(
   let disposed = false;
   let disposePromise: Promise<void> | undefined;
   const inFlight = new Set<Promise<unknown>>();
-  // Maps OpenClaw session id (from AgentHarnessAttemptParams.sessionId) to
+  // Maps MerClaw session id (from AgentHarnessAttemptParams.sessionId) to
   // the SDK session id + client that owns it. Populated by
   // runCopilotAttempt via the onSessionEstablished callback so that
   // reset(params) can call client.deleteSession on the right client.
@@ -265,11 +265,11 @@ export function createCopilotAgentHarness(
         if (disposed) {
           throw new Error("[copilot] harness was disposed while starting an attempt");
         }
-        const openclawSessionId =
+        const merclawSessionId =
           typeof params.sessionId === "string" ? params.sessionId : undefined;
 
         // Dogfood finding #4: reuse the SDK session across turns within
-        // the same OpenClaw session so that the GitHub Copilot agent runtime's prompt
+        // the same MerClaw session so that the GitHub Copilot agent runtime's prompt
         // cache, tool-call history, and any server-side compaction state
         // survive turn boundaries. Without this, every turn called
         // `createSession()` and lost cache + thread continuity — the
@@ -289,11 +289,11 @@ export function createCopilotAgentHarness(
         //     back to `createSession`, so a stale-session error never
         //     surfaces as a prompt error.
         const currentCompatKey = computeSessionCompatKey(params);
-        const tracked = openclawSessionId ? trackedSessions.get(openclawSessionId) : undefined;
-        const stored = openclawSessionId
-          ? resetBlockedStoredSessions.has(openclawSessionId)
+        const tracked = merclawSessionId ? trackedSessions.get(merclawSessionId) : undefined;
+        const stored = merclawSessionId
+          ? resetBlockedStoredSessions.has(merclawSessionId)
             ? undefined
-            : lookupStoredBinding(options?.sessionStore, openclawSessionId)
+            : lookupStoredBinding(options?.sessionStore, merclawSessionId)
           : undefined;
         const resumableSessionId =
           tracked && tracked.compatKey === currentCompatKey
@@ -313,7 +313,7 @@ export function createCopilotAgentHarness(
 
         return runCopilotAttempt(effectiveParams, {
           pool,
-          onSessionEstablished: openclawSessionId
+          onSessionEstablished: merclawSessionId
             ? ({
                 sdkSessionId,
                 pooledClient,
@@ -321,19 +321,19 @@ export function createCopilotAgentHarness(
                 sdkSessionId: string;
                 pooledClient: PooledClient;
               }) => {
-                trackedSessions.set(openclawSessionId, {
+                trackedSessions.set(merclawSessionId, {
                   sdkSessionId,
                   client: pooledClient.client,
                   compatKey: currentCompatKey,
                 });
-                const persisted = registerStoredBinding(options?.sessionStore, openclawSessionId, {
+                const persisted = registerStoredBinding(options?.sessionStore, merclawSessionId, {
                   schemaVersion: 1,
                   sdkSessionId,
                   compatKey: currentCompatKey,
                   updatedAt: Date.now(),
                 });
                 if (persisted) {
-                  resetBlockedStoredSessions.delete(openclawSessionId);
+                  resetBlockedStoredSessions.delete(merclawSessionId);
                 }
               }
             : undefined,
@@ -348,21 +348,21 @@ export function createCopilotAgentHarness(
     },
 
     async reset(params: AgentHarnessResetParams): Promise<void> {
-      const openclawSessionId = typeof params.sessionId === "string" ? params.sessionId : undefined;
-      if (!openclawSessionId) {
+      const merclawSessionId = typeof params.sessionId === "string" ? params.sessionId : undefined;
+      if (!merclawSessionId) {
         return;
       }
-      const tracked = trackedSessions.get(openclawSessionId);
-      if (deleteStoredBinding(options?.sessionStore, openclawSessionId)) {
-        resetBlockedStoredSessions.delete(openclawSessionId);
+      const tracked = trackedSessions.get(merclawSessionId);
+      if (deleteStoredBinding(options?.sessionStore, merclawSessionId)) {
+        resetBlockedStoredSessions.delete(merclawSessionId);
       } else {
-        resetBlockedStoredSessions.add(openclawSessionId);
+        resetBlockedStoredSessions.add(merclawSessionId);
       }
       if (!tracked) {
         // Session was created by a different harness, or already reset.
         return;
       }
-      trackedSessions.delete(openclawSessionId);
+      trackedSessions.delete(merclawSessionId);
       try {
         await tracked.client.deleteSession(tracked.sdkSessionId);
       } catch {
@@ -381,28 +381,28 @@ export function createCopilotAgentHarness(
       // utilization crosses `backgroundCompactionThreshold`). There is
       // no synchronous compact RPC, so the harness cannot honour
       // `params.force === true` directly. Instead this method writes
-      // an OpenClaw-shaped marker file under
-      // `<workspaceDir>/files/openclaw-compaction-<ts>-<sessionId>.json`
-      // so existing OpenClaw transcript readers see a familiar
+      // an MerClaw-shaped marker file under
+      // `<workspaceDir>/files/merclaw-compaction-<ts>-<sessionId>.json`
+      // so existing MerClaw transcript readers see a familiar
       // compaction artifact when the host calls compact(). See
       // src/compaction-bridge.ts for the bridge boundary.
-      const openclawSessionId = typeof params.sessionId === "string" ? params.sessionId : undefined;
+      const merclawSessionId = typeof params.sessionId === "string" ? params.sessionId : undefined;
       const workspaceDir =
         typeof params.workspaceDir === "string" ? params.workspaceDir : undefined;
-      if (!openclawSessionId || !workspaceDir) {
+      if (!merclawSessionId || !workspaceDir) {
         return {
           ok: false,
           compacted: false,
           reason: "missing-required-params",
         };
       }
-      const tracked = trackedSessions.get(openclawSessionId);
+      const tracked = trackedSessions.get(merclawSessionId);
       const reason = params.force
         ? "force-requested-but-sdk-has-no-synchronous-compact-api"
         : "deferred-to-sdk-infinite-sessions";
       try {
-        await writeOpenClawCompactionMarker({
-          sessionId: openclawSessionId,
+        await writeMerClawCompactionMarker({
+          sessionId: merclawSessionId,
           workspaceDir,
           trigger: params.trigger,
           currentTokenCount: params.currentTokenCount,

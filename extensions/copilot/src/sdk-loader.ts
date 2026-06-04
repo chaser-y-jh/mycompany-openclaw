@@ -3,7 +3,7 @@ import { createRequire } from "node:module";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import type * as Sdk from "@github/copilot-sdk";
-import { resolveStateDir } from "openclaw/plugin-sdk/state-paths";
+import { resolveStateDir } from "merclaw/plugin-sdk/state-paths";
 
 export function resolveCopilotSdkFallbackDir(env: NodeJS.ProcessEnv = process.env): string {
   return path.join(resolveStateDir(env), "npm-runtime", "copilot");
@@ -85,11 +85,11 @@ function createMissingSdkError(
   const lines = [
     "[copilot] @github/copilot-sdk is not installed.",
     "",
-    "The external @openclaw/copilot plugin depends on @github/copilot-sdk",
+    "The external @merclaw/copilot plugin depends on @github/copilot-sdk",
     "(~260 MB after pulling its platform-specific @github/copilot CLI binary).",
     "Reinstall the plugin once with:",
     "",
-    "  openclaw plugins install @openclaw/copilot",
+    "  merclaw plugins install @merclaw/copilot",
     "",
     "For source checkouts or offline repair, install the SDK directly:",
     "",

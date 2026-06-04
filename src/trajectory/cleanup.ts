@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { isRecord } from "@openclaw/normalization-core/record-coerce";
+import { isRecord } from "@merclaw/normalization-core/record-coerce";
 import { resolveSessionFilePath } from "../config/sessions/paths.js";
 import { isPathInside } from "../infra/path-guards.js";
 import {
@@ -58,7 +58,7 @@ function readTrajectoryPointerFile(
       return null;
     }
     if (
-      parsed.traceSchema !== "openclaw-trajectory-pointer" ||
+      parsed.traceSchema !== "merclaw-trajectory-pointer" ||
       parsed.schemaVersion !== 1 ||
       parsed.sessionId !== sessionId ||
       typeof parsed.runtimeFile !== "string" ||
@@ -113,7 +113,7 @@ function runtimeFileStartsWithSessionEvent(filePath: string, sessionId: string):
     const parsed: unknown = JSON.parse(firstLine);
     return (
       isRecord(parsed) &&
-      parsed.traceSchema === "openclaw-trajectory" &&
+      parsed.traceSchema === "merclaw-trajectory" &&
       parsed.schemaVersion === 1 &&
       parsed.source === "runtime" &&
       parsed.sessionId === sessionId

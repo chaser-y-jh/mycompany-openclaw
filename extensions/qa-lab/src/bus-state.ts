@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { sanitizeQaBusToolCalls } from "openclaw/plugin-sdk/qa-channel-protocol";
+import { sanitizeQaBusToolCalls } from "merclaw/plugin-sdk/qa-channel-protocol";
 import {
   buildQaBusSnapshot,
   cloneMessage,
@@ -30,8 +30,8 @@ import type {
   QaBusWaitForInput,
 } from "./runtime-api.js";
 
-const DEFAULT_BOT_ID = "openclaw";
-const DEFAULT_BOT_NAME = "OpenClaw QA";
+const DEFAULT_BOT_ID = "merclaw";
+const DEFAULT_BOT_NAME = "MerClaw QA";
 
 type QaBusEventSeed =
   | {

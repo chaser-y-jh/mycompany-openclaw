@@ -1,11 +1,11 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { OpenKeyedStoreOptions } from "openclaw/plugin-sdk/plugin-state-runtime";
+import type { OpenKeyedStoreOptions } from "merclaw/plugin-sdk/plugin-state-runtime";
 import {
   createPluginStateSyncKeyedStoreForTests,
   resetPluginStateStoreForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
+} from "merclaw/plugin-sdk/plugin-state-test-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { PluginRuntime } from "../runtime-api.js";
 import {
@@ -20,9 +20,9 @@ let tempDir: string | undefined;
 let previousStateDir: string | undefined;
 
 beforeEach(async () => {
-  previousStateDir = process.env.OPENCLAW_STATE_DIR;
-  tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-feishu-dedup-"));
-  process.env.OPENCLAW_STATE_DIR = tempDir;
+  previousStateDir = process.env.MERCLAW_STATE_DIR;
+  tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-feishu-dedup-"));
+  process.env.MERCLAW_STATE_DIR = tempDir;
   setFeishuRuntime({
     state: {
       openSyncKeyedStore: (options: OpenKeyedStoreOptions) =>
@@ -37,9 +37,9 @@ afterEach(async () => {
   testingHooks.resetFeishuDedupForTests();
   resetPluginStateStoreForTests();
   if (previousStateDir === undefined) {
-    delete process.env.OPENCLAW_STATE_DIR;
+    delete process.env.MERCLAW_STATE_DIR;
   } else {
-    process.env.OPENCLAW_STATE_DIR = previousStateDir;
+    process.env.MERCLAW_STATE_DIR = previousStateDir;
   }
   if (tempDir) {
     await fs.rm(tempDir, { recursive: true, force: true });

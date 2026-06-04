@@ -22,7 +22,7 @@ import {
 const tempRoots = new Set<string>();
 
 function createTempExtensionRoot(extensionId = "demo") {
-  const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-boundary-canary-"));
+  const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-boundary-canary-"));
   tempRoots.add(rootDir);
   const extensionRoot = path.join(rootDir, "extensions", extensionId);
   fs.mkdirSync(extensionRoot, { recursive: true });
@@ -84,7 +84,7 @@ describe("check-extension-package-tsc-boundary", () => {
   });
 
   it("cleans stale artifacts for every extension id passed to the cleanup hook", () => {
-    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-boundary-canary-"));
+    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-boundary-canary-"));
     tempRoots.add(rootDir);
     fs.mkdirSync(path.join(rootDir, "extensions", "demo-a"), { recursive: true });
     fs.mkdirSync(path.join(rootDir, "extensions", "demo-b"), { recursive: true });

@@ -1,4 +1,4 @@
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
 import { Type, type TSchema } from "typebox";
 import { getRuntimeConfig } from "../../config/config.js";
 import { resolveCronCreationDelivery } from "../../cron/delivery-context.js";
@@ -430,7 +430,7 @@ export function createCronTool(opts?: CronToolOptions, deps?: CronToolDeps): Any
     displaySummary: CRON_TOOL_DISPLAY_SUMMARY,
     description: `Manage Gateway cron jobs and wake events: reminders, check-back-later, delayed follow-ups, recurring work. Do not emulate scheduling with exec sleep/process polling.
 
-Main cron => system events for heartbeat. Isolated cron => background task in \`openclaw tasks\`.
+Main cron => system events for heartbeat. Isolated cron => background task in \`merclaw tasks\`.
 
 ACTIONS:
 - status: scheduler status
@@ -572,7 +572,7 @@ Use jobId canonical; id accepted compat. contextMessages (0-10) adds previous me
           // job properties to the top level alongside `action` instead of nesting
           // them inside `job`. When `params.job` is missing or empty, reconstruct
           // a synthetic job object from any recognised top-level job fields.
-          // See: https://github.com/openclaw/openclaw/issues/11310
+          // See: https://github.com/merclaw/merclaw/issues/11310
           if (isMissingOrEmptyObject(params.job)) {
             const synthetic = recoverCronObjectFromFlatParams(params);
             // Only use the synthetic job if at least one meaningful field is present

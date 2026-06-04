@@ -33,7 +33,7 @@ import { createUnitFastVitestConfig } from "./vitest/vitest.unit-fast.config.ts"
 import unitUiConfig from "./vitest/vitest.unit-ui.config.ts";
 import { createUnitVitestConfig } from "./vitest/vitest.unit.config.ts";
 
-const patternFiles = createPatternFileHelper("openclaw-vitest-projects-config-");
+const patternFiles = createPatternFileHelper("merclaw-vitest-projects-config-");
 
 function requireTestConfig<T extends { test?: unknown }>(config: T): NonNullable<T["test"]> {
   if (!config.test) {
@@ -106,7 +106,7 @@ describe("projects vitest config", () => {
   it("honors explicit worker caps in CI vitest lanes", () => {
     expect(
       resolveSharedVitestWorkerConfig({
-        env: { CI: "true", OPENCLAW_VITEST_MAX_WORKERS: "1" },
+        env: { CI: "true", MERCLAW_VITEST_MAX_WORKERS: "1" },
         isCI: true,
         isWindows: false,
         localScheduling: {
@@ -182,7 +182,7 @@ describe("projects vitest config", () => {
     const config = createContractsVitestConfig(
       ["src/channels/plugins/contracts/*-shard-a.contract.test.ts"],
       {
-        OPENCLAW_VITEST_INCLUDE_FILE: includeFile,
+        MERCLAW_VITEST_INCLUDE_FILE: includeFile,
       },
     );
 
@@ -198,7 +198,7 @@ describe("projects vitest config", () => {
     expect(testConfig.isolate).toBe(false);
     expect(normalizeConfigPath(testConfig.runner)).toBe("test/non-isolated-runner.ts");
     const setupFiles = normalizeConfigPaths(testConfig.setupFiles);
-    expect(setupFiles).not.toContain("test/setup-openclaw-runtime.ts");
+    expect(setupFiles).not.toContain("test/setup-merclaw-runtime.ts");
     expect(setupFiles).toContain("ui/src/test-helpers/lit-warnings.setup.ts");
     expect(requireWebOptimizer(testConfig).enabled).toBe(true);
   });
@@ -210,7 +210,7 @@ describe("projects vitest config", () => {
     expect(normalizeConfigPath(testConfig.runner)).toBe("test/non-isolated-runner.ts");
     expect(unitUiIncludePatterns).toContain("ui/src/ui/views/dreaming.test.ts");
     const setupFiles = normalizeConfigPaths(testConfig.setupFiles);
-    expect(setupFiles).not.toContain("test/setup-openclaw-runtime.ts");
+    expect(setupFiles).not.toContain("test/setup-merclaw-runtime.ts");
     expect(setupFiles).toContain("ui/src/test-helpers/lit-warnings.setup.ts");
   });
 

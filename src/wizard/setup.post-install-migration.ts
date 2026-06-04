@@ -1,5 +1,5 @@
 import { formatCliCommand } from "../cli/command-format.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import {
   readMigrationConfigPatchDetails,
@@ -10,7 +10,7 @@ import type { RuntimeEnv } from "../runtime.js";
 import type { WizardPrompter } from "./prompts.js";
 
 export type PostInstallMigrationOptions = {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   runtime: RuntimeEnv;
   // Required only on interactive paths; non-interactive callers can omit it
   // since the helper only emits hint lines in that mode.
@@ -25,7 +25,7 @@ export type PostInstallMigrationOptions = {
 };
 
 export type PostInstallMigrationResult = {
-  config: OpenClawConfig;
+  config: MerClawConfig;
 };
 
 type ResolvedProviderCandidate = {
@@ -48,7 +48,7 @@ const loadConfigPathsModule = async () => {
 };
 
 async function resolveCandidates(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   runtime: RuntimeEnv;
   installedPluginIds: readonly string[];
 }): Promise<ResolvedProviderCandidate[]> {
@@ -117,14 +117,14 @@ function describeCandidate(candidate: ResolvedProviderCandidate): string {
 }
 
 function logMigrationHint(runtime: RuntimeEnv, candidate: ResolvedProviderCandidate): void {
-  const command = formatCliCommand(`openclaw migrate ${candidate.provider.id} --dry-run`);
+  const command = formatCliCommand(`merclaw migrate ${candidate.provider.id} --dry-run`);
   runtime.log(`Detected ${describeCandidate(candidate)}. Preview migration with ${command}.`);
 }
 
 function applyMigrationConfigPatches(
-  config: OpenClawConfig,
+  config: MerClawConfig,
   result: { items?: readonly unknown[] } | undefined,
-): OpenClawConfig {
+): MerClawConfig {
   const items = result?.items ?? [];
   const patches = items
     .filter((item): item is Parameters<typeof readMigrationConfigPatchDetails>[0] =>
@@ -159,7 +159,7 @@ function applyMigrationConfigPatches(
  * that was just installed during onboarding. In non-interactive mode this is
  * a no-op apart from a hint line so scripted setups never mutate state
  * unexpectedly. The actual migration UI (skill/plugin checkboxes, confirm
- * prompt) is owned by `openclaw migrate <provider>`; this helper only owns
+ * prompt) is owned by `merclaw migrate <provider>`; this helper only owns
  * the gate prompt.
  */
 export async function offerPostInstallMigrations(
@@ -228,7 +228,7 @@ export async function offerPostInstallMigrations(
     } catch (error) {
       params.runtime.log(
         `${candidate.provider.label} migration failed: ${formatErrorMessage(error)}. ` +
-          `Re-run with ${formatCliCommand(`openclaw migrate ${candidate.provider.id} --dry-run`)} to inspect.`,
+          `Re-run with ${formatCliCommand(`merclaw migrate ${candidate.provider.id} --dry-run`)} to inspect.`,
       );
     } finally {
       await preparation?.dispose?.();

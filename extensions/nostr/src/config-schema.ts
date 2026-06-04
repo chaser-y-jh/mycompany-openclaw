@@ -2,8 +2,8 @@ import {
   AllowFromListSchema,
   DmPolicySchema,
   MarkdownConfigSchema,
-} from "openclaw/plugin-sdk/channel-config-primitives";
-import { buildSecretInputSchema } from "openclaw/plugin-sdk/secret-input";
+} from "merclaw/plugin-sdk/channel-config-primitives";
+import { buildSecretInputSchema } from "merclaw/plugin-sdk/secret-input";
 import { z } from "zod";
 
 /**

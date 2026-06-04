@@ -1,4 +1,4 @@
-import type { EmbeddedRunAttemptParams } from "openclaw/plugin-sdk/agent-harness-runtime";
+import type { EmbeddedRunAttemptParams } from "merclaw/plugin-sdk/agent-harness-runtime";
 import { describe, expect, it } from "vitest";
 import { CODEX_GPT5_BEHAVIOR_CONTRACT } from "../../prompt-overlay.js";
 import {
@@ -74,12 +74,12 @@ function createAppServerOptions() {
 }
 
 describe("Codex app-server native code mode config", () => {
-  it("keeps Codex-native subagents primary while limiting OpenClaw spawn to OpenClaw delegation", () => {
+  it("keeps Codex-native subagents primary while limiting MerClaw spawn to MerClaw delegation", () => {
     const instructions = buildDeveloperInstructions(createAttemptParams({ provider: "openai" }));
 
     expect(instructions).toContain("Use Codex native `spawn_agent` for Codex subagents");
     expect(instructions).toContain(
-      "Use OpenClaw `sessions_spawn` only for OpenClaw or ACP delegation.",
+      "Use MerClaw `sessions_spawn` only for MerClaw or ACP delegation.",
     );
   });
 
@@ -95,21 +95,21 @@ describe("Codex app-server native code mode config", () => {
           name: "music_generate",
           description: "Create music",
           inputSchema: { type: "object" },
-          namespace: "openclaw",
+          namespace: "merclaw",
           deferLoading: true,
         },
         {
           name: "image_generate",
           description: "Create images",
           inputSchema: { type: "object" },
-          namespace: "openclaw",
+          namespace: "merclaw",
           deferLoading: true,
         },
       ],
     });
 
     expect(instructions).toContain(
-      "Deferred searchable OpenClaw dynamic tools available: image_generate, music_generate.",
+      "Deferred searchable MerClaw dynamic tools available: image_generate, music_generate.",
     );
     expect(instructions).toContain("Use `tool_search` to load exact callable specs before use.");
     expect(instructions).not.toContain("message,");
@@ -122,7 +122,7 @@ describe("Codex app-server native code mode config", () => {
           name: "skill_workshop",
           description: "Manage skill proposals",
           inputSchema: { type: "object" },
-          namespace: "openclaw",
+          namespace: "merclaw",
           deferLoading: true,
         },
       ],
@@ -148,7 +148,7 @@ describe("Codex app-server native code mode config", () => {
       ],
     });
 
-    expect(instructions).not.toContain("Deferred searchable OpenClaw dynamic tools available");
+    expect(instructions).not.toContain("Deferred searchable MerClaw dynamic tools available");
   });
 
   it("keeps durable dynamic tool fingerprints independent from presentation mode", () => {
@@ -172,7 +172,7 @@ describe("Codex app-server native code mode config", () => {
         name: "message",
         description: "Load and send a visible message",
         inputSchema,
-        namespace: "openclaw",
+        namespace: "merclaw",
         deferLoading: true,
       },
     ]);
@@ -180,7 +180,7 @@ describe("Codex app-server native code mode config", () => {
     expect(searchableFingerprint).toBe(directFingerprint);
   });
 
-  it("keeps OpenClaw skill catalogs out of developer instructions", () => {
+  it("keeps MerClaw skill catalogs out of developer instructions", () => {
     const params = createAttemptParams({ provider: "openai" });
     params.skillsSnapshot = {
       prompt: "<available_skills><skill><name>demo</name></skill></available_skills>",
@@ -457,7 +457,7 @@ describe("Codex app-server turn input image sanitizing", () => {
 });
 
 describe("Codex app-server turn params", () => {
-  it("builds resume and turn params from the currently selected OpenClaw model", () => {
+  it("builds resume and turn params from the currently selected MerClaw model", () => {
     const params = createAttemptParams({ provider: "codex" });
     params.modelId = "gpt-5.4-codex";
     params.thinkLevel = "medium";
@@ -531,7 +531,7 @@ describe("Codex app-server turn params", () => {
     expect(heartbeatCollaborationMode.settings.model).toBe("gpt-5.4-codex");
     expect(heartbeatCollaborationMode.settings.reasoning_effort).toBe("medium");
     expect(heartbeatCollaborationMode.settings.developer_instructions).toContain(
-      "This is an OpenClaw heartbeat turn. Apply these instructions only to this heartbeat wake",
+      "This is an MerClaw heartbeat turn. Apply these instructions only to this heartbeat wake",
     );
     expect(heartbeatCollaborationMode.settings.developer_instructions).toContain(
       "Use heartbeats to create useful proactive progress",
@@ -571,7 +571,7 @@ describe("Codex app-server turn params", () => {
     expect(cronCollaborationMode.settings.model).toBe("gpt-5.4-codex");
     expect(cronCollaborationMode.settings.reasoning_effort).toBe("medium");
     expect(cronCollaborationMode.settings.developer_instructions).toContain(
-      "This is an OpenClaw cron automation turn",
+      "This is an MerClaw cron automation turn",
     );
     expect(cronCollaborationMode.settings.developer_instructions).toContain(
       "If it asks you to run an exact command, run that command before doing any investigation",

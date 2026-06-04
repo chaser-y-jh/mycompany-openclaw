@@ -24,7 +24,7 @@ import {
   updateSessionStore,
 } from "./store.js";
 
-const suiteRootTracker = createSuiteTempRootTracker({ prefix: "openclaw-skills-strip-" });
+const suiteRootTracker = createSuiteTempRootTracker({ prefix: "merclaw-skills-strip-" });
 
 function makeFixtureSkill(name: string, bodySize = 3000): Skill {
   // 3KB body simulates a realistic SKILL.md.
@@ -80,17 +80,17 @@ describe("session store strips resolvedSkills from persistence", () => {
   beforeEach(async () => {
     testDir = await suiteRootTracker.make("case");
     storePath = path.join(testDir, "sessions.json");
-    savedCacheTtl = process.env.OPENCLAW_SESSION_CACHE_TTL_MS;
-    process.env.OPENCLAW_SESSION_CACHE_TTL_MS = "0";
+    savedCacheTtl = process.env.MERCLAW_SESSION_CACHE_TTL_MS;
+    process.env.MERCLAW_SESSION_CACHE_TTL_MS = "0";
     clearSessionStoreCacheForTest();
   });
 
   afterEach(() => {
     clearSessionStoreCacheForTest();
     if (savedCacheTtl === undefined) {
-      delete process.env.OPENCLAW_SESSION_CACHE_TTL_MS;
+      delete process.env.MERCLAW_SESSION_CACHE_TTL_MS;
     } else {
-      process.env.OPENCLAW_SESSION_CACHE_TTL_MS = savedCacheTtl;
+      process.env.MERCLAW_SESSION_CACHE_TTL_MS = savedCacheTtl;
     }
   });
 
@@ -404,7 +404,7 @@ describe("session store strips resolvedSkills from persistence", () => {
   });
 
   it("keeps cache clones hydrated when disk JSON uses prompt refs", async () => {
-    process.env.OPENCLAW_SESSION_CACHE_TTL_MS = "45000";
+    process.env.MERCLAW_SESSION_CACHE_TTL_MS = "45000";
     clearSessionStoreCacheForTest();
     const prompt = `<available_skills>\n${"cached prompt\n".repeat(200)}</available_skills>`;
     await saveSessionStore(
@@ -442,7 +442,7 @@ describe("session store strips resolvedSkills from persistence", () => {
   });
 
   it("does not cache unhydrated prompt refs for later full reads", async () => {
-    process.env.OPENCLAW_SESSION_CACHE_TTL_MS = "45000";
+    process.env.MERCLAW_SESSION_CACHE_TTL_MS = "45000";
     clearSessionStoreCacheForTest();
     const prompt = `<available_skills>\n${"cache-safe prompt\n".repeat(200)}</available_skills>`;
     await saveSessionStore(

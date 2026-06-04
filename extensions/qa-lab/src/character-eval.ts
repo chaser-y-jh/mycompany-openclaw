@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { normalizeStringEntries, uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { formatErrorMessage } from "merclaw/plugin-sdk/error-runtime";
+import { normalizeStringEntries, uniqueStrings } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { runQaManualLane } from "./manual-lane.runtime.js";
 import { isQaFastModeModelRef, type QaProviderMode } from "./model-selection.js";
 import {
@@ -321,7 +321,7 @@ ${run.transcript}
     })
     .join("\n\n");
 
-  const prompt = `You are grading OpenClaw natural character conversation transcripts for naturalness, vibes, and funniness.
+  const prompt = `You are grading MerClaw natural character conversation transcripts for naturalness, vibes, and funniness.
 
 Scenario id: ${params.scenarioId}
 
@@ -432,7 +432,7 @@ function renderCharacterEvalReport(params: {
   judgments: readonly QaCharacterEvalJudgeResult[];
 }) {
   const lines = [
-    "# OpenClaw Character Eval Report",
+    "# MerClaw Character Eval Report",
     "",
     `- Started: ${params.startedAt.toISOString()}`,
     `- Finished: ${params.finishedAt.toISOString()}`,

@@ -113,7 +113,7 @@ export function truncateUtf16Safe(input: string, maxLen: number): string {
   return sliceUtf16Safe(input, 0, limit);
 }
 
-/** Resolves `~` and OpenClaw home-relative paths with injectable env/home sources. */
+/** Resolves `~` and MerClaw home-relative paths with injectable env/home sources. */
 export function resolveUserPath(
   input: string,
   env: NodeJS.ProcessEnv = process.env,
@@ -125,20 +125,20 @@ export function resolveUserPath(
   return resolveHomeRelativePath(input, { env, homedir });
 }
 
-/** Resolves the OpenClaw config directory from state/config env overrides or home. */
+/** Resolves the MerClaw config directory from state/config env overrides or home. */
 export function resolveConfigDir(
   env: NodeJS.ProcessEnv = process.env,
   homedir: () => string = os.homedir,
 ): string {
-  const override = env.OPENCLAW_STATE_DIR?.trim();
+  const override = env.MERCLAW_STATE_DIR?.trim();
   if (override) {
     return resolveUserPath(override, env, homedir);
   }
-  const configPath = env.OPENCLAW_CONFIG_PATH?.trim();
+  const configPath = env.MERCLAW_CONFIG_PATH?.trim();
   if (configPath) {
     return path.dirname(resolveUserPath(configPath, env, homedir));
   }
-  const newDir = path.join(resolveRequiredHomeDir(env, homedir), ".openclaw");
+  const newDir = path.join(resolveRequiredHomeDir(env, homedir), ".merclaw");
   try {
     const hasNew = fs.existsSync(newDir);
     if (hasNew) {
@@ -150,7 +150,7 @@ export function resolveConfigDir(
   return newDir;
 }
 
-/** Resolves the effective OpenClaw home directory, if one can be determined. */
+/** Resolves the effective MerClaw home directory, if one can be determined. */
 export function resolveHomeDir(): string | undefined {
   return resolveEffectiveHomeDir(process.env, os.homedir);
 }
@@ -160,14 +160,14 @@ function resolveHomeDisplayPrefix(): { home: string; prefix: string } | undefine
   if (!home) {
     return undefined;
   }
-  const explicitHome = process.env.OPENCLAW_HOME?.trim();
+  const explicitHome = process.env.MERCLAW_HOME?.trim();
   if (explicitHome) {
-    return { home, prefix: "$OPENCLAW_HOME" };
+    return { home, prefix: "$MERCLAW_HOME" };
   }
   return { home, prefix: "~" };
 }
 
-/** Replaces the leading home directory in a path with `~` or `$OPENCLAW_HOME`. */
+/** Replaces the leading home directory in a path with `~` or `$MERCLAW_HOME`. */
 export function shortenHomePath(input: string): string {
   if (!input) {
     return input;
@@ -208,7 +208,7 @@ export function displayString(input: string): string {
   return shortenHomeInString(input);
 }
 
-// Configuration root; can be overridden via OPENCLAW_STATE_DIR.
+// Configuration root; can be overridden via MERCLAW_STATE_DIR.
 export const CONFIG_DIR = resolveConfigDir();
 /**
  * Check if a file or directory exists at the given path.

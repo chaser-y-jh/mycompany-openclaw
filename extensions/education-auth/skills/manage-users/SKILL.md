@@ -2,7 +2,7 @@
 name: manage-users
 description: "Manage education platform users and classes — add students, create classes, enroll students, list users"
 metadata:
-  openclaw:
+  merclaw:
     emoji: "👥"
     requires:
       config: ["education.enabled"]

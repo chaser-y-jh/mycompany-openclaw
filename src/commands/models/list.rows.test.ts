@@ -60,7 +60,7 @@ describe("appendProviderCatalogRows", () => {
           agents: { defaults: { model: { primary: "codex/gpt-5.5" } } },
           models: { providers: {} },
         },
-        agentDir: "/tmp/openclaw-agent",
+        agentDir: "/tmp/merclaw-agent",
         authIndex,
         configuredByKey: new Map(),
         discoveredKeys: new Set(),
@@ -110,7 +110,7 @@ describe("appendProviderCatalogRows", () => {
           agents: { defaults: { model: { primary: "openai/gpt-5.5" } } },
           models: { providers: {} },
         },
-        agentDir: "/tmp/openclaw-agent",
+        agentDir: "/tmp/merclaw-agent",
         authIndex: {
           hasProviderAuth: () => false,
           allowsProviderAuthAvailabilityFallback: () => false,
@@ -159,7 +159,7 @@ describe("appendProviderCatalogRows", () => {
           agents: { defaults: { model: { primary: "openai/gpt-5.5" } } },
           models: { providers: {} },
         },
-        agentDir: "/tmp/openclaw-agent",
+        agentDir: "/tmp/merclaw-agent",
         authIndex: {
           hasProviderAuth: (provider: string) => provider === "openai",
           allowsProviderAuthAvailabilityFallback: (provider: string) => provider === "openai",

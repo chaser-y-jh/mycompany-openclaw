@@ -1,4 +1,4 @@
-import { parseStrictPositiveInteger } from "openclaw/plugin-sdk/number-runtime";
+import { parseStrictPositiveInteger } from "merclaw/plugin-sdk/number-runtime";
 import { trimNonEmptyString } from "./openai-chatgpt-shared.js";
 
 type CodexJwtPayload = {

@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
-import { logInfo } from "openclaw/plugin-sdk/logging-core";
-import { resolveTimerTimeoutMs } from "openclaw/plugin-sdk/number-runtime";
-import { getRuntimeConfig } from "openclaw/plugin-sdk/runtime-config-snapshot";
-import { danger, info, success } from "openclaw/plugin-sdk/runtime-env";
-import { defaultRuntime, type RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
+import { logInfo } from "merclaw/plugin-sdk/logging-core";
+import { resolveTimerTimeoutMs } from "merclaw/plugin-sdk/number-runtime";
+import { getRuntimeConfig } from "merclaw/plugin-sdk/runtime-config-snapshot";
+import { danger, info, success } from "merclaw/plugin-sdk/runtime-env";
+import { defaultRuntime, type RuntimeEnv } from "merclaw/plugin-sdk/runtime-env";
 import { resolveWhatsAppAccount } from "./accounts.js";
 import {
   closeWaSocket,

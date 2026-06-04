@@ -1,0 +1,17 @@
+{
+  "id": "twitch",
+  "name": "Twitch",
+  "description": "MerClaw Twitch channel plugin for chat and moderation workflows.",
+  "activation": {
+    "onStartup": false
+  },
+  "channels": ["twitch"],
+  "channelEnvVars": {
+    "twitch": ["MERCLAW_TWITCH_ACCESS_TOKEN"]
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}

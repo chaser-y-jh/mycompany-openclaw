@@ -1,11 +1,11 @@
 import fs from "node:fs/promises";
-import type { AgentMessage } from "openclaw/plugin-sdk/agent-harness-runtime";
-import type { SessionEntry } from "openclaw/plugin-sdk/agent-sessions";
+import type { AgentMessage } from "merclaw/plugin-sdk/agent-harness-runtime";
+import type { SessionEntry } from "merclaw/plugin-sdk/agent-sessions";
 import {
   buildSessionContext,
   migrateSessionEntries,
   parseSessionEntries,
-} from "openclaw/plugin-sdk/agent-sessions";
+} from "merclaw/plugin-sdk/agent-sessions";
 import { sanitizeCodexHistoryImagePayloads } from "./image-payload-sanitizer.js";
 
 function isMissingFileError(error: unknown): boolean {

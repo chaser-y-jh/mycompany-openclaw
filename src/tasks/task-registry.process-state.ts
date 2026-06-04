@@ -10,7 +10,7 @@ export type TaskRegistryProcessState = {
   tasksWithPendingDelivery: Set<string>;
 };
 
-const TASK_REGISTRY_PROCESS_STATE_KEY = Symbol.for("openclaw.taskRegistry.state");
+const TASK_REGISTRY_PROCESS_STATE_KEY = Symbol.for("merclaw.taskRegistry.state");
 
 export function getTaskRegistryProcessState(): TaskRegistryProcessState {
   const globalState = globalThis as typeof globalThis & {

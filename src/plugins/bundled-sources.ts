@@ -1,6 +1,6 @@
-import { isRecord } from "@openclaw/normalization-core/record-coerce";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
-import { discoverOpenClawPlugins, type PluginDiscoveryResult } from "./discovery.js";
+import { isRecord } from "@merclaw/normalization-core/record-coerce";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
+import { discoverMerClawPlugins, type PluginDiscoveryResult } from "./discovery.js";
 import { loadPluginManifest } from "./manifest.js";
 
 export type BundledPluginSource = {
@@ -43,7 +43,7 @@ export function resolveBundledPluginSources(params: {
 }): Map<string, BundledPluginSource> {
   const discovery =
     params.discovery ??
-    discoverOpenClawPlugins({ workspaceDir: params.workspaceDir, env: params.env });
+    discoverMerClawPlugins({ workspaceDir: params.workspaceDir, env: params.env });
   const bundled = new Map<string, BundledPluginSource>();
 
   for (const candidate of discovery.candidates) {
@@ -122,5 +122,5 @@ export function resolveBundledPluginInstallCommandHint(params: {
   if (!bundledSource?.localPath) {
     return null;
   }
-  return `openclaw plugins install ${bundledSource.localPath}`;
+  return `merclaw plugins install ${bundledSource.localPath}`;
 }

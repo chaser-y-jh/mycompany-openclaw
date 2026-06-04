@@ -4,7 +4,7 @@ import {
   isFutureDateTimestampMs,
   resolveDateTimestampMs,
   resolveExpiresAtMsFromDurationMs,
-} from "@openclaw/normalization-core/number-coercion";
+} from "@merclaw/normalization-core/number-coercion";
 import type { Selectable } from "kysely";
 import {
   executeSqliteQuerySync,
@@ -12,19 +12,19 @@ import {
   getNodeSqliteKysely,
 } from "../../infra/kysely-sync.js";
 import { normalizeAgentId } from "../../routing/session-key.js";
-import type { DB as OpenClawAgentKyselyDatabase } from "../../state/openclaw-agent-db.generated.js";
+import type { DB as MerClawAgentKyselyDatabase } from "../../state/merclaw-agent-db.generated.js";
 import {
-  openOpenClawAgentDatabase,
-  runOpenClawAgentWriteTransaction,
-  type OpenClawAgentDatabaseOptions,
-} from "../../state/openclaw-agent-db.js";
+  openMerClawAgentDatabase,
+  runMerClawAgentWriteTransaction,
+  type MerClawAgentDatabaseOptions,
+} from "../../state/merclaw-agent-db.js";
 import type {
   AgentRuntimeCacheStore,
   AgentRuntimeCacheValue,
   AgentRuntimeCacheWriteOptions,
 } from "./agent-cache-store.js";
 
-export type SqliteAgentCacheStoreOptions = OpenClawAgentDatabaseOptions & {
+export type SqliteAgentCacheStoreOptions = MerClawAgentDatabaseOptions & {
   scope: string;
   now?: () => number;
 };
@@ -32,8 +32,8 @@ export type SqliteAgentCacheStoreOptions = OpenClawAgentDatabaseOptions & {
 export type WriteSqliteAgentCacheEntryOptions = SqliteAgentCacheStoreOptions &
   AgentRuntimeCacheWriteOptions;
 
-type CacheEntriesTable = OpenClawAgentKyselyDatabase["cache_entries"];
-type AgentCacheDatabase = Pick<OpenClawAgentKyselyDatabase, "cache_entries">;
+type CacheEntriesTable = MerClawAgentKyselyDatabase["cache_entries"];
+type AgentCacheDatabase = Pick<MerClawAgentKyselyDatabase, "cache_entries">;
 type AgentCacheRow = Selectable<CacheEntriesTable>;
 
 function normalizeScopeValue(value: string): string {
@@ -68,7 +68,7 @@ function normalizeScope(options: SqliteAgentCacheStoreOptions): {
   };
 }
 
-function toDatabaseOptions(options: SqliteAgentCacheStoreOptions): OpenClawAgentDatabaseOptions {
+function toDatabaseOptions(options: SqliteAgentCacheStoreOptions): MerClawAgentDatabaseOptions {
   return {
     agentId: options.agentId,
     ...(options.env ? { env: options.env } : {}),
@@ -152,7 +152,7 @@ export function writeSqliteAgentCacheEntry(
       : Buffer.isBuffer(options.blob)
         ? options.blob
         : Buffer.from(options.blob);
-  runOpenClawAgentWriteTransaction((database) => {
+  runMerClawAgentWriteTransaction((database) => {
     const db = getNodeSqliteKysely<AgentCacheDatabase>(database.db);
     executeSqliteQuerySync(
       database.db,
@@ -192,7 +192,7 @@ export function readSqliteAgentCacheEntry(
 ): AgentRuntimeCacheValue | null {
   const scope = normalizeScope(options);
   const key = normalizeKey(options.key);
-  const database = openOpenClawAgentDatabase(toDatabaseOptions(options));
+  const database = openMerClawAgentDatabase(toDatabaseOptions(options));
   const db = getNodeSqliteKysely<AgentCacheDatabase>(database.db);
   const row =
     executeSqliteQueryTakeFirstSync(
@@ -214,7 +214,7 @@ export function listSqliteAgentCacheEntries(
 ): AgentRuntimeCacheValue[] {
   const scope = normalizeScope(options);
   const now = resolveDateTimestampMs(options.now?.());
-  const database = openOpenClawAgentDatabase(toDatabaseOptions(options));
+  const database = openMerClawAgentDatabase(toDatabaseOptions(options));
   const db = getNodeSqliteKysely<AgentCacheDatabase>(database.db);
   return executeSqliteQuerySync(
     database.db,
@@ -233,7 +233,7 @@ export function deleteSqliteAgentCacheEntry(
 ): boolean {
   const scope = normalizeScope(options);
   const key = normalizeKey(options.key);
-  return runOpenClawAgentWriteTransaction((database) => {
+  return runMerClawAgentWriteTransaction((database) => {
     const db = getNodeSqliteKysely<AgentCacheDatabase>(database.db);
     const result = executeSqliteQuerySync(
       database.db,
@@ -245,7 +245,7 @@ export function deleteSqliteAgentCacheEntry(
 
 export function clearSqliteAgentCacheEntries(options: SqliteAgentCacheStoreOptions): number {
   const scope = normalizeScope(options);
-  return runOpenClawAgentWriteTransaction((database) => {
+  return runMerClawAgentWriteTransaction((database) => {
     const db = getNodeSqliteKysely<AgentCacheDatabase>(database.db);
     const result = executeSqliteQuerySync(
       database.db,
@@ -263,7 +263,7 @@ export function clearExpiredSqliteAgentCacheEntries(
   if (currentTime === undefined) {
     return 0;
   }
-  return runOpenClawAgentWriteTransaction((database) => {
+  return runMerClawAgentWriteTransaction((database) => {
     const db = getNodeSqliteKysely<AgentCacheDatabase>(database.db);
     const result = executeSqliteQuerySync(
       database.db,

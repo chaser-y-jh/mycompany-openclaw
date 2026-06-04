@@ -1,12 +1,12 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
 import type {
   EmbeddingInput,
   EmbeddingProviderCallOptions,
-} from "openclaw/plugin-sdk/embedding-providers";
+} from "merclaw/plugin-sdk/embedding-providers";
 import {
   createPluginRegistryFixture,
   registerVirtualTestPlugin,
-} from "openclaw/plugin-sdk/plugin-test-contracts";
+} from "merclaw/plugin-sdk/plugin-test-contracts";
 import {
   clearEmbeddingProviders,
   getRegisteredEmbeddingProvider,
@@ -17,7 +17,7 @@ import {
   listRegisteredMemoryEmbeddingProviders,
   type RegisteredMemoryEmbeddingProvider,
   restoreRegisteredMemoryEmbeddingProviders,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
+} from "merclaw/plugin-sdk/plugin-test-runtime";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createEmbeddingProvider } from "./embeddings.js";
 
@@ -30,10 +30,10 @@ type CapturedCall = {
 let embeddingProvidersSnapshot: RegisteredEmbeddingProvider[];
 let memoryEmbeddingProvidersSnapshot: RegisteredMemoryEmbeddingProvider[];
 
-function createOptions(config: OpenClawConfig) {
+function createOptions(config: MerClawConfig) {
   return {
     config,
-    agentDir: "/tmp/openclaw-agent",
+    agentDir: "/tmp/merclaw-agent",
     provider: "virtual-generic",
     fallback: "none",
     model: "virtual-model",
@@ -60,7 +60,7 @@ describe("memory-core generic embedding provider bridge", () => {
       plugins: {
         enabled: false,
       },
-    } as OpenClawConfig);
+    } as MerClawConfig);
 
     registerVirtualTestPlugin({
       registry,

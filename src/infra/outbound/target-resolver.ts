@@ -1,11 +1,11 @@
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
 import { getChannelPlugin } from "../../channels/plugins/index.js";
 import type {
   ChannelDirectoryEntry,
   ChannelDirectoryEntryKind,
   ChannelId,
 } from "../../channels/plugins/types.public.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { defaultRuntime, type RuntimeEnv } from "../../runtime.js";
 import { buildDirectoryCacheKey, DirectoryCache } from "./directory-cache.js";
 import { ambiguousTargetError, unknownTargetError } from "./target-errors.js";
@@ -44,7 +44,7 @@ function asResolvedMessagingTarget(
 export { maybeResolveIdLikeTarget } from "./target-id-resolution.js";
 
 export async function resolveChannelTarget(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channel: ChannelId;
   input: string;
   accountId?: string | null;
@@ -216,7 +216,7 @@ function resolveMatch(params: {
 }
 
 async function listDirectoryEntries(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channel: ChannelId;
   accountId?: string | null;
   kind: ChannelDirectoryEntryKind;
@@ -252,7 +252,7 @@ async function listDirectoryEntries(params: {
 }
 
 async function getDirectoryEntries(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channel: ChannelId;
   accountId?: string | null;
   kind: ChannelDirectoryEntryKind;
@@ -340,7 +340,7 @@ function pickAmbiguousMatch(
 }
 
 export async function resolveMessagingTarget(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channel: ChannelId;
   input: string;
   accountId?: string | null;
@@ -462,7 +462,7 @@ export async function resolveMessagingTarget(params: {
 }
 
 export async function lookupDirectoryDisplay(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channel: ChannelId;
   targetId: string;
   accountId?: string | null;

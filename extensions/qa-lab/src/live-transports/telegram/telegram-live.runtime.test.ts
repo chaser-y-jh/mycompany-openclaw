@@ -1,5 +1,5 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { MAX_TIMER_TIMEOUT_MS } from "openclaw/plugin-sdk/number-runtime";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { MAX_TIMER_TIMEOUT_MS } from "merclaw/plugin-sdk/number-runtime";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   LIVE_TRANSPORT_BASELINE_STANDARD_SCENARIO_IDS,
@@ -24,9 +24,9 @@ const fetchWithSsrFGuardMock = vi.hoisted(() =>
   ),
 );
 
-vi.mock("openclaw/plugin-sdk/ssrf-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/ssrf-runtime")>(
-    "openclaw/plugin-sdk/ssrf-runtime",
+vi.mock("merclaw/plugin-sdk/ssrf-runtime", async () => {
+  const actual = await vi.importActual<typeof import("merclaw/plugin-sdk/ssrf-runtime")>(
+    "merclaw/plugin-sdk/ssrf-runtime",
   );
   return {
     ...actual,
@@ -52,9 +52,9 @@ describe("telegram live qa runtime", () => {
   it("resolves required Telegram QA env vars", () => {
     expect(
       testing.resolveTelegramQaRuntimeEnv({
-        OPENCLAW_QA_TELEGRAM_GROUP_ID: "-100123",
-        OPENCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN: "driver",
-        OPENCLAW_QA_TELEGRAM_SUT_BOT_TOKEN: "sut",
+        MERCLAW_QA_TELEGRAM_GROUP_ID: "-100123",
+        MERCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN: "driver",
+        MERCLAW_QA_TELEGRAM_SUT_BOT_TOKEN: "sut",
       }),
     ).toEqual({
       groupId: "-100123",
@@ -66,20 +66,20 @@ describe("telegram live qa runtime", () => {
   it("fails when a required Telegram QA env var is missing", () => {
     expect(() =>
       testing.resolveTelegramQaRuntimeEnv({
-        OPENCLAW_QA_TELEGRAM_GROUP_ID: "-100123",
-        OPENCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN: "driver",
+        MERCLAW_QA_TELEGRAM_GROUP_ID: "-100123",
+        MERCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN: "driver",
       }),
-    ).toThrow("OPENCLAW_QA_TELEGRAM_SUT_BOT_TOKEN");
+    ).toThrow("MERCLAW_QA_TELEGRAM_SUT_BOT_TOKEN");
   });
 
   it("fails when the Telegram group id is not numeric", () => {
     expect(() =>
       testing.resolveTelegramQaRuntimeEnv({
-        OPENCLAW_QA_TELEGRAM_GROUP_ID: "qa-group",
-        OPENCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN: "driver",
-        OPENCLAW_QA_TELEGRAM_SUT_BOT_TOKEN: "sut",
+        MERCLAW_QA_TELEGRAM_GROUP_ID: "qa-group",
+        MERCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN: "driver",
+        MERCLAW_QA_TELEGRAM_SUT_BOT_TOKEN: "sut",
       }),
-    ).toThrow("OPENCLAW_QA_TELEGRAM_GROUP_ID must be a numeric Telegram chat id.");
+    ).toThrow("MERCLAW_QA_TELEGRAM_GROUP_ID must be a numeric Telegram chat id.");
   });
 
   it("parses Telegram live progress env booleans", () => {
@@ -95,23 +95,23 @@ describe("telegram live qa runtime", () => {
     expect(testing.shouldLogTelegramQaLiveProgress({ CI: "false" })).toBe(false);
   });
 
-  it("applies OPENCLAW_QA_SUITE_PROGRESS override to Telegram live logging", () => {
+  it("applies MERCLAW_QA_SUITE_PROGRESS override to Telegram live logging", () => {
     expect(
       testing.shouldLogTelegramQaLiveProgress({
         CI: "false",
-        OPENCLAW_QA_SUITE_PROGRESS: "true",
+        MERCLAW_QA_SUITE_PROGRESS: "true",
       }),
     ).toBe(true);
     expect(
       testing.shouldLogTelegramQaLiveProgress({
         CI: "true",
-        OPENCLAW_QA_SUITE_PROGRESS: "false",
+        MERCLAW_QA_SUITE_PROGRESS: "false",
       }),
     ).toBe(false);
     expect(
       testing.shouldLogTelegramQaLiveProgress({
         CI: "true",
-        OPENCLAW_QA_SUITE_PROGRESS: "definitely",
+        MERCLAW_QA_SUITE_PROGRESS: "definitely",
       }),
     ).toBe(true);
   });
@@ -120,18 +120,18 @@ describe("telegram live qa runtime", () => {
     expect(testing.resolveTelegramQaCanaryTimeoutMs({})).toBe(30_000);
     expect(
       testing.resolveTelegramQaCanaryTimeoutMs({
-        OPENCLAW_QA_TELEGRAM_CANARY_TIMEOUT_MS: "90000",
+        MERCLAW_QA_TELEGRAM_CANARY_TIMEOUT_MS: "90000",
       }),
     ).toBe(90_000);
     expect(
       testing.resolveTelegramQaCanaryTimeoutMs({
-        OPENCLAW_QA_TELEGRAM_CANARY_TIMEOUT_MS: "nope",
+        MERCLAW_QA_TELEGRAM_CANARY_TIMEOUT_MS: "nope",
       }),
     ).toBe(30_000);
     for (const value of ["0x10", "1e3", "10.5"]) {
       expect(
         testing.resolveTelegramQaCanaryTimeoutMs({
-          OPENCLAW_QA_TELEGRAM_CANARY_TIMEOUT_MS: value,
+          MERCLAW_QA_TELEGRAM_CANARY_TIMEOUT_MS: value,
         }),
       ).toBe(30_000);
     }
@@ -141,18 +141,18 @@ describe("telegram live qa runtime", () => {
     expect(testing.resolveTelegramQaScenarioTimeoutMs(45_000, {})).toBe(45_000);
     expect(
       testing.resolveTelegramQaScenarioTimeoutMs(45_000, {
-        OPENCLAW_QA_TELEGRAM_SCENARIO_TIMEOUT_MS: "180000",
+        MERCLAW_QA_TELEGRAM_SCENARIO_TIMEOUT_MS: "180000",
       }),
     ).toBe(180_000);
     expect(
       testing.resolveTelegramQaScenarioTimeoutMs(45_000, {
-        OPENCLAW_QA_TELEGRAM_SCENARIO_TIMEOUT_MS: "nope",
+        MERCLAW_QA_TELEGRAM_SCENARIO_TIMEOUT_MS: "nope",
       }),
     ).toBe(45_000);
     for (const value of ["0x10", "1e3", "10.5"]) {
       expect(
         testing.resolveTelegramQaScenarioTimeoutMs(45_000, {
-          OPENCLAW_QA_TELEGRAM_SCENARIO_TIMEOUT_MS: value,
+          MERCLAW_QA_TELEGRAM_SCENARIO_TIMEOUT_MS: value,
         }),
       ).toBe(45_000);
     }
@@ -194,7 +194,7 @@ describe("telegram live qa runtime", () => {
   });
 
   it("injects a temporary Telegram account into the QA gateway config", () => {
-    const baseCfg: OpenClawConfig = {
+    const baseCfg: MerClawConfig = {
       plugins: {
         allow: ["memory-core", "qa-channel"],
         entries: {
@@ -206,8 +206,8 @@ describe("telegram live qa runtime", () => {
         "qa-channel": {
           enabled: true,
           baseUrl: "http://127.0.0.1:43123",
-          botUserId: "openclaw",
-          botDisplayName: "OpenClaw QA",
+          botUserId: "merclaw",
+          botDisplayName: "MerClaw QA",
           allowFrom: ["*"],
         },
       },
@@ -222,7 +222,7 @@ describe("telegram live qa runtime", () => {
 
     expect(next.agents?.defaults?.skipBootstrap).toBe(true);
     expect(next.agents?.defaults?.models?.["openai/gpt-5.5"]?.agentRuntime).toEqual({
-      id: "openclaw",
+      id: "merclaw",
     });
     expect(next.plugins?.allow).toContain("telegram");
     expect(next.plugins?.entries?.telegram).toEqual({ enabled: true });
@@ -418,7 +418,7 @@ describe("telegram live qa runtime", () => {
     expect(
       scenarios.find((scenario) => scenario.id === "telegram-status-command")?.buildRun("sut_bot")
         .steps[0].expectedTextIncludes,
-    ).toEqual(["OpenClaw", "Model:", "Session:", "Activation:"]);
+    ).toEqual(["MerClaw", "Model:", "Session:", "Activation:"]);
     expect(
       scenarios
         .find((scenario) => scenario.id === "telegram-repeated-command-authorization")
@@ -442,7 +442,7 @@ describe("telegram live qa runtime", () => {
       "sut_bot",
     ).steps[0];
     expect(otherBotStep?.expectReply).toBe(false);
-    expect(otherBotStep?.input).toBe("/status@OpenClawQaOtherBot");
+    expect(otherBotStep?.input).toBe("/status@MerClawQaOtherBot");
     const contextStep = requireScenario(scenarios, "telegram-context-command").buildRun("sut_bot")
       .steps[0];
     expect(contextStep?.matchText).toBe("/context list");
@@ -543,16 +543,16 @@ describe("telegram live qa runtime", () => {
     const catalog = testing.listTelegramQaScenarioCatalog("mock-openai");
     const status = requireScenario(catalog, "telegram-status-command");
     expect(status.defaultEnabled).toBe(true);
-    expect(status.regressionRefs).toEqual(["openclaw/openclaw#74698"]);
+    expect(status.regressionRefs).toEqual(["merclaw/merclaw#74698"]);
     expect(requireScenario(catalog, "telegram-current-session-status-tool").defaultEnabled).toBe(
       false,
     );
     const usageFooter = requireScenario(catalog, "telegram-tool-only-usage-footer");
     expect(usageFooter.defaultEnabled).toBe(false);
-    expect(usageFooter.regressionRefs).toEqual(["openclaw/openclaw#87392"]);
+    expect(usageFooter.regressionRefs).toEqual(["merclaw/merclaw#87392"]);
     const streamSingle = requireScenario(catalog, "telegram-stream-final-single-message");
     expect(streamSingle.defaultEnabled).toBe(false);
-    expect(streamSingle.regressionRefs).toEqual(["openclaw/openclaw#39905"]);
+    expect(streamSingle.regressionRefs).toEqual(["merclaw/merclaw#39905"]);
     expect(requireScenario(catalog, "telegram-reply-chain-exact-marker").defaultEnabled).toBe(
       false,
     );

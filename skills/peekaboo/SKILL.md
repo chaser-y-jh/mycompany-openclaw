@@ -4,7 +4,7 @@ description: "Capture and automate macOS UI with the Peekaboo CLI."
 homepage: https://peekaboo.boo
 metadata:
   {
-    "openclaw":
+    "merclaw":
       {
         "emoji": "👀",
         "os": ["darwin"],
@@ -187,7 +187,7 @@ peekaboo type "Line 1\nLine 2" --delay 10
 Notes
 
 - Requires Screen Recording + Accessibility permissions.
-- In OpenClaw subprocesses, use the default Bridge path. Do not pass
+- In MerClaw subprocesses, use the default Bridge path. Do not pass
   `--no-remote` unless the calling process has its own Screen Recording grant.
 - Diagnose subprocess capture failures with `peekaboo bridge status --json`,
   then `peekaboo permissions status --json`, then a normal Bridge-routed

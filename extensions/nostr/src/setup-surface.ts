@@ -1,9 +1,9 @@
 import {
   hasConfiguredSecretInput,
   normalizeSecretInputString,
-} from "openclaw/plugin-sdk/secret-input";
-import { DEFAULT_ACCOUNT_ID } from "openclaw/plugin-sdk/routing";
-import type { ChannelSetupDmPolicy, ChannelSetupWizard, DmPolicy } from "openclaw/plugin-sdk/setup";
+} from "merclaw/plugin-sdk/secret-input";
+import { DEFAULT_ACCOUNT_ID } from "merclaw/plugin-sdk/routing";
+import type { ChannelSetupDmPolicy, ChannelSetupWizard, DmPolicy } from "merclaw/plugin-sdk/setup";
 import {
   createSetupTranslator,
   createStandardChannelSetupStatus,
@@ -13,7 +13,7 @@ import {
   mergeAllowFromEntries,
   parseSetupEntriesWithParser,
   patchTopLevelChannelConfigSection,
-} from "openclaw/plugin-sdk/setup";
+} from "merclaw/plugin-sdk/setup";
 import { DEFAULT_RELAYS } from "./default-relays.js";
 import { getPublicKeyFromPrivate, normalizePubkey } from "./nostr-key-utils.js";
 import {

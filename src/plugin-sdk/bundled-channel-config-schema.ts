@@ -1,8 +1,8 @@
 /**
- * Bundled-channel config schemas for OpenClaw-maintained plugins.
+ * Bundled-channel config schemas for MerClaw-maintained plugins.
  *
  * Third-party plugins should define plugin-local schemas and import primitives
- * from openclaw/plugin-sdk/channel-config-schema instead of depending on these
+ * from merclaw/plugin-sdk/channel-config-schema instead of depending on these
  * bundled channel schemas.
  */
 export {

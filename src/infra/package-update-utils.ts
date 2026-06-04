@@ -1,7 +1,7 @@
 import fsSync from "node:fs";
 import path from "node:path";
-import { readRootJsonObjectSync } from "@openclaw/fs-safe/json";
-import { isRecord } from "@openclaw/normalization-core/record-coerce";
+import { readRootJsonObjectSync } from "@merclaw/fs-safe/json";
+import { isRecord } from "@merclaw/normalization-core/record-coerce";
 
 export function expectedIntegrityForUpdate(
   spec: string | undefined,
@@ -50,14 +50,14 @@ export function readInstalledPackagePeerDependencies(dir: string): Record<string
   );
 }
 
-export function installedPackageNeedsOpenClawPeerLinkRepair(dir: string): boolean {
+export function installedPackageNeedsMerClawPeerLinkRepair(dir: string): boolean {
   const peerDependencies = readInstalledPackagePeerDependencies(dir);
-  if (!Object.hasOwn(peerDependencies, "openclaw")) {
+  if (!Object.hasOwn(peerDependencies, "merclaw")) {
     return false;
   }
 
   try {
-    fsSync.statSync(path.join(dir, "node_modules", "openclaw"));
+    fsSync.statSync(path.join(dir, "node_modules", "merclaw"));
     return false;
   } catch (error) {
     const code = (error as NodeJS.ErrnoException | undefined)?.code;

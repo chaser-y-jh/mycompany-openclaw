@@ -1,4 +1,4 @@
-import type { UnifiedModelCatalogEntry } from "@openclaw/model-catalog-core/model-catalog-types";
+import type { UnifiedModelCatalogEntry } from "@merclaw/model-catalog-core/model-catalog-types";
 import { createProviderApiKeyAuthMethod } from "../plugins/provider-api-key-auth.js";
 import { projectProviderCatalogResultToUnifiedTextRows } from "../plugins/provider-catalog-unified-text.js";
 import type {
@@ -13,9 +13,9 @@ import type {
 import { normalizeStringEntries, uniqueStrings } from "../../packages/normalization-core/src/string-normalization.js";
 import { definePluginEntry } from "./plugin-entry.js";
 import type {
-  OpenClawPluginApi,
-  OpenClawPluginConfigSchema,
-  OpenClawPluginDefinition,
+  MerClawPluginApi,
+  MerClawPluginConfigSchema,
+  MerClawPluginDefinition,
 } from "./plugin-entry.js";
 import { buildSingleProviderApiKeyCatalog } from "./provider-catalog-shared.js";
 
@@ -52,12 +52,12 @@ export type SingleProviderPluginOptions = {
   name: string;
   description: string;
   /**
-   * @deprecated Declare exclusive plugin kind in `openclaw.plugin.json` via
+   * @deprecated Declare exclusive plugin kind in `merclaw.plugin.json` via
    * manifest `kind`. Runtime-entry `kind` remains only as a compatibility
    * fallback for older plugins.
    */
-  kind?: OpenClawPluginDefinition["kind"];
-  configSchema?: OpenClawPluginConfigSchema | (() => OpenClawPluginConfigSchema);
+  kind?: MerClawPluginDefinition["kind"];
+  configSchema?: MerClawPluginConfigSchema | (() => MerClawPluginConfigSchema);
   provider?: {
     id?: string;
     label: string;
@@ -71,7 +71,7 @@ export type SingleProviderPluginOptions = {
     ProviderPlugin,
     "id" | "label" | "docsPath" | "aliases" | "envVars" | "auth" | "catalog" | "staticCatalog"
   >;
-  register?: (api: OpenClawPluginApi) => void;
+  register?: (api: MerClawPluginApi) => void;
 };
 
 function resolveWizardSetup(params: {

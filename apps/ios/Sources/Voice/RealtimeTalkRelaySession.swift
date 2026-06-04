@@ -1,8 +1,8 @@
 import AVFAudio
 import Foundation
-import OpenClawChatUI
-import OpenClawKit
-import OpenClawProtocol
+import MerClawChatUI
+import MerClawKit
+import MerClawProtocol
 import OSLog
 
 private func makeRealtimeAudioTapBlock(
@@ -84,7 +84,7 @@ private actor RealtimeAudioSender {
 
 @MainActor
 final class RealtimeTalkRelaySession {
-    private static let agentControlToolName = "openclaw_agent_control"
+    private static let agentControlToolName = "merclaw_agent_control"
 
     struct Options {
         let sessionKey: String
@@ -114,7 +114,7 @@ final class RealtimeTalkRelaySession {
     private let gateway: GatewayNodeSession
     private let options: Options
     private let pcmPlayer: PCMStreamingAudioPlaying
-    private let logger = Logger(subsystem: "ai.openclaw", category: "RealtimeTalkRelay")
+    private let logger = Logger(subsystem: "ai.merclaw", category: "RealtimeTalkRelay")
     private let onStatus: (String) -> Void
     private let onSpeakingChanged: (Bool) -> Void
 
@@ -427,8 +427,8 @@ final class RealtimeTalkRelaySession {
                 stream: completionStream,
                 timeoutSeconds: 120)
             let result: [String: Any] = completion.failed
-                ? ["error": "OpenClaw tool call failed"]
-                : ["text": completion.text ?? "OpenClaw finished with no text."]
+                ? ["error": "MerClaw tool call failed"]
+                : ["text": completion.text ?? "MerClaw finished with no text."]
             try await self.submitToolResult(callId: callId, result: result)
             self.onStatus("Listening (Realtime)")
         } catch {
@@ -496,12 +496,12 @@ final class RealtimeTalkRelaySession {
                           let payload = event.payload,
                           let chatEvent = try? GatewayPayloadDecoding.decode(
                               payload,
-                              as: OpenClawChatEventPayload.self),
+                              as: MerClawChatEventPayload.self),
                           chatEvent.runId == runId
                     else { continue }
                     if chatEvent.state == "final" {
                         return ChatCompletionResult(
-                            text: OpenClawChatEventText.assistantText(from: chatEvent),
+                            text: MerClawChatEventText.assistantText(from: chatEvent),
                             failed: false)
                     }
                     if chatEvent.state == "aborted" || chatEvent.state == "error" {

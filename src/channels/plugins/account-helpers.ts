@@ -1,6 +1,6 @@
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
-import { normalizeUniqueStringEntries } from "@openclaw/normalization-core/string-normalization";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
+import { normalizeUniqueStringEntries } from "@merclaw/normalization-core/string-normalization";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import {
   resolveAccountEntry,
   resolveNormalizedAccountEntry,
@@ -21,10 +21,10 @@ export function createAccountListHelpers(
       channelKeys?: readonly string[];
       envVars?: readonly string[];
     };
-    hasImplicitDefaultAccount?: (cfg: OpenClawConfig) => boolean;
+    hasImplicitDefaultAccount?: (cfg: MerClawConfig) => boolean;
   },
 ) {
-  function hasImplicitDefaultAccount(cfg: OpenClawConfig): boolean {
+  function hasImplicitDefaultAccount(cfg: MerClawConfig): boolean {
     if (options?.hasImplicitDefaultAccount?.(cfg)) {
       return true;
     }
@@ -42,7 +42,7 @@ export function createAccountListHelpers(
     return false;
   }
 
-  function resolveConfiguredDefaultAccountId(cfg: OpenClawConfig): string | undefined {
+  function resolveConfiguredDefaultAccountId(cfg: MerClawConfig): string | undefined {
     const channel = cfg.channels?.[channelKey] as Record<string, unknown> | undefined;
     const preferred = normalizeOptionalAccountId(
       typeof channel?.defaultAccount === "string" ? channel.defaultAccount : undefined,
@@ -60,7 +60,7 @@ export function createAccountListHelpers(
     return undefined;
   }
 
-  function listConfiguredAccountIds(cfg: OpenClawConfig): string[] {
+  function listConfiguredAccountIds(cfg: MerClawConfig): string[] {
     const channel = cfg.channels?.[channelKey];
     const accounts = (channel as Record<string, unknown> | undefined)?.accounts;
     if (!accounts || typeof accounts !== "object") {
@@ -74,7 +74,7 @@ export function createAccountListHelpers(
     return normalizeUniqueStringEntries(ids.map((id) => normalizeConfiguredAccountId(id)));
   }
 
-  function listAccountIds(cfg: OpenClawConfig): string[] {
+  function listAccountIds(cfg: MerClawConfig): string[] {
     return listCombinedAccountIds({
       configuredAccountIds: listConfiguredAccountIds(cfg),
       implicitAccountId: hasImplicitDefaultAccount(cfg) ? DEFAULT_ACCOUNT_ID : undefined,
@@ -82,7 +82,7 @@ export function createAccountListHelpers(
     });
   }
 
-  function resolveDefaultAccountId(cfg: OpenClawConfig): string {
+  function resolveDefaultAccountId(cfg: MerClawConfig): string {
     return resolveListedDefaultAccountId({
       accountIds: listAccountIds(cfg),
       configuredDefaultAccountId: resolveConfiguredDefaultAccountId(cfg),

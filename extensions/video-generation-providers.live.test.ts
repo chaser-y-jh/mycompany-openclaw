@@ -1,13 +1,13 @@
 import {
   resolveApiKeyForProvider,
   resolveDefaultAgentDir,
-} from "openclaw/plugin-sdk/agent-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+} from "merclaw/plugin-sdk/agent-runtime";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
 import {
   registerProviderPlugin,
   requireRegisteredProvider,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
-import { getRuntimeConfig } from "openclaw/plugin-sdk/runtime-config-snapshot";
+} from "merclaw/plugin-sdk/plugin-test-runtime";
+import { getRuntimeConfig } from "merclaw/plugin-sdk/runtime-config-snapshot";
 import {
   DEFAULT_LIVE_VIDEO_MODELS,
   canRunBufferBackedImageToVideoLiveLane,
@@ -33,14 +33,14 @@ import {
   resolveConfiguredLiveVideoModels,
   resolveLiveVideoAuthStore,
   resolveLiveVideoResolution,
-} from "openclaw/plugin-sdk/test-env";
+} from "merclaw/plugin-sdk/test-env";
 import type {
   GeneratedVideoAsset,
   VideoGenerationMode,
   VideoGenerationModeCapabilities,
   VideoGenerationProvider,
   VideoGenerationRequest,
-} from "openclaw/plugin-sdk/test-env";
+} from "merclaw/plugin-sdk/test-env";
 import { describe, expect, it } from "vitest";
 import alibabaPlugin from "./alibaba/index.js";
 import byteplusPlugin from "./byteplus/index.js";
@@ -60,19 +60,19 @@ import xaiPlugin from "./xai/index.js";
 
 const LIVE = isLiveTestEnabled();
 const REQUIRE_PROFILE_KEYS =
-  isLiveProfileKeyModeEnabled() || isTruthyEnvValue(process.env.OPENCLAW_LIVE_REQUIRE_PROFILE_KEYS);
+  isLiveProfileKeyModeEnabled() || isTruthyEnvValue(process.env.MERCLAW_LIVE_REQUIRE_PROFILE_KEYS);
 const describeLive = LIVE ? describe : describe.skip;
-const providerFilter = parseCsvFilter(process.env.OPENCLAW_LIVE_VIDEO_GENERATION_PROVIDERS);
+const providerFilter = parseCsvFilter(process.env.MERCLAW_LIVE_VIDEO_GENERATION_PROVIDERS);
 const defaultSkippedProviders = providerFilter
   ? null
-  : parseCsvFilter(process.env.OPENCLAW_LIVE_VIDEO_GENERATION_SKIP_PROVIDERS ?? "fal");
-const envModelMap = parseProviderModelMap(process.env.OPENCLAW_LIVE_VIDEO_GENERATION_MODELS);
+  : parseCsvFilter(process.env.MERCLAW_LIVE_VIDEO_GENERATION_SKIP_PROVIDERS ?? "fal");
+const envModelMap = parseProviderModelMap(process.env.MERCLAW_LIVE_VIDEO_GENERATION_MODELS);
 const RUN_FULL_VIDEO_MODES = isTruthyEnvValue(
-  process.env.OPENCLAW_LIVE_VIDEO_GENERATION_FULL_MODES,
+  process.env.MERCLAW_LIVE_VIDEO_GENERATION_FULL_MODES,
 );
 const LIVE_VIDEO_REQUESTED_DURATION_SECONDS = 1;
 const LIVE_VIDEO_OPERATION_TIMEOUT_MS = readPositiveIntegerEnv(
-  process.env.OPENCLAW_LIVE_VIDEO_GENERATION_TIMEOUT_MS,
+  process.env.MERCLAW_LIVE_VIDEO_GENERATION_TIMEOUT_MS,
   180_000,
 );
 const LIVE_VIDEO_TEST_TIMEOUT_MS =
@@ -156,7 +156,7 @@ function readPositiveIntegerEnv(raw: string | undefined, fallback: number): numb
   return Number.isFinite(value) && value > 0 ? value : fallback;
 }
 
-function withPluginsEnabled(cfg: OpenClawConfig): OpenClawConfig {
+function withPluginsEnabled(cfg: MerClawConfig): MerClawConfig {
   return {
     ...cfg,
     plugins: {

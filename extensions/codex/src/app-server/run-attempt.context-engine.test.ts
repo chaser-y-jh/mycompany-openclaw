@@ -1,14 +1,14 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { AgentMessage } from "openclaw/plugin-sdk/agent-core";
-import type { EmbeddedRunAttemptParams } from "openclaw/plugin-sdk/agent-harness";
+import type { AgentMessage } from "merclaw/plugin-sdk/agent-core";
+import type { EmbeddedRunAttemptParams } from "merclaw/plugin-sdk/agent-harness";
 import {
   embeddedAgentLog,
   type HarnessContextEngine as ContextEngine,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import { SessionManager } from "openclaw/plugin-sdk/agent-sessions";
-import { registerSandboxBackend } from "openclaw/plugin-sdk/sandbox";
+} from "merclaw/plugin-sdk/agent-harness-runtime";
+import { SessionManager } from "merclaw/plugin-sdk/agent-sessions";
+import { registerSandboxBackend } from "merclaw/plugin-sdk/sandbox";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { CodexAppServerClientFactory } from "./client-factory.js";
 import type { CodexServerNotification } from "./protocol.js";
@@ -120,7 +120,7 @@ function threadStartResult(threadId = "thread-1") {
       updatedAt: 1,
       status: { type: "idle" },
       path: null,
-      cwd: tempDir || "/tmp/openclaw-codex-test",
+      cwd: tempDir || "/tmp/merclaw-codex-test",
       cliVersion: "0.125.0",
       source: "unknown",
       agentNickname: null,
@@ -132,7 +132,7 @@ function threadStartResult(threadId = "thread-1") {
     model: "gpt-5.4-codex",
     modelProvider: "openai",
     serviceTier: null,
-    cwd: tempDir || "/tmp/openclaw-codex-test",
+    cwd: tempDir || "/tmp/merclaw-codex-test",
     instructionSources: [],
     approvalPolicy: "never",
     approvalsReviewer: "user",
@@ -305,7 +305,7 @@ function getRequestInputTextAt(
 
 describe("runCodexAppServerAttempt context-engine lifecycle", () => {
   beforeEach(async () => {
-    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-context-engine-"));
+    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-context-engine-"));
   });
 
   afterEach(async () => {
@@ -359,7 +359,7 @@ describe("runCodexAppServerAttempt context-engine lifecycle", () => {
     expect(optionalString(threadStartParams.developerInstructions)).toContain(
       "context-engine system",
     );
-    expectRequestInputTextContains(harness, "OpenClaw assembled context for this turn:");
+    expectRequestInputTextContains(harness, "MerClaw assembled context for this turn:");
 
     await harness.completeTurn();
     await run;
@@ -479,7 +479,7 @@ describe("runCodexAppServerAttempt context-engine lifecycle", () => {
 
     const firstRun = runCodexAppServerAttempt(firstParams);
     await firstHarness.waitForMethod("turn/start");
-    expectRequestInputTextContains(firstHarness, "OpenClaw assembled context for this turn:");
+    expectRequestInputTextContains(firstHarness, "MerClaw assembled context for this turn:");
     expectRequestInputTextContains(firstHarness, "bootstrap-only context");
     await firstHarness.completeTurn();
     await firstRun;
@@ -506,7 +506,7 @@ describe("runCodexAppServerAttempt context-engine lifecycle", () => {
       "turn/start",
     ]);
     const secondInputText = getRequestInputText(secondHarness);
-    expect(secondInputText).not.toContain("OpenClaw assembled context for this turn:");
+    expect(secondInputText).not.toContain("MerClaw assembled context for this turn:");
     expect(secondInputText).not.toContain("bootstrap-only context");
     expect(secondInputText).toBe("hello");
     const projectionLogs = info.mock.calls.filter(
@@ -622,7 +622,7 @@ describe("runCodexAppServerAttempt context-engine lifecycle", () => {
       "turn/start",
     ]);
     const inputText = getRequestInputText(harness);
-    expect(inputText).not.toContain("OpenClaw assembled context for this turn:");
+    expect(inputText).not.toContain("MerClaw assembled context for this turn:");
     expect(inputText).not.toContain("already bootstrapped context");
     expect(inputText).toBe("hello");
 
@@ -704,7 +704,7 @@ describe("runCodexAppServerAttempt context-engine lifecycle", () => {
       "turn/start",
     ]);
     const inputText = getRequestInputText(harness);
-    expect(inputText).toContain("OpenClaw assembled context for this turn:");
+    expect(inputText).toContain("MerClaw assembled context for this turn:");
     expect(inputText).toContain("reprojected context");
 
     await harness.completeTurn("completed", "thread-fresh");
@@ -792,7 +792,7 @@ describe("runCodexAppServerAttempt context-engine lifecycle", () => {
       "turn/start",
     ]);
     const inputText = getRequestInputText(harness);
-    expect(inputText).not.toContain("OpenClaw assembled context for this turn:");
+    expect(inputText).not.toContain("MerClaw assembled context for this turn:");
     expect(inputText).not.toContain("previous stale-bootstrap request");
     expect(inputText).not.toContain("previous stale-bootstrap answer");
     expect(inputText).not.toContain("Current user request:");
@@ -846,7 +846,7 @@ describe("runCodexAppServerAttempt context-engine lifecycle", () => {
       "thread/start",
       "turn/start",
     ]);
-    expectRequestInputTextContains(harness, "OpenClaw assembled context for this turn:");
+    expectRequestInputTextContains(harness, "MerClaw assembled context for this turn:");
     expectRequestInputTextContains(harness, "new epoch context");
 
     await harness.notify({
@@ -934,7 +934,7 @@ describe("runCodexAppServerAttempt context-engine lifecycle", () => {
       "thread/start",
       "turn/start",
     ]);
-    expectRequestInputTextContains(harness, "OpenClaw assembled context for this turn:");
+    expectRequestInputTextContains(harness, "MerClaw assembled context for this turn:");
     expectRequestInputTextContains(harness, "policy changed context");
 
     await harness.notify({
@@ -1046,7 +1046,7 @@ describe("runCodexAppServerAttempt context-engine lifecycle", () => {
         "thread/start",
         "turn/start",
       ]);
-      expectRequestInputTextContains(harness, "OpenClaw assembled context for this turn:");
+      expectRequestInputTextContains(harness, "MerClaw assembled context for this turn:");
       expectRequestInputTextContains(harness, "native-disabled context");
 
       await harness.notify({
@@ -1112,7 +1112,7 @@ describe("runCodexAppServerAttempt context-engine lifecycle", () => {
       "thread/start",
       "turn/start",
     ]);
-    expectRequestInputTextContains(harness, "OpenClaw assembled context for this turn:");
+    expectRequestInputTextContains(harness, "MerClaw assembled context for this turn:");
     expectRequestInputTextContains(harness, "per-turn context");
 
     await harness.notify({
@@ -1429,7 +1429,7 @@ describe("runCodexAppServerAttempt context-engine lifecycle", () => {
     expect(result.assistantTexts).toContain("final answer");
   });
 
-  it("fails first-turn Codex context overflow instead of falling back to OpenClaw compaction", async () => {
+  it("fails first-turn Codex context overflow instead of falling back to MerClaw compaction", async () => {
     const sessionFile = path.join(tempDir, "session.jsonl");
     const workspaceDir = path.join(tempDir, "workspace");
     const compact = vi.fn<ContextEngine["compact"]>(async () => ({
@@ -1560,8 +1560,8 @@ describe("runCodexAppServerAttempt context-engine lifecycle", () => {
     params.currentInboundContext = {
       text: [
         "Conversation context (untrusted, chronological, selected for current message):",
-        "#6474 Sun 2026-05-10 22:22 GMT+5:30 [reply target] OpenClaw: anchor REPLYCTX this is the old message",
-        "#6498 Sun 2026-05-10 22:22 GMT+5:30 OpenClaw: filler REPLYCTX 23",
+        "#6474 Sun 2026-05-10 22:22 GMT+5:30 [reply target] MerClaw: anchor REPLYCTX this is the old message",
+        "#6498 Sun 2026-05-10 22:22 GMT+5:30 MerClaw: filler REPLYCTX 23",
       ].join("\n"),
     };
 
@@ -1569,9 +1569,9 @@ describe("runCodexAppServerAttempt context-engine lifecycle", () => {
     await harness.waitForMethod("turn/start");
 
     const inputText = getRequestInputText(harness);
-    expect(inputText).toContain("OpenClaw assembled context for this turn:");
+    expect(inputText).toContain("MerClaw assembled context for this turn:");
     expect(inputText).toContain("Current user request:\nhello");
-    expect(inputText).toContain("[reply target] OpenClaw: anchor REPLYCTX");
+    expect(inputText).toContain("[reply target] MerClaw: anchor REPLYCTX");
     expect(inputText.trim().startsWith("Conversation context (untrusted")).toBe(true);
 
     await harness.completeTurn();

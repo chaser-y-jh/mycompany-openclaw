@@ -57,7 +57,7 @@ async function runConcurrentRefreshCase(): Promise<ConcurrentRefreshResult> {
       formatProviderAuthProfileApiKeyWithPluginMock,
     });
     clearRuntimeAuthProfileStoreSnapshots();
-    tempRoot = await createOAuthTestTempRoot("openclaw-oauth-concurrent-");
+    tempRoot = await createOAuthTestTempRoot("merclaw-oauth-concurrent-");
     const mainAgentDir = await createOAuthMainAgentDir(tempRoot);
     await loadOAuthModuleForTest();
     // Drop any refresh-queue entries left behind by a prior timed-out test.

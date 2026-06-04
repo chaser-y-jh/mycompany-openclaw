@@ -1,5 +1,5 @@
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
-import { sortUniqueStrings } from "@openclaw/normalization-core/string-normalization";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
+import { sortUniqueStrings } from "@merclaw/normalization-core/string-normalization";
 import {
   envInvocationUsesModifiers,
   parseEnvInvocationPrelude,

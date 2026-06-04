@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { wrapPluginSystemContextSection } from "./hook-system-context-boundary.js";
 
 function wrappedPluginSystemContext(text: string): string {
-  return `---\n\nOpenClaw plugin-injected system context. This block is not workspace file content.\n\n${text}\n\n---`;
+  return `---\n\nMerClaw plugin-injected system context. This block is not workspace file content.\n\n${text}\n\n---`;
 }
 
 describe("wrapPluginSystemContextSection", () => {

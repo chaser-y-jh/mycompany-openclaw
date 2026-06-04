@@ -9,8 +9,8 @@ import {
   type NativeHookRelayProcessResponse,
   type NativeHookRelayRegistrationHandle,
   runBeforeToolCallHook,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import { normalizeTrimmedStringList } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/agent-harness-runtime";
+import { normalizeTrimmedStringList } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { formatCodexDisplayText } from "../command-formatters.js";
 import {
   approvalRequestExplicitlyUnavailable,
@@ -82,7 +82,7 @@ export async function handleCodexAppServerApprovalRequest(params: {
   });
 
   try {
-    const policyOutcome = await runOpenClawToolPolicyForApprovalRequest({
+    const policyOutcome = await runMerClawToolPolicyForApprovalRequest({
       method: params.method,
       requestParams,
       paramsForRun: params.paramsForRun,
@@ -333,7 +333,7 @@ type ApprovalPolicyOutcome =
   | { outcome: "approved-once" | "approved-session" }
   | { outcome: "no-decision" };
 
-async function runOpenClawToolPolicyForApprovalRequest(params: {
+async function runMerClawToolPolicyForApprovalRequest(params: {
   method: string;
   requestParams: JsonObject | undefined;
   paramsForRun: EmbeddedRunAttemptParams;
@@ -344,7 +344,7 @@ async function runOpenClawToolPolicyForApprovalRequest(params: {
   >;
   signal?: AbortSignal;
 }): Promise<ApprovalPolicyOutcome | undefined> {
-  const policyRequest = buildOpenClawToolPolicyRequest(params.method, params.requestParams);
+  const policyRequest = buildMerClawToolPolicyRequest(params.method, params.requestParams);
   if (!policyRequest) {
     return undefined;
   }
@@ -400,7 +400,7 @@ async function runOpenClawToolPolicyForApprovalRequest(params: {
     return {
       outcome: "denied",
       reason:
-        "OpenClaw tool policy rewrote Codex app-server approval params; refusing original request.",
+        "MerClaw tool policy rewrote Codex app-server approval params; refusing original request.",
     };
   }
   if (outcome.approvalResolution) {
@@ -503,7 +503,7 @@ async function runNativeRelayToolPolicyForApprovalRequest(params: {
     return {
       handled: true,
       blocked: true,
-      reason: `OpenClaw native hook relay unavailable for Codex app-server approval: ${formatCodexDisplayText(
+      reason: `MerClaw native hook relay unavailable for Codex app-server approval: ${formatCodexDisplayText(
         formatErrorMessage(error),
       )}`,
     };
@@ -523,7 +523,7 @@ function buildNativeRelayPreToolUsePayload(params: {
   const turnId = readString(params.requestParams, "turnId");
   return {
     hook_event_name: "PreToolUse",
-    openclaw_approval_mode: "report",
+    merclaw_approval_mode: "report",
     tool_name: "exec_command",
     ...(params.context.itemId ? { tool_use_id: params.context.itemId } : {}),
     ...(params.cwd ? { cwd: params.cwd } : {}),
@@ -545,7 +545,7 @@ function readNativeRelayPreToolUseDecision(
       reason:
         sanitizeRelayDecisionReason(response?.stderr) ||
         sanitizeRelayDecisionReason(response?.stdout) ||
-        "OpenClaw native hook relay failed for Codex app-server approval.",
+        "MerClaw native hook relay failed for Codex app-server approval.",
     };
   }
   const stdout = response.stdout?.trim();
@@ -559,7 +559,7 @@ function readNativeRelayPreToolUseDecision(
       blocked: true,
       reason:
         readString(output, "permissionDecisionReason") ||
-        "OpenClaw native hook policy denied Codex app-server approval.",
+        "MerClaw native hook policy denied Codex app-server approval.",
     };
   }
   // The app-server bridge invokes the relay in report mode, where the relay
@@ -567,8 +567,8 @@ function readNativeRelayPreToolUseDecision(
   return {
     blocked: true,
     reason: output
-      ? "OpenClaw native hook relay returned a non-deny Codex app-server approval decision."
-      : "OpenClaw native hook relay returned an unreadable Codex app-server approval result.",
+      ? "MerClaw native hook relay returned a non-deny Codex app-server approval decision."
+      : "MerClaw native hook relay returned an unreadable Codex app-server approval result.",
   };
 }
 
@@ -586,7 +586,7 @@ function sanitizeRelayDecisionReason(value: string | undefined): string | undefi
   return preview.text;
 }
 
-function buildOpenClawToolPolicyRequest(
+function buildMerClawToolPolicyRequest(
   method: string,
   requestParams: JsonObject | undefined,
 ): { toolName: string; params: JsonObject } | undefined {
@@ -701,7 +701,7 @@ function requestedPermissions(requestParams: JsonObject | undefined): JsonObject
 function unsupportedApprovalResponse(): JsonValue {
   return {
     decision: "decline",
-    reason: "OpenClaw codex app-server bridge does not grant native approvals yet.",
+    reason: "MerClaw codex app-server bridge does not grant native approvals yet.",
   };
 }
 

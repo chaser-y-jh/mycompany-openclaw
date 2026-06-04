@@ -1,15 +1,15 @@
 import {
   isExplicitCommandTurn,
   type CommandTurnContext,
-} from "openclaw/plugin-sdk/channel-inbound";
+} from "merclaw/plugin-sdk/channel-inbound";
 import {
   maybeResolveTextAlias,
   normalizeCommandBody,
-} from "openclaw/plugin-sdk/command-auth-native";
+} from "merclaw/plugin-sdk/command-auth-native";
 import {
   isAbortRequestText,
   isBtwRequestText,
-} from "openclaw/plugin-sdk/command-primitives-runtime";
+} from "merclaw/plugin-sdk/command-primitives-runtime";
 import { isTelegramReadOnlyControlLaneText } from "./sequential-key.js";
 
 type TelegramReplyFenceState = {

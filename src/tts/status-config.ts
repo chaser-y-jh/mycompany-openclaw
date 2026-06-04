@@ -1,10 +1,10 @@
 import path from "node:path";
-import { isRecord as isObjectRecord } from "@openclaw/normalization-core/record-coerce";
+import { isRecord as isObjectRecord } from "@merclaw/normalization-core/record-coerce";
 import {
   normalizeOptionalLowercaseString,
   normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.js";
+} from "@merclaw/normalization-core/string-coerce";
+import type { MerClawConfig } from "../config/types.js";
 import type { TtsAutoMode, TtsConfig, TtsProvider } from "../config/types.tts.js";
 import { tryReadJsonSync } from "../infra/json-files.js";
 import { resolveConfigDir, resolveUserPath } from "../utils.js";
@@ -80,7 +80,7 @@ function resolveTtsPrefsPathValue(prefsPath: string | undefined): string {
   if (configuredPath) {
     return resolveUserPath(configuredPath);
   }
-  const envPath = normalizeOptionalString(process.env.OPENCLAW_TTS_PREFS);
+  const envPath = normalizeOptionalString(process.env.MERCLAW_TTS_PREFS);
   if (envPath) {
     return resolveUserPath(envPath);
   }
@@ -215,7 +215,7 @@ function resolveStatusProviderDetails(raw: TtsConfig, provider: TtsProvider) {
 }
 
 export function resolveStatusTtsSnapshot(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   sessionAuto?: string;
   agentId?: string;
   channelId?: string;

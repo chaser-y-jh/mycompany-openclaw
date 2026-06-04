@@ -1,10 +1,10 @@
 import {
   asFiniteNumber,
   timestampMsToIsoString,
-} from "@openclaw/normalization-core/number-coercion";
-import { normalizeOptionalString as asString } from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/normalization-core/number-coercion";
+import { normalizeOptionalString as asString } from "@merclaw/normalization-core/string-coerce";
 import { resolveAgentConfig } from "../agents/agent-scope.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { MerClawConfig } from "../config/config.js";
 import { resolveHeartbeatIntervalMs } from "../infra/heartbeat-summary.js";
 import { isRecord } from "../utils.js";
 import { resolveCommitmentsConfig } from "./config.js";
@@ -160,7 +160,7 @@ export function parseCommitmentExtractionOutput(raw: string): CommitmentExtracti
 }
 
 export async function hydrateCommitmentExtractionItem(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   item: Omit<CommitmentExtractionItem, "existingPending">;
 }): Promise<CommitmentExtractionItem> {
   const existingPending = await listPendingCommitmentsForScope({
@@ -209,7 +209,7 @@ function formatExtractionNow(valueMs: unknown): string {
 }
 
 export function buildCommitmentExtractionPrompt(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   items: CommitmentExtractionItem[];
 }): string {
   const items = params.items.map((item) => ({
@@ -220,7 +220,7 @@ export function buildCommitmentExtractionPrompt(params: {
     assistantResponse: item.assistantText ?? "",
     existingPendingCommitments: formatExistingPending(item),
   }));
-  return `You are OpenClaw's internal commitment extractor. This is a hidden background classification run. Do not address the user.
+  return `You are MerClaw's internal commitment extractor. This is a hidden background classification run. Do not address the user.
 
 Create inferred follow-up commitments only. Exact user requests such as "remind me tomorrow", "schedule this", or "check in at 3" belong to cron/reminders and must be skipped.
 
@@ -255,7 +255,7 @@ function parseDueMs(raw: string | undefined): number | undefined {
 }
 
 function resolveMinimumDueMs(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   item: CommitmentExtractionItem;
   nowMs: number;
 }): number {
@@ -268,7 +268,7 @@ function resolveMinimumDueMs(params: {
 }
 
 export function validateCommitmentCandidates(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   items: CommitmentExtractionItem[];
   result: CommitmentExtractionBatchResult;
   nowMs?: number;
@@ -330,7 +330,7 @@ export function validateCommitmentCandidates(params: {
 }
 
 export async function persistCommitmentExtractionResult(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   items: CommitmentExtractionItem[];
   result: CommitmentExtractionBatchResult;
   nowMs?: number;

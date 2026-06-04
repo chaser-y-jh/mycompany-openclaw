@@ -6,8 +6,8 @@ import { readBody, writeJson, writeSse } from "./lib/mock-openai-http.mjs";
 const port =
   process.env.MOCK_PORT != null
     ? readPositiveIntEnv("MOCK_PORT")
-    : readPositiveIntEnv("OPENCLAW_MOCK_OPENAI_PORT");
-const successMarker = process.env.SUCCESS_MARKER ?? "OPENCLAW_E2E_OK";
+    : readPositiveIntEnv("MERCLAW_MOCK_OPENAI_PORT");
+const successMarker = process.env.SUCCESS_MARKER ?? "MERCLAW_E2E_OK";
 const requestLog = process.env.MOCK_REQUEST_LOG;
 
 function responseEvents(text) {
@@ -104,14 +104,14 @@ function writeImageGeneration(res) {
         b64_json:
           "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+yf7kAAAAASUVORK5CYII=",
         mime_type: "image/png",
-        revised_prompt: "openclaw mock image",
+        revised_prompt: "merclaw mock image",
       },
     ],
   });
 }
 
 function resolveResponseText(bodyText) {
-  const matches = Array.from(bodyText.matchAll(/\bOPENCLAW_E2E_OK(?:_\d+)?\b/gu));
+  const matches = Array.from(bodyText.matchAll(/\bMERCLAW_E2E_OK(?:_\d+)?\b/gu));
   return matches.at(-1)?.[0] ?? successMarker;
 }
 
@@ -124,7 +124,7 @@ const server = http.createServer(async (req, res) => {
   if (req.method === "GET" && url.pathname === "/v1/models") {
     writeJson(res, 200, {
       object: "list",
-      data: [{ id: "gpt-5.5", object: "model", owned_by: "openclaw-e2e" }],
+      data: [{ id: "gpt-5.5", object: "model", owned_by: "merclaw-e2e" }],
     });
     return;
   }

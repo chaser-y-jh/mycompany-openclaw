@@ -5,7 +5,7 @@ import type {
   AgentHarnessAttemptResult,
   AgentMessage,
   SandboxContext,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "merclaw/plugin-sdk/agent-harness-runtime";
 import {
   detectAndLoadAgentHarnessPromptImages,
   resolveAttemptFsWorkspaceOnly,
@@ -13,7 +13,7 @@ import {
   resolveSandboxContext as defaultResolveSandboxContext,
   resolveSessionAgentIds,
   resolveUserPath,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "merclaw/plugin-sdk/agent-harness-runtime";
 import { resolveCopilotAuth } from "./auth-bridge.js";
 import {
   createInfiniteSessionConfig,
@@ -51,9 +51,9 @@ const SUPPORTED_PROVIDERS = new Set(["github-copilot"]);
 type AttemptResultWithSdkSessionId = AgentHarnessAttemptResult & { sdkSessionId?: string };
 type PromptErrorWithCode = Error & { code?: string; cause?: unknown };
 // NOTE(plugin-sdk-widening): AttemptParamsLike can be removed once
-// openclaw/plugin-sdk/agent-harness-runtime declares auth, messages,
+// merclaw/plugin-sdk/agent-harness-runtime declares auth, messages,
 // onAssistantDelta, and initialReplayState.sdkSessionId fields. Tracked by
-// project openclaw-copilot-harness; reviewer-attempt-bridge note.
+// project merclaw-copilot-harness; reviewer-attempt-bridge note.
 
 type AttemptParamsLike = AgentHarnessAttemptParams & {
   auth?: {
@@ -76,7 +76,7 @@ type AttemptParamsLike = AgentHarnessAttemptParams & {
   reasoningEffort?: "low" | "medium" | "high" | "xhigh";
   // User-visible prompt body (when distinct from `prompt`, which may
   // include runtime-expanded context). Used when synthesizing the
-  // current-turn user message for the OpenClaw audit transcript so
+  // current-turn user message for the MerClaw audit transcript so
   // dashboard/CLI history shows what the user actually typed, not the
   // internal expansion. Symmetric to `EmbeddedRunAttemptParams.transcriptPrompt`.
   transcriptPrompt?: string;
@@ -94,7 +94,7 @@ export interface CopilotAttemptDeps {
   createToolBridge?: typeof createCopilotToolBridge;
   /**
    * Optional override for sandbox-context resolution. The default delegates to
-   * `openclaw/plugin-sdk/agent-harness-runtime#resolveSandboxContext`, which is
+   * `merclaw/plugin-sdk/agent-harness-runtime#resolveSandboxContext`, which is
    * the same path PI uses. Tests inject a stub here to avoid the real
    * resolver's side effects (container provisioning, registry writes).
    */
@@ -102,7 +102,7 @@ export interface CopilotAttemptDeps {
   /**
    * Called once with the SDK session id and pooled client immediately
    * after the SDK session is created (or resumed) successfully. The
-   * harness uses this to track the openclawSessionId -> sdkSessionId
+   * harness uses this to track the merclawSessionId -> sdkSessionId
    * mapping needed for `reset(params)` (see harness.ts). Exceptions
    * thrown from this callback are swallowed so they cannot break the
    * attempt.
@@ -314,7 +314,7 @@ export async function runCopilotAttempt(
         // enforcement layer receives the same context PI does
         // (identity, owner-only allowlist, auth-profile store,
         // channel/routing, model context, run hooks). See
-        // tool-bridge.ts buildOpenClawCodingToolsOptions().
+        // tool-bridge.ts buildMerClawCodingToolsOptions().
         attemptParams: input,
         sessionRef,
         onYieldDetected: () => {
@@ -338,14 +338,14 @@ export async function runCopilotAttempt(
 
     handle = await deps.pool.acquire(poolAcquire.key, poolAcquire.options);
     const client = handle.client;
-    // Load OpenClaw workspace bootstrap files (SOUL.md, IDENTITY.md,
+    // Load MerClaw workspace bootstrap files (SOUL.md, IDENTITY.md,
     // HEARTBEAT.md, ...) before constructing the SDK SessionConfig so
     // persona/identity/heartbeat reach the model via
     // `SessionConfig.systemMessage` (append mode). Mirrors codex's
     // `buildCodexWorkspaceBootstrapContext` call in run-attempt.ts.
     // Failures here are non-fatal: workspace-bootstrap returns
     // `instructions: undefined` and the session proceeds without the
-    // OpenClaw bootstrap block (SDK still loads AGENTS.md natively).
+    // MerClaw bootstrap block (SDK still loads AGENTS.md natively).
     const workspaceBootstrap = await resolveCopilotWorkspaceBootstrapContext({
       attempt: input,
       // Pair with `createSessionConfig`'s `workingDirectory:
@@ -441,7 +441,7 @@ export async function runCopilotAttempt(
       await bridge.awaitDeltaChain();
       if (!bridge.recordSendResult(result) && !aborted) {
         // SDK sendAndWait returning undefined is treated as a timeout by the
-        // capability inventory. Do not call session.abort() here: OpenClaw may
+        // capability inventory. Do not call session.abort() here: MerClaw may
         // resume the in-flight SDK session on the next attempt.
         timedOut = true;
       }
@@ -519,7 +519,7 @@ export async function runCopilotAttempt(
 
   // Dogfood finding #3 (mirror codex parity):
   //
-  // Without this synthesis the OpenClaw audit transcript never sees
+  // Without this synthesis the MerClaw audit transcript never sees
   // the user's prompt for a copilot attempt. The shell's
   // `persistTextTurnTranscript` skips the user write when
   // `embeddedAssistantGapFill` is true (its `body` arrives as ""),
@@ -553,9 +553,9 @@ export async function runCopilotAttempt(
   ];
 
   // Best-effort dual-write: mirror this attempt's full message snapshot
-  // (user/assistant/toolResult) into the OpenClaw audit transcript at
+  // (user/assistant/toolResult) into the MerClaw audit transcript at
   // params.sessionFile, alongside the SDK's own session storage. The
-  // OpenClaw shell (attempt-execution.ts) writes only the user prompt
+  // MerClaw shell (attempt-execution.ts) writes only the user prompt
   // and terminal assistant text; mirroring here captures intermediate
   // tool calls/results for full audit/replay parity with the codex
   // extension. Identity-tagged so re-emits dedupe. Errors are
@@ -598,7 +598,7 @@ export async function runCopilotAttempt(
       // mirror failures, but we double-guard here so any future
       // signature change or unexpected rejection cannot break the
       // attempt result. The SDK's own session storage remains
-      // authoritative; only the OpenClaw audit transcript would be
+      // authoritative; only the MerClaw audit transcript would be
       // missing intermediate messages for this turn.
       console.warn(
         "[copilot-attempt] dual-write transcript wrapper rejected unexpectedly",
@@ -747,7 +747,7 @@ function createSessionConfig(
     // built-in kind that future SDK versions might surface outside
     // `availableTools`. Every bridged tool is also registered with
     // `overridesBuiltInTool: true` and `skipPermission: true` (see
-    // tool-bridge.ts) so 100% of tool calls go through OpenClaw's
+    // tool-bridge.ts) so 100% of tool calls go through MerClaw's
     // wrapped `execute()` which runs `runBeforeToolCallHook` (loop
     // detection, trusted plugin policies, before-tool-call hooks,
     // two-phase plugin approval). This mirrors the in-tree codex
@@ -758,7 +758,7 @@ function createSessionConfig(
     // `onUserInputRequest` is intentionally NOT registered: per the SDK
     // contract, omitting the handler hides the `ask_user` tool from the
     // model entirely. This is the MVP posture — interactive ask_user
-    // requires routing the request to the OpenClaw channel/TUI prompt
+    // requires routing the request to the MerClaw channel/TUI prompt
     // path (mirroring extensions/codex/src/app-server/user-input-bridge.ts),
     // which is tracked as a follow-up. With the handler absent, agents
     // running under this harness must make best-judgment decisions from
@@ -789,7 +789,7 @@ function createSessionConfig(
     // returned by `createCopilotToolBridge`. Without this, the SDK
     // would still expose its native read/write/shell/url/mcp/memory/
     // hook tools to the model alongside our overrides, which would
-    // bypass OpenClaw's wrapped-tool enforcement under any permissive
+    // bypass MerClaw's wrapped-tool enforcement under any permissive
     // permission policy and pollute the catalog with disabled tools
     // under the default reject policy. An empty list (`[]`) is
     // meaningful per the SDK contract
@@ -826,15 +826,15 @@ function createSessionConfig(
     ...(resolvedAuth.authMode === "gitHubToken" && resolvedAuth.gitHubToken
       ? { gitHubToken: resolvedAuth.gitHubToken }
       : {}),
-    // OpenClaw workspace bootstrap plus per-turn runtime guidance
+    // MerClaw workspace bootstrap plus per-turn runtime guidance
     // injected via the SDK's `systemMessage` field in append mode:
-    // SDK foundation + OpenClaw context. Append keeps every SDK
+    // SDK foundation + MerClaw context. Append keeps every SDK
     // guardrail intact while ensuring persona/identity/heartbeat and
     // channel policy guidance reach the model without native reads.
     // AGENTS.md and .github/copilot-instructions.md are filtered by
     // workspace-bootstrap.ts because the SDK auto-loads them from
     // `workingDirectory` (see `@github/copilot-sdk/dist/types.d.ts`
-    // L1036). Omitted when there is no OpenClaw-owned context so the
+    // L1036). Omitted when there is no MerClaw-owned context so the
     // SDK default foundation applies.
     ...(systemMessageContent
       ? {
@@ -994,8 +994,8 @@ function readTailUserText(messages: AgentMessage[]): string | undefined {
 // widening the module's public surface for what is otherwise a pure
 // guard. See attempt.ts dual-write tagging block.
 function hasMirrorIdentity(message: AgentMessage): boolean {
-  const record = message as unknown as { __openclaw?: unknown };
-  const meta = record["__openclaw"];
+  const record = message as unknown as { __merclaw?: unknown };
+  const meta = record["__merclaw"];
   if (!meta || typeof meta !== "object" || Array.isArray(meta)) {
     return false;
   }

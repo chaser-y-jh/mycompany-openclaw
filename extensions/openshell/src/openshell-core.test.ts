@@ -1,13 +1,13 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { CreateSandboxBackendParams } from "openclaw/plugin-sdk/sandbox";
+import type { CreateSandboxBackendParams } from "merclaw/plugin-sdk/sandbox";
 import {
   createSandboxBrowserConfig,
   createSandboxPruneConfig,
   createSandboxSshConfig,
   createSandboxTestContext,
-} from "openclaw/plugin-sdk/test-fixtures";
+} from "merclaw/plugin-sdk/test-fixtures";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import type { OpenShellSandboxBackend } from "./backend.js";
 import {
@@ -181,7 +181,7 @@ describe("openshell backend manager", () => {
     vi.clearAllMocks();
   });
 
-  it("checks runtime status with config override from OpenClaw config", async () => {
+  it("checks runtime status with config override from MerClaw config", async () => {
     cliMocks.runOpenShellCli.mockResolvedValue({
       code: 0,
       stdout: "{}",
@@ -191,15 +191,15 @@ describe("openshell backend manager", () => {
     const manager = createOpenShellSandboxBackendManager({
       pluginConfig: resolveOpenShellPluginConfig({
         command: "openshell",
-        from: "openclaw",
+        from: "merclaw",
       }),
     });
 
     const result = await manager.describeRuntime({
       entry: {
-        containerName: "openclaw-session-1234",
+        containerName: "merclaw-session-1234",
         backendId: "openshell",
-        runtimeLabel: "openclaw-session-1234",
+        runtimeLabel: "merclaw-session-1234",
         sessionKey: "agent:main",
         createdAtMs: 1,
         lastUsedAtMs: 1,
@@ -232,10 +232,10 @@ describe("openshell backend manager", () => {
     });
     expect(cliMocks.runOpenShellCli).toHaveBeenCalledWith({
       context: {
-        sandboxName: "openclaw-session-1234",
+        sandboxName: "merclaw-session-1234",
         config: expectedConfig,
       },
-      args: ["sandbox", "get", "openclaw-session-1234"],
+      args: ["sandbox", "get", "merclaw-session-1234"],
     });
   });
 
@@ -255,13 +255,13 @@ describe("openshell backend manager", () => {
 
     await manager.removeRuntime({
       entry: {
-        containerName: "openclaw-session-5678",
+        containerName: "merclaw-session-5678",
         backendId: "openshell",
-        runtimeLabel: "openclaw-session-5678",
+        runtimeLabel: "merclaw-session-5678",
         sessionKey: "agent:main",
         createdAtMs: 1,
         lastUsedAtMs: 1,
-        image: "openclaw",
+        image: "merclaw",
         configLabelKind: "Source",
       },
       config: {},
@@ -273,10 +273,10 @@ describe("openshell backend manager", () => {
     });
     expect(cliMocks.runOpenShellCli).toHaveBeenCalledWith({
       context: {
-        sandboxName: "openclaw-session-5678",
+        sandboxName: "merclaw-session-5678",
         config: expectedConfig,
       },
-      args: ["sandbox", "delete", "openclaw-session-5678"],
+      args: ["sandbox", "delete", "merclaw-session-5678"],
     });
   });
 
@@ -313,10 +313,10 @@ function createOpenShellBackendSandboxConfig(): CreateSandboxBackendParams["cfg"
     backend: "openshell",
     scope: "session",
     workspaceAccess: "rw",
-    workspaceRoot: "/tmp/openclaw-sandboxes",
+    workspaceRoot: "/tmp/merclaw-sandboxes",
     docker: {
-      image: "openclaw-sandbox:bookworm-slim",
-      containerPrefix: "openclaw-sbx-",
+      image: "merclaw-sandbox:bookworm-slim",
+      containerPrefix: "merclaw-sbx-",
       workdir: "/workspace",
       readOnlyRoot: false,
       tmpfs: [],
@@ -325,7 +325,7 @@ function createOpenShellBackendSandboxConfig(): CreateSandboxBackendParams["cfg"
       binds: [],
       env: {},
     },
-    ssh: createSandboxSshConfig("/tmp/openclaw-sandboxes"),
+    ssh: createSandboxSshConfig("/tmp/merclaw-sandboxes"),
     browser: createSandboxBrowserConfig(),
     tools: { allow: ["*"], deny: [] },
     prune: createSandboxPruneConfig(),
@@ -339,7 +339,7 @@ async function makeTempDir(prefix: string) {
 }
 
 async function makeExecutable(params: { name: string; script: string }): Promise<string> {
-  const dir = await makeTempDir("openclaw-openshell-bin-");
+  const dir = await makeTempDir("merclaw-openshell-bin-");
   const file = path.join(dir, params.name);
   const logPath = path.join(dir, "openshell.log");
   await fs.writeFile(file, params.script.replaceAll("__LOG__", logPath), { mode: 0o755 });
@@ -385,7 +385,7 @@ function createMirrorBackendMock(): OpenShellSandboxBackend {
 
 describe("openshell fs bridges", () => {
   it("writes locally and syncs the file to the remote workspace", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
+    const workspaceDir = await makeTempDir("merclaw-openshell-fs-");
     const backend = createMirrorBackendMock();
     const sandbox = createSandboxTestContext({
       overrides: {
@@ -412,8 +412,8 @@ describe("openshell fs bridges", () => {
   });
 
   it("rejects symlink-parent writes instead of escaping the local mount root", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
-    const outsideDir = await makeTempDir("openclaw-openshell-outside-");
+    const workspaceDir = await makeTempDir("merclaw-openshell-fs-");
+    const outsideDir = await makeTempDir("merclaw-openshell-outside-");
     await fs.symlink(outsideDir, path.join(workspaceDir, "alias"));
     const backend = createMirrorBackendMock();
     const sandbox = createSandboxTestContext({
@@ -441,7 +441,7 @@ describe("openshell fs bridges", () => {
   });
 
   it("rejects writes whose final target is a symlink inside the local mount root", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
+    const workspaceDir = await makeTempDir("merclaw-openshell-fs-");
     const linkedTarget = path.join(workspaceDir, "existing.txt");
     await fs.writeFile(linkedTarget, "keep", "utf8");
     await fs.symlink("existing.txt", path.join(workspaceDir, "link.txt"));
@@ -471,8 +471,8 @@ describe("openshell fs bridges", () => {
   });
 
   it("rejects a parent symlink that lands outside the sandbox root", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
-    const outsideDir = await makeTempDir("openclaw-openshell-outside-");
+    const workspaceDir = await makeTempDir("merclaw-openshell-fs-");
+    const outsideDir = await makeTempDir("merclaw-openshell-outside-");
     await fs.writeFile(path.join(outsideDir, "secret.txt"), "outside", "utf8");
     await fs.symlink(outsideDir, path.join(workspaceDir, "subdir"));
     const backend = createMirrorBackendMock();
@@ -494,7 +494,7 @@ describe("openshell fs bridges", () => {
   });
 
   it("reads regular files through the shared safe fs root", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
+    const workspaceDir = await makeTempDir("merclaw-openshell-fs-");
     await fs.mkdir(path.join(workspaceDir, "subdir"), { recursive: true });
     await fs.writeFile(path.join(workspaceDir, "subdir", "secret.txt"), "inside", "utf8");
 
@@ -517,8 +517,8 @@ describe("openshell fs bridges", () => {
   });
 
   it("rejects reads of a symlinked leaf", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
-    const outsideDir = await makeTempDir("openclaw-openshell-outside-");
+    const workspaceDir = await makeTempDir("merclaw-openshell-fs-");
+    const outsideDir = await makeTempDir("merclaw-openshell-outside-");
     await fs.mkdir(path.join(workspaceDir, "subdir"), { recursive: true });
     await fs.writeFile(path.join(outsideDir, "secret.txt"), "outside", "utf8");
     await fs.symlink(
@@ -545,8 +545,8 @@ describe("openshell fs bridges", () => {
   });
 
   it("rejects hardlinked files inside the sandbox root", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
-    const outsideDir = await makeTempDir("openclaw-openshell-outside-");
+    const workspaceDir = await makeTempDir("merclaw-openshell-fs-");
+    const outsideDir = await makeTempDir("merclaw-openshell-outside-");
     await fs.mkdir(path.join(workspaceDir, "subdir"), { recursive: true });
     await fs.writeFile(path.join(outsideDir, "secret.txt"), "outside", "utf8");
     await fs.link(
@@ -573,8 +573,8 @@ describe("openshell fs bridges", () => {
   });
 
   it("maps agent mount paths when the sandbox workspace is read-only", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
-    const agentWorkspaceDir = await makeTempDir("openclaw-openshell-agent-");
+    const workspaceDir = await makeTempDir("merclaw-openshell-fs-");
+    const agentWorkspaceDir = await makeTempDir("merclaw-openshell-agent-");
     await fs.writeFile(path.join(agentWorkspaceDir, "note.txt"), "agent", "utf8");
     const backend = createMirrorBackendMock();
     const sandbox = createSandboxTestContext({

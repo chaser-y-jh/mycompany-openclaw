@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { applyAcpRuntimeOverlay, type AgentRuntimeMetadata } from "./acp-runtime-overlay.js";
 import { resolveAgentHarnessPolicy } from "./harness/policy.js";
 import { resolveDefaultModelForAgent } from "./model-selection.js";
@@ -6,7 +6,7 @@ import { resolveDefaultModelForAgent } from "./model-selection.js";
 export type { AgentRuntimeMetadata };
 
 export function resolveModelAgentRuntimeMetadata(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentId: string;
   provider?: string;
   model?: string;

@@ -1,4 +1,4 @@
-import type { StreamFn } from "openclaw/plugin-sdk/agent-core";
+import type { StreamFn } from "merclaw/plugin-sdk/agent-core";
 import type { AgentMessage } from "../../runtime/index.js";
 
 export type MessageTransform = (messages: AgentMessage[], model: unknown) => AgentMessage[];

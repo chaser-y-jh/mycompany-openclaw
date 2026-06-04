@@ -2,10 +2,10 @@ import path from "node:path";
 import {
   replaceManagedMarkdownBlock,
   withTrailingNewline,
-} from "openclaw/plugin-sdk/memory-host-markdown";
-import { readFiniteNumberParam } from "openclaw/plugin-sdk/param-readers";
-import { root as fsRoot } from "openclaw/plugin-sdk/security-runtime";
-import { normalizeStringEntries, uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/memory-host-markdown";
+import { readFiniteNumberParam } from "merclaw/plugin-sdk/param-readers";
+import { root as fsRoot } from "merclaw/plugin-sdk/security-runtime";
+import { normalizeStringEntries, uniqueStrings } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { compileMemoryWikiVault, type CompileMemoryWikiResult } from "./compile.js";
 import type { ResolvedMemoryWikiConfig } from "./config.js";
 import {
@@ -23,10 +23,10 @@ import {
 } from "./query.js";
 import { initializeMemoryWikiVault } from "./vault.js";
 
-const GENERATED_START = "<!-- openclaw:wiki:generated:start -->";
-const GENERATED_END = "<!-- openclaw:wiki:generated:end -->";
-const HUMAN_START = "<!-- openclaw:human:start -->";
-const HUMAN_END = "<!-- openclaw:human:end -->";
+const GENERATED_START = "<!-- merclaw:wiki:generated:start -->";
+const GENERATED_END = "<!-- merclaw:wiki:generated:end -->";
+const HUMAN_START = "<!-- merclaw:human:start -->";
+const HUMAN_END = "<!-- merclaw:human:end -->";
 
 type CreateSynthesisMemoryWikiMutation = {
   op: "create_synthesis";

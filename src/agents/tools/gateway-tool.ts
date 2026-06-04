@@ -1,15 +1,15 @@
 import { isDeepStrictEqual } from "node:util";
-import { isRecord as isPlainObject } from "@openclaw/normalization-core/record-coerce";
+import { isRecord as isPlainObject } from "@merclaw/normalization-core/record-coerce";
 import {
   normalizeOptionalString,
   readStringValue,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/normalization-core/string-coerce";
 import { Type } from "typebox";
 import { isRestartEnabled } from "../../config/commands.flags.js";
 import { parseConfigJson5, resolveConfigSnapshotHash } from "../../config/io.js";
 import { applyMergePatch } from "../../config/merge-patch.js";
 import { extractDeliveryInfo } from "../../config/sessions.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import {
   buildRestartSuccessContinuation,
   formatDoctorNonInteractiveHint,
@@ -316,11 +316,11 @@ function assertGatewayConfigMutationAllowed(params: {
   }
 
   // Block writes that newly enable any dangerous config flag.
-  // Uses the same flag enumeration as `openclaw security audit`.
+  // Uses the same flag enumeration as `merclaw security audit`.
   const currentFlags = new Set(
-    collectEnabledInsecureOrDangerousFlags(params.currentConfig as OpenClawConfig),
+    collectEnabledInsecureOrDangerousFlags(params.currentConfig as MerClawConfig),
   );
-  const nextFlags = collectEnabledInsecureOrDangerousFlags(nextConfig as OpenClawConfig);
+  const nextFlags = collectEnabledInsecureOrDangerousFlags(nextConfig as MerClawConfig);
   const newlyEnabled = nextFlags.filter((f) => !currentFlags.has(f));
   if (newlyEnabled.length > 0) {
     throw new Error(
@@ -366,7 +366,7 @@ const GatewayToolSchema = Type.Object({
 
 export function createGatewayTool(opts?: {
   agentSessionKey?: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
 }): AnyAgentTool {
   return {
     label: "Gateway",

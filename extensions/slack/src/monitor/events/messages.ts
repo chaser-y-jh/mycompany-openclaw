@@ -1,11 +1,11 @@
 import type { SlackEventMiddlewareArgs } from "@slack/bolt";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { danger, logVerbose, shouldLogVerbose } from "openclaw/plugin-sdk/runtime-env";
+import { formatErrorMessage } from "merclaw/plugin-sdk/error-runtime";
+import { danger, logVerbose, shouldLogVerbose } from "merclaw/plugin-sdk/runtime-env";
 import {
   asOptionalRecord as asRecord,
   normalizeOptionalString as asString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
-import { enqueueSystemEvent } from "openclaw/plugin-sdk/system-event-runtime";
+} from "merclaw/plugin-sdk/string-coerce-runtime";
+import { enqueueSystemEvent } from "merclaw/plugin-sdk/system-event-runtime";
 import type { SlackAppMentionEvent, SlackMessageEvent } from "../../types.js";
 import { normalizeSlackChannelType } from "../channel-type.js";
 import type { SlackMonitorContext } from "../context.js";

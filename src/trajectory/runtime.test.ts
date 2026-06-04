@@ -16,7 +16,7 @@ type TrajectoryRuntimeRecorder = NonNullable<ReturnType<typeof createTrajectoryR
 const tempDirs: string[] = [];
 
 function makeTempDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-trajectory-runtime-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-trajectory-runtime-"));
   tempDirs.push(dir);
   return dir;
 }
@@ -51,7 +51,7 @@ describe("trajectory runtime", () => {
   it("sanitizes session ids when resolving an override directory", () => {
     expect(
       resolveTrajectoryFilePath({
-        env: { OPENCLAW_TRAJECTORY_DIR: "/tmp/traces" },
+        env: { MERCLAW_TRAJECTORY_DIR: "/tmp/traces" },
         sessionId: "../evil/session",
       }),
     ).toBe("/tmp/traces/___evil_session.jsonl");
@@ -289,7 +289,7 @@ describe("trajectory runtime", () => {
     const sessionFile = path.join(tmpDir, "session.jsonl");
     const trajectoryDir = path.join(tmpDir, "traces");
     const recorder = createTrajectoryRuntimeRecorder({
-      env: { OPENCLAW_TRAJECTORY_DIR: trajectoryDir },
+      env: { MERCLAW_TRAJECTORY_DIR: trajectoryDir },
       sessionId: "session-1",
       sessionFile,
       writer: {
@@ -319,7 +319,7 @@ describe("trajectory runtime", () => {
   it("does not record runtime events when explicitly disabled", () => {
     const recorder = createTrajectoryRuntimeRecorder({
       env: {
-        OPENCLAW_TRAJECTORY: "0",
+        MERCLAW_TRAJECTORY: "0",
       },
       sessionId: "session-1",
       sessionKey: "agent:main:session-1",

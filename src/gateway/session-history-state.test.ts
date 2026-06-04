@@ -10,7 +10,7 @@ describe("SessionHistorySseState", () => {
       {
         role: "assistant",
         content: [{ type: "text", text: "stale disk message" }],
-        __openclaw: { seq: 1 },
+        __merclaw: { seq: 1 },
       },
     ]);
     try {
@@ -20,7 +20,7 @@ describe("SessionHistorySseState", () => {
           {
             role: "assistant",
             content: [{ type: "text", text: "fresh snapshot message" }],
-            __openclaw: { seq: 2 },
+            __merclaw: { seq: 2 },
           },
         ],
       });
@@ -30,16 +30,16 @@ describe("SessionHistorySseState", () => {
         (
           state.snapshot().messages[0] as {
             content?: Array<{ text?: string }>;
-            __openclaw?: { seq?: number };
+            __merclaw?: { seq?: number };
           }
         ).content?.[0]?.text,
       ).toBe("fresh snapshot message");
       expect(
         (
           state.snapshot().messages[0] as {
-            __openclaw?: { seq?: number };
+            __merclaw?: { seq?: number };
           }
-        )["__openclaw"]?.seq,
+        )["__merclaw"]?.seq,
       ).toBe(2);
 
       const appended = state.appendInlineMessage({
@@ -62,19 +62,19 @@ describe("SessionHistorySseState", () => {
         {
           role: "assistant",
           content: [{ type: "text", text: "first" }],
-          __openclaw: { seq: 1 },
+          __merclaw: { seq: 1 },
         },
         {
           role: "assistant",
           content: [{ type: "text", text: "second" }],
-          __openclaw: { seq: 2 },
+          __merclaw: { seq: 2 },
         },
       ],
       limit: 1,
     });
 
     expect(snapshot.history.items).toBe(snapshot.history.messages);
-    expect(snapshot.history.messages[0]?.["__openclaw"]?.seq).toBe(2);
+    expect(snapshot.history.messages[0]?.["__merclaw"]?.seq).toBe(2);
     expect(snapshot.rawTranscriptSeq).toBe(2);
   });
 
@@ -85,7 +85,7 @@ describe("SessionHistorySseState", () => {
         {
           role: "assistant",
           content: [{ type: "text", text: "initial" }],
-          __openclaw: { seq: 2 },
+          __merclaw: { seq: 2 },
         },
       ],
     });
@@ -99,7 +99,7 @@ describe("SessionHistorySseState", () => {
     });
 
     expect(appended?.messageSeq).toBe(9);
-    expect(state.snapshot().messages.at(-1)?.["__openclaw"]?.seq).toBe(9);
+    expect(state.snapshot().messages.at(-1)?.["__merclaw"]?.seq).toBe(9);
   });
 
   test("emits message-tool mirror when silent control reply completes inline append", () => {
@@ -109,7 +109,7 @@ describe("SessionHistorySseState", () => {
         {
           role: "user",
           content: [{ type: "text", text: "reply here" }],
-          __openclaw: { seq: 1 },
+          __merclaw: { seq: 1 },
         },
       ],
     });
@@ -159,14 +159,14 @@ describe("SessionHistorySseState", () => {
       (
         appended?.message as {
           content?: Array<{ text?: string }>;
-          openclawMessageToolMirror?: unknown;
+          merclawMessageToolMirror?: unknown;
         }
       )?.content?.[0]?.text,
     ).toBe("Still the current chat.");
     expect(
       Boolean(
-        (appended?.message as { openclawMessageToolMirror?: unknown } | undefined)
-          ?.openclawMessageToolMirror,
+        (appended?.message as { merclawMessageToolMirror?: unknown } | undefined)
+          ?.merclawMessageToolMirror,
       ),
     ).toBe(true);
   });
@@ -177,7 +177,7 @@ describe("SessionHistorySseState", () => {
         {
           role: "user",
           content: [{ type: "text", text: "reply here" }],
-          __openclaw: { seq: 1 },
+          __merclaw: { seq: 1 },
         },
         {
           role: "assistant",
@@ -192,26 +192,26 @@ describe("SessionHistorySseState", () => {
               },
             },
           ],
-          __openclaw: { seq: 2 },
+          __merclaw: { seq: 2 },
         },
         {
           role: "toolResult",
           toolName: "message",
           toolCallId: "call-message-cursor",
           content: { ok: true, messageId: "cursor" },
-          __openclaw: { seq: 3 },
+          __merclaw: { seq: 3 },
         },
         {
           role: "assistant",
           content: [{ type: "text", text: "NO_REPLY" }],
-          __openclaw: { seq: 4 },
+          __merclaw: { seq: 4 },
         },
       ],
       limit: 1,
     });
 
     expect(snapshot.history.nextCursor).toBe("3");
-    expect(snapshot.history.messages[0]?.["__openclaw"]?.seq).toBe(3);
+    expect(snapshot.history.messages[0]?.["__merclaw"]?.seq).toBe(3);
     expect(
       (snapshot.history.messages[0] as { content?: Array<{ text?: string }> }).content?.[0]?.text,
     ).toBe("Cursor-visible reply.");
@@ -223,18 +223,18 @@ describe("SessionHistorySseState", () => {
         {
           role: "assistant",
           content: [{ type: "text", text: "first" }],
-          __openclaw: { seq: 1 },
+          __merclaw: { seq: 1 },
         },
         {
           role: "assistant",
           content: [{ type: "text", text: "second" }],
-          __openclaw: { seq: 2 },
+          __merclaw: { seq: 2 },
         },
       ],
       cursor: "seq:2next",
     });
 
-    expect(snapshot.history.messages.map((message) => message["__openclaw"]?.seq)).toEqual([1, 2]);
+    expect(snapshot.history.messages.map((message) => message["__merclaw"]?.seq)).toEqual([1, 2]);
   });
 
   test("requests refresh when silent control reply completes multiple message-tool mirrors", () => {
@@ -244,7 +244,7 @@ describe("SessionHistorySseState", () => {
         {
           role: "user",
           content: [{ type: "text", text: "send both here" }],
-          __openclaw: { seq: 1 },
+          __merclaw: { seq: 1 },
         },
       ],
     });
@@ -320,7 +320,7 @@ describe("SessionHistorySseState", () => {
         {
           role: "user",
           content: [{ type: "text", text: "reply here" }],
-          __openclaw: { seq: 1 },
+          __merclaw: { seq: 1 },
         },
       ],
     });
@@ -346,7 +346,7 @@ describe("SessionHistorySseState", () => {
         {
           role: "assistant",
           content: [{ type: "text", text: visibleText }],
-          __openclaw: { seq: 2 },
+          __merclaw: { seq: 2 },
         },
       ],
     });
@@ -366,7 +366,7 @@ describe("SessionHistorySseState", () => {
             },
           },
         ],
-        openclawTtsSupplement: { textSha256, spokenText: visibleText },
+        merclawTtsSupplement: { textSha256, spokenText: visibleText },
       },
       messageSeq: 3,
     });
@@ -387,7 +387,7 @@ describe("SessionHistorySseState", () => {
             },
           },
         ],
-        __openclaw: { seq: 2 },
+        __merclaw: { seq: 2 },
       },
     ]);
   });
@@ -399,7 +399,7 @@ describe("SessionHistorySseState", () => {
         {
           role: "assistant",
           content: [{ type: "text", text: "current" }],
-          __openclaw: { seq: 5 },
+          __merclaw: { seq: 5 },
         },
       ],
     });
@@ -414,7 +414,7 @@ describe("SessionHistorySseState", () => {
 
     expect(appended).toEqual({ shouldRefresh: true });
     expect(state.snapshot().messages).toHaveLength(1);
-    expect(state.snapshot().messages.at(-1)?.["__openclaw"]?.seq).toBe(5);
+    expect(state.snapshot().messages.at(-1)?.["__merclaw"]?.seq).toBe(5);
   });
 
   test("marks bounded tail snapshots as having older history", () => {
@@ -423,7 +423,7 @@ describe("SessionHistorySseState", () => {
         {
           role: "assistant",
           content: [{ type: "text", text: "tail" }],
-          __openclaw: { seq: 99 },
+          __merclaw: { seq: 99 },
         },
       ],
       limit: 1,
@@ -445,7 +445,7 @@ describe("SessionHistorySseState", () => {
           {
             role: "assistant",
             content: [{ type: "text", text: "tail two" }],
-            __openclaw: { seq: 8 },
+            __merclaw: { seq: 8 },
           },
         ],
         totalMessages: 8,
@@ -457,7 +457,7 @@ describe("SessionHistorySseState", () => {
           {
             role: "assistant",
             content: [{ type: "text", text: "tail one" }],
-            __openclaw: { seq: 7 },
+            __merclaw: { seq: 7 },
           },
         ],
         rawTranscriptSeq: 7,
@@ -465,12 +465,12 @@ describe("SessionHistorySseState", () => {
         limit: 1,
       });
 
-      expect(state.snapshot().messages[0]?.["__openclaw"]?.seq).toBe(7);
+      expect(state.snapshot().messages[0]?.["__merclaw"]?.seq).toBe(7);
       const refreshed = await state.refreshAsync();
 
       expect(refreshed.hasMore).toBe(true);
       expect(refreshed.nextCursor).toBe("8");
-      expect(refreshed.messages[0]?.["__openclaw"]?.seq).toBe(8);
+      expect(refreshed.messages[0]?.["__merclaw"]?.seq).toBe(8);
       expect(tailReadSpy).toHaveBeenCalledTimes(1);
       expect(fullReadSpy).not.toHaveBeenCalled();
     } finally {
@@ -488,15 +488,15 @@ describe("SessionHistorySseState", () => {
             {
               type: "text",
               text: [
-                "<<<BEGIN_OPENCLAW_INTERNAL_CONTEXT>>>",
+                "<<<BEGIN_MERCLAW_INTERNAL_CONTEXT>>>",
                 "secret runtime context",
-                "<<<END_OPENCLAW_INTERNAL_CONTEXT>>>",
+                "<<<END_MERCLAW_INTERNAL_CONTEXT>>>",
                 "",
                 "visible ask",
               ].join("\n"),
             },
           ],
-          __openclaw: { seq: 1 },
+          __merclaw: { seq: 1 },
         },
       ],
     });
@@ -520,18 +520,18 @@ describe("SessionHistorySseState", () => {
             {
               type: "text",
               text: [
-                "<<<BEGIN_OPENCLAW_INTERNAL_CONTEXT>>>",
+                "<<<BEGIN_MERCLAW_INTERNAL_CONTEXT>>>",
                 "subagent completion payload",
-                "<<<END_OPENCLAW_INTERNAL_CONTEXT>>>",
+                "<<<END_MERCLAW_INTERNAL_CONTEXT>>>",
               ].join("\n"),
             },
           ],
-          __openclaw: { seq: 1 },
+          __merclaw: { seq: 1 },
         },
         {
           role: "assistant",
           content: [{ type: "text", text: "visible answer" }],
-          __openclaw: { seq: 2 },
+          __merclaw: { seq: 2 },
         },
       ],
     });
@@ -540,7 +540,7 @@ describe("SessionHistorySseState", () => {
       {
         role: "assistant",
         content: [{ type: "text", text: "visible answer" }],
-        __openclaw: { seq: 2 },
+        __merclaw: { seq: 2 },
       },
     ]);
   });
@@ -550,15 +550,15 @@ describe("SessionHistorySseState", () => {
       rawMessages: [
         {
           role: "custom",
-          customType: "openclaw.runtime-context",
+          customType: "merclaw.runtime-context",
           content: "secret runtime context",
           display: false,
-          __openclaw: { seq: 1 },
+          __merclaw: { seq: 1 },
         },
         {
           role: "assistant",
           content: [{ type: "text", text: "visible answer" }],
-          __openclaw: { seq: 2 },
+          __merclaw: { seq: 2 },
         },
       ],
     });
@@ -567,7 +567,7 @@ describe("SessionHistorySseState", () => {
       {
         role: "assistant",
         content: [{ type: "text", text: "visible answer" }],
-        __openclaw: { seq: 2 },
+        __merclaw: { seq: 2 },
       },
     ]);
     expect(snapshot.rawTranscriptSeq).toBe(2);
@@ -583,10 +583,10 @@ describe("SessionHistorySseState", () => {
               type: "text",
               text: [
                 "[Inter-session message] sourceSession=agent:main:subagent:child sourceChannel=webchat sourceTool=subagent_announce isUser=false",
-                "This content was routed by OpenClaw from another session or internal tool.",
-                "<<<BEGIN_OPENCLAW_INTERNAL_CONTEXT>>>",
+                "This content was routed by MerClaw from another session or internal tool.",
+                "<<<BEGIN_MERCLAW_INTERNAL_CONTEXT>>>",
                 "subagent completion payload",
-                "<<<END_OPENCLAW_INTERNAL_CONTEXT>>>",
+                "<<<END_MERCLAW_INTERNAL_CONTEXT>>>",
               ].join("\n"),
             },
           ],
@@ -595,12 +595,12 @@ describe("SessionHistorySseState", () => {
             sourceSessionKey: "agent:main:subagent:child",
             sourceTool: "subagent_announce",
           },
-          __openclaw: { seq: 1 },
+          __merclaw: { seq: 1 },
         },
         {
           role: "assistant",
           content: [{ type: "text", text: "clean child result" }],
-          __openclaw: { seq: 2 },
+          __merclaw: { seq: 2 },
         },
       ],
     });
@@ -609,7 +609,7 @@ describe("SessionHistorySseState", () => {
       {
         role: "assistant",
         content: [{ type: "text", text: "clean child result" }],
-        __openclaw: { seq: 2 },
+        __merclaw: { seq: 2 },
       },
     ]);
   });
@@ -620,22 +620,22 @@ describe("SessionHistorySseState", () => {
         {
           role: "user",
           content: `${HEARTBEAT_PROMPT}\nWhen reading HEARTBEAT.md, use workspace file /tmp/HEARTBEAT.md (exact case). Do not read docs/heartbeat.md.`,
-          __openclaw: { seq: 1 },
+          __merclaw: { seq: 1 },
         },
         {
           role: "assistant",
           content: [{ type: "text", text: "HEARTBEAT_OK" }],
-          __openclaw: { seq: 2 },
+          __merclaw: { seq: 2 },
         },
         {
           role: "user",
           content: HEARTBEAT_PROMPT,
-          __openclaw: { seq: 3 },
+          __merclaw: { seq: 3 },
         },
         {
           role: "assistant",
           content: [{ type: "text", text: "Disk usage crossed 95 percent." }],
-          __openclaw: { seq: 4 },
+          __merclaw: { seq: 4 },
         },
       ],
     });
@@ -644,7 +644,7 @@ describe("SessionHistorySseState", () => {
       {
         role: "assistant",
         content: [{ type: "text", text: "Disk usage crossed 95 percent." }],
-        __openclaw: { seq: 4 },
+        __merclaw: { seq: 4 },
       },
     ]);
     expect(snapshot.rawTranscriptSeq).toBe(4);
@@ -657,7 +657,7 @@ describe("SessionHistorySseState", () => {
         {
           role: "assistant",
           content: [{ type: "text", text: "already visible" }],
-          __openclaw: { seq: 1 },
+          __merclaw: { seq: 1 },
         },
       ],
     });
@@ -682,7 +682,7 @@ describe("SessionHistorySseState", () => {
       state.appendInlineMessage({
         message: {
           role: "custom",
-          customType: "openclaw.runtime-context",
+          customType: "merclaw.runtime-context",
           content: "secret runtime context",
           display: false,
         },
@@ -696,9 +696,9 @@ describe("SessionHistorySseState", () => {
             {
               type: "text",
               text: [
-                "<<<BEGIN_OPENCLAW_INTERNAL_CONTEXT>>>",
+                "<<<BEGIN_MERCLAW_INTERNAL_CONTEXT>>>",
                 "runtime details",
-                "<<<END_OPENCLAW_INTERNAL_CONTEXT>>>",
+                "<<<END_MERCLAW_INTERNAL_CONTEXT>>>",
               ].join("\n"),
             },
           ],

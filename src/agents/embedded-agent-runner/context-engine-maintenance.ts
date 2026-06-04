@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { resolveContextEngineOwnerPluginId } from "../../context-engine/registry.js";
 import type {
   ContextEngine,
@@ -44,7 +44,7 @@ const TURN_MAINTENANCE_LANE_PREFIX = "context-engine-turn-maintenance:";
 const TURN_MAINTENANCE_WAIT_POLL_MS = 100;
 const TURN_MAINTENANCE_LONG_WAIT_MS = 10_000;
 const DEFERRED_TURN_MAINTENANCE_ABORT_STATE_KEY = Symbol.for(
-  "openclaw.contextEngineTurnMaintenanceAbortState",
+  "merclaw.contextEngineTurnMaintenanceAbortState",
 );
 type DeferredTurnMaintenanceScheduleParams = {
   contextEngine: ContextEngine;
@@ -54,7 +54,7 @@ type DeferredTurnMaintenanceScheduleParams = {
   sessionManager?: Parameters<typeof rewriteTranscriptEntriesInSessionManager>[0]["sessionManager"];
   runtimeContext?: ContextEngineRuntimeContext;
   agentId?: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   disposeContextEngineAfterMaintenance?: boolean;
   onScheduleFailure?: (error: unknown) => void;
 };
@@ -303,7 +303,7 @@ export function buildContextEngineMaintenanceRuntimeContext(params: {
   agentId?: string;
   allowDeferredCompactionExecution?: boolean;
   deferTranscriptRewriteToSessionLane?: boolean;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   purpose?: string;
   contextEnginePluginId?: string;
 }): ContextEngineRuntimeContext {
@@ -362,7 +362,7 @@ async function executeContextEngineMaintenance(params: {
   runtimeContext?: ContextEngineRuntimeContext;
   agentId?: string;
   executionMode: "foreground" | "background";
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
 }): Promise<ContextEngineMaintenanceResult | undefined> {
   if (typeof params.contextEngine.maintain !== "function") {
     return undefined;
@@ -406,7 +406,7 @@ async function runDeferredTurnMaintenanceWorker(params: {
   runtimeContext?: ContextEngineRuntimeContext;
   agentId?: string;
   runId: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   disposeContextEngineAfterMaintenance?: boolean;
 }): Promise<void> {
   let surfacedUserNotice = false;
@@ -695,7 +695,7 @@ export async function runContextEngineMaintenance(params: {
   executionMode?: "foreground" | "background";
   onDeferredMaintenance?: (promise: Promise<void>) => void;
   onDeferredMaintenanceFailure?: (error: unknown) => void;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   disposeDeferredContextEngineAfterMaintenance?: boolean;
 }): Promise<ContextEngineMaintenanceResult | undefined> {
   if (typeof params.contextEngine?.maintain !== "function") {

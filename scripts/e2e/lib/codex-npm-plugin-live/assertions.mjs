@@ -14,7 +14,7 @@ import {
 
 const command = process.argv[2];
 const allowBetaCompatDiagnostics =
-  process.env.OPENCLAW_CODEX_NPM_PLUGIN_ALLOW_BETA_COMPAT_DIAGNOSTICS === "1";
+  process.env.MERCLAW_CODEX_NPM_PLUGIN_ALLOW_BETA_COMPAT_DIAGNOSTICS === "1";
 
 function configure() {
   const modelRef = process.argv[3] || "codex/gpt-5.4";
@@ -99,9 +99,9 @@ function normalizePluginSpec(spec) {
 }
 
 function assertPlugin() {
-  const spec = process.argv[3] || "npm:@openclaw/codex";
-  const list = readJson("/tmp/openclaw-codex-plugins-list.json");
-  const inspect = readJson("/tmp/openclaw-codex-plugin-inspect.json");
+  const spec = process.argv[3] || "npm:@merclaw/codex";
+  const list = readJson("/tmp/merclaw-codex-plugins-list.json");
+  const inspect = readJson("/tmp/merclaw-codex-plugin-inspect.json");
   const plugin = (list.plugins || []).find((entry) => entry.id === "codex");
   if (!plugin) {
     throw new Error("codex plugin not found in plugins list --json output");
@@ -181,7 +181,7 @@ function codexInstallPath() {
 }
 
 function codexNpmProjectRoot() {
-  return npmProjectRootForInstalledPackage(codexInstallPath(), "@openclaw/codex");
+  return npmProjectRootForInstalledPackage(codexInstallPath(), "@merclaw/codex");
 }
 
 function findCodexPackageJson(packageName) {
@@ -194,19 +194,19 @@ function assertNpmDeps() {
   const installPath = codexInstallPath();
   const pluginPackageJson = path.join(installPath, "package.json");
   if (!fs.existsSync(pluginPackageJson)) {
-    throw new Error(`missing npm-installed @openclaw/codex package.json: ${pluginPackageJson}`);
+    throw new Error(`missing npm-installed @merclaw/codex package.json: ${pluginPackageJson}`);
   }
   assertPathInside(npmRoot, installPath, "codex plugin install path");
   assertPathInside(npmRoot, pluginPackageJson, "codex plugin package");
 
   const pluginPackage = readJson(pluginPackageJson);
-  if (pluginPackage.name !== "@openclaw/codex") {
+  if (pluginPackage.name !== "@merclaw/codex") {
     throw new Error(`unexpected codex package name: ${pluginPackage.name}`);
   }
 
   const openAiCodexPackageJson = findCodexPackageJson("@openai/codex");
   if (!openAiCodexPackageJson) {
-    throw new Error("missing @openai/codex dependency under .openclaw/npm");
+    throw new Error("missing @openai/codex dependency under .merclaw/npm");
   }
   assertPathInside(npmRoot, openAiCodexPackageJson, "@openai/codex dependency");
 
@@ -253,7 +253,7 @@ function printCodexBin() {
 
 function assertPreflight() {
   const marker = process.argv[3];
-  const output = fs.readFileSync("/tmp/openclaw-codex-preflight.log", "utf8");
+  const output = fs.readFileSync("/tmp/merclaw-codex-preflight.log", "utf8");
   if (!output.includes(marker)) {
     throw new Error(`Codex CLI preflight did not contain ${marker}:\n${output}`);
   }
@@ -306,15 +306,15 @@ function assertAgentTurn() {
   const marker = process.argv[3];
   const sessionId = process.argv[4];
   const modelRef = process.argv[5];
-  const stdout = fs.readFileSync("/tmp/openclaw-codex-agent.json", "utf8");
-  const stderr = fs.existsSync("/tmp/openclaw-codex-agent.err")
-    ? fs.readFileSync("/tmp/openclaw-codex-agent.err", "utf8")
+  const stdout = fs.readFileSync("/tmp/merclaw-codex-agent.json", "utf8");
+  const stderr = fs.existsSync("/tmp/merclaw-codex-agent.err")
+    ? fs.readFileSync("/tmp/merclaw-codex-agent.err", "utf8")
     : "";
   const response = JSON.parse(stdout);
   const text = (response.payloads || []).map((payload) => payload?.text || "").join("\n");
   if (!text.includes(marker)) {
     throw new Error(
-      `OpenClaw agent reply did not contain ${marker}:\nstdout=${stdout}\nstderr=${stderr}`,
+      `MerClaw agent reply did not contain ${marker}:\nstdout=${stdout}\nstderr=${stderr}`,
     );
   }
   const expectedProvider = modelRef.split("/")[0] || "codex";
@@ -339,7 +339,7 @@ function assertAgentTurn() {
     throw new Error(`unexpected session model override: ${entry.modelOverride}`);
   }
   if (typeof entry.sessionFile !== "string" || !fs.existsSync(entry.sessionFile)) {
-    throw new Error(`missing OpenClaw session file: ${entry.sessionFile}`);
+    throw new Error(`missing MerClaw session file: ${entry.sessionFile}`);
   }
 
   const bindingPath = `${entry.sessionFile}.codex-app-server.json`;
@@ -381,7 +381,7 @@ function assertUninstalled() {
       `codex install record still exists after uninstall: ${JSON.stringify(records.codex)}`,
     );
   }
-  const list = readJson("/tmp/openclaw-codex-plugins-list-after-uninstall.json");
+  const list = readJson("/tmp/merclaw-codex-plugins-list-after-uninstall.json");
   const plugin = (list.plugins || []).find((entry) => entry.id === "codex");
   if (plugin?.status === "loaded" || plugin?.enabled === true) {
     throw new Error(`codex plugin still loaded/enabled after uninstall: ${JSON.stringify(plugin)}`);
@@ -399,14 +399,14 @@ function assertAgentError() {
   const status = Number(process.argv[3]);
   if (!Number.isInteger(status) || status === 0) {
     throw new Error(
-      `expected OpenClaw agent to fail after Codex uninstall, got status ${process.argv[3]}`,
+      `expected MerClaw agent to fail after Codex uninstall, got status ${process.argv[3]}`,
     );
   }
-  const stdout = fs.existsSync("/tmp/openclaw-codex-agent-after-uninstall.json")
-    ? fs.readFileSync("/tmp/openclaw-codex-agent-after-uninstall.json", "utf8")
+  const stdout = fs.existsSync("/tmp/merclaw-codex-agent-after-uninstall.json")
+    ? fs.readFileSync("/tmp/merclaw-codex-agent-after-uninstall.json", "utf8")
     : "";
-  const stderr = fs.existsSync("/tmp/openclaw-codex-agent-after-uninstall.err")
-    ? fs.readFileSync("/tmp/openclaw-codex-agent-after-uninstall.err", "utf8")
+  const stderr = fs.existsSync("/tmp/merclaw-codex-agent-after-uninstall.err")
+    ? fs.readFileSync("/tmp/merclaw-codex-agent-after-uninstall.err", "utf8")
     : "";
   const combined = `${stdout}\n${stderr}`;
   if (

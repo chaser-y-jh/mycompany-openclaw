@@ -11,9 +11,9 @@ import {
   type ChannelSetupDmPolicy,
   type ChannelSetupWizard,
   type DmPolicy,
-  type OpenClawConfig,
-} from "openclaw/plugin-sdk/setup";
-import { normalizeStringEntries } from "openclaw/plugin-sdk/string-coerce-runtime";
+  type MerClawConfig,
+} from "merclaw/plugin-sdk/setup";
+import { normalizeStringEntries } from "merclaw/plugin-sdk/string-coerce-runtime";
 import {
   checkZcaAuthenticated,
   listZalouserAccountIds,
@@ -43,11 +43,11 @@ function parseZalouserEntries(raw: string): string[] {
 }
 
 function setZalouserAccountScopedConfig(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   accountId: string,
   defaultPatch: Record<string, unknown>,
   accountPatch: Record<string, unknown> = defaultPatch,
-): OpenClawConfig {
+): MerClawConfig {
   return patchScopedAccountConfig({
     cfg,
     channelKey: channel,
@@ -58,10 +58,10 @@ function setZalouserAccountScopedConfig(
 }
 
 function setZalouserDmPolicy(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   accountId: string,
   policy: DmPolicy,
-): OpenClawConfig {
+): MerClawConfig {
   const resolvedAccountId = normalizeAccountId(accountId) ?? DEFAULT_ACCOUNT_ID;
   const resolved = resolveZalouserAccountSync({ cfg, accountId: resolvedAccountId });
   return setZalouserAccountScopedConfig(
@@ -79,20 +79,20 @@ function setZalouserDmPolicy(
 }
 
 function setZalouserGroupPolicy(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   accountId: string,
   groupPolicy: "open" | "allowlist" | "disabled",
-): OpenClawConfig {
+): MerClawConfig {
   return setZalouserAccountScopedConfig(cfg, accountId, {
     groupPolicy,
   });
 }
 
 function setZalouserGroupAllowlist(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   accountId: string,
   groupKeys: string[],
-): OpenClawConfig {
+): MerClawConfig {
   const groups = Object.fromEntries(
     groupKeys.map((key) => [key, { enabled: true, requireMention: true }]),
   );
@@ -101,8 +101,8 @@ function setZalouserGroupAllowlist(
   });
 }
 
-function ensureZalouserPluginEnabled(cfg: OpenClawConfig): OpenClawConfig {
-  const next: OpenClawConfig = {
+function ensureZalouserPluginEnabled(cfg: MerClawConfig): MerClawConfig {
+  const next: MerClawConfig = {
     ...cfg,
     plugins: {
       ...cfg.plugins,
@@ -144,10 +144,10 @@ async function noteZalouserHelp(
 }
 
 async function promptZalouserAllowFrom(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   prompter: Parameters<NonNullable<ChannelSetupDmPolicy["promptAllowFrom"]>>[0]["prompter"];
   accountId: string;
-}): Promise<OpenClawConfig> {
+}): Promise<MerClawConfig> {
   const { cfg, prompter, accountId } = params;
   const resolved = resolveZalouserAccountSync({ cfg, accountId });
   const existingAllowFrom = resolved.config.allowFrom ?? [];
@@ -165,7 +165,7 @@ async function promptZalouserAllowFrom(params: {
           t("wizard.zalouser.noDmAllowlist"),
           t("wizard.zalouser.directChatsBlocked"),
           t("wizard.zalouser.peersLookupTip", {
-            command: formatCliCommand("openclaw directory peers list --channel zalouser"),
+            command: formatCliCommand("merclaw directory peers list --channel zalouser"),
           }),
         ].join("\n"),
         ZALOUSER_ALLOWLIST_TITLE,
@@ -244,10 +244,10 @@ const zalouserDmPolicy: ChannelSetupDmPolicy = {
 };
 
 async function promptZalouserQuickstartDmPolicy(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   prompter: Parameters<NonNullable<ChannelSetupWizard["prepare"]>>[0]["prompter"];
   accountId: string;
-}): Promise<OpenClawConfig> {
+}): Promise<MerClawConfig> {
   const { cfg, prompter, accountId } = params;
   const resolved = resolveZalouserAccountSync({ cfg, accountId });
   const existingPolicy = resolved.config.dmPolicy ?? "pairing";
@@ -430,7 +430,7 @@ export const zalouserSetupWizard: ChannelSetupWizard = {
             t("wizard.zalouser.noGroupAllowlist"),
             t("wizard.zalouser.groupChatsBlocked"),
             t("wizard.zalouser.groupsLookupTip", {
-              command: formatCliCommand("openclaw directory groups list --channel zalouser"),
+              command: formatCliCommand("merclaw directory groups list --channel zalouser"),
             }),
             t("wizard.zalouser.groupMentionRequirement"),
           ].join("\n"),

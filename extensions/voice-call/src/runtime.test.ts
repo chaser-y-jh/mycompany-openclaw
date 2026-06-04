@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/core";
+import type { MerClawConfig } from "merclaw/plugin-sdk/core";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { VoiceCallConfig } from "./config.js";
 import type { CoreConfig } from "./core-bridge.js";
@@ -198,7 +198,7 @@ function requireRealtimeConsultToolHandler(): RealtimeConsultToolHandler {
     mocks.realtimeHandlerRegisterToolHandler.mock.calls,
     "realtime tool handler registration",
   );
-  expect(registeredToolHandler[0]).toBe("openclaw_agent_consult");
+  expect(registeredToolHandler[0]).toBe("merclaw_agent_consult");
   if (typeof registeredToolHandler[1] !== "function") {
     throw new Error("expected realtime tool handler callback");
   }
@@ -289,7 +289,7 @@ describe("createVoiceCallRuntime lifecycle", () => {
           openai: { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
 
     await createVoiceCallRuntime({
       config: createBaseConfig(),
@@ -429,7 +429,7 @@ describe("createVoiceCallRuntime lifecycle", () => {
       throw new Error("expected realtime handler tools to be an array");
     }
     expect(tools.map((tool) => requireRecord(tool, "realtime tool").name)).toEqual([
-      "openclaw_agent_consult",
+      "merclaw_agent_consult",
       "custom_tool",
     ]);
     const handler = requireRealtimeConsultToolHandler();
@@ -442,8 +442,8 @@ describe("createVoiceCallRuntime lifecycle", () => {
     });
     expect(runEmbeddedAgent).toHaveBeenCalledOnce();
     const consultParams = requireRecord(
-      firstCallParam(runEmbeddedAgent.mock.calls as unknown[][], "embedded OpenClaw consult"),
-      "embedded OpenClaw consult params",
+      firstCallParam(runEmbeddedAgent.mock.calls as unknown[][], "embedded MerClaw consult"),
+      "embedded MerClaw consult params",
     );
     expect(consultParams.sessionKey).toBe("voice:15550009999");
     expect(consultParams.spawnedBy).toBe("agent:main:discord:channel:general");
@@ -508,9 +508,9 @@ describe("createVoiceCallRuntime lifecycle", () => {
     const consultParams = requireRecord(
       firstCallParam(
         runEmbeddedAgent.mock.calls as unknown[][],
-        "per-call embedded OpenClaw consult",
+        "per-call embedded MerClaw consult",
       ),
-      "per-call embedded OpenClaw consult params",
+      "per-call embedded MerClaw consult params",
     );
     expect(consultParams.sessionKey).toBe("voice:call:call-1");
   });
@@ -550,7 +550,7 @@ describe("createVoiceCallRuntime lifecycle", () => {
     mocks.resolveRealtimeFastContextConsult.mockResolvedValue({
       handled: true,
       result: {
-        text: "Fast OpenClaw memory or session context found.\nThe caller's basement lights are on.",
+        text: "Fast MerClaw memory or session context found.\nThe caller's basement lights are on.",
       },
     });
 
@@ -632,9 +632,9 @@ describe("createVoiceCallRuntime lifecycle", () => {
     const consultParams = requireRecord(
       firstCallParam(
         runEmbeddedAgent.mock.calls as unknown[][],
-        "configured embedded OpenClaw consult",
+        "configured embedded MerClaw consult",
       ),
-      "configured embedded OpenClaw consult params",
+      "configured embedded MerClaw consult params",
     );
     expect(consultParams.thinkLevel).toBe("low");
     expect(consultParams.fastMode).toBe(true);

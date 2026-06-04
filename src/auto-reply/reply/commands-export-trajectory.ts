@@ -17,9 +17,9 @@ import {
   resolveExportCommandSessionTarget,
 } from "./commands-export-common.js";
 import {
-  buildCurrentOpenClawCliArgv,
-  buildCurrentOpenClawCliCommand,
-} from "./commands-openclaw-cli.js";
+  buildCurrentMerClawCliArgv,
+  buildCurrentMerClawCliCommand,
+} from "./commands-merclaw-cli.js";
 import {
   deliverPrivateCommandReply,
   readCommandDeliveryTarget,
@@ -30,7 +30,7 @@ import {
 } from "./commands-private-route.js";
 import type { HandleCommandsParams } from "./commands-types.js";
 
-const EXPORT_TRAJECTORY_DOCS_URL = "https://docs.openclaw.ai/tools/trajectory";
+const EXPORT_TRAJECTORY_DOCS_URL = "https://docs.merclaw.ai/tools/trajectory";
 const EXPORT_TRAJECTORY_EXEC_SCOPE_KEY = "chat:export-trajectory";
 const MAX_TRAJECTORY_EXPORT_ENCODED_REQUEST_CHARS = 8192;
 const EXPORT_TRAJECTORY_PRIVATE_ROUTE_UNAVAILABLE =
@@ -358,9 +358,9 @@ function buildTrajectoryExportExecRequest(
   }
   const args = ["sessions", "export-trajectory", "--request-json-base64", encodedRequest, "--json"];
   return {
-    argv: buildCurrentOpenClawCliArgv(args),
-    command: buildCurrentOpenClawCliCommand(args),
-    displayCommand: ["openclaw", ...args].join(" "),
+    argv: buildCurrentMerClawCliArgv(args),
+    command: buildCurrentMerClawCliCommand(args),
+    displayCommand: ["merclaw", ...args].join(" "),
     encodedRequest,
     request,
   };

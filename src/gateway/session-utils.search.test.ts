@@ -6,7 +6,7 @@ import {
   addSubagentRunForTests,
   resetSubagentRegistryForTests,
 } from "../agents/subagent-registry.test-helpers.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { MerClawConfig } from "../config/config.js";
 import type { SessionEntry } from "../config/sessions.js";
 import { registerAgentRunContext, resetAgentRunContextForTest } from "../infra/agent-events.js";
 import { listSessionsFromStore } from "./session-utils.js";
@@ -14,7 +14,7 @@ import { listSessionsFromStore } from "./session-utils.js";
 function createModelDefaultsConfig(params: {
   primary: string;
   models?: Record<string, Record<string, never>>;
-}): OpenClawConfig {
+}): MerClawConfig {
   return {
     agents: {
       defaults: {
@@ -22,12 +22,12 @@ function createModelDefaultsConfig(params: {
         models: params.models,
       },
     },
-  } as OpenClawConfig;
+  } as MerClawConfig;
 }
 
 function createLegacyRuntimeListConfig(
   models?: Record<string, Record<string, never>>,
-): OpenClawConfig {
+): MerClawConfig {
   return createModelDefaultsConfig({
     primary: "google-gemini-cli/gemini-3.1-pro-preview",
     ...(models ? { models } : {}),
@@ -86,7 +86,7 @@ function withTranscriptStoreFixture<T>(params: {
   }
 }
 
-function createAnthropicContext1mConfig(): OpenClawConfig {
+function createAnthropicContext1mConfig(): MerClawConfig {
   return {
     session: { mainKey: "main" },
     agents: {
@@ -97,11 +97,11 @@ function createAnthropicContext1mConfig(): OpenClawConfig {
         },
       },
     },
-  } as unknown as OpenClawConfig;
+  } as unknown as MerClawConfig;
 }
 
 function listSingleSession(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   storePath: string;
   key: string;
   entry: SessionEntry;
@@ -125,7 +125,7 @@ describe("listSessionsFromStore search", () => {
   const baseCfg = {
     session: { mainKey: "main" },
     agents: { list: [{ id: "main", default: true }] },
-  } as OpenClawConfig;
+  } as MerClawConfig;
 
   const makeStore = (): Record<string, SessionEntry> => ({
     "agent:main:work-project": {
@@ -378,7 +378,7 @@ describe("listSessionsFromStore search", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
     const result = listSessionsFromStore({
       cfg,
       storePath: "/tmp/sessions.json",
@@ -402,7 +402,7 @@ describe("listSessionsFromStore search", () => {
 
   test("prefers persisted estimated session cost from the store", () => {
     withTranscriptStoreFixture({
-      prefix: "openclaw-session-utils-store-cost-",
+      prefix: "merclaw-session-utils-store-cost-",
       transcriptId: "sess-main",
       provider: "anthropic",
       model: "claude-sonnet-4-6",
@@ -450,7 +450,7 @@ describe("listSessionsFromStore search", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as MerClawConfig;
     const result = listSessionsFromStore({
       cfg,
       storePath: "/tmp/sessions.json",
@@ -474,7 +474,7 @@ describe("listSessionsFromStore search", () => {
 
   test("falls back to transcript usage for totalTokens and zero estimatedCostUsd", () => {
     withTranscriptStoreFixture({
-      prefix: "openclaw-session-utils-zero-cost-",
+      prefix: "merclaw-session-utils-zero-cost-",
       transcriptId: "sess-main",
       provider: "openai",
       model: "gpt-5.3-codex-spark",
@@ -510,7 +510,7 @@ describe("listSessionsFromStore search", () => {
 
   test("falls back to transcript usage for totalTokens and estimatedCostUsd, and derives contextTokens from the resolved model", () => {
     withTranscriptStoreFixture({
-      prefix: "openclaw-session-utils-",
+      prefix: "merclaw-session-utils-",
       transcriptId: "sess-main",
       provider: "anthropic",
       model: "claude-sonnet-4-6",
@@ -547,7 +547,7 @@ describe("listSessionsFromStore search", () => {
 
   test("uses subagent run model immediately for child sessions while transcript usage fills live totals", () => {
     withTranscriptStoreFixture({
-      prefix: "openclaw-session-utils-subagent-",
+      prefix: "merclaw-session-utils-subagent-",
       transcriptId: "sess-child",
       provider: "anthropic",
       model: "claude-sonnet-4-6",
@@ -599,7 +599,7 @@ describe("listSessionsFromStore search", () => {
 
   test("keeps a running subagent model when transcript fallback still reflects an older run", () => {
     withTranscriptStoreFixture({
-      prefix: "openclaw-session-utils-subagent-stale-model-",
+      prefix: "merclaw-session-utils-subagent-stale-model-",
       transcriptId: "sess-child-stale",
       provider: "anthropic",
       model: "claude-sonnet-4-6",
@@ -649,7 +649,7 @@ describe("listSessionsFromStore search", () => {
 
   test("keeps the selected override model when runtime identity was intentionally cleared", () => {
     withTranscriptStoreFixture({
-      prefix: "openclaw-session-utils-cleared-runtime-model-",
+      prefix: "merclaw-session-utils-cleared-runtime-model-",
       transcriptId: "sess-override",
       provider: "anthropic",
       model: "claude-sonnet-4-6",
@@ -683,7 +683,7 @@ describe("listSessionsFromStore search", () => {
 
   test("does not replace the current runtime model when transcript fallback is only for missing pricing", () => {
     withTranscriptStoreFixture({
-      prefix: "openclaw-session-utils-pricing-",
+      prefix: "merclaw-session-utils-pricing-",
       transcriptId: "sess-pricing",
       provider: "anthropic",
       model: "claude-sonnet-4-6",
@@ -698,7 +698,7 @@ describe("listSessionsFromStore search", () => {
             agents: {
               list: [{ id: "main", default: true }],
             },
-          } as unknown as OpenClawConfig,
+          } as unknown as MerClawConfig,
           storePath,
           key: "agent:main:main",
           entry: {

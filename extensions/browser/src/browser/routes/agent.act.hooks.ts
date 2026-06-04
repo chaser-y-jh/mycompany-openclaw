@@ -151,7 +151,7 @@ export function registerBrowserAgentActHookRoutes(
               profile: profileCtx.profile,
               targetId: tab.targetId,
               fn: `() => {
-              const state = (window.__openclawDialogHook ??= {});
+              const state = (window.__merclawDialogHook ??= {});
               if (!state.originals) {
                 state.originals = {
                   alert: window.alert.bind(window),
@@ -164,7 +164,7 @@ export function registerBrowserAgentActHookRoutes(
                 window.alert = originals.alert;
                 window.confirm = originals.confirm;
                 window.prompt = originals.prompt;
-                delete window.__openclawDialogHook;
+                delete window.__merclawDialogHook;
               };
               window.alert = (...args) => {
                 try {

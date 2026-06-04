@@ -1,10 +1,10 @@
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import { normalizeProviderId } from "@merclaw/model-catalog-core/provider-id";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { buildProviderAuthDoctorHintWithPlugin } from "../../plugins/provider-runtime.runtime.js";
 import type { AuthProfileStore } from "./types.js";
 
 const QWEN_PORTAL_OAUTH_MIGRATION_HINT =
-  "Legacy Qwen Portal OAuth profiles are not refreshable. Re-authenticate with a current portal token: openclaw onboard --auth-choice qwen-oauth.";
+  "Legacy Qwen Portal OAuth profiles are not refreshable. Re-authenticate with a current portal token: merclaw onboard --auth-choice qwen-oauth.";
 
 function hasLegacyQwenPortalOAuthProfile(store: AuthProfileStore, profileId?: string): boolean {
   const profiles = profileId ? [store.profiles[profileId]] : Object.values(store.profiles);
@@ -15,7 +15,7 @@ function hasLegacyQwenPortalOAuthProfile(store: AuthProfileStore, profileId?: st
 }
 
 export async function formatAuthDoctorHint(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   store: AuthProfileStore;
   provider: string;
   profileId?: string;

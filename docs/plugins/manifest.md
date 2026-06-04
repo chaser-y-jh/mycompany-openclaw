@@ -1,12 +1,12 @@
 ---
 summary: "Plugin manifest + JSON schema requirements (strict config validation)"
 read_when:
-  - You are building an OpenClaw plugin
+  - You are building an MerClaw plugin
   - You need to ship a plugin config schema or debug plugin validation errors
 title: "Plugin manifest"
 ---
 
-This page is for the **native OpenClaw plugin manifest** only.
+This page is for the **native MerClaw plugin manifest** only.
 
 For compatible bundle layouts, see [Plugin bundles](/plugins/bundles).
 
@@ -17,16 +17,16 @@ Compatible bundle formats use different manifest files:
   layout without a manifest
 - Cursor bundle: `.cursor-plugin/plugin.json`
 
-OpenClaw auto-detects those bundle layouts too, but they are not validated
-against the `openclaw.plugin.json` schema described here.
+MerClaw auto-detects those bundle layouts too, but they are not validated
+against the `merclaw.plugin.json` schema described here.
 
-For compatible bundles, OpenClaw currently reads bundle metadata plus declared
+For compatible bundles, MerClaw currently reads bundle metadata plus declared
 skill roots, Claude command roots, Claude bundle `settings.json` defaults,
 Claude bundle LSP defaults, and supported hook packs when the layout matches
-OpenClaw runtime expectations.
+MerClaw runtime expectations.
 
-Every native OpenClaw plugin **must** ship a `openclaw.plugin.json` file in the
-**plugin root**. OpenClaw uses this manifest to validate configuration
+Every native MerClaw plugin **must** ship a `merclaw.plugin.json` file in the
+**plugin root**. MerClaw uses this manifest to validate configuration
 **without executing plugin code**. Missing or invalid manifests are treated as
 plugin errors and block config validation.
 
@@ -36,7 +36,7 @@ For the native capability model and current external-compatibility guidance:
 
 ## What this file does
 
-`openclaw.plugin.json` is the metadata OpenClaw reads **before it loads your
+`merclaw.plugin.json` is the metadata MerClaw reads **before it loads your
 plugin code**. Everything below must be cheap enough to inspect without booting
 plugin runtime.
 
@@ -47,7 +47,7 @@ plugin runtime.
 - activation hints for control-plane surfaces
 - shorthand model-family ownership
 - static capability-ownership snapshots (`contracts`)
-- QA runner metadata the shared `openclaw qa` host can inspect
+- QA runner metadata the shared `merclaw qa` host can inspect
 - channel-specific config metadata merged into catalog and validation surfaces
 
 **Do not use it for:** registering runtime behavior, declaring code entrypoints,
@@ -174,13 +174,13 @@ or npm install metadata. Those belong in your plugin code and `package.json`.
 | `syntheticAuthRefs`                  | No       | `string[]`                       | Provider or CLI backend refs whose plugin-owned synthetic auth hook should be probed during cold model discovery before runtime loads.                                                                                                          |
 | `nonSecretAuthMarkers`               | No       | `string[]`                       | Bundled-plugin-owned placeholder API key values that represent non-secret local, OAuth, or ambient credential state.                                                                                                                            |
 | `commandAliases`                     | No       | `object[]`                       | Command names owned by this plugin that should produce plugin-aware config and CLI diagnostics before runtime loads.                                                                                                                            |
-| `providerAuthEnvVars`                | No       | `Record<string, string[]>`       | Deprecated compatibility env metadata for provider auth/status lookup. Prefer `setup.providers[].envVars` for new plugins; OpenClaw still reads this during the deprecation window.                                                             |
+| `providerAuthEnvVars`                | No       | `Record<string, string[]>`       | Deprecated compatibility env metadata for provider auth/status lookup. Prefer `setup.providers[].envVars` for new plugins; MerClaw still reads this during the deprecation window.                                                             |
 | `providerAuthAliases`                | No       | `Record<string, string>`         | Provider ids that should reuse another provider id for auth lookup, for example a coding provider that shares the base provider API key and auth profiles.                                                                                      |
-| `channelEnvVars`                     | No       | `Record<string, string[]>`       | Cheap channel env metadata that OpenClaw can inspect without loading plugin code. Use this for env-driven channel setup or auth surfaces that generic startup/config helpers should see.                                                        |
+| `channelEnvVars`                     | No       | `Record<string, string[]>`       | Cheap channel env metadata that MerClaw can inspect without loading plugin code. Use this for env-driven channel setup or auth surfaces that generic startup/config helpers should see.                                                        |
 | `providerAuthChoices`                | No       | `object[]`                       | Cheap auth-choice metadata for onboarding pickers, preferred-provider resolution, and simple CLI flag wiring.                                                                                                                                   |
 | `activation`                         | No       | `object`                         | Cheap activation planner metadata for startup, provider, command, channel, route, and capability-triggered loading. Metadata only; plugin runtime still owns actual behavior.                                                                   |
 | `setup`                              | No       | `object`                         | Cheap setup/onboarding descriptors that discovery and setup surfaces can inspect without loading plugin runtime.                                                                                                                                |
-| `qaRunners`                          | No       | `object[]`                       | Cheap QA runner descriptors used by the shared `openclaw qa` host before plugin runtime loads.                                                                                                                                                  |
+| `qaRunners`                          | No       | `object[]`                       | Cheap QA runner descriptors used by the shared `merclaw qa` host before plugin runtime loads.                                                                                                                                                  |
 | `contracts`                          | No       | `object`                         | Static capability ownership snapshot for external auth hooks, embeddings, speech, realtime transcription, realtime voice, media-understanding, image-generation, music-generation, video-generation, web-fetch, web search, and tool ownership. |
 | `mediaUnderstandingProviderMetadata` | No       | `Record<string, object>`         | Cheap media-understanding defaults for provider ids declared in `contracts.mediaUnderstandingProviders`.                                                                                                                                        |
 | `imageGenerationProviderMetadata`    | No       | `Record<string, object>`         | Cheap image-generation auth metadata for provider ids declared in `contracts.imageGenerationProviders`, including provider-owned auth aliases and base-url guards.                                                                              |
@@ -198,7 +198,7 @@ or npm install metadata. Those belong in your plugin code and `package.json`.
 
 The generation provider metadata fields describe static auth signals for
 providers declared in the matching `contracts.*GenerationProviders` list.
-OpenClaw reads these fields before provider runtime loads so core tools can
+MerClaw reads these fields before provider runtime loads so core tools can
 decide whether a generation provider is available without importing every
 provider plugin.
 
@@ -295,7 +295,7 @@ Each `providerBaseUrl` guard supports:
 
 `toolMetadata` uses the same `configSignals` and `authSignals` shapes as
 generation provider metadata, keyed by tool name. `contracts.tools` declares
-ownership. `toolMetadata` declares cheap availability evidence so OpenClaw can
+ownership. `toolMetadata` declares cheap availability evidence so MerClaw can
 avoid importing a plugin runtime just to have its tool factory return `null`.
 
 ```json
@@ -330,7 +330,7 @@ avoid importing a plugin runtime just to have its tool factory return `null`.
 }
 ```
 
-If a tool has no `toolMetadata`, OpenClaw preserves the existing behavior and
+If a tool has no `toolMetadata`, MerClaw preserves the existing behavior and
 loads the owning plugin when the tool contract matches policy. For hot-path
 tools whose factory depends on auth/config, plugin authors should declare
 `toolMetadata` instead of making core import runtime to ask.
@@ -338,7 +338,7 @@ tools whose factory depends on auth/config, plugin authors should declare
 ## providerAuthChoices reference
 
 Each `providerAuthChoices` entry describes one onboarding or auth choice.
-OpenClaw reads this before provider runtime loads.
+MerClaw reads this before provider runtime loads.
 Provider setup lists use these manifest choices, descriptor-derived setup
 choices, and install-catalog metadata without loading provider runtime.
 
@@ -347,7 +347,7 @@ choices, and install-catalog metadata without loading provider runtime.
 | `provider`            | Yes      | `string`                                                              | Provider id this choice belongs to.                                                                      |
 | `method`              | Yes      | `string`                                                              | Auth method id to dispatch to.                                                                           |
 | `choiceId`            | Yes      | `string`                                                              | Stable auth-choice id used by onboarding and CLI flows.                                                  |
-| `choiceLabel`         | No       | `string`                                                              | User-facing label. If omitted, OpenClaw falls back to `choiceId`.                                        |
+| `choiceLabel`         | No       | `string`                                                              | User-facing label. If omitted, MerClaw falls back to `choiceId`.                                        |
 | `choiceHint`          | No       | `string`                                                              | Short helper text for the picker.                                                                        |
 | `assistantPriority`   | No       | `number`                                                              | Lower values sort earlier in assistant-driven interactive pickers.                                       |
 | `assistantVisibility` | No       | `"visible"` \| `"manual-only"`                                        | Hide the choice from assistant pickers while still allowing manual CLI selection.                        |
@@ -364,7 +364,7 @@ choices, and install-catalog metadata without loading provider runtime.
 ## commandAliases reference
 
 Use `commandAliases` when a plugin owns a runtime command name that users may
-mistakenly put in `plugins.allow` or try to run as a root CLI command. OpenClaw
+mistakenly put in `plugins.allow` or try to run as a root CLI command. MerClaw
 uses this metadata for diagnostics without importing plugin runtime code.
 
 ```json
@@ -469,7 +469,7 @@ that best describes ownership.
 ## qaRunners reference
 
 Use `qaRunners` when a plugin contributes one or more transport runners beneath
-the shared `openclaw qa` root. Keep this metadata cheap and static; the plugin
+the shared `merclaw qa` root. Keep this metadata cheap and static; the plugin
 runtime still owns actual CLI registration through a lightweight
 `runtime-api.ts` surface that exports `qaRunnerCliRegistrations`.
 
@@ -486,7 +486,7 @@ runtime still owns actual CLI registration through a lightweight
 
 | Field         | Required | Type     | What it means                                                      |
 | ------------- | -------- | -------- | ------------------------------------------------------------------ |
-| `commandName` | Yes      | `string` | Subcommand mounted beneath `openclaw qa`, for example `matrix`.    |
+| `commandName` | Yes      | `string` | Subcommand mounted beneath `merclaw qa`, for example `matrix`.    |
 | `description` | No       | `string` | Fallback help text used when the shared host needs a stub command. |
 
 ## setup reference
@@ -530,22 +530,22 @@ narrows the candidate plugin and setup still needs richer setup-time runtime
 hooks, set `requiresRuntime: true` and keep `setup-api` in place as the
 fallback execution path.
 
-OpenClaw also includes `setup.providers[].envVars` in generic provider auth and
+MerClaw also includes `setup.providers[].envVars` in generic provider auth and
 env-var lookups. `providerAuthEnvVars` remains supported through a compatibility
 adapter during the deprecation window, but non-bundled plugins that still use it
 receive a manifest diagnostic. New plugins should put setup/status env metadata
 on `setup.providers[].envVars`.
 
-OpenClaw can also derive simple setup choices from `setup.providers[].authMethods`
+MerClaw can also derive simple setup choices from `setup.providers[].authMethods`
 when no setup entry is available, or when `setup.requiresRuntime: false`
 declares setup runtime unnecessary. Explicit `providerAuthChoices` entries stay
 preferred for custom labels, CLI flags, onboarding scope, and assistant metadata.
 
 Set `requiresRuntime: false` only when those descriptors are sufficient for the
-setup surface. OpenClaw treats explicit `false` as a descriptor-only contract
-and will not execute `setup-api` or `openclaw.setupEntry` for setup lookup. If
+setup surface. MerClaw treats explicit `false` as a descriptor-only contract
+and will not execute `setup-api` or `merclaw.setupEntry` for setup lookup. If
 a descriptor-only plugin still ships one of those setup runtime entries,
-OpenClaw reports an additive diagnostic and continues ignoring it. Omitted
+MerClaw reports an additive diagnostic and continues ignoring it. Omitted
 `requiresRuntime` keeps legacy fallback behavior so existing plugins that added
 descriptors without the flag do not break.
 
@@ -624,13 +624,13 @@ Each field hint can include:
 
 ## contracts reference
 
-Use `contracts` only for static capability ownership metadata that OpenClaw can
+Use `contracts` only for static capability ownership metadata that MerClaw can
 read without importing the plugin runtime.
 
 ```json
 {
   "contracts": {
-    "agentToolResultMiddleware": ["openclaw", "codex"],
+    "agentToolResultMiddleware": ["merclaw", "codex"],
     "externalAuthProviders": ["acme-ai"],
     "embeddingProviders": ["openai-compatible"],
     "speechProviders": ["openai"],
@@ -667,7 +667,7 @@ Each list is optional:
 | `videoGenerationProviders`       | `string[]` | Video-generation provider ids this plugin owns.                                                      |
 | `webFetchProviders`              | `string[]` | Web-fetch provider ids this plugin owns.                                                             |
 | `webSearchProviders`             | `string[]` | Web-search provider ids this plugin owns.                                                            |
-| `migrationProviders`             | `string[]` | Import provider ids this plugin owns for `openclaw migrate`.                                         |
+| `migrationProviders`             | `string[]` | Import provider ids this plugin owns for `merclaw migrate`.                                         |
 | `gatewayMethodDispatch`          | `string[]` | Reserved entitlement for authenticated plugin HTTP routes that dispatch Gateway methods in-process.  |
 | `tools`                          | `string[]` | Agent tool names this plugin owns.                                                                   |
 
@@ -744,7 +744,7 @@ when `setup.requiresRuntime: false` declares setup runtime unnecessary.
 
 `channelConfigs` is plugin manifest metadata, not a new top-level user config
 section. Users still configure channel instances under `channels.<channel-id>`.
-OpenClaw reads manifest metadata to decide which plugin owns that configured
+MerClaw reads manifest metadata to decide which plugin owns that configured
 channel before plugin runtime code executes.
 
 For a channel plugin, `configSchema` and `channelConfigs` describe different
@@ -754,14 +754,14 @@ paths:
 - `channelConfigs.<channel-id>.schema` validates `channels.<channel-id>`
 
 Non-bundled plugins that declare `channels[]` should also declare matching
-`channelConfigs` entries. Without them, OpenClaw can still load the plugin, but
+`channelConfigs` entries. Without them, MerClaw can still load the plugin, but
 cold-path config schema, setup, and Control UI surfaces cannot know the
 channel-owned option shape until plugin runtime executes.
 
 `channelConfigs.<channel-id>.commands.nativeCommandsAutoEnabled` and
 `nativeSkillsAutoEnabled` can declare static `auto` defaults for command config
 checks that run before channel runtime loads. Bundled channels can also publish
-the same defaults through `package.json#openclaw.channel.commands` alongside
+the same defaults through `package.json#merclaw.channel.commands` alongside
 their other package-owned channel catalog metadata.
 
 ```json
@@ -830,11 +830,11 @@ keeps the same channel id for config compatibility.
 }
 ```
 
-When `channels.chat` is configured, OpenClaw considers both the channel id and
+When `channels.chat` is configured, MerClaw considers both the channel id and
 the preferred plugin id. If the lower-priority plugin was only selected because
-it is bundled or enabled by default, OpenClaw disables it in the effective
+it is bundled or enabled by default, MerClaw disables it in the effective
 runtime config so one plugin owns the channel and its tools. Explicit user
-selection still wins: if the user explicitly enables both plugins, OpenClaw
+selection still wins: if the user explicitly enables both plugins, MerClaw
 preserves that choice and reports duplicate channel/tool diagnostics instead of
 silently changing the requested plugin set.
 
@@ -843,7 +843,7 @@ It is not a general priority field and it does not rename user config keys.
 
 ## modelSupport reference
 
-Use `modelSupport` when OpenClaw should infer your provider plugin from
+Use `modelSupport` when MerClaw should infer your provider plugin from
 shorthand model ids like `gpt-5.5` or `claude-sonnet-4.6` before plugin runtime
 loads.
 
@@ -856,7 +856,7 @@ loads.
 }
 ```
 
-OpenClaw applies this precedence:
+MerClaw applies this precedence:
 
 - explicit `provider/model` refs use the owning `providers` manifest metadata
 - `modelPatterns` beat `modelPrefixes`
@@ -878,7 +878,7 @@ Keep patterns simple and avoid nested quantifiers.
 
 ## modelCatalog reference
 
-Use `modelCatalog` when OpenClaw should know provider model metadata before
+Use `modelCatalog` when MerClaw should know provider model metadata before
 loading plugin runtime. This is the manifest-owned source for fixed catalog
 rows, provider aliases, suppression rules, and discovery mode. Runtime refresh
 still belongs in provider runtime code, but the manifest tells core when runtime
@@ -943,7 +943,7 @@ Top-level fields:
 
 `aliases` participates in provider ownership lookup for model-catalog planning.
 Alias targets must be top-level providers owned by the same plugin. When a
-provider-filtered list uses an alias, OpenClaw can read the owning manifest and
+provider-filtered list uses an alias, MerClaw can read the owning manifest and
 apply alias API/base URL overrides without loading provider runtime.
 Aliases do not expand unfiltered catalog listings; broad lists emit the owning
 canonical provider rows only.
@@ -977,7 +977,7 @@ Model fields:
 | `contextTokens` | `number`                                                       | Optional effective runtime context cap when different from `contextWindow`. |
 | `maxTokens`     | `number`                                                       | Maximum output tokens when known.                                           |
 | `cost`          | `object`                                                       | Optional USD per million token pricing, including optional `tieredPricing`. |
-| `compat`        | `object`                                                       | Optional compatibility flags matching OpenClaw model config compatibility.  |
+| `compat`        | `object`                                                       | Optional compatibility flags matching MerClaw model config compatibility.  |
 | `status`        | `"available"` \| `"preview"` \| `"deprecated"` \| `"disabled"` | Listing status. Suppress only when the row must not appear at all.          |
 | `statusReason`  | `string`                                                       | Optional reason shown with non-available status.                            |
 | `replaces`      | `string[]`                                                     | Older provider-local model ids this model supersedes.                       |
@@ -998,7 +998,7 @@ Do not put runtime-only data in `modelCatalog`. Use `static` only when manifest
 rows are complete enough for provider-filtered list and picker surfaces to skip
 registry/runtime discovery. Use `refreshable` when manifest rows are useful
 listable seeds or supplements but a refresh/cache can add more rows later;
-refreshable rows are not authoritative by themselves. Use `runtime` when OpenClaw
+refreshable rows are not authoritative by themselves. Use `runtime` when MerClaw
 must load provider runtime to know the list.
 
 ## modelIdNormalization reference
@@ -1085,7 +1085,7 @@ Provider fields:
 ## secretProviderIntegrations reference
 
 Use `secretProviderIntegrations` when a plugin can publish a reusable SecretRef
-exec provider preset. OpenClaw reads this metadata before plugin runtime loads,
+exec provider preset. MerClaw reads this metadata before plugin runtime loads,
 stores plugin ownership in `secrets.providers.<alias>.pluginIntegration`, and
 leaves actual secret resolution to the SecretRef runtime.
 Presets are exposed only for bundled plugins and installed plugins discovered
@@ -1105,12 +1105,12 @@ from the managed plugin install roots, such as git and ClawHub installs.
 }
 ```
 
-The map key is the integration id. If `providerAlias` is omitted, OpenClaw uses
+The map key is the integration id. If `providerAlias` is omitted, MerClaw uses
 the integration id as the SecretRef provider alias. Provider aliases must match
 the normal SecretRef provider alias pattern, for example `team-secrets` or
 `onepassword-work`.
 
-When an operator selects the preset, OpenClaw writes a provider reference like:
+When an operator selects the preset, MerClaw writes a provider reference like:
 
 ```json
 {
@@ -1128,7 +1128,7 @@ When an operator selects the preset, OpenClaw writes a provider reference like:
 }
 ```
 
-At startup/reload, OpenClaw resolves that provider by loading current plugin
+At startup/reload, MerClaw resolves that provider by loading current plugin
 manifest metadata, checking that the owning plugin is installed and active, and
 materializing the exec command from the manifest. Disabling or removing the
 plugin revokes the provider for active SecretRefs. Operators who want standalone
@@ -1136,13 +1136,13 @@ exec configuration can still write manual `command`/`args` providers directly.
 
 Only `source: "exec"` presets are currently supported. `command` must be
 `${node}`, and `args[0]` must be a `./` plugin-root-relative resolver script.
-OpenClaw materializes it at startup/reload to the current Node executable and
+MerClaw materializes it at startup/reload to the current Node executable and
 the absolute in-plugin script path. Node options such as `--require`, `--import`,
 `--loader`, `--env-file`, `--eval`, and `--print` are not part of the manifest
 preset contract. Operators who need non-Node commands can configure standalone
 manual exec providers directly.
 
-OpenClaw derives `trustedDirs` for manifest presets from the plugin root and,
+MerClaw derives `trustedDirs` for manifest presets from the plugin root and,
 for `${node}` presets, the current Node executable directory. Manifest-authored
 `trustedDirs` are ignored. Other exec provider options such as `timeoutMs`,
 `maxOutputBytes`, `jsonOnly`, `env`, `passEnv`, and `allowInsecurePath` pass
@@ -1185,13 +1185,13 @@ Source fields:
 
 | Field                      | Type               | What it means                                                                                                        |
 | -------------------------- | ------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| `provider`                 | `string`           | External catalog provider id when it differs from the OpenClaw provider id, for example `z-ai` for a `zai` provider. |
+| `provider`                 | `string`           | External catalog provider id when it differs from the MerClaw provider id, for example `z-ai` for a `zai` provider. |
 | `passthroughProviderModel` | `boolean`          | Treat slash-containing model ids as nested provider/model refs, useful for proxy providers such as OpenRouter.       |
 | `modelIdTransforms`        | `"version-dots"[]` | Extra external catalog model-id variants. `version-dots` tries dotted version ids like `claude-opus-4.6`.            |
 
-### OpenClaw Provider Index
+### MerClaw Provider Index
 
-The OpenClaw Provider Index is OpenClaw-owned preview metadata for providers
+The MerClaw Provider Index is MerClaw-owned preview metadata for providers
 whose plugins may not be installed yet. It is not part of a plugin manifest.
 Plugin manifests remain the installed-plugin authority. The Provider Index is
 the internal fallback contract that future installable-provider and pre-install
@@ -1202,7 +1202,7 @@ Catalog authority order:
 1. User config.
 2. Installed plugin manifest `modelCatalog`.
 3. Model catalog cache from explicit refresh.
-4. OpenClaw Provider Index preview rows.
+4. MerClaw Provider Index preview rows.
 
 The Provider Index must not contain secrets, enabled state, runtime hooks, or
 live account-specific model data. Its preview catalogs use the same
@@ -1220,7 +1220,7 @@ expected integrity, and cheap auth-choice labels are enough to show an
 installable setup option. Once the plugin is installed, its manifest wins and
 the Provider Index entry is ignored for that provider.
 
-Legacy top-level capability keys are deprecated. Use `openclaw doctor --fix` to
+Legacy top-level capability keys are deprecated. Use `merclaw doctor --fix` to
 move `speechProviders`, `realtimeTranscriptionProviders`,
 `realtimeVoiceProviders`, `mediaUnderstandingProviders`,
 `imageGenerationProviders`, `videoGenerationProviders`,
@@ -1234,61 +1234,61 @@ The two files serve different jobs:
 
 | File                   | Use it for                                                                                                                       |
 | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `openclaw.plugin.json` | Discovery, config validation, auth-choice metadata, and UI hints that must exist before plugin code runs                         |
-| `package.json`         | npm metadata, dependency installation, and the `openclaw` block used for entrypoints, install gating, setup, or catalog metadata |
+| `merclaw.plugin.json` | Discovery, config validation, auth-choice metadata, and UI hints that must exist before plugin code runs                         |
+| `package.json`         | npm metadata, dependency installation, and the `merclaw` block used for entrypoints, install gating, setup, or catalog metadata |
 
 If you are unsure where a piece of metadata belongs, use this rule:
 
-- if OpenClaw must know it before loading plugin code, put it in `openclaw.plugin.json`
+- if MerClaw must know it before loading plugin code, put it in `merclaw.plugin.json`
 - if it is about packaging, entry files, or npm install behavior, put it in `package.json`
 
 ### package.json fields that affect discovery
 
 Some pre-runtime plugin metadata intentionally lives in `package.json` under the
-`openclaw` block instead of `openclaw.plugin.json`.
-`openclaw.bundle` and `openclaw.bundle.json` are not OpenClaw plugin contracts;
-native plugins must use `openclaw.plugin.json` plus the supported
-`package.json#openclaw` fields below.
+`merclaw` block instead of `merclaw.plugin.json`.
+`merclaw.bundle` and `merclaw.bundle.json` are not MerClaw plugin contracts;
+native plugins must use `merclaw.plugin.json` plus the supported
+`package.json#merclaw` fields below.
 
 Important examples:
 
 | Field                                                                                      | What it means                                                                                                                                                                        |
 | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `openclaw.extensions`                                                                      | Declares native plugin entrypoints. Must stay inside the plugin package directory.                                                                                                   |
-| `openclaw.runtimeExtensions`                                                               | Declares built JavaScript runtime entrypoints for installed packages. Must stay inside the plugin package directory.                                                                 |
-| `openclaw.setupEntry`                                                                      | Lightweight setup-only entrypoint used during onboarding, deferred channel startup, and read-only channel status/SecretRef discovery. Must stay inside the plugin package directory. |
-| `openclaw.runtimeSetupEntry`                                                               | Declares the built JavaScript setup entrypoint for installed packages. Requires `setupEntry`, must exist, and must stay inside the plugin package directory.                         |
-| `openclaw.channel`                                                                         | Cheap channel catalog metadata like labels, docs paths, aliases, and selection copy.                                                                                                 |
-| `openclaw.channel.commands`                                                                | Static native command and native skill auto-default metadata used by config, audit, and command-list surfaces before channel runtime loads.                                          |
-| `openclaw.channel.configuredState`                                                         | Lightweight configured-state checker metadata that can answer "does env-only setup already exist?" without loading the full channel runtime.                                         |
-| `openclaw.channel.persistedAuthState`                                                      | Lightweight persisted-auth checker metadata that can answer "is anything already signed in?" without loading the full channel runtime.                                               |
-| `openclaw.install.clawhubSpec` / `openclaw.install.npmSpec` / `openclaw.install.localPath` | Install/update hints for bundled and externally published plugins.                                                                                                                   |
-| `openclaw.install.defaultChoice`                                                           | Preferred install path when multiple install sources are available.                                                                                                                  |
-| `openclaw.install.minHostVersion`                                                          | Minimum supported OpenClaw host version, using a semver floor like `>=2026.3.22` or `>=2026.5.1-beta.1`.                                                                             |
-| `openclaw.compat.pluginApi`                                                                | Minimum OpenClaw plugin API range required by this package, using a semver floor like `>=2026.5.27`.                                                                                 |
-| `openclaw.install.expectedIntegrity`                                                       | Expected npm dist integrity string such as `sha512-...`; install and update flows verify the fetched artifact against it.                                                            |
-| `openclaw.install.allowInvalidConfigRecovery`                                              | Allows a narrow bundled-plugin reinstall recovery path when config is invalid.                                                                                                       |
-| `openclaw.startup.deferConfiguredChannelFullLoadUntilAfterListen`                          | Lets setup-runtime channel surfaces load before listen, then defers the full configured channel plugin until post-listen activation.                                                 |
+| `merclaw.extensions`                                                                      | Declares native plugin entrypoints. Must stay inside the plugin package directory.                                                                                                   |
+| `merclaw.runtimeExtensions`                                                               | Declares built JavaScript runtime entrypoints for installed packages. Must stay inside the plugin package directory.                                                                 |
+| `merclaw.setupEntry`                                                                      | Lightweight setup-only entrypoint used during onboarding, deferred channel startup, and read-only channel status/SecretRef discovery. Must stay inside the plugin package directory. |
+| `merclaw.runtimeSetupEntry`                                                               | Declares the built JavaScript setup entrypoint for installed packages. Requires `setupEntry`, must exist, and must stay inside the plugin package directory.                         |
+| `merclaw.channel`                                                                         | Cheap channel catalog metadata like labels, docs paths, aliases, and selection copy.                                                                                                 |
+| `merclaw.channel.commands`                                                                | Static native command and native skill auto-default metadata used by config, audit, and command-list surfaces before channel runtime loads.                                          |
+| `merclaw.channel.configuredState`                                                         | Lightweight configured-state checker metadata that can answer "does env-only setup already exist?" without loading the full channel runtime.                                         |
+| `merclaw.channel.persistedAuthState`                                                      | Lightweight persisted-auth checker metadata that can answer "is anything already signed in?" without loading the full channel runtime.                                               |
+| `merclaw.install.clawhubSpec` / `merclaw.install.npmSpec` / `merclaw.install.localPath` | Install/update hints for bundled and externally published plugins.                                                                                                                   |
+| `merclaw.install.defaultChoice`                                                           | Preferred install path when multiple install sources are available.                                                                                                                  |
+| `merclaw.install.minHostVersion`                                                          | Minimum supported MerClaw host version, using a semver floor like `>=2026.3.22` or `>=2026.5.1-beta.1`.                                                                             |
+| `merclaw.compat.pluginApi`                                                                | Minimum MerClaw plugin API range required by this package, using a semver floor like `>=2026.5.27`.                                                                                 |
+| `merclaw.install.expectedIntegrity`                                                       | Expected npm dist integrity string such as `sha512-...`; install and update flows verify the fetched artifact against it.                                                            |
+| `merclaw.install.allowInvalidConfigRecovery`                                              | Allows a narrow bundled-plugin reinstall recovery path when config is invalid.                                                                                                       |
+| `merclaw.startup.deferConfiguredChannelFullLoadUntilAfterListen`                          | Lets setup-runtime channel surfaces load before listen, then defers the full configured channel plugin until post-listen activation.                                                 |
 
 Manifest metadata decides which provider/channel/setup choices appear in
-onboarding before runtime loads. `package.json#openclaw.install` tells
+onboarding before runtime loads. `package.json#merclaw.install` tells
 onboarding how to fetch or enable that plugin when the user picks one of those
-choices. Do not move install hints into `openclaw.plugin.json`.
+choices. Do not move install hints into `merclaw.plugin.json`.
 
-`openclaw.install.minHostVersion` is enforced during install and manifest
+`merclaw.install.minHostVersion` is enforced during install and manifest
 registry loading for non-bundled plugin sources. Invalid values are rejected;
 newer-but-valid values skip external plugins on older hosts. Bundled source
 plugins are assumed to be co-versioned with the host checkout.
 
-`openclaw.compat.pluginApi` is enforced during package install for non-bundled
-plugin sources. Use it for the OpenClaw plugin SDK/runtime API floor that the
+`merclaw.compat.pluginApi` is enforced during package install for non-bundled
+plugin sources. Use it for the MerClaw plugin SDK/runtime API floor that the
 package was built against. It can be stricter than `minHostVersion` when a
 plugin package needs a newer API but still keeps a lower install hint for other
-flows. Official OpenClaw release sync bumps existing official plugin API floors
-to the OpenClaw release version by default, but plugin-only releases can keep a
+flows. Official MerClaw release sync bumps existing official plugin API floors
+to the MerClaw release version by default, but plugin-only releases can keep a
 lower floor when the package intentionally supports older hosts. Do not use the
-package version alone as the compatibility contract. `peerDependencies.openclaw`
-remains npm package metadata; OpenClaw uses the `openclaw.compat.pluginApi`
+package version alone as the compatibility contract. `peerDependencies.merclaw`
+remains npm package metadata; MerClaw uses the `merclaw.compat.pluginApi`
 contract for install compatibility decisions.
 
 Official install-on-demand metadata should use `clawhubSpec` when the plugin is
@@ -1297,7 +1297,7 @@ records ClawHub artifact facts after install. `npmSpec` remains the compatibilit
 fallback for packages that have not moved to ClawHub yet.
 
 Exact npm version pinning already lives in `npmSpec`, for example
-`"npmSpec": "@wecom/wecom-openclaw-plugin@1.2.3"`. Official external catalog
+`"npmSpec": "@wecom/wecom-merclaw-plugin@1.2.3"`. Official external catalog
 entries should pair exact specs with `expectedIntegrity` so update flows fail
 closed if the fetched npm artifact no longer matches the pinned release.
 Interactive onboarding still offers trusted registry npm specs, including bare
@@ -1309,29 +1309,29 @@ When `expectedIntegrity` is present,
 install/update flows enforce it; when it is omitted, the registry resolution is
 recorded without an integrity pin.
 
-Channel plugins should provide `openclaw.setupEntry` when status, channel list,
+Channel plugins should provide `merclaw.setupEntry` when status, channel list,
 or SecretRef scans need to identify configured accounts without loading the full
 runtime. The setup entry should expose channel metadata plus setup-safe config,
 status, and secrets adapters; keep network clients, gateway listeners, and
 transport runtimes in the main extension entrypoint.
 
 Runtime entrypoint fields do not override package-boundary checks for source
-entrypoint fields. For example, `openclaw.runtimeExtensions` cannot make an
-escaping `openclaw.extensions` path loadable.
+entrypoint fields. For example, `merclaw.runtimeExtensions` cannot make an
+escaping `merclaw.extensions` path loadable.
 
-`openclaw.install.allowInvalidConfigRecovery` is intentionally narrow. It does
+`merclaw.install.allowInvalidConfigRecovery` is intentionally narrow. It does
 not make arbitrary broken configs installable. Today it only allows install
 flows to recover from specific stale bundled-plugin upgrade failures, such as a
 missing bundled plugin path or a stale `channels.<id>` entry for that same
 bundled plugin. Unrelated config errors still block install and send operators
-to `openclaw doctor --fix`.
+to `merclaw doctor --fix`.
 
-`openclaw.channel.persistedAuthState` is package metadata for a tiny checker
+`merclaw.channel.persistedAuthState` is package metadata for a tiny checker
 module:
 
 ```json
 {
-  "openclaw": {
+  "merclaw": {
     "channel": {
       "id": "whatsapp",
       "persistedAuthState": {
@@ -1350,12 +1350,12 @@ repair runtime dependencies, or decide whether a channel runtime should load.
 The target export should be a small function that reads persisted state only; do
 not route it through the full channel runtime barrel.
 
-`openclaw.channel.configuredState` follows the same shape for cheap env-only
+`merclaw.channel.configuredState` follows the same shape for cheap env-only
 configured checks:
 
 ```json
 {
-  "openclaw": {
+  "merclaw": {
     "channel": {
       "id": "telegram",
       "configuredState": {
@@ -1374,7 +1374,7 @@ hook instead.
 
 ## Discovery precedence (duplicate plugin ids)
 
-OpenClaw discovers plugins from several roots. For the raw filesystem scan
+MerClaw discovers plugins from several roots. For the raw filesystem scan
 order, see [Plugin scan
 order](/gateway/configuration-reference#plugin-scan-order). If two discoveries
 share the same `id`, only the **highest-precedence** manifest is kept;
@@ -1383,8 +1383,8 @@ lower-precedence duplicates are dropped instead of loading beside it.
 Precedence, highest to lowest:
 
 1. **Config-selected** — a path explicitly pinned in `plugins.entries.<id>`
-2. **Bundled** — plugins shipped with OpenClaw
-3. **Global install** — plugins installed into the global OpenClaw plugin root
+2. **Bundled** — plugins shipped with MerClaw
+3. **Global install** — plugins installed into the global MerClaw plugin root
 4. **Workspace** — plugins discovered relative to the current workspace
 
 Implications:
@@ -1399,7 +1399,7 @@ Implications:
 - **Every plugin must ship a JSON Schema**, even if it accepts no config.
 - An empty schema is acceptable (for example, `{ "type": "object", "additionalProperties": false }`).
 - Schemas are validated at config read/write time, not at runtime.
-- When extending or forking a bundled plugin with new config keys, update that plugin's `openclaw.plugin.json` `configSchema` at the same time. Bundled plugin schemas are strict, so adding `plugins.entries.<id>.config.myNewKey` in user config without adding `myNewKey` to `configSchema.properties` will be rejected before the plugin runtime loads.
+- When extending or forking a bundled plugin with new config keys, update that plugin's `merclaw.plugin.json` `configSchema` at the same time. Bundled plugin schemas are strict, so adding `plugins.entries.<id>.config.myNewKey` in user config without adding `myNewKey` to `configSchema.properties` will be rejected before the plugin runtime loads.
 
 Example schema extension:
 
@@ -1432,13 +1432,13 @@ See [Configuration reference](/gateway/configuration) for the full `plugins.*` s
 
 ## Notes
 
-- The manifest is **required for native OpenClaw plugins**, including local filesystem loads. Runtime still loads the plugin module separately; the manifest is only for discovery + validation.
+- The manifest is **required for native MerClaw plugins**, including local filesystem loads. Runtime still loads the plugin module separately; the manifest is only for discovery + validation.
 - Native manifests are parsed with JSON5, so comments, trailing commas, and unquoted keys are accepted as long as the final value is still an object.
 - Only documented manifest fields are read by the manifest loader. Avoid custom top-level keys.
 - `channels`, `providers`, `cliBackends`, and `skills` can all be omitted when a plugin does not need them.
 - `providerCatalogEntry` must stay lightweight and should not import broad runtime code; use it for static provider catalog metadata or narrow discovery descriptors, not request-time execution.
 - Exclusive plugin kinds are selected through `plugins.slots.*`: `kind: "memory"` via `plugins.slots.memory`, `kind: "context-engine"` via `plugins.slots.contextEngine` (default `legacy`).
-- Declare exclusive plugin kind in this manifest. Runtime-entry `OpenClawPluginDefinition.kind` is deprecated and remains only as a compatibility fallback for older plugins.
+- Declare exclusive plugin kind in this manifest. Runtime-entry `MerClawPluginDefinition.kind` is deprecated and remains only as a compatibility fallback for older plugins.
 - Env-var metadata (`setup.providers[].envVars`, deprecated `providerAuthEnvVars`, and `channelEnvVars`) is declarative only. Status, audit, cron delivery validation, and other read-only surfaces still apply plugin trust and effective activation policy before treating an env var as configured.
 - For runtime wizard metadata that requires provider code, see [Provider runtime hooks](/plugins/architecture-internals#provider-runtime-hooks).
 - If your plugin depends on native modules, document the build steps and any package-manager allowlist requirements (for example, pnpm `allow-build-scripts` + `pnpm rebuild <package>`).

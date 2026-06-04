@@ -1,21 +1,21 @@
 import path from "node:path";
-import { buildModelAliasIndex, resolveModelRefFromString } from "openclaw/plugin-sdk/agent-runtime";
+import { buildModelAliasIndex, resolveModelRefFromString } from "merclaw/plugin-sdk/agent-runtime";
 import {
   optionalFiniteNumberSchema,
   optionalPositiveIntegerSchema,
-} from "openclaw/plugin-sdk/channel-actions";
+} from "merclaw/plugin-sdk/channel-actions";
 import {
   type JsonSchemaObject,
   validateJsonSchemaValue,
-} from "openclaw/plugin-sdk/json-schema-runtime";
-import { readFiniteNumberParam, readPositiveIntegerParam } from "openclaw/plugin-sdk/param-readers";
+} from "merclaw/plugin-sdk/json-schema-runtime";
+import { readFiniteNumberParam, readPositiveIntegerParam } from "merclaw/plugin-sdk/param-readers";
 import {
   asPositiveSafeInteger,
   normalizeOptionalString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/string-coerce-runtime";
 import { Type } from "typebox";
-import { resolvePreferredOpenClawTmpDir, withTempWorkspace } from "../api.js";
-import type { OpenClawPluginApi } from "../api.js";
+import { resolvePreferredMerClawTmpDir, withTempWorkspace } from "../api.js";
+import type { MerClawPluginApi } from "../api.js";
 
 function stripCodeFences(s: string): string {
   const trimmed = s.trim();
@@ -53,7 +53,7 @@ function stripDuplicateProviderPrefix(provider: string | undefined, model: strin
 }
 
 function resolveLlmTaskModelRef(params: {
-  api: OpenClawPluginApi;
+  api: MerClawPluginApi;
   provider?: string;
   rawModel?: string;
 }): { provider?: string; model?: string } {
@@ -112,13 +112,13 @@ type LlmTaskParams = {
   timeoutMs?: unknown;
 };
 
-type ThinkingPolicy = ReturnType<OpenClawPluginApi["runtime"]["agent"]["resolveThinkingPolicy"]>;
+type ThinkingPolicy = ReturnType<MerClawPluginApi["runtime"]["agent"]["resolveThinkingPolicy"]>;
 
 export const llmTaskToolDefinition = {
   name: "llm-task",
   label: "LLM Task",
   description:
-    "Run a generic JSON-only LLM task and return schema-validated JSON. Designed for orchestration from Lobster workflows via openclaw.invoke.",
+    "Run a generic JSON-only LLM task and return schema-validated JSON. Designed for orchestration from Lobster workflows via merclaw.invoke.",
   parameters: Type.Object({
     prompt: Type.String({ description: "Task instruction for the LLM." }),
     input: Type.Optional(Type.Unknown({ description: "Optional input payload for the task." })),
@@ -145,12 +145,12 @@ function formatThinkingPolicy(policy: ThinkingPolicy): string {
 
 function supportsThinkingPolicyLevel(
   policy: ThinkingPolicy,
-  level: ReturnType<OpenClawPluginApi["runtime"]["agent"]["normalizeThinkingLevel"]>,
+  level: ReturnType<MerClawPluginApi["runtime"]["agent"]["normalizeThinkingLevel"]>,
 ): boolean {
   return Boolean(level) && policy.levels.some((entry) => entry.id === level);
 }
 
-export function createLlmTaskTool(api: OpenClawPluginApi) {
+export function createLlmTaskTool(api: MerClawPluginApi) {
   return {
     ...llmTaskToolDefinition,
 
@@ -211,7 +211,7 @@ export function createLlmTaskTool(api: OpenClawPluginApi) {
 
       const thinkingRaw =
         typeof params.thinking === "string" && params.thinking.trim() ? params.thinking : undefined;
-      let thinkLevel: ReturnType<OpenClawPluginApi["runtime"]["agent"]["normalizeThinkingLevel"]> =
+      let thinkLevel: ReturnType<MerClawPluginApi["runtime"]["agent"]["normalizeThinkingLevel"]> =
         undefined;
       if (thinkingRaw) {
         const thinkingPolicy = api.runtime.agent.resolveThinkingPolicy({ provider, model });
@@ -260,7 +260,7 @@ export function createLlmTaskTool(api: OpenClawPluginApi) {
       const fullPrompt = `${system}\n\nTASK:\n${prompt}\n\nINPUT_JSON:\n${inputJson}\n`;
 
       return await withTempWorkspace(
-        { rootDir: resolvePreferredOpenClawTmpDir(), prefix: "openclaw-llm-task-" },
+        { rootDir: resolvePreferredMerClawTmpDir(), prefix: "merclaw-llm-task-" },
         async ({ dir: tmpDir }) => {
           const sessionId = `llm-task-${Date.now()}`;
           const sessionFile = path.join(tmpDir, "session.json");

@@ -7,7 +7,7 @@ import { runNpmVerifyCommand } from "../../scripts/lib/npm-verify-exec.ts";
 const tempDirs: string[] = [];
 
 function makeTempRoot(): string {
-  const root = mkdtempSync(path.join(tmpdir(), "openclaw-npm-verify-exec-"));
+  const root = mkdtempSync(path.join(tmpdir(), "merclaw-npm-verify-exec-"));
   tempDirs.push(root);
   return root;
 }

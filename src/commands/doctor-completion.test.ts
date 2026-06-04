@@ -10,7 +10,7 @@ function status(overrides: Partial<ShellCompletionStatus> = {}): ShellCompletion
     shell: "zsh",
     profileInstalled: true,
     cacheExists: true,
-    cachePath: "/tmp/openclaw.zsh",
+    cachePath: "/tmp/merclaw.zsh",
     usesSlowPattern: false,
     ...overrides,
   };
@@ -31,7 +31,7 @@ describe("shell completion health mapping", () => {
       {
         kind: "state",
         action: "would-generate-completion-cache",
-        target: "/tmp/openclaw.zsh",
+        target: "/tmp/merclaw.zsh",
         dryRunSafe: true,
       },
       {
@@ -50,14 +50,14 @@ describe("shell completion health mapping", () => {
       expect.objectContaining({
         severity: "info",
         message: expect.stringContaining("cache is missing"),
-        fixHint: expect.stringContaining("openclaw doctor --fix"),
+        fixHint: expect.stringContaining("merclaw doctor --fix"),
       }),
     ]);
     expect(shellCompletionStatusToRepairEffects(current)).toEqual([
       {
         kind: "state",
         action: "would-regenerate-completion-cache",
-        target: "/tmp/openclaw.zsh",
+        target: "/tmp/merclaw.zsh",
         dryRunSafe: true,
       },
     ]);

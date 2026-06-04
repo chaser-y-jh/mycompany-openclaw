@@ -142,7 +142,7 @@ Run the helper directly so target selection, engine choice, structured validatio
 
 ## Helper
 
-OpenClaw repo-local helper:
+MerClaw repo-local helper:
 
 ```bash
 .agents/skills/autoreview/scripts/autoreview --help

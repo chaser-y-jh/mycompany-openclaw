@@ -51,8 +51,8 @@ describe("whatsapp setup entry", () => {
       detectLegacyStateMigrations({
         cfg: {},
         env: {},
-        oauthDir: "/tmp/openclaw-whatsapp-empty",
-        stateDir: "/tmp/openclaw-state",
+        oauthDir: "/tmp/merclaw-whatsapp-empty",
+        stateDir: "/tmp/merclaw-state",
       }),
     ).toStrictEqual([]);
     const legacySessionSurface = setupEntry.loadLegacySessionSurface?.(setupEntryLoadOptions);

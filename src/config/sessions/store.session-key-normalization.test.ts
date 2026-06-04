@@ -42,7 +42,7 @@ function createSignalGroupContext(): MsgContext {
 
 describe("session store key normalization", () => {
   const suiteRootTracker = createSuiteTempRootTracker({
-    prefix: "openclaw-session-key-normalize-",
+    prefix: "merclaw-session-key-normalize-",
   });
   let tempDir = "";
   let storePath = "";

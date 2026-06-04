@@ -47,7 +47,7 @@ import { readRoutePositiveInteger } from "./route-numeric.js";
 import type { BrowserResponse, BrowserRouteRegistrar } from "./types.js";
 import { asyncBrowserRoute, jsonError, toBoolean, toStringOrEmpty } from "./utils.js";
 
-const CHROME_MCP_OVERLAY_ATTR = "data-openclaw-mcp-overlay";
+const CHROME_MCP_OVERLAY_ATTR = "data-merclaw-mcp-overlay";
 
 async function collectChromeMcpSnapshotUrls(params: {
   profileName: string;

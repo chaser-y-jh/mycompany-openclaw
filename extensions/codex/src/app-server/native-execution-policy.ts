@@ -1,6 +1,6 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { resolveSandboxRuntimeStatus } from "openclaw/plugin-sdk/sandbox";
-import { getSessionEntry, type SessionEntry } from "openclaw/plugin-sdk/session-store-runtime";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { resolveSandboxRuntimeStatus } from "merclaw/plugin-sdk/sandbox";
+import { getSessionEntry, type SessionEntry } from "merclaw/plugin-sdk/session-store-runtime";
 
 type ExecHost = "sandbox" | "gateway" | "node";
 type ExecTarget = "auto" | ExecHost;
@@ -10,7 +10,7 @@ type ExecHostOverride = {
   node?: string;
 };
 
-type AgentEntry = NonNullable<NonNullable<OpenClawConfig["agents"]>["list"]>[number];
+type AgentEntry = NonNullable<NonNullable<MerClawConfig["agents"]>["list"]>[number];
 
 const DEFAULT_AGENT_ID = "main";
 const VALID_AGENT_ID_PATTERN = /^[a-z0-9][a-z0-9_-]{0,63}$/i;
@@ -27,7 +27,7 @@ export type CodexNativeExecutionPolicy = {
 };
 
 export function resolveCodexNativeExecutionPolicy(params: {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   sessionEntry?: SessionEntry;
   sessionKey?: string;
   sessionId?: string;
@@ -80,7 +80,7 @@ export function resolveCodexNativeExecutionPolicy(params: {
     effectiveExecHost,
     node,
     blockReason:
-      "OpenClaw exec host=node is active for this session. Codex app-server native execution cannot route shell, filesystem, MCP, or app-backed work through the selected OpenClaw node.",
+      "MerClaw exec host=node is active for this session. Codex app-server native execution cannot route shell, filesystem, MCP, or app-backed work through the selected MerClaw node.",
   };
 }
 
@@ -89,15 +89,15 @@ export function formatCodexNativeNodeExecBlock(params: {
   reason?: string;
 }): string {
   return [
-    `Codex-native ${params.surface} is unavailable because OpenClaw exec host=node is active for this session.`,
+    `Codex-native ${params.surface} is unavailable because MerClaw exec host=node is active for this session.`,
     params.reason ??
-      "Codex app-server native execution cannot route execution through the selected OpenClaw node.",
-    "Use a normal Codex harness turn so OpenClaw exec/process tools run on the node, or switch exec host to gateway for native Codex app-server execution.",
+      "Codex app-server native execution cannot route execution through the selected MerClaw node.",
+    "Use a normal Codex harness turn so MerClaw exec/process tools run on the node, or switch exec host to gateway for native Codex app-server execution.",
   ].join(" ");
 }
 
 function resolvePolicyAgentId(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   sessionKey?: string;
   agentId?: string;
 }): string {
@@ -115,7 +115,7 @@ function resolvePolicyAgentId(params: {
 }
 
 function resolvePolicyAgentExec(params: {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   agentId: string;
 }): ExecHostOverride | undefined {
   return listAgentEntries(params.config).find(
@@ -123,7 +123,7 @@ function resolvePolicyAgentExec(params: {
   )?.tools?.exec;
 }
 
-function listAgentEntries(config: OpenClawConfig): AgentEntry[] {
+function listAgentEntries(config: MerClawConfig): AgentEntry[] {
   return (config.agents?.list ?? []).filter(
     (entry): entry is AgentEntry => entry !== null && typeof entry === "object",
   );

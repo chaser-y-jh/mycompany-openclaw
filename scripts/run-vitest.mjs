@@ -20,8 +20,8 @@ const SUPPRESSED_VITEST_STDERR_PATTERNS = ["[PLUGIN_TIMINGS]"];
 export const DEFAULT_VITEST_NO_OUTPUT_TIMEOUT_MS = 120_000;
 export const DEFAULT_VITEST_NO_OUTPUT_HEARTBEAT_MS = 60_000;
 export const DEFAULT_LONG_RUNNING_VITEST_NO_OUTPUT_TIMEOUT_MS = 300_000;
-const VITEST_NO_OUTPUT_TIMEOUT_ENV_KEY = "OPENCLAW_VITEST_NO_OUTPUT_TIMEOUT_MS";
-const VITEST_NO_OUTPUT_HEARTBEAT_ENV_KEY = "OPENCLAW_VITEST_NO_OUTPUT_HEARTBEAT_MS";
+const VITEST_NO_OUTPUT_TIMEOUT_ENV_KEY = "MERCLAW_VITEST_NO_OUTPUT_TIMEOUT_MS";
+const VITEST_NO_OUTPUT_HEARTBEAT_ENV_KEY = "MERCLAW_VITEST_NO_OUTPUT_HEARTBEAT_MS";
 const UI_VITEST_CONFIG = "test/vitest/vitest.ui.config.ts";
 const UNIT_UI_VITEST_CONFIG = "test/vitest/vitest.unit-ui.config.ts";
 const TOOLING_VITEST_CONFIG = "test/vitest/vitest.tooling.config.ts";
@@ -31,7 +31,7 @@ const LONG_RUNNING_VITEST_CONFIGS = new Set([
 ]);
 const TOOLING_EXCLUDED_TESTS = new Set([
   ...boundaryTestFiles,
-  "test/scripts/openclaw-e2e-instance.test.ts",
+  "test/scripts/merclaw-e2e-instance.test.ts",
 ]);
 const EXPLICIT_TEST_FILE_RE = /\.(?:test|e2e|live)\.(?:[cm]?[jt]sx?)$/u;
 const GLOB_PATTERN_CHARS_RE = /[*?[\]{}]/u;
@@ -101,7 +101,7 @@ function parsePositiveInt(value) {
 }
 
 export function resolveVitestNodeArgs(env = process.env) {
-  if (isTruthyEnvValue(env.OPENCLAW_VITEST_ENABLE_MAGLEV)) {
+  if (isTruthyEnvValue(env.MERCLAW_VITEST_ENABLE_MAGLEV)) {
     return [];
   }
 
@@ -140,7 +140,7 @@ export function resolveVitestCliEntry({
   } catch (error) {
     if (isMissingVitestResolveError(error)) {
       const wrappedError = new Error(resolveMissingVitestDependencyMessage(baseDir, fsImpl));
-      wrappedError.code = "OPENCLAW_MISSING_VITEST";
+      wrappedError.code = "MERCLAW_MISSING_VITEST";
       throw wrappedError;
     }
     throw error;
@@ -313,7 +313,7 @@ function shouldApplyNativeWorkerBudget(env) {
     return false;
   }
   return (
-    env.OPENCLAW_TEST_PROJECTS_SERIAL === "1" || resolveExplicitVitestWorkerBudget(env) !== null
+    env.MERCLAW_TEST_PROJECTS_SERIAL === "1" || resolveExplicitVitestWorkerBudget(env) !== null
   );
 }
 
@@ -322,7 +322,7 @@ function resolveNativeWorkerCount(env) {
 }
 
 function resolveExplicitVitestWorkerBudget(env) {
-  return parsePositiveInt(env.OPENCLAW_VITEST_MAX_WORKERS ?? env.OPENCLAW_TEST_WORKERS);
+  return parsePositiveInt(env.MERCLAW_VITEST_MAX_WORKERS ?? env.MERCLAW_TEST_WORKERS);
 }
 
 export function shouldSuppressVitestStderrLine(line) {
@@ -801,7 +801,7 @@ function main(argv = process.argv.slice(2), env = process.env) {
   try {
     vitestCliEntry = resolveVitestCliEntry();
   } catch (error) {
-    if (error instanceof Error && error.code === "OPENCLAW_MISSING_VITEST") {
+    if (error instanceof Error && error.code === "MERCLAW_MISSING_VITEST") {
       console.error(error.message);
       process.exit(1);
     }

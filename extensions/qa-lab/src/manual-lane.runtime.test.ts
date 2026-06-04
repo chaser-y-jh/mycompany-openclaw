@@ -1,4 +1,4 @@
-import { MAX_TIMER_TIMEOUT_MS } from "openclaw/plugin-sdk/number-runtime";
+import { MAX_TIMER_TIMEOUT_MS } from "merclaw/plugin-sdk/number-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const { startQaLabServer, startQaGatewayChild, startQaProviderServer } = vi.hoisted(() => ({
@@ -82,7 +82,7 @@ describe("runQaManualLane", () => {
 
   it("starts the mock provider and threads its base url into the gateway child", async () => {
     const result = await runQaManualLane({
-      repoRoot: "/tmp/openclaw-repo",
+      repoRoot: "/tmp/merclaw-repo",
       providerMode: "mock-openai",
       primaryModel: "mock-openai/gpt-5.5",
       alternateModel: "mock-openai/gpt-5.5-alt",
@@ -93,11 +93,11 @@ describe("runQaManualLane", () => {
 
     expect(startQaProviderServer).toHaveBeenCalledWith("mock-openai");
     const [gatewayOptions] = startQaGatewayChild.mock.calls[0] ?? [];
-    expect(gatewayOptions?.repoRoot).toBe("/tmp/openclaw-repo");
+    expect(gatewayOptions?.repoRoot).toBe("/tmp/merclaw-repo");
     expect(gatewayOptions?.providerMode).toBe("mock-openai");
     expect(gatewayOptions?.providerBaseUrl).toBe("http://127.0.0.1:44080/v1");
     expect(startQaLabServer).toHaveBeenCalledWith({
-      repoRoot: "/tmp/openclaw-repo",
+      repoRoot: "/tmp/merclaw-repo",
       embeddedGateway: "disabled",
     });
     expect(result.reply).toBe("Protocol note: mock reply.");
@@ -108,7 +108,7 @@ describe("runQaManualLane", () => {
 
   it("skips the mock provider bootstrap for live frontier runs", async () => {
     const result = await runQaManualLane({
-      repoRoot: "/tmp/openclaw-repo",
+      repoRoot: "/tmp/merclaw-repo",
       providerMode: "live-frontier",
       primaryModel: "openai/gpt-5.5",
       alternateModel: "openai/gpt-5.5",
@@ -119,7 +119,7 @@ describe("runQaManualLane", () => {
 
     expect(startQaProviderServer).toHaveBeenCalledWith("live-frontier");
     expect(startQaLabServer).toHaveBeenCalledWith({
-      repoRoot: "/tmp/openclaw-repo",
+      repoRoot: "/tmp/merclaw-repo",
       embeddedGateway: "disabled",
     });
     const [gatewayOptions] = startQaGatewayChild.mock.calls[0] ?? [];
@@ -130,7 +130,7 @@ describe("runQaManualLane", () => {
 
   it("caps the gateway client timeout for oversized manual waits", async () => {
     const result = await runQaManualLane({
-      repoRoot: "/tmp/openclaw-repo",
+      repoRoot: "/tmp/merclaw-repo",
       providerMode: "mock-openai",
       primaryModel: "mock-openai/gpt-5.5",
       alternateModel: "mock-openai/gpt-5.5-alt",

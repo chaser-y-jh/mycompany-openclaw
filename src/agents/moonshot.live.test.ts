@@ -1,4 +1,4 @@
-import { completeSimple, type Model } from "openclaw/plugin-sdk/llm";
+import { completeSimple, type Model } from "merclaw/plugin-sdk/llm";
 import { describe, expect, it } from "vitest";
 import {
   createSingleUserPromptMessage,

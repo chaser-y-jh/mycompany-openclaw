@@ -1,6 +1,6 @@
-import { loadAuthProfileStoreWithoutExternalProfiles } from "openclaw/plugin-sdk/agent-runtime";
-import type { MigrationItem, MigrationProviderContext } from "openclaw/plugin-sdk/plugin-entry";
-import { updateAuthProfileStoreWithLock } from "openclaw/plugin-sdk/provider-auth";
+import { loadAuthProfileStoreWithoutExternalProfiles } from "merclaw/plugin-sdk/agent-runtime";
+import type { MigrationItem, MigrationProviderContext } from "merclaw/plugin-sdk/plugin-entry";
+import { updateAuthProfileStoreWithLock } from "merclaw/plugin-sdk/provider-auth";
 import {
   applyAuthProfileConfigWithConflictCheck,
   hasAuthProfileConfigConflict,
@@ -219,7 +219,7 @@ async function buildOpenCodeSecretCandidates(
       secretField: "key",
     });
   }
-  // OpenClaw's Copilot token profile cannot preserve OpenCode enterprise routing yet.
+  // MerClaw's Copilot token profile cannot preserve OpenCode enterprise routing yet.
   if (readString(githubCopilot.refresh) && !githubCopilotEnterpriseUrl) {
     candidates.push({
       id: "secret:github-copilot:opencode-auth-json",

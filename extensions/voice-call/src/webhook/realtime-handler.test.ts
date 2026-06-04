@@ -3,7 +3,7 @@ import type {
   RealtimeVoiceBridge,
   RealtimeVoiceProviderPlugin,
   RealtimeVoiceToolCallEvent,
-} from "openclaw/plugin-sdk/realtime-voice";
+} from "merclaw/plugin-sdk/realtime-voice";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { WebSocket } from "ws";
 import type { VoiceCallRealtimeConfig } from "../config.js";
@@ -844,7 +844,7 @@ describe("RealtimeCallHandler path routing", () => {
       },
       realtimeProvider: makeRealtimeProvider(createBridge),
     });
-    handler.registerToolHandler("openclaw_agent_consult", (_args, _callId, context) => {
+    handler.registerToolHandler("merclaw_agent_consult", (_args, _callId, context) => {
       receivedPartialTranscript = context.partialUserTranscript;
       return new Promise((resolve) => {
         resolveConsult = resolve;
@@ -871,7 +871,7 @@ describe("RealtimeCallHandler path routing", () => {
         callbacks?.onToolCall?.({
           itemId: "item-1",
           callId: "consult-call",
-          name: "openclaw_agent_consult",
+          name: "merclaw_agent_consult",
           args: { question: "Are the basement lights on?" },
         });
         await vi.advanceTimersByTimeAsync(350);
@@ -888,7 +888,7 @@ describe("RealtimeCallHandler path routing", () => {
           }
           const payload = workingCall[1] as Record<string, unknown> | undefined;
           expect(payload?.status).toBe("working");
-          expect(payload?.tool).toBe("openclaw_agent_consult");
+          expect(payload?.tool).toBe("merclaw_agent_consult");
           expect(typeof payload?.message).toBe("string");
           expect(workingCall[2]).toEqual({ willContinue: true });
         });
@@ -973,7 +973,7 @@ describe("RealtimeCallHandler path routing", () => {
     const consult = vi.fn<
       (args: unknown, callId: string, context: Record<string, unknown>) => Promise<{ text: string }>
     >(async () => ({ text: "I created the smoke test file." }));
-    handler.registerToolHandler("openclaw_agent_consult", consult);
+    handler.registerToolHandler("merclaw_agent_consult", consult);
     const server = await startRealtimeServer(handler);
 
     try {
@@ -1001,13 +1001,13 @@ describe("RealtimeCallHandler path routing", () => {
           question: "Create a smoke test file for me.",
         });
         expect(JSON.stringify(args)).not.toContain("consultPolicy");
-        expect(JSON.stringify(args)).not.toContain("openclaw_agent_consult");
+        expect(JSON.stringify(args)).not.toContain("merclaw_agent_consult");
         expect(callId).toBe("call-1");
         expect(context).toEqual({});
         await waitForRealtimeTest(() => {
           expect(sendUserMessage).toHaveBeenCalledTimes(1);
           expect(requireFirstMockCall(sendUserMessage.mock.calls, "user message")).toEqual([
-            "Internal OpenClaw consult result is ready.\nDo not call tools for this internal result.\nSpeak the following answer to the caller now, briefly and naturally:\nI created the smoke test file.",
+            "Internal MerClaw consult result is ready.\nDo not call tools for this internal result.\nSpeak the following answer to the caller now, briefly and naturally:\nI created the smoke test file.",
           ]);
         });
       } finally {
@@ -1134,7 +1134,7 @@ describe("RealtimeCallHandler path routing", () => {
     const consult = vi.fn<
       (args: unknown, callId: string, context: Record<string, unknown>) => Promise<{ text: string }>
     >(async () => ({ text: "I sent it." }));
-    handler.registerToolHandler("openclaw_agent_consult", consult);
+    handler.registerToolHandler("merclaw_agent_consult", consult);
     const server = await startRealtimeServer(handler);
 
     try {
@@ -1155,7 +1155,7 @@ describe("RealtimeCallHandler path routing", () => {
         callbacks?.onToolCall?.({
           itemId: "item-1",
           callId: "consult-call",
-          name: "openclaw_agent_consult",
+          name: "merclaw_agent_consult",
           args: { question: "message" },
         });
         await vi.advanceTimersByTimeAsync(50);
@@ -1236,7 +1236,7 @@ describe("RealtimeCallHandler path routing", () => {
       },
     );
     const consult = vi.fn(async () => ({ text: "Native consult result." }));
-    handler.registerToolHandler("openclaw_agent_consult", consult);
+    handler.registerToolHandler("merclaw_agent_consult", consult);
     const server = await startRealtimeServer(handler);
 
     try {
@@ -1257,7 +1257,7 @@ describe("RealtimeCallHandler path routing", () => {
         callbacks?.onToolCall?.({
           itemId: "item-1",
           callId: "consult-call",
-          name: "openclaw_agent_consult",
+          name: "merclaw_agent_consult",
           args: { question: "Send me a Discord message." },
         });
 
@@ -1329,7 +1329,7 @@ describe("RealtimeCallHandler path routing", () => {
         realtimeProvider: makeRealtimeProvider(createBridge),
       },
     );
-    handler.registerToolHandler("openclaw_agent_consult", async () => ({ text: "Fast context." }));
+    handler.registerToolHandler("merclaw_agent_consult", async () => ({ text: "Fast context." }));
     const server = await startRealtimeServer(handler);
 
     try {
@@ -1348,7 +1348,7 @@ describe("RealtimeCallHandler path routing", () => {
         callbacks?.onToolCall?.({
           itemId: "item-1",
           callId: "consult-call",
-          name: "openclaw_agent_consult",
+          name: "merclaw_agent_consult",
           args: { question: "What do you remember?" },
         });
 

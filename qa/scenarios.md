@@ -1,4 +1,4 @@
-# OpenClaw QA Scenarios
+# MerClaw QA Scenarios
 
 Canonical scenario source now lives in:
 

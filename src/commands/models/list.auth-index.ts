@@ -1,4 +1,4 @@
-import { normalizeProviderIdForAuth } from "@openclaw/model-catalog-core/provider-id";
+import { normalizeProviderIdForAuth } from "@merclaw/model-catalog-core/provider-id";
 import type { AuthProfileStore } from "../../agents/auth-profiles/types.js";
 import type { AuthProfileCredential } from "../../agents/auth-profiles/types.js";
 import {
@@ -17,7 +17,7 @@ import {
   openAIProviderUsesCodexRuntimeByDefault,
 } from "../../agents/openai-routing.js";
 import { resolveAgentModelPrimaryValue } from "../../config/model-input.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import type { PluginMetadataSnapshot } from "../../plugins/plugin-metadata-snapshot.types.js";
 import { loadPluginRegistrySnapshotWithMetadata } from "../../plugins/plugin-registry.js";
 
@@ -27,7 +27,7 @@ export type ModelListAuthIndex = {
 };
 
 export type CreateModelListAuthIndexParams = {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   authStore: AuthProfileStore;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
@@ -55,7 +55,7 @@ function normalizeStoredAuthProvider(
 }
 
 function listValidatedSyntheticAuthProviderRefs(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
   metadataSnapshot?: PluginMetadataSnapshot;

@@ -7,21 +7,21 @@ import {
   MIGRATION_REASON_TARGET_EXISTS,
   summarizeMigrationItems,
   writeMigrationConfigPath,
-} from "openclaw/plugin-sdk/migration";
+} from "merclaw/plugin-sdk/migration";
 import {
   archiveMigrationItem,
   copyMigrationFileItem,
   withCachedMigrationConfigRuntime,
   writeMigrationReport,
-} from "openclaw/plugin-sdk/migration-runtime";
-import { parseStrictNonNegativeInteger } from "openclaw/plugin-sdk/number-runtime";
+} from "merclaw/plugin-sdk/migration-runtime";
+import { parseStrictNonNegativeInteger } from "merclaw/plugin-sdk/number-runtime";
 import type {
   MigrationApplyResult,
   MigrationItem,
   MigrationPlan,
   MigrationProviderContext,
-} from "openclaw/plugin-sdk/plugin-entry";
-import { uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/plugin-entry";
+import { uniqueStrings } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { defaultCodexAppInventoryCache } from "../app-server/app-inventory-cache.js";
 import {
   resolveCodexAppServerAuthAccountCacheKey,
@@ -63,11 +63,11 @@ const CODEX_PLUGIN_AUTH_REQUIRED_REASON = "auth_required";
 const CODEX_PLUGIN_NOT_SELECTED_REASON = "not selected for migration";
 const CODEX_CONFIG_PATCH_MODE_RETURN = "return";
 const CODEX_PLUGIN_LOAD_WARNING =
-  "Some Codex plugins could not be migrated. Run `openclaw migrate codex` after onboarding.";
+  "Some Codex plugins could not be migrated. Run `merclaw migrate codex` after onboarding.";
 const TARGET_CODEX_MARKETPLACE_DISCOVERY_POLL_MS = 250;
 const TARGET_CODEX_MARKETPLACE_DISCOVERY_TIMEOUT_MS = 30_000;
 const TARGET_CODEX_MARKETPLACE_DISCOVERY_TIMEOUT_ENV =
-  "OPENCLAW_CODEX_MIGRATION_PLUGIN_LIST_TIMEOUT_MS";
+  "MERCLAW_CODEX_MIGRATION_PLUGIN_LIST_TIMEOUT_MS";
 
 export type CodexMigrationTargetAppServerPreparation = {
   dispose: () => Promise<void>;

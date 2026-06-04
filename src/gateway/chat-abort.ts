@@ -2,10 +2,10 @@ import {
   asDateTimestampMs,
   resolveDateTimestampMs,
   resolveExpiresAtMsFromDurationMs,
-} from "@openclaw/normalization-core/number-coercion";
+} from "@merclaw/normalization-core/number-coercion";
 import { resolveDefaultAgentId } from "../agents/agent-scope-config.js";
 import { isAbortRequestText } from "../auto-reply/reply/abort-primitives.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { emitAgentEvent } from "../infra/agent-events.js";
 
 const DEFAULT_CHAT_RUN_ABORT_GRACE_MS = 60_000;
@@ -173,7 +173,7 @@ export type ChatAbortOps = {
     sessionKey?: string,
   ) => { sessionKey: string; agentId?: string; clientRunId: string } | undefined;
   agentRunSeq: Map<string, number>;
-  getRuntimeConfig?: () => OpenClawConfig;
+  getRuntimeConfig?: () => MerClawConfig;
   broadcast: (event: string, payload: unknown, opts?: { dropIfSlow?: boolean }) => void;
   nodeSendToSession: (sessionKey: string, event: string, payload: unknown) => void;
 };

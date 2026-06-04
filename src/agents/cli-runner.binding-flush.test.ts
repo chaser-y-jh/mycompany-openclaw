@@ -6,7 +6,7 @@ import {
 } from "./cli-runner.js";
 
 describe("isCliBindingFlushed", () => {
-  const workspaceDir = "/tmp/openclaw-workspace";
+  const workspaceDir = "/tmp/merclaw-workspace";
 
   beforeEach(() => {
     vi.useRealTimers();

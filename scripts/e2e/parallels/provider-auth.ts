@@ -29,7 +29,7 @@ export function resolveProviderAuth(input: {
       authKeyFlag: "anthropic-api-key",
       modelId:
         input.modelId ||
-        process.env.OPENCLAW_PARALLELS_ANTHROPIC_MODEL ||
+        process.env.MERCLAW_PARALLELS_ANTHROPIC_MODEL ||
         "anthropic/claude-sonnet-4-6",
     },
     minimax: {
@@ -37,13 +37,13 @@ export function resolveProviderAuth(input: {
       authChoice: "minimax-global-api",
       authKeyFlag: "minimax-api-key",
       modelId:
-        input.modelId || process.env.OPENCLAW_PARALLELS_MINIMAX_MODEL || "minimax/MiniMax-M2.7",
+        input.modelId || process.env.MERCLAW_PARALLELS_MINIMAX_MODEL || "minimax/MiniMax-M2.7",
     },
     openai: {
       apiKeyEnv: input.apiKeyEnv || "OPENAI_API_KEY",
       authChoice: "openai-api-key",
       authKeyFlag: "openai-api-key",
-      modelId: input.modelId || process.env.OPENCLAW_PARALLELS_OPENAI_MODEL || "openai/gpt-5.5",
+      modelId: input.modelId || process.env.MERCLAW_PARALLELS_OPENAI_MODEL || "openai/gpt-5.5",
     },
   };
   const resolved = providerDefaults[input.provider];
@@ -63,11 +63,11 @@ export function resolveWindowsProviderAuth(input: {
   if (input.provider !== "openai" || input.modelId) {
     return auth;
   }
-  const windowsModel = process.env.OPENCLAW_PARALLELS_WINDOWS_OPENAI_MODEL?.trim();
+  const windowsModel = process.env.MERCLAW_PARALLELS_WINDOWS_OPENAI_MODEL?.trim();
   if (windowsModel) {
     return { ...auth, modelId: windowsModel };
   }
-  if (process.env.OPENCLAW_PARALLELS_OPENAI_MODEL?.trim()) {
+  if (process.env.MERCLAW_PARALLELS_OPENAI_MODEL?.trim()) {
     return auth;
   }
   return { ...auth, modelId: "openai/gpt-5.5" };
@@ -82,13 +82,13 @@ export function resolveParallelsModelTimeoutSeconds(platform?: Platform): number
   const platformEnvName =
     platform === undefined
       ? undefined
-      : `OPENCLAW_PARALLELS_${platform.toUpperCase()}_MODEL_TIMEOUT_S`;
+      : `MERCLAW_PARALLELS_${platform.toUpperCase()}_MODEL_TIMEOUT_S`;
   const platformEnv = platformEnvName === undefined ? undefined : process.env[platformEnvName];
   const defaultSeconds = platform === "macos" || platform === "windows" ? 1800 : 900;
   if (platformEnvName && platformEnv?.trim()) {
     return parsePositiveInt(platformEnv, platformEnvName);
   }
-  return readPositiveIntEnv("OPENCLAW_PARALLELS_MODEL_TIMEOUT_S", defaultSeconds);
+  return readPositiveIntEnv("MERCLAW_PARALLELS_MODEL_TIMEOUT_S", defaultSeconds);
 }
 
 export function providerTimeoutConfigJson(
@@ -200,10 +200,10 @@ export function resolveLatestVersion(versionOverride = ""): string {
     "npm",
     [
       "view",
-      "openclaw",
+      "merclaw",
       "version",
       "--userconfig",
-      mkdtempSync(path.join(tmpdir(), "openclaw-npm-")),
+      mkdtempSync(path.join(tmpdir(), "merclaw-npm-")),
     ],
     {
       quiet: true,

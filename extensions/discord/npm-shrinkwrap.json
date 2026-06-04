@@ -1,11 +1,11 @@
 {
-  "name": "@openclaw/discord",
+  "name": "@merclaw/discord",
   "version": "2026.5.31",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
-      "name": "@openclaw/discord",
+      "name": "@merclaw/discord",
       "version": "2026.5.31",
       "dependencies": {
         "@discordjs/voice": "0.19.2",
@@ -16,10 +16,10 @@
         "ws": "8.21.0"
       },
       "peerDependencies": {
-        "openclaw": ">=2026.5.31"
+        "merclaw": ">=2026.5.31"
       },
       "peerDependenciesMeta": {
-        "openclaw": {
+        "merclaw": {
           "optional": true
         }
       }

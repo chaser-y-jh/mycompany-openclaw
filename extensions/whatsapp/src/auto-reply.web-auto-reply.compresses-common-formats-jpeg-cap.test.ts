@@ -1,5 +1,5 @@
 import fs from "node:fs/promises";
-import { createNoisyPngBuffer, createSolidPngBuffer } from "openclaw/plugin-sdk/test-fixtures";
+import { createNoisyPngBuffer, createSolidPngBuffer } from "merclaw/plugin-sdk/test-fixtures";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import {
   createMockWebListener,

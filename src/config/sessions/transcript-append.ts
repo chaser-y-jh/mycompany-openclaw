@@ -2,14 +2,14 @@ import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { StringDecoder } from "node:string_decoder";
-import { resolveTimestampMsToIsoString } from "@openclaw/normalization-core/number-coercion";
+import { resolveTimestampMsToIsoString } from "@merclaw/normalization-core/number-coercion";
 import type { AgentMessage } from "../../agents/runtime/index.js";
 import {
   acquireSessionWriteLock,
   resolveSessionWriteLockOptions,
 } from "../../agents/session-write-lock.js";
 import { redactTranscriptMessage } from "../../agents/transcript-redact.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { redactSecrets } from "../../logging/redact.js";
 import { createSessionTranscriptHeader } from "./transcript-header.js";
 import {
@@ -235,7 +235,7 @@ type AppendSessionTranscriptMessageParams<TMessage = unknown> = {
   idempotencyLookup?: "scan" | "caller-checked";
   /** Runs under the transcript write lock after idempotency replay checks and before append. */
   prepareMessageAfterIdempotencyCheck?: (message: TMessage) => TMessage | undefined;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
 };
 
 type AppendSessionTranscriptMessageResult<TMessage> = {

@@ -137,7 +137,7 @@ describe("resolveApiKeyForProfile openai refresh fallback", () => {
   let caseIndex = 0;
 
   beforeAll(async () => {
-    tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-refresh-fallback-"));
+    tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-codex-refresh-fallback-"));
     ({ resolveApiKeyForProfile } = await import("./oauth.js"));
     ({ resolveApiKeyForProvider } = await import("../model-auth.js"));
     ({ markAuthProfileSuccess } = await import("./profiles.js"));
@@ -161,8 +161,8 @@ describe("resolveApiKeyForProfile openai refresh fallback", () => {
     const caseRoot = path.join(tempRoot, `case-${++caseIndex}`);
     agentDir = path.join(caseRoot, "agents", "main", "agent");
     await fs.mkdir(agentDir, { recursive: true });
-    process.env.OPENCLAW_STATE_DIR = caseRoot;
-    process.env.OPENCLAW_AGENT_DIR = agentDir;
+    process.env.MERCLAW_STATE_DIR = caseRoot;
+    process.env.MERCLAW_AGENT_DIR = agentDir;
   });
 
   afterEach(async () => {

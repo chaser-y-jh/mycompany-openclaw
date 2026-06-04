@@ -1,16 +1,16 @@
 {
-  "name": "@openclaw/document-extract-plugin",
+  "name": "@merclaw/document-extract-plugin",
   "version": "2026.5.31",
   "private": true,
-  "description": "OpenClaw local document extraction plugin",
+  "description": "MerClaw local document extraction plugin",
   "type": "module",
   "dependencies": {
     "clawpdf": "0.3.0"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@merclaw/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ]

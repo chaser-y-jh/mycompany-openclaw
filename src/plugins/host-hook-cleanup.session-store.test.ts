@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { clearSessionStoreCacheForTest, saveSessionStore } from "../config/sessions/store.js";
 import type { SessionEntry } from "../config/sessions/types.js";
 import * as jsonFiles from "../infra/json-files.js";
-import { resolvePreferredOpenClawTmpDir } from "../infra/tmp-openclaw-dir.js";
+import { resolvePreferredMerClawTmpDir } from "../infra/tmp-merclaw-dir.js";
 import { runPluginHostCleanup } from "./host-hook-cleanup.js";
 import { createEmptyPluginRegistry } from "./registry-empty.js";
 
@@ -15,9 +15,9 @@ describe("plugin host cleanup session stores", () => {
   afterEach(async () => {
     clearSessionStoreCacheForTest();
     if (previousStateDir === undefined) {
-      delete process.env.OPENCLAW_STATE_DIR;
+      delete process.env.MERCLAW_STATE_DIR;
     } else {
-      process.env.OPENCLAW_STATE_DIR = previousStateDir;
+      process.env.MERCLAW_STATE_DIR = previousStateDir;
     }
     if (stateDir) {
       await fs.rm(stateDir, { recursive: true, force: true });
@@ -28,10 +28,10 @@ describe("plugin host cleanup session stores", () => {
 
   it("does not rewrite session stores when cleanup scans find no plugin-owned state", async () => {
     stateDir = await fs.mkdtemp(
-      path.join(resolvePreferredOpenClawTmpDir(), "openclaw-host-cleanup-noop-"),
+      path.join(resolvePreferredMerClawTmpDir(), "merclaw-host-cleanup-noop-"),
     );
-    previousStateDir = process.env.OPENCLAW_STATE_DIR;
-    process.env.OPENCLAW_STATE_DIR = stateDir;
+    previousStateDir = process.env.MERCLAW_STATE_DIR;
+    process.env.MERCLAW_STATE_DIR = stateDir;
     const storePath = path.join(stateDir, "sessions.json");
     await saveSessionStore(
       storePath,

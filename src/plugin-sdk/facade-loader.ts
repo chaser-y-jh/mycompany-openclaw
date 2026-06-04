@@ -17,18 +17,18 @@ const moduleLoaders: PluginModuleLoaderCache = new Map();
 const loadedFacadeModules = new Map<string, unknown>();
 const loadedFacadePluginIds = new Set<string>();
 let facadeLoaderSourceTransformFactory: PluginModuleLoaderFactory | undefined;
-let cachedOpenClawPackageRoot: string | undefined;
+let cachedMerClawPackageRoot: string | undefined;
 
-function getOpenClawPackageRoot() {
-  if (cachedOpenClawPackageRoot) {
-    return cachedOpenClawPackageRoot;
+function getMerClawPackageRoot() {
+  if (cachedMerClawPackageRoot) {
+    return cachedMerClawPackageRoot;
   }
-  cachedOpenClawPackageRoot =
+  cachedMerClawPackageRoot =
     resolveLoaderPackageRoot({
       modulePath: fileURLToPath(import.meta.url),
       moduleUrl: import.meta.url,
     }) ?? fileURLToPath(new URL("../..", import.meta.url));
-  return cachedOpenClawPackageRoot;
+  return cachedMerClawPackageRoot;
 }
 
 function resolveFacadeModuleLocation(params: {
@@ -40,7 +40,7 @@ function resolveFacadeModuleLocation(params: {
   return resolveBundledFacadeModuleLocation({
     ...params,
     currentModulePath: CURRENT_MODULE_PATH,
-    packageRoot: getOpenClawPackageRoot(),
+    packageRoot: getMerClawPackageRoot(),
     bundledPluginsDir,
   });
 }
@@ -140,8 +140,8 @@ export function loadFacadeModuleAtLocationSync<T extends object>(params: {
     absolutePath: location.modulePath,
     rootPath: location.boundaryRoot,
     boundaryLabel:
-      location.boundaryRoot === getOpenClawPackageRoot()
-        ? "OpenClaw package root"
+      location.boundaryRoot === getMerClawPackageRoot()
+        ? "MerClaw package root"
         : (() => {
             const bundledDir = resolveBundledPluginsDir();
             return bundledDir && path.resolve(location.boundaryRoot) === path.resolve(bundledDir)
@@ -219,8 +219,8 @@ export async function loadBundledPluginPublicSurfaceModule<T extends object>(par
     absolutePath: preparedLocation.modulePath,
     rootPath: preparedLocation.boundaryRoot,
     boundaryLabel:
-      preparedLocation.boundaryRoot === getOpenClawPackageRoot()
-        ? "OpenClaw package root"
+      preparedLocation.boundaryRoot === getMerClawPackageRoot()
+        ? "MerClaw package root"
         : "plugin root",
     rejectHardlinks: false,
   });
@@ -257,7 +257,7 @@ export function resetFacadeLoaderStateForTest(): void {
   loadedFacadePluginIds.clear();
   moduleLoaders.clear();
   facadeLoaderSourceTransformFactory = undefined;
-  cachedOpenClawPackageRoot = undefined;
+  cachedMerClawPackageRoot = undefined;
 }
 
 export function setFacadeLoaderSourceTransformFactoryForTest(

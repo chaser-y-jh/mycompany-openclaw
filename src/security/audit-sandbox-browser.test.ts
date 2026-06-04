@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { MerClawConfig } from "../config/config.js";
 import { collectSandboxBrowserHashLabelFindings } from "./audit-extra.async.js";
 import { collectSandboxDangerousConfigFindings } from "./audit-extra.sync.js";
 
@@ -47,19 +47,19 @@ describe("security audit sandbox browser findings", () => {
       execDockerRawFn: async (args: string[]) => {
         if (args[0] === "ps") {
           return {
-            stdout: Buffer.from("openclaw-sbx-browser-old\nopenclaw-sbx-browser-missing-hash\n"),
+            stdout: Buffer.from("merclaw-sbx-browser-old\nmerclaw-sbx-browser-missing-hash\n"),
             stderr: Buffer.alloc(0),
             code: 0,
           };
         }
-        if (args[0] === "inspect" && args.at(-1) === "openclaw-sbx-browser-old") {
+        if (args[0] === "inspect" && args.at(-1) === "merclaw-sbx-browser-old") {
           return {
             stdout: Buffer.from("abc123\tepoch-v0\n"),
             stderr: Buffer.alloc(0),
             code: 0,
           };
         }
-        if (args[0] === "inspect" && args.at(-1) === "openclaw-sbx-browser-missing-hash") {
+        if (args[0] === "inspect" && args.at(-1) === "merclaw-sbx-browser-missing-hash") {
           return {
             stdout: Buffer.from("<no value>\t<no value>\n"),
             stderr: Buffer.alloc(0),
@@ -77,7 +77,7 @@ describe("security audit sandbox browser findings", () => {
     expect(hasFinding("sandbox.browser_container.hash_label_missing", "warn", findings)).toBe(true);
     expect(hasFinding("sandbox.browser_container.hash_epoch_stale", "warn", findings)).toBe(true);
     const staleEpoch = requireFinding("sandbox.browser_container.hash_epoch_stale", findings);
-    expect(staleEpoch.detail).toContain("openclaw-sbx-browser-old");
+    expect(staleEpoch.detail).toContain("merclaw-sbx-browser-old");
   });
 
   it("skips sandbox browser hash label checks when docker inspect is unavailable", async () => {
@@ -140,7 +140,7 @@ describe("security audit sandbox browser findings", () => {
         calls.push(`${args[0] ?? ""}:${args.at(-1) ?? ""}`);
         if (args[0] === "ps") {
           return {
-            stdout: Buffer.from("openclaw-sbx-browser-hung\nopenclaw-sbx-browser-next\n"),
+            stdout: Buffer.from("merclaw-sbx-browser-hung\nmerclaw-sbx-browser-next\n"),
             stderr: Buffer.alloc(0),
             code: 0,
           };
@@ -158,7 +158,7 @@ describe("security audit sandbox browser findings", () => {
 
     const findings = await findingsPromise;
 
-    expect(calls).toEqual(["ps:{{.Names}}", "inspect:openclaw-sbx-browser-hung"]);
+    expect(calls).toEqual(["ps:{{.Names}}", "inspect:merclaw-sbx-browser-hung"]);
     expect(findings).toEqual([
       expect.objectContaining({
         checkId: "sandbox.browser_container.docker_probe_timeout",
@@ -171,19 +171,19 @@ describe("security audit sandbox browser findings", () => {
       execDockerRawFn: async (args: string[]) => {
         if (args[0] === "ps") {
           return {
-            stdout: Buffer.from("openclaw-sbx-browser-exposed\n"),
+            stdout: Buffer.from("merclaw-sbx-browser-exposed\n"),
             stderr: Buffer.alloc(0),
             code: 0,
           };
         }
-        if (args[0] === "inspect" && args.at(-1) === "openclaw-sbx-browser-exposed") {
+        if (args[0] === "inspect" && args.at(-1) === "merclaw-sbx-browser-exposed") {
           return {
             stdout: Buffer.from("hash123\t2026-02-21-novnc-auth-default\n"),
             stderr: Buffer.alloc(0),
             code: 0,
           };
         }
-        if (args[0] === "port" && args.at(-1) === "openclaw-sbx-browser-exposed") {
+        if (args[0] === "port" && args.at(-1) === "merclaw-sbx-browser-exposed") {
           return {
             stdout: Buffer.from("6080/tcp -> 0.0.0.0:49101\n9222/tcp -> 127.0.0.1:49100\n"),
             stderr: Buffer.alloc(0),
@@ -213,7 +213,7 @@ describe("security audit sandbox browser findings", () => {
           },
         },
       },
-    } satisfies OpenClawConfig);
+    } satisfies MerClawConfig);
     expect(findings.map((finding) => finding.checkId)).not.toContain(
       "sandbox.browser_cdp_bridge_unrestricted",
     );

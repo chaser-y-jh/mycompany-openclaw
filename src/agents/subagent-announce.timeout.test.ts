@@ -1,4 +1,4 @@
-import { clampTimerTimeoutMs } from "@openclaw/normalization-core/number-coercion";
+import { clampTimerTimeoutMs } from "@merclaw/normalization-core/number-coercion";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createSubagentAnnounceDeliveryRuntimeMock } from "./subagent-announce.test-support.js";
 
@@ -133,7 +133,7 @@ vi.mock("./subagent-announce-delivery.js", () => ({
     const timeoutMs =
       clampTimerTimeoutMs(configOverride.agents?.defaults?.subagents?.announceTimeoutMs) ?? 120_000;
     const retryDelaysMs =
-      process.env.OPENCLAW_TEST_FAST === "1" ? [8, 16, 32] : [5_000, 10_000, 20_000];
+      process.env.MERCLAW_TEST_FAST === "1" ? [8, 16, 32] : [5_000, 10_000, 20_000];
     let retryIndex = 0;
     for (;;) {
       const request = buildRequest();
@@ -329,7 +329,7 @@ describe("subagent announce timeout config", () => {
 
   it("retries gateway timeout for externally delivered completion announces before giving up", async () => {
     try {
-      vi.stubEnv("OPENCLAW_TEST_FAST", "1");
+      vi.stubEnv("MERCLAW_TEST_FAST", "1");
       callGatewayImpl = async (request) => {
         if (request.method === "chat.history") {
           return { messages: [] };

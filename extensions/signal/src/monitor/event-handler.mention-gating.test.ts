@@ -1,6 +1,6 @@
-import { buildDispatchInboundCaptureMock } from "openclaw/plugin-sdk/channel-contract-testing";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { MsgContext } from "openclaw/plugin-sdk/reply-runtime";
+import { buildDispatchInboundCaptureMock } from "merclaw/plugin-sdk/channel-contract-testing";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import type { MsgContext } from "merclaw/plugin-sdk/reply-runtime";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 type SignalMsgContext = Pick<MsgContext, "Body" | "WasMentioned"> & {
@@ -28,9 +28,9 @@ function getGroupHistoryEntries(
   return entries;
 }
 
-vi.mock("openclaw/plugin-sdk/reply-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/reply-runtime")>(
-    "openclaw/plugin-sdk/reply-runtime",
+vi.mock("merclaw/plugin-sdk/reply-runtime", async () => {
+  const actual = await vi.importActual<typeof import("merclaw/plugin-sdk/reply-runtime")>(
+    "merclaw/plugin-sdk/reply-runtime",
   );
   return buildDispatchInboundCaptureMock(actual, (ctx) => {
     capturedCtx = ctx as SignalMsgContext;
@@ -106,7 +106,7 @@ function createSignalConfig(params: { requireMention: boolean; mentionPattern?: 
         groups: { "*": { requireMention: params.requireMention } },
       },
     },
-  } as unknown as OpenClawConfig;
+  } as unknown as MerClawConfig;
 }
 
 async function expectSkippedGroupHistory(opts: GroupEventOpts, expectedBody: string) {
@@ -160,7 +160,7 @@ describe("signal mention gating", () => {
               groups: { g1: {} },
             },
           },
-        } as unknown as OpenClawConfig,
+        } as unknown as MerClawConfig,
         groupPolicy: "allowlist",
         groupAllowFrom: ["group:g1"],
       }),

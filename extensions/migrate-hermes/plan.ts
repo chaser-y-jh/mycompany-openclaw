@@ -3,12 +3,12 @@ import {
   createMigrationItem,
   MIGRATION_REASON_TARGET_EXISTS,
   summarizeMigrationItems,
-} from "openclaw/plugin-sdk/migration";
+} from "merclaw/plugin-sdk/migration";
 import type {
   MigrationItem,
   MigrationPlan,
   MigrationProviderContext,
-} from "openclaw/plugin-sdk/plugin-entry";
+} from "merclaw/plugin-sdk/plugin-entry";
 import { buildAuthItems } from "./auth.js";
 import { buildConfigItems } from "./config.js";
 import { exists, parseHermesConfig, readText } from "./helpers.js";
@@ -144,7 +144,7 @@ export async function buildHermesPlan(ctx: MigrationProviderContext): Promise<Mi
       : []),
     ...(source.archivePaths.length > 0
       ? [
-          "Some Hermes files are archive-only. They will be copied into the migration report for manual review, not loaded into OpenClaw.",
+          "Some Hermes files are archive-only. They will be copied into the migration report for manual review, not loaded into MerClaw.",
         ]
       : []),
     ...(items.some((item) => item.kind === "manual")
@@ -158,7 +158,7 @@ export async function buildHermesPlan(ctx: MigrationProviderContext): Promise<Mi
     summary: summarizeMigrationItems(items),
     items,
     warnings,
-    nextSteps: ["Run openclaw doctor after applying the migration."],
+    nextSteps: ["Run merclaw doctor after applying the migration."],
     metadata: { agentDir: targets.agentDir },
   };
 }

@@ -1,5 +1,5 @@
 import Foundation
-import OpenClawKit
+import MerClawKit
 import SwiftUI
 
 struct AgentProDreamingDestination: View {
@@ -17,7 +17,7 @@ struct AgentProDreamingDestination: View {
 
     var body: some View {
         ZStack {
-            OpenClawProBackground()
+            MerClawProBackground()
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     self.detailSummaryCard(
@@ -51,7 +51,7 @@ struct AgentProDreamingDestination: View {
             .refreshable {
                 await self.refresh()
             }
-            .safeAreaPadding(.bottom, OpenClawProMetric.bottomScrollInset)
+            .safeAreaPadding(.bottom, MerClawProMetric.bottomScrollInset)
         }
         .navigationTitle("Dreaming")
         .navigationBarTitleDisplayMode(.inline)
@@ -112,7 +112,7 @@ struct AgentProDreamingDestination: View {
                 ProValuePill(value: value, color: color)
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     private var dreamingTotalsCard: some View {
@@ -138,11 +138,11 @@ struct AgentProDreamingDestination: View {
                 if let storeError = self.normalized(self.overview?.dreaming?.storeError) {
                     Text(storeError)
                         .font(.caption2)
-                        .foregroundStyle(OpenClawBrand.warn)
+                        .foregroundStyle(MerClawBrand.warn)
                 }
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     private var dreamingActionsCard: some View {
@@ -190,7 +190,7 @@ struct AgentProDreamingDestination: View {
                 }
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     private var dreamDiaryCard: some View {
@@ -203,7 +203,7 @@ struct AgentProDreamingDestination: View {
                         let selectedDay = self.selectedDreamDiaryDay(from: days)
                         VStack(alignment: .leading, spacing: 12) {
                             HStack {
-                                ProIconBadge(systemName: "book.pages", color: OpenClawBrand.accent)
+                                ProIconBadge(systemName: "book.pages", color: MerClawBrand.accent)
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(diary.path)
                                         .font(.subheadline.weight(.semibold))
@@ -246,7 +246,7 @@ struct AgentProDreamingDestination: View {
                         .padding(14)
                 }
             }
-            .padding(.horizontal, OpenClawProMetric.pagePadding)
+            .padding(.horizontal, MerClawProMetric.pagePadding)
         }
     }
 
@@ -286,7 +286,7 @@ struct AgentProDreamingDestination: View {
                 Spacer(minLength: 8)
                 Text("\(day.entryCount) \(day.entryCount == 1 ? "entry" : "entries")")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(OpenClawBrand.accent)
+                    .foregroundStyle(MerClawBrand.accent)
             }
             Text(day.body)
                 .font(.caption.monospaced())
@@ -334,13 +334,13 @@ struct AgentProDreamingDestination: View {
                     }
                 }
             }
-            .padding(.horizontal, OpenClawProMetric.pagePadding)
+            .padding(.horizontal, MerClawProMetric.pagePadding)
         }
     }
 
     private func dreamingEntryRow(_ entry: DreamingEntryLite) -> some View {
         HStack(alignment: .top, spacing: 12) {
-            ProIconBadge(systemName: "text.page", color: OpenClawBrand.accent)
+            ProIconBadge(systemName: "text.page", color: MerClawBrand.accent)
             VStack(alignment: .leading, spacing: 4) {
                 Text(self.dreamingEntryTitle(entry))
                     .font(.subheadline.weight(.semibold))
@@ -358,7 +358,7 @@ struct AgentProDreamingDestination: View {
             Spacer(minLength: 8)
             Text("\(entry.totalSignalCount)")
                 .font(.caption2.weight(.semibold))
-                .foregroundStyle(OpenClawBrand.accent)
+                .foregroundStyle(MerClawBrand.accent)
                 .lineLimit(1)
         }
         .padding(.vertical, 10)
@@ -389,7 +389,7 @@ struct AgentProDreamingDestination: View {
                     }
                 }
             }
-            .padding(.horizontal, OpenClawProMetric.pagePadding)
+            .padding(.horizontal, MerClawProMetric.pagePadding)
         }
     }
 
@@ -406,7 +406,7 @@ struct AgentProDreamingDestination: View {
         HStack(alignment: .top, spacing: 12) {
             ProIconBadge(
                 systemName: phase.status.enabled == false ? "pause.circle" : "moon.stars",
-                color: phase.status.enabled == false ? .secondary : OpenClawBrand.accent)
+                color: phase.status.enabled == false ? .secondary : MerClawBrand.accent)
             VStack(alignment: .leading, spacing: 4) {
                 Text(phase.title)
                     .font(.subheadline.weight(.semibold))
@@ -424,7 +424,7 @@ struct AgentProDreamingDestination: View {
             Spacer(minLength: 8)
             Text(self.dreamingPhaseState(phase.status))
                 .font(.caption2.weight(.semibold))
-                .foregroundStyle(phase.status.managedCronPresent == true ? OpenClawBrand.accent : .secondary)
+                .foregroundStyle(phase.status.managedCronPresent == true ? MerClawBrand.accent : .secondary)
                 .lineLimit(1)
         }
         .padding(.vertical, 10)
@@ -570,8 +570,8 @@ struct AgentProDreamingDestination: View {
     }
 
     private static func dreamDiaryInnerContent(_ content: String) -> String {
-        let start = "<!-- openclaw:dreaming:diary:start -->"
-        let end = "<!-- openclaw:dreaming:diary:end -->"
+        let start = "<!-- merclaw:dreaming:diary:start -->"
+        let end = "<!-- merclaw:dreaming:diary:end -->"
         guard let startRange = content.range(of: start),
               let endRange = content.range(of: end, range: startRange.upperBound..<content.endIndex)
         else {

@@ -1,6 +1,6 @@
 import { spawnSync } from "node:child_process";
 import { isIP } from "node:net";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import { consumeRootOptionToken, FLAG_TERMINATOR } from "../infra/cli-root-options.js";
 import { resolveCliArgvInvocation } from "./argv-invocation.js";
 import { scanCliRootOptions } from "./root-option-scan.js";
@@ -27,7 +27,7 @@ type ContainerRuntimeExec = {
   argsPrefix: string[];
 };
 
-const CONTAINER_ALLOW_LOOPBACK_PROXY_URL_ENV = "OPENCLAW_CONTAINER_ALLOW_LOOPBACK_PROXY_URL";
+const CONTAINER_ALLOW_LOOPBACK_PROXY_URL_ENV = "MERCLAW_CONTAINER_ALLOW_LOOPBACK_PROXY_URL";
 
 export function parseCliContainerArgs(argv: string[]): CliContainerParseResult {
   let container: string | null = null;
@@ -60,7 +60,7 @@ export function resolveCliContainerTarget(
   if (!parsed.ok) {
     throw new Error(parsed.error);
   }
-  return parsed.container ?? normalizeOptionalString(env.OPENCLAW_CONTAINER) ?? null;
+  return parsed.container ?? normalizeOptionalString(env.MERCLAW_CONTAINER) ?? null;
 }
 
 function isContainerRunning(params: {
@@ -135,23 +135,23 @@ function buildContainerExecArgs(params: {
   stdoutIsTTY: boolean;
 }): string[] {
   const envFlag = params.exec.runtime === "docker" ? "-e" : "--env";
-  const proxyUrl = normalizeOptionalString(params.env.OPENCLAW_PROXY_URL);
+  const proxyUrl = normalizeOptionalString(params.env.MERCLAW_PROXY_URL);
   if (proxyUrl) {
     assertContainerProxyUrlIsReachable(proxyUrl, params.env);
   }
-  const proxyEnvArgs = proxyUrl ? [envFlag, `OPENCLAW_PROXY_URL=${proxyUrl}`] : [];
+  const proxyEnvArgs = proxyUrl ? [envFlag, `MERCLAW_PROXY_URL=${proxyUrl}`] : [];
   const interactiveFlags = ["-i", ...(params.stdinIsTTY && params.stdoutIsTTY ? ["-t"] : [])];
   return [
     ...params.exec.argsPrefix,
     "exec",
     ...interactiveFlags,
     envFlag,
-    `OPENCLAW_CONTAINER_HINT=${params.containerName}`,
+    `MERCLAW_CONTAINER_HINT=${params.containerName}`,
     envFlag,
-    "OPENCLAW_CLI_CONTAINER_BYPASS=1",
+    "MERCLAW_CLI_CONTAINER_BYPASS=1",
     ...proxyEnvArgs,
     params.containerName,
-    "openclaw",
+    "merclaw",
     ...params.argv,
   ];
 }
@@ -170,7 +170,7 @@ function assertContainerProxyUrlIsReachable(proxyUrl: string, env: NodeJS.Proces
     return;
   }
   throw new Error(
-    `OPENCLAW_PROXY_URL=${redactProxyUrlForMessage(proxyUrl)} is loopback; 127.0.0.1 inside a container points at the container, not the host. ` +
+    `MERCLAW_PROXY_URL=${redactProxyUrlForMessage(proxyUrl)} is loopback; 127.0.0.1 inside a container points at the container, not the host. ` +
       `Use a container-reachable proxy address, or set ${CONTAINER_ALLOW_LOOPBACK_PROXY_URL_ENV}=1 if this is intentional.`,
   );
 }
@@ -217,20 +217,20 @@ function buildContainerExecEnv(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
   const next = { ...env };
   // Container-targeted CLI invocations should use the container's own profile
   // and gateway auth/runtime state rather than inheriting host overrides.
-  delete next.OPENCLAW_PROFILE;
-  delete next.OPENCLAW_GATEWAY_PORT;
-  delete next.OPENCLAW_GATEWAY_URL;
-  delete next.OPENCLAW_GATEWAY_TOKEN;
-  delete next.OPENCLAW_GATEWAY_PASSWORD;
+  delete next.MERCLAW_PROFILE;
+  delete next.MERCLAW_GATEWAY_PORT;
+  delete next.MERCLAW_GATEWAY_URL;
+  delete next.MERCLAW_GATEWAY_TOKEN;
+  delete next.MERCLAW_GATEWAY_PASSWORD;
   // The child CLI should render container-aware follow-up commands via
-  // OPENCLAW_CONTAINER_HINT, but it should not treat itself as still
+  // MERCLAW_CONTAINER_HINT, but it should not treat itself as still
   // container-targeted for validation/routing.
-  next.OPENCLAW_CONTAINER = "";
+  next.MERCLAW_CONTAINER = "";
   return next;
 }
 
 function isBlockedContainerCommand(argv: string[]): boolean {
-  if (resolveCliArgvInvocation(["node", "openclaw", ...argv]).primary === "update") {
+  if (resolveCliArgvInvocation(["node", "merclaw", ...argv]).primary === "update") {
     return true;
   }
   for (let i = 0; i < argv.length; i += 1) {
@@ -264,7 +264,7 @@ export function maybeRunCliInContainer(
     stdoutIsTTY: deps?.stdoutIsTTY ?? process.stdout.isTTY,
   };
 
-  if (resolvedDeps.env.OPENCLAW_CLI_CONTAINER_BYPASS === "1") {
+  if (resolvedDeps.env.MERCLAW_CLI_CONTAINER_BYPASS === "1") {
     return { handled: false, argv };
   }
 
@@ -278,7 +278,7 @@ export function maybeRunCliInContainer(
   }
   if (isBlockedContainerCommand(parsed.argv.slice(2))) {
     throw new Error(
-      "openclaw update is not supported with --container; rebuild or restart the container image instead.",
+      "merclaw update is not supported with --container; rebuild or restart the container image instead.",
     );
   }
 

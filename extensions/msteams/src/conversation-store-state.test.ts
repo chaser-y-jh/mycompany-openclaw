@@ -5,7 +5,7 @@ import path from "node:path";
 import {
   createPluginStateKeyedStoreForTests,
   resetPluginStateStoreForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
+} from "merclaw/plugin-sdk/plugin-state-test-runtime";
 import { beforeEach, describe, expect, it } from "vitest";
 import { createMSTeamsConversationStoreState } from "./conversation-store-state.js";
 import type { StoredConversationReference } from "./conversation-store.js";
@@ -23,10 +23,10 @@ describe("msteams conversation store (plugin state)", () => {
   });
 
   it("filters and prunes expired entries while preserving legacy entries without lastSeenAt", async () => {
-    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-store-"));
+    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "merclaw-msteams-store-"));
     const env: NodeJS.ProcessEnv = {
       ...process.env,
-      OPENCLAW_STATE_DIR: stateDir,
+      MERCLAW_STATE_DIR: stateDir,
     };
 
     const ref: StoredConversationReference = {
@@ -83,15 +83,15 @@ describe("msteams conversation store (plugin state)", () => {
       "19:new@thread.tacv2",
     ]);
     await expect(
-      fs.promises.access(path.join(stateDir, "state", "openclaw.sqlite")),
+      fs.promises.access(path.join(stateDir, "state", "merclaw.sqlite")),
     ).resolves.toBeUndefined();
   });
 
   it("does not let a stale legacy JSON file overwrite existing SQLite rows", async () => {
-    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-store-"));
+    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "merclaw-msteams-store-"));
     const env: NodeJS.ProcessEnv = {
       ...process.env,
-      OPENCLAW_STATE_DIR: stateDir,
+      MERCLAW_STATE_DIR: stateDir,
     };
     const ref: StoredConversationReference = {
       conversation: { id: "conv-current" },
@@ -128,7 +128,7 @@ describe("msteams conversation store (plugin state)", () => {
   });
 
   it("hashes external conversation ids before using plugin-state keys", async () => {
-    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-store-"));
+    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "merclaw-msteams-store-"));
     const longConversationId = `a:${"x".repeat(900)}`;
     const filePath = path.join(stateDir, "msteams-conversations.json");
     await fs.promises.writeFile(
@@ -164,7 +164,7 @@ describe("msteams conversation store (plugin state)", () => {
   });
 
   it("serializes concurrent upserts so sparse activities do not drop preserved fields", async () => {
-    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-store-"));
+    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "merclaw-msteams-store-"));
     const store = createMSTeamsConversationStoreState({ stateDir });
 
     await store.upsert("conv-race", {
@@ -200,7 +200,7 @@ describe("msteams conversation store (plugin state)", () => {
   });
 
   it("keeps newest legacy conversations by lastSeenAt at the row cap", async () => {
-    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-store-"));
+    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "merclaw-msteams-store-"));
     const filePath = path.join(stateDir, "msteams-conversations.json");
     const conversations: Record<string, StoredConversationReference> = {
       "conv-recent": {
@@ -230,7 +230,7 @@ describe("msteams conversation store (plugin state)", () => {
   });
 
   it("treats timestamp-less legacy conversations as oldest during later cap pruning", async () => {
-    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-store-"));
+    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "merclaw-msteams-store-"));
     const filePath = path.join(stateDir, "msteams-conversations.json");
     const conversations: Record<string, StoredConversationReference> = {
       "conv-legacy": {

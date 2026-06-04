@@ -1,5 +1,5 @@
-import type { AgentToolResult } from "openclaw/plugin-sdk/agent-core";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { AgentToolResult } from "merclaw/plugin-sdk/agent-core";
+import { normalizeLowercaseStringOrEmpty } from "merclaw/plugin-sdk/string-coerce-runtime";
 import type { Activity, UpdatePresenceData } from "../internal/gateway.js";
 import { getGateway } from "../monitor/gateway-registry.js";
 import {

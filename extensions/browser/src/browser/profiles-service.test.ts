@@ -2,26 +2,26 @@ import fs from "node:fs";
 import path from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getRuntimeConfig } from "../config/config.js";
-import type { OpenClawConfig } from "../config/config.js";
-import { resolveOpenClawUserDataDir } from "./chrome.js";
+import type { MerClawConfig } from "../config/config.js";
+import { resolveMerClawUserDataDir } from "./chrome.js";
 import type { BrowserRouteContext, BrowserServerState } from "./server-context.js";
 import { movePathToTrash } from "./trash.js";
 
 const configMocks = vi.hoisted(() => ({
-  getRuntimeConfig: vi.fn<() => OpenClawConfig>(),
-  writeConfigFile: vi.fn<(cfg: OpenClawConfig) => Promise<void>>(async (_cfg) => {}),
+  getRuntimeConfig: vi.fn<() => MerClawConfig>(),
+  writeConfigFile: vi.fn<(cfg: MerClawConfig) => Promise<void>>(async (_cfg) => {}),
   mutateConfigFile: vi.fn(
     async (params: {
-      mutate: (draft: OpenClawConfig, context: { snapshot: { path: string } }) => unknown;
+      mutate: (draft: MerClawConfig, context: { snapshot: { path: string } }) => unknown;
     }) => {
       const draft = structuredClone(configMocks.getRuntimeConfig());
-      const result = await params.mutate(draft, { snapshot: { path: "/tmp/openclaw.json" } });
+      const result = await params.mutate(draft, { snapshot: { path: "/tmp/merclaw.json" } });
       await configMocks.writeConfigFile(draft);
       return {
-        path: "/tmp/openclaw.json",
+        path: "/tmp/merclaw.json",
         previousHash: "test-hash",
         persistedHash: "test-hash",
-        snapshot: { path: "/tmp/openclaw.json" },
+        snapshot: { path: "/tmp/merclaw.json" },
         nextConfig: draft,
         result,
         attempts: 1,
@@ -37,7 +37,7 @@ vi.mock("../config/config.js", async () => {
   const actual = await vi.importActual<typeof import("../config/config.js")>("../config/config.js");
   return {
     ...actual,
-    replaceConfigFile: vi.fn(async ({ nextConfig }: { nextConfig: OpenClawConfig }) => {
+    replaceConfigFile: vi.fn(async ({ nextConfig }: { nextConfig: MerClawConfig }) => {
       await configMocks.writeConfigFile(nextConfig);
     }),
     mutateConfigFile: configMocks.mutateConfigFile,
@@ -50,7 +50,7 @@ vi.mock("./trash.js", () => ({
 }));
 
 vi.mock("./chrome.js", () => ({
-  resolveOpenClawUserDataDir: vi.fn(() => "/tmp/openclaw-test/openclaw/user-data"),
+  resolveMerClawUserDataDir: vi.fn(() => "/tmp/merclaw-test/merclaw/user-data"),
 }));
 
 const [{ resolveBrowserConfig }, { createBrowserProfilesService }] = await Promise.all([
@@ -184,13 +184,13 @@ describe("BrowserProfilesService", () => {
           cdpPortRangeStart: 19000,
           profiles: {},
         },
-      } as OpenClawConfig)
+      } as MerClawConfig)
       .mockReturnValue({
         browser: {
           cdpPortRangeEnd: 18801,
           profiles: {},
         },
-      } as unknown as OpenClawConfig);
+      } as unknown as MerClawConfig);
 
     const service = createBrowserProfilesService(ctx);
     const result = await service.createProfile({ name: "work" });
@@ -295,7 +295,7 @@ describe("BrowserProfilesService", () => {
     const { ctx, state } = createCtx(resolved);
     vi.mocked(getRuntimeConfig).mockReturnValue({ browser: { profiles: {} } });
 
-    const tempDir = fs.mkdtempSync(path.join("/tmp", "openclaw-profile-"));
+    const tempDir = fs.mkdtempSync(path.join("/tmp", "merclaw-profile-"));
     const userDataDir = path.join(tempDir, "BraveSoftware", "Brave-Browser");
     fs.mkdirSync(userDataDir, { recursive: true });
 
@@ -320,7 +320,7 @@ describe("BrowserProfilesService", () => {
     const { ctx } = createCtx(resolved);
     vi.mocked(getRuntimeConfig).mockReturnValue({ browser: { profiles: {} } });
 
-    const tempDir = fs.mkdtempSync(path.join("/tmp", "openclaw-profile-"));
+    const tempDir = fs.mkdtempSync(path.join("/tmp", "merclaw-profile-"));
     const userDataDir = path.join(tempDir, "BraveSoftware", "Brave-Browser");
     fs.mkdirSync(userDataDir, { recursive: true });
 
@@ -344,9 +344,9 @@ describe("BrowserProfilesService", () => {
 
     vi.mocked(getRuntimeConfig).mockReturnValue({
       browser: {
-        defaultProfile: "openclaw",
+        defaultProfile: "merclaw",
         profiles: {
-          openclaw: { cdpPort: 18800, color: "#FF4500" },
+          merclaw: { cdpPort: 18800, color: "#FF4500" },
           remote: { cdpUrl: "http://10.0.0.42:9222", color: "#0066CC" },
         },
       },
@@ -371,9 +371,9 @@ describe("BrowserProfilesService", () => {
     vi.mocked(getRuntimeConfig)
       .mockReturnValueOnce({
         browser: {
-          defaultProfile: "openclaw",
+          defaultProfile: "merclaw",
           profiles: {
-            openclaw: { cdpPort: 18800, color: "#FF4500" },
+            merclaw: { cdpPort: 18800, color: "#FF4500" },
             work: { cdpUrl: "http://10.0.0.42:9222", color: "#0066CC" },
           },
         },
@@ -382,7 +382,7 @@ describe("BrowserProfilesService", () => {
         browser: {
           defaultProfile: "work",
           profiles: {
-            openclaw: { cdpPort: 18800, color: "#FF4500" },
+            merclaw: { cdpPort: 18800, color: "#FF4500" },
             work: { cdpUrl: "http://10.0.0.42:9222", color: "#0066CC" },
           },
         },
@@ -409,18 +409,18 @@ describe("BrowserProfilesService", () => {
 
     vi.mocked(getRuntimeConfig).mockReturnValue({
       browser: {
-        defaultProfile: "openclaw",
+        defaultProfile: "merclaw",
         profiles: {
-          openclaw: { cdpPort: 18800, color: "#FF4500" },
+          merclaw: { cdpPort: 18800, color: "#FF4500" },
           work: { cdpPort: 18801, color: "#0066CC" },
         },
       },
     });
 
-    const tempDir = fs.mkdtempSync(path.join("/tmp", "openclaw-profile-"));
+    const tempDir = fs.mkdtempSync(path.join("/tmp", "merclaw-profile-"));
     const userDataDir = path.join(tempDir, "work", "user-data");
     fs.mkdirSync(path.dirname(userDataDir), { recursive: true });
-    vi.mocked(resolveOpenClawUserDataDir).mockReturnValue(userDataDir);
+    vi.mocked(resolveMerClawUserDataDir).mockReturnValue(userDataDir);
 
     const service = createBrowserProfilesService(ctx);
     const result = await service.deleteProfile("work");
@@ -444,9 +444,9 @@ describe("BrowserProfilesService", () => {
 
     vi.mocked(getRuntimeConfig).mockReturnValue({
       browser: {
-        defaultProfile: "openclaw",
+        defaultProfile: "merclaw",
         profiles: {
-          openclaw: { cdpPort: 18800, color: "#FF4500" },
+          merclaw: { cdpPort: 18800, color: "#FF4500" },
           "chrome-live": {
             cdpPort: 18801,
             color: "#0066CC",

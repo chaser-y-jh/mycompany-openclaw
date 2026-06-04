@@ -621,7 +621,7 @@ function renderMessageMeta(meta: GroupMeta | null) {
   `;
 }
 
-const SKIP_DELETE_CONFIRM_KEY = "openclaw:skipDeleteConfirm";
+const SKIP_DELETE_CONFIRM_KEY = "merclaw:skipDeleteConfirm";
 const DELETE_CONFIRM_VIEWPORT_MARGIN_PX = 8;
 const DELETE_CONFIRM_TRIGGER_GAP_PX = 6;
 
@@ -870,7 +870,7 @@ function renderReplyPill(replyTarget: NormalizedMessage["replyTarget"]) {
 
 function isLocalAssistantAttachmentSource(source: string): boolean {
   const trimmed = source.trim();
-  if (/^\/(?:__openclaw__|media|api\/chat\/media\/outgoing)\//.test(trimmed)) {
+  if (/^\/(?:__merclaw__|media|api\/chat\/media\/outgoing)\//.test(trimmed)) {
     return false;
   }
   return (
@@ -974,7 +974,7 @@ function buildAssistantAttachmentUrl(
   if (normalizedMediaTicket) {
     params.set("mediaTicket", normalizedMediaTicket);
   }
-  return `${normalizedBasePath}/__openclaw__/assistant-media?${params.toString()}`;
+  return `${normalizedBasePath}/__merclaw__/assistant-media?${params.toString()}`;
 }
 
 function isManagedOutgoingImageSource(source: string): boolean {
@@ -1037,7 +1037,7 @@ async function resolveManagedOutgoingImageBlobUrl(
         headers.set("Authorization", `Bearer ${authToken}`);
       }
       if (requesterSessionKey) {
-        headers.set("x-openclaw-requester-session-key", requesterSessionKey);
+        headers.set("x-merclaw-requester-session-key", requesterSessionKey);
       }
       const res = await fetch(fetchUrl, {
         method: "GET",
@@ -1537,8 +1537,8 @@ function renderGroupedMessage(
   const canExpand = role === "assistant" && Boolean(onOpenSidebar && markdown?.trim());
   const hasActions = canCopyMarkdown || canExpand;
   const transcriptMeta =
-    m["__openclaw"] && typeof m["__openclaw"] === "object" && !Array.isArray(m["__openclaw"])
-      ? (m["__openclaw"] as Record<string, unknown>)
+    m["__merclaw"] && typeof m["__merclaw"] === "object" && !Array.isArray(m["__merclaw"])
+      ? (m["__merclaw"] as Record<string, unknown>)
       : null;
   const sidebarMessageId =
     typeof transcriptMeta?.id === "string"
@@ -1548,7 +1548,7 @@ function renderGroupedMessage(
         : undefined;
   const shouldFetchFullMessage = Boolean(
     sidebarMessageId &&
-    !m.openclawMessageToolMirror &&
+    !m.merclawMessageToolMirror &&
     (transcriptMeta?.truncated === true || markdown?.includes("\n...(truncated)...")),
   );
 

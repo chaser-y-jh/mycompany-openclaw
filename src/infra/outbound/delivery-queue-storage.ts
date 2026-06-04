@@ -8,7 +8,7 @@ import {
   readJsonDurableQueueEntry,
   resolveJsonDurableQueueEntryPaths,
   writeJsonDurableQueueEntry,
-} from "@openclaw/fs-safe/store";
+} from "@merclaw/fs-safe/store";
 import type { ReplyDispatchKind } from "../../auto-reply/reply/reply-dispatcher.types.js";
 import type { ReplyPayload } from "../../auto-reply/types.js";
 import type { RenderedMessageBatchPlanItem } from "../../channels/message/types.js";

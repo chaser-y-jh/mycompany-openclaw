@@ -1,12 +1,12 @@
-import type { ProviderPrepareRuntimeAuthContext } from "openclaw/plugin-sdk/core";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import type { ProviderPrepareRuntimeAuthContext } from "merclaw/plugin-sdk/core";
+import { formatErrorMessage } from "merclaw/plugin-sdk/error-runtime";
 import {
   asDateTimestampMs,
   resolveDateTimestampMs,
   resolveExpiresAtMsFromDurationMs,
-} from "openclaw/plugin-sdk/number-runtime";
-import { ensureAuthProfileStore } from "openclaw/plugin-sdk/provider-auth";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/number-runtime";
+import { ensureAuthProfileStore } from "merclaw/plugin-sdk/provider-auth";
+import { normalizeOptionalString } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { getAccessTokenResultAsync } from "./cli.js";
 import {
   type CachedTokenEntry,

@@ -5,7 +5,7 @@ import path from "node:path";
 import {
   createPluginStateKeyedStoreForTests,
   resetPluginStateStoreForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
+} from "merclaw/plugin-sdk/plugin-state-test-runtime";
 import { beforeEach, describe, expect, it } from "vitest";
 import { createMSTeamsPollStoreMemory } from "./polls-store-memory.js";
 import {
@@ -39,7 +39,7 @@ describe("msteams polls", () => {
   it("extracts poll votes from activity values", () => {
     const vote = extractMSTeamsPollVote({
       value: {
-        openclawPollId: "poll-1",
+        merclawPollId: "poll-1",
         choices: "0,1",
       },
     });
@@ -51,7 +51,7 @@ describe("msteams polls", () => {
   });
 
   it("stores and records poll votes", async () => {
-    const home = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-polls-"));
+    const home = await fs.promises.mkdtemp(path.join(os.tmpdir(), "merclaw-msteams-polls-"));
     const store = createMSTeamsPollStoreState({ homedir: () => home });
     await store.createPoll({
       id: "poll-2",
@@ -107,7 +107,7 @@ describe("msteams polls", () => {
 });
 
 const createStateStore = async () => {
-  const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-polls-"));
+  const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "merclaw-msteams-polls-"));
   return createMSTeamsPollStoreState({ stateDir });
 };
 
@@ -153,7 +153,7 @@ describe("state poll store", () => {
   });
 
   it("imports legacy JSON polls once and removes the old file", async () => {
-    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-polls-"));
+    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "merclaw-msteams-polls-"));
     const filePath = path.join(stateDir, "msteams-polls.json");
     await fs.promises.writeFile(
       filePath,
@@ -186,12 +186,12 @@ describe("state poll store", () => {
     });
     expect(updated?.votes["user-1"]).toEqual(["1"]);
     await expect(
-      fs.promises.access(path.join(stateDir, "state", "openclaw.sqlite")),
+      fs.promises.access(path.join(stateDir, "state", "merclaw.sqlite")),
     ).resolves.toBeUndefined();
   });
 
   it("hashes external poll ids before using plugin-state keys", async () => {
-    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-polls-"));
+    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "merclaw-msteams-polls-"));
     const store = createMSTeamsPollStoreState({ stateDir });
     const longPollId = `poll-${"x".repeat(900)}`;
 
@@ -215,7 +215,7 @@ describe("state poll store", () => {
   });
 
   it("serializes concurrent votes for the same poll", async () => {
-    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-polls-"));
+    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "merclaw-msteams-polls-"));
     const store = createMSTeamsPollStoreState({ stateDir });
     await store.createPoll({
       id: "poll-race",
@@ -240,7 +240,7 @@ describe("state poll store", () => {
   });
 
   it("keeps large vote maps split across bounded rows", async () => {
-    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-polls-"));
+    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "merclaw-msteams-polls-"));
     const store = createMSTeamsPollStoreState({ stateDir });
     const votes = Object.fromEntries(
       Array.from({ length: 500 }, (_, index) => [
@@ -265,8 +265,8 @@ describe("state poll store", () => {
   });
 
   it("fills missing legacy vote buckets after a partial metadata import", async () => {
-    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-polls-"));
-    const env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "merclaw-msteams-polls-"));
+    const env = { ...process.env, MERCLAW_STATE_DIR: stateDir };
     const filePath = path.join(stateDir, "msteams-polls.json");
     const metadata = {
       id: "poll-partial",
@@ -332,7 +332,7 @@ describe("state poll store", () => {
   });
 
   it("keeps newest legacy polls by update timestamp at the row cap", async () => {
-    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-polls-"));
+    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "merclaw-msteams-polls-"));
     const filePath = path.join(stateDir, "msteams-polls.json");
     const pollRows: Record<string, MSTeamsPoll> = {};
     const baseMs = Date.now() - 60_000;
@@ -365,8 +365,8 @@ describe("state poll store", () => {
   });
 
   it("deletes vote buckets when pruning over the poll cap", async () => {
-    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-polls-"));
-    const env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "merclaw-msteams-polls-"));
+    const env = { ...process.env, MERCLAW_STATE_DIR: stateDir };
     const metadataStore = createPluginStateKeyedStoreForTests<Omit<MSTeamsPoll, "votes">>(
       "msteams",
       {

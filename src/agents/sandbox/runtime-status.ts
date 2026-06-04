@@ -1,10 +1,10 @@
-import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalLowercaseString } from "@merclaw/normalization-core/string-coerce";
 import { formatCliCommand } from "../../cli/command-format.js";
 import {
   canonicalizeMainSessionAlias,
   resolveAgentMainSessionKey,
 } from "../../config/sessions/main-session.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { resolveSessionAgentId } from "../agent-scope.js";
 import { auditSandboxToolPolicyBlock } from "../tool-policy-audit.js";
 import { resolveSandboxConfigForAgent } from "./config.js";
@@ -25,7 +25,7 @@ function shouldSandboxSession(cfg: SandboxConfig, sessionKey: string, mainSessio
 }
 
 function resolveMainSessionKeyForSandbox(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   agentId: string;
 }): string {
   if (params.cfg?.session?.scope === "global") {
@@ -38,7 +38,7 @@ function resolveMainSessionKeyForSandbox(params: {
 }
 
 function resolveComparableSessionKeyForSandbox(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   agentId: string;
   sessionKey: string;
 }): string {
@@ -50,7 +50,7 @@ function resolveComparableSessionKeyForSandbox(params: {
 }
 
 export function resolveSandboxRuntimeStatus(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   sessionKey?: string;
 }): {
   agentId: string;
@@ -127,7 +127,7 @@ function shellEscapeSingleArg(value: string): string {
 }
 
 export function formatSandboxToolPolicyBlockedMessage(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   sessionKey?: string;
   toolName: string;
   audit?: boolean;
@@ -194,9 +194,9 @@ export function formatSandboxToolPolicyBlockedMessage(params: {
   }
   const explainCommand = runtime.sessionKey
     ? hasUnsafeControlChars(runtime.sessionKey)
-      ? `openclaw sandbox explain --agent ${runtime.agentId}`
-      : `openclaw sandbox explain --session ${shellEscapeSingleArg(runtime.sessionKey)}`
-    : "openclaw sandbox explain";
+      ? `merclaw sandbox explain --agent ${runtime.agentId}`
+      : `merclaw sandbox explain --session ${shellEscapeSingleArg(runtime.sessionKey)}`
+    : "merclaw sandbox explain";
   lines.push(`- See: ${formatCliCommand(explainCommand)}`);
 
   return lines.join("\n");

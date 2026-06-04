@@ -45,7 +45,7 @@ afterEach(async () => {
 describe("loadExtensions native JavaScript path", () => {
   it("loads compiled JavaScript extensions without creating a jiti loader", async () => {
     const loadExtensions = preloadedLoadExtensions;
-    const dir = await mkdtemp(join(tmpdir(), "openclaw-extension-js-"));
+    const dir = await mkdtemp(join(tmpdir(), "merclaw-extension-js-"));
     tempDirs.push(dir);
     const extensionPath = join(dir, "extension.mjs");
     await writeFile(
@@ -71,7 +71,7 @@ export default async function extension(api) {
 
   it("reloads native JavaScript extensions when the file changes without stat-key drift", async () => {
     const { loadExtensions } = await import("./loader.js");
-    const dir = await mkdtemp(join(tmpdir(), "openclaw-extension-js-"));
+    const dir = await mkdtemp(join(tmpdir(), "merclaw-extension-js-"));
     tempDirs.push(dir);
     const extensionPath = join(dir, "extension.cjs");
     const beforeSource = `
@@ -109,7 +109,7 @@ module.exports = async function(api) {
 
   it("loads transpiled CommonJS default exports through the native path", async () => {
     const { loadExtensions } = await import("./loader.js");
-    const dir = await mkdtemp(join(tmpdir(), "openclaw-extension-js-"));
+    const dir = await mkdtemp(join(tmpdir(), "merclaw-extension-js-"));
     tempDirs.push(dir);
     const extensionPath = join(dir, "extension.cjs");
     await writeFile(
@@ -134,7 +134,7 @@ exports.default = async function(api) {
 
   it("keeps CommonJS-shaped .js extensions on jiti", async () => {
     const { loadExtensions } = await import("./loader.js");
-    const dir = await mkdtemp(join(tmpdir(), "openclaw-extension-js-"));
+    const dir = await mkdtemp(join(tmpdir(), "merclaw-extension-js-"));
     tempDirs.push(dir);
     await writeFile(join(dir, "package.json"), '{"type":"module"}\n');
     const extensionPath = join(dir, "extension.js");
@@ -160,7 +160,7 @@ module.exports = async function(api) {
 
   it("keeps plain ESM .js extensions on jiti", async () => {
     const { loadExtensions } = await import("./loader.js");
-    const dir = await mkdtemp(join(tmpdir(), "openclaw-extension-js-"));
+    const dir = await mkdtemp(join(tmpdir(), "merclaw-extension-js-"));
     tempDirs.push(dir);
     const extensionPath = join(dir, "extension.js");
     await writeFile(
@@ -185,12 +185,12 @@ export default async function extension(api) {
 
   it("keeps SDK-alias JavaScript extensions on one shared jiti loader", async () => {
     const { loadExtensions } = await import("./loader.js");
-    const dir = await mkdtemp(join(tmpdir(), "openclaw-extension-js-"));
+    const dir = await mkdtemp(join(tmpdir(), "merclaw-extension-js-"));
     tempDirs.push(dir);
     const firstPath = join(dir, "first.js");
     const secondPath = join(dir, "second.js");
     const source = `
-require("@openclaw/plugin-sdk/agent-sessions");
+require("@merclaw/plugin-sdk/agent-sessions");
 module.exports = async function(api) {
   api.registerCommand("should-not-native-load", {
     description: "probe",
@@ -211,7 +211,7 @@ module.exports = async function(api) {
 
   it("keeps TypeBox-alias JavaScript extensions on jiti", async () => {
     const { loadExtensions } = await import("./loader.js");
-    const dir = await mkdtemp(join(tmpdir(), "openclaw-extension-js-"));
+    const dir = await mkdtemp(join(tmpdir(), "merclaw-extension-js-"));
     tempDirs.push(dir);
     const extensionPath = join(dir, "extension.js");
     await writeFile(
@@ -237,7 +237,7 @@ module.exports = async function(api) {
 
   it("keeps multi-file JavaScript extensions on jiti for graph-wide aliases", async () => {
     const { loadExtensions } = await import("./loader.js");
-    const dir = await mkdtemp(join(tmpdir(), "openclaw-extension-js-"));
+    const dir = await mkdtemp(join(tmpdir(), "merclaw-extension-js-"));
     tempDirs.push(dir);
     const extensionPath = join(dir, "extension.js");
     await writeFile(
@@ -264,7 +264,7 @@ module.exports = async function(api) {
 
   it("keeps ESM re-export JavaScript extensions on jiti for graph-wide aliases", async () => {
     const { loadExtensions } = await import("./loader.js");
-    const dir = await mkdtemp(join(tmpdir(), "openclaw-extension-js-"));
+    const dir = await mkdtemp(join(tmpdir(), "merclaw-extension-js-"));
     tempDirs.push(dir);
     await writeFile(join(dir, "package.json"), '{"type":"module"}\n');
     const extensionPath = join(dir, "extension.js");
@@ -292,7 +292,7 @@ export default async function extension(api) {
 
   it("keeps minified ESM relative imports on jiti for graph-wide aliases", async () => {
     const { loadExtensions } = await import("./loader.js");
-    const dir = await mkdtemp(join(tmpdir(), "openclaw-extension-js-"));
+    const dir = await mkdtemp(join(tmpdir(), "merclaw-extension-js-"));
     tempDirs.push(dir);
     const extensionPath = join(dir, "extension.mjs");
     await writeFile(

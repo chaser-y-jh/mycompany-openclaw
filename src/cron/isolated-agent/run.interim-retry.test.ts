@@ -21,7 +21,7 @@ const runCronIsolatedAgentTurn = await loadRunCronIsolatedAgentTurn();
 function requireEmbeddedAgentCall(index: number): { prompt?: string } {
   const call = runEmbeddedAgentMock.mock.calls[index]?.[0] as { prompt?: string } | undefined;
   if (!call) {
-    throw new Error(`Expected embedded OpenClaw agent call ${index}`);
+    throw new Error(`Expected embedded MerClaw agent call ${index}`);
   }
   return call;
 }

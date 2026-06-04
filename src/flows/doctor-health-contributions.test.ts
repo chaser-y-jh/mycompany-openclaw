@@ -13,7 +13,7 @@ const mocks = vi.hoisted(() => ({
   runDoctorHealthRepairs: vi.fn(),
   listHealthChecks: vi.fn(),
   getHealthCheck: vi.fn(),
-  resolveAgentWorkspaceDir: vi.fn(() => "/tmp/openclaw-workspace"),
+  resolveAgentWorkspaceDir: vi.fn(() => "/tmp/merclaw-workspace"),
   resolveDefaultAgentId: vi.fn(() => "default"),
   note: vi.fn(),
   loadModelCatalog: vi.fn(async () => []),
@@ -78,7 +78,7 @@ vi.mock("../version.js", () => ({
 }));
 
 vi.mock("../config/config.js", () => ({
-  CONFIG_PATH: "/tmp/fake-openclaw.json",
+  CONFIG_PATH: "/tmp/fake-merclaw.json",
   replaceConfigFile: mocks.replaceConfigFile,
   readConfigFileSnapshot: mocks.readConfigFileSnapshot,
 }));
@@ -153,7 +153,7 @@ describe("doctor health contributions", () => {
     mocks.getHealthCheck.mockReset();
     mocks.getHealthCheck.mockReturnValue(undefined);
     mocks.resolveAgentWorkspaceDir.mockReset();
-    mocks.resolveAgentWorkspaceDir.mockReturnValue("/tmp/openclaw-workspace");
+    mocks.resolveAgentWorkspaceDir.mockReturnValue("/tmp/merclaw-workspace");
     mocks.resolveDefaultAgentId.mockReset();
     mocks.resolveDefaultAgentId.mockReturnValue("default");
     mocks.note.mockReset();
@@ -253,10 +253,10 @@ describe("doctor health contributions", () => {
       runtime: { log: vi.fn(), error: vi.fn(), exit: vi.fn() },
       options: {},
       cfgForPersistence: {},
-      configPath: "/tmp/fake-openclaw.json",
+      configPath: "/tmp/fake-merclaw.json",
       env: {
-        OPENCLAW_UPDATE_IN_PROGRESS: "1",
-        OPENCLAW_UPDATE_PARENT_SUPPORTS_DOCTOR_CONFIG_WRITE: "1",
+        MERCLAW_UPDATE_IN_PROGRESS: "1",
+        MERCLAW_UPDATE_PARENT_SUPPORTS_DOCTOR_CONFIG_WRITE: "1",
       },
     } as Parameters<(typeof contribution)["run"]>[0];
 
@@ -330,7 +330,7 @@ describe("doctor health contributions", () => {
       runtime: { log: vi.fn(), error: vi.fn(), exit: vi.fn() },
       options: {},
       cfgForPersistence: {},
-      configPath: "/tmp/fake-openclaw.json",
+      configPath: "/tmp/fake-merclaw.json",
       env: {},
     } as Parameters<(typeof contribution)["run"]>[0];
 
@@ -367,7 +367,7 @@ describe("doctor health contributions", () => {
       runtime: { log: vi.fn(), error: vi.fn(), exit: vi.fn() },
       options: {},
       cfgForPersistence: {},
-      configPath: "/tmp/fake-openclaw.json",
+      configPath: "/tmp/fake-merclaw.json",
       env: {},
     } as Parameters<(typeof contribution)["run"]>[0];
 
@@ -410,7 +410,7 @@ describe("doctor health contributions", () => {
       runtime: { log: vi.fn(), error: vi.fn(), exit: vi.fn() },
       options: {},
       cfgForPersistence: {},
-      configPath: "/tmp/fake-openclaw.json",
+      configPath: "/tmp/fake-merclaw.json",
       env: {},
     } as Parameters<(typeof contribution)["run"]>[0];
 
@@ -430,7 +430,7 @@ describe("doctor health contributions", () => {
   it("skips doctor config writes under legacy update parents", () => {
     expect(
       shouldSkipLegacyUpdateDoctorConfigWrite({
-        env: { OPENCLAW_UPDATE_IN_PROGRESS: "1" },
+        env: { MERCLAW_UPDATE_IN_PROGRESS: "1" },
       }),
     ).toBe(true);
   });
@@ -447,8 +447,8 @@ describe("doctor health contributions", () => {
     expect(
       shouldSkipLegacyUpdateDoctorConfigWrite({
         env: {
-          OPENCLAW_UPDATE_IN_PROGRESS: "1",
-          OPENCLAW_UPDATE_PARENT_SUPPORTS_DOCTOR_CONFIG_WRITE: "1",
+          MERCLAW_UPDATE_IN_PROGRESS: "1",
+          MERCLAW_UPDATE_PARENT_SUPPORTS_DOCTOR_CONFIG_WRITE: "1",
         },
       }),
     ).toBe(false);
@@ -458,7 +458,7 @@ describe("doctor health contributions", () => {
     expect(
       shouldSkipLegacyUpdateDoctorConfigWrite({
         env: {
-          OPENCLAW_UPDATE_IN_PROGRESS: "0",
+          MERCLAW_UPDATE_IN_PROGRESS: "0",
         },
       }),
     ).toBe(false);
@@ -482,7 +482,7 @@ describe("doctor health contributions", () => {
           shouldWriteConfig: true,
           skipPluginValidationOnWrite: false,
         },
-        configPath: "/tmp/fake-openclaw.json",
+        configPath: "/tmp/fake-merclaw.json",
         sourceConfigValid: true,
         prompter: buildDoctorPrompter(true),
         runtime: { log: vi.fn(), error: vi.fn(), exit: vi.fn() },
@@ -495,10 +495,10 @@ describe("doctor health contributions", () => {
       (entry) => entry.id === "doctor:write-config",
     )!;
 
-    it("allows config size drops when OPENCLAW_UPDATE_IN_PROGRESS=1", async () => {
+    it("allows config size drops when MERCLAW_UPDATE_IN_PROGRESS=1", async () => {
       const ctx = buildWriteConfigCtx({
-        OPENCLAW_UPDATE_IN_PROGRESS: "1",
-        OPENCLAW_UPDATE_PARENT_SUPPORTS_DOCTOR_CONFIG_WRITE: "1",
+        MERCLAW_UPDATE_IN_PROGRESS: "1",
+        MERCLAW_UPDATE_PARENT_SUPPORTS_DOCTOR_CONFIG_WRITE: "1",
       });
       await writeConfigContribution.run(ctx);
       expect(mocks.replaceConfigFile).toHaveBeenCalledWith(
@@ -512,8 +512,8 @@ describe("doctor health contributions", () => {
 
     it("skips plugin schema validation during update doctor writes", async () => {
       const ctx = buildWriteConfigCtx({
-        OPENCLAW_UPDATE_IN_PROGRESS: "1",
-        OPENCLAW_UPDATE_PARENT_SUPPORTS_DOCTOR_CONFIG_WRITE: "1",
+        MERCLAW_UPDATE_IN_PROGRESS: "1",
+        MERCLAW_UPDATE_PARENT_SUPPORTS_DOCTOR_CONFIG_WRITE: "1",
       });
       await writeConfigContribution.run(ctx);
       expect(mocks.replaceConfigFile).toHaveBeenCalledWith(
@@ -527,8 +527,8 @@ describe("doctor health contributions", () => {
 
     it("preserves source config version for legacy parent writable update doctor writes", async () => {
       const ctx = buildWriteConfigCtx({
-        OPENCLAW_UPDATE_IN_PROGRESS: "1",
-        OPENCLAW_UPDATE_PARENT_SUPPORTS_DOCTOR_CONFIG_WRITE: "1",
+        MERCLAW_UPDATE_IN_PROGRESS: "1",
+        MERCLAW_UPDATE_PARENT_SUPPORTS_DOCTOR_CONFIG_WRITE: "1",
       });
       ctx.configResult.sourceLastTouchedVersion = "2026.5.16-beta.4";
 
@@ -545,9 +545,9 @@ describe("doctor health contributions", () => {
 
     it("does not preserve source config version for explicit deferral update doctors", async () => {
       const ctx = buildWriteConfigCtx({
-        OPENCLAW_UPDATE_IN_PROGRESS: "1",
-        OPENCLAW_UPDATE_DEFER_CONFIGURED_PLUGIN_INSTALL_REPAIR: "1",
-        OPENCLAW_UPDATE_PARENT_SUPPORTS_DOCTOR_CONFIG_WRITE: "1",
+        MERCLAW_UPDATE_IN_PROGRESS: "1",
+        MERCLAW_UPDATE_DEFER_CONFIGURED_PLUGIN_INSTALL_REPAIR: "1",
+        MERCLAW_UPDATE_PARENT_SUPPORTS_DOCTOR_CONFIG_WRITE: "1",
       });
       ctx.configResult.sourceLastTouchedVersion = "2026.5.16-beta.4";
 
@@ -577,14 +577,14 @@ describe("doctor health contributions", () => {
     it("points update-time config rewrites at the pre-update backup", async () => {
       vi.mocked(fs.existsSync).mockImplementation((value) => String(value).endsWith(".pre-update"));
       const ctx = buildWriteConfigCtx({
-        OPENCLAW_UPDATE_IN_PROGRESS: "1",
-        OPENCLAW_UPDATE_PARENT_SUPPORTS_DOCTOR_CONFIG_WRITE: "1",
+        MERCLAW_UPDATE_IN_PROGRESS: "1",
+        MERCLAW_UPDATE_PARENT_SUPPORTS_DOCTOR_CONFIG_WRITE: "1",
       });
 
       await writeConfigContribution.run(ctx);
 
       expect(ctx.runtime.log).toHaveBeenCalledWith(
-        "Update changed config; pre-update backup: /tmp/fake-openclaw.json.pre-update",
+        "Update changed config; pre-update backup: /tmp/fake-merclaw.json.pre-update",
       );
     });
 
@@ -595,13 +595,13 @@ describe("doctor health contributions", () => {
         cfg: {},
         cfgForPersistence: {},
         configResult: { cfg: {} },
-        configPath: "/tmp/fake-openclaw.json",
+        configPath: "/tmp/fake-merclaw.json",
         sourceConfigValid: true,
         prompter: buildDoctorPrompter(true),
         runtime: { log: vi.fn(), error: vi.fn(), exit: vi.fn() },
         options: {},
         env: {
-          OPENCLAW_UPDATE_IN_PROGRESS: "1",
+          MERCLAW_UPDATE_IN_PROGRESS: "1",
         },
       } as Parameters<(typeof contribution)["run"]>[0]);
 
@@ -617,7 +617,7 @@ describe("doctor health contributions", () => {
         cfg: {},
         cfgForPersistence: {},
         configResult: { cfg: {} },
-        configPath: "/tmp/fake-openclaw.json",
+        configPath: "/tmp/fake-merclaw.json",
         sourceConfigValid: true,
         prompter: buildDoctorPrompter(true),
         runtime: { log: vi.fn(), error: vi.fn(), exit: vi.fn() },

@@ -3,7 +3,7 @@ import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { captureEnv } from "../../test-utils/env.js";
 import { createTrackedTempDirs } from "../../test-utils/tracked-temp-dirs.js";
-import { createOpenClawTools } from "../openclaw-tools.js";
+import { createMerClawTools } from "../merclaw-tools.js";
 import { createSkillWorkshopTool } from "./skill-workshop-tool.js";
 
 const tempDirs = createTrackedTempDirs();
@@ -11,9 +11,9 @@ let envSnapshot: ReturnType<typeof captureEnv>;
 let stateDir = "";
 
 beforeEach(async () => {
-  envSnapshot = captureEnv(["OPENCLAW_STATE_DIR"]);
-  stateDir = await tempDirs.make("openclaw-skill-workshop-state-");
-  process.env.OPENCLAW_STATE_DIR = stateDir;
+  envSnapshot = captureEnv(["MERCLAW_STATE_DIR"]);
+  stateDir = await tempDirs.make("merclaw-skill-workshop-state-");
+  process.env.MERCLAW_STATE_DIR = stateDir;
 });
 
 afterEach(async () => {
@@ -22,9 +22,9 @@ afterEach(async () => {
 });
 
 describe("skill_workshop tool", () => {
-  it("is exposed in the OpenClaw tool set", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-skill-workshop-tool-");
-    const tools = createOpenClawTools({
+  it("is exposed in the MerClaw tool set", async () => {
+    const workspaceDir = await tempDirs.make("merclaw-skill-workshop-tool-");
+    const tools = createMerClawTools({
       workspaceDir,
       config: {},
       disablePluginTools: true,
@@ -33,8 +33,8 @@ describe("skill_workshop tool", () => {
   });
 
   it("stays exposed when autonomous proposal capture is disabled", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-skill-workshop-tool-");
-    const tools = createOpenClawTools({
+    const workspaceDir = await tempDirs.make("merclaw-skill-workshop-tool-");
+    const tools = createMerClawTools({
       workspaceDir,
       config: {
         skills: {
@@ -50,9 +50,9 @@ describe("skill_workshop tool", () => {
     expect(tools.some((tool) => tool.name === "skill_workshop")).toBe(true);
   });
 
-  it("is not exposed from sandboxed OpenClaw tool sets", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-skill-workshop-tool-");
-    const tools = createOpenClawTools({
+  it("is not exposed from sandboxed MerClaw tool sets", async () => {
+    const workspaceDir = await tempDirs.make("merclaw-skill-workshop-tool-");
+    const tools = createMerClawTools({
       workspaceDir,
       config: {},
       disablePluginTools: true,
@@ -63,7 +63,7 @@ describe("skill_workshop tool", () => {
   });
 
   it("creates pending skill proposals without applying them", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-skill-workshop-tool-");
+    const workspaceDir = await tempDirs.make("merclaw-skill-workshop-tool-");
     const tool = createSkillWorkshopTool({ workspaceDir, config: {}, agentId: "main" });
 
     const result = await tool.execute("call-1", {
@@ -224,7 +224,7 @@ describe("skill_workshop tool", () => {
   });
 
   it("applies, rejects, and quarantines proposals through the workshop service", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-skill-workshop-tool-");
+    const workspaceDir = await tempDirs.make("merclaw-skill-workshop-tool-");
     const tool = createSkillWorkshopTool({ workspaceDir, config: {}, agentId: "main" });
 
     const created = await tool.execute("call-1", {
@@ -341,8 +341,8 @@ describe("skill_workshop tool", () => {
   });
 
   it("scopes proposal discovery to the tool workspace", async () => {
-    const firstWorkspaceDir = await tempDirs.make("openclaw-skill-workshop-tool-first-");
-    const secondWorkspaceDir = await tempDirs.make("openclaw-skill-workshop-tool-second-");
+    const firstWorkspaceDir = await tempDirs.make("merclaw-skill-workshop-tool-first-");
+    const secondWorkspaceDir = await tempDirs.make("merclaw-skill-workshop-tool-second-");
     const firstTool = createSkillWorkshopTool({
       workspaceDir: firstWorkspaceDir,
       config: {},

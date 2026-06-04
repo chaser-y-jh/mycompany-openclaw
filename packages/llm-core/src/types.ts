@@ -540,7 +540,7 @@ export interface Model<TApi extends Api = Api> {
   baseUrl: string;
   reasoning: boolean;
   /**
-   * Maps OpenClaw thinking levels to provider/model-specific values.
+   * Maps MerClaw thinking levels to provider/model-specific values.
    * Missing keys use provider defaults. null marks a level as unsupported.
    */
   thinkingLevelMap?: ThinkingLevelMap;

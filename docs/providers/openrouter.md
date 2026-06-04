@@ -1,8 +1,8 @@
 ---
-summary: "Use OpenRouter's unified API to access many models in OpenClaw"
+summary: "Use OpenRouter's unified API to access many models in MerClaw"
 read_when:
   - You want a single API key for many LLMs
-  - You want to run models via OpenRouter in OpenClaw
+  - You want to run models via OpenRouter in MerClaw
   - You want to use OpenRouter for image generation
   - You want to use OpenRouter for music generation
   - You want to use OpenRouter for video generation
@@ -20,14 +20,14 @@ endpoint and API key. It is OpenAI-compatible, so most OpenAI SDKs work by switc
   </Step>
   <Step title="Run onboarding">
     ```bash
-    openclaw onboard --auth-choice openrouter-api-key
+    merclaw onboard --auth-choice openrouter-api-key
     ```
   </Step>
   <Step title="(Optional) Switch to a specific model">
     Onboarding defaults to `openrouter/auto`. Pick a concrete model later:
 
     ```bash
-    openclaw models set openrouter/<provider>/<model>
+    merclaw models set openrouter/<provider>/<model>
     ```
 
   </Step>
@@ -79,7 +79,7 @@ OpenRouter can also back the `image_generate` tool. Use an OpenRouter image mode
 }
 ```
 
-OpenClaw sends image requests to OpenRouter's chat completions image API with `modalities: ["image", "text"]`. Gemini image models receive supported `aspectRatio` and `resolution` hints through OpenRouter's `image_config`. Use `agents.defaults.imageGenerationModel.timeoutMs` for slower OpenRouter image models; the `image_generate` tool's per-call `timeoutMs` parameter still wins.
+MerClaw sends image requests to OpenRouter's chat completions image API with `modalities: ["image", "text"]`. Gemini image models receive supported `aspectRatio` and `resolution` hints through OpenRouter's `image_config`. Use `agents.defaults.imageGenerationModel.timeoutMs` for slower OpenRouter image models; the `image_generate` tool's per-call `timeoutMs` parameter still wins.
 
 ## Video generation
 
@@ -98,7 +98,7 @@ OpenRouter can also back the `video_generate` tool through its asynchronous `/vi
 }
 ```
 
-OpenClaw submits text-to-video and image-to-video jobs to OpenRouter, polls
+MerClaw submits text-to-video and image-to-video jobs to OpenRouter, polls
 the returned `polling_url`, and downloads the completed video from
 OpenRouter's `unsigned_urls` or the documented job content endpoint.
 Reference images are sent as first/last frame images by default; images
@@ -130,7 +130,7 @@ audio output. Use an OpenRouter audio model under
 
 The bundled OpenRouter music provider defaults to
 `google/lyria-3-pro-preview` and also exposes
-`google/lyria-3-clip-preview`. OpenClaw sends `modalities: ["text",
+`google/lyria-3-clip-preview`. MerClaw sends `modalities: ["text",
 "audio"]`, enables streaming, collects the streamed audio chunks, and saves
 the result as generated media for channel delivery. Reference images are
 accepted for Lyria models through the shared `music_generate image=...`
@@ -182,24 +182,24 @@ media understanding preflight.
 }
 ```
 
-OpenClaw sends OpenRouter STT requests as JSON with base64 audio under
+MerClaw sends OpenRouter STT requests as JSON with base64 audio under
 `input_audio` (OpenRouter STT contract), not as multipart OpenAI form uploads.
 
 ## Authentication and headers
 
 OpenRouter uses a Bearer token with your API key under the hood.
 
-On real OpenRouter requests (`https://openrouter.ai/api/v1`), OpenClaw also adds
+On real OpenRouter requests (`https://openrouter.ai/api/v1`), MerClaw also adds
 OpenRouter's documented app-attribution headers:
 
 | Header                    | Value                                                                                                  |
 | ------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `HTTP-Referer`            | `https://openclaw.ai`                                                                                  |
-| `X-OpenRouter-Title`      | `OpenClaw`                                                                                             |
+| `HTTP-Referer`            | `https://merclaw.ai`                                                                                  |
+| `X-OpenRouter-Title`      | `MerClaw`                                                                                             |
 | `X-OpenRouter-Categories` | `cli-agent,cloud-agent,programming-app,creative-writing,writing-assistant,general-chat,personal-agent` |
 
 <Warning>
-If you repoint the OpenRouter provider at some other proxy or base URL, OpenClaw
+If you repoint the OpenRouter provider at some other proxy or base URL, MerClaw
 does **not** inject those OpenRouter-specific headers or Anthropic cache markers.
 </Warning>
 
@@ -227,7 +227,7 @@ does **not** inject those OpenRouter-specific headers or Anthropic cache markers
     }
     ```
 
-    OpenClaw sends `X-OpenRouter-Cache: true` and, when configured,
+    MerClaw sends `X-OpenRouter-Cache: true` and, when configured,
     `X-OpenRouter-Cache-TTL`. `responseCacheClear: true` forces a refresh for
     the current request and stores the replacement response. Snake_case aliases
     (`response_cache`, `response_cache_ttl_seconds`, and
@@ -241,7 +241,7 @@ does **not** inject those OpenRouter-specific headers or Anthropic cache markers
 
   <Accordion title="Anthropic cache markers">
     On verified OpenRouter routes, Anthropic model refs keep the
-    OpenRouter-specific Anthropic `cache_control` markers that OpenClaw uses for
+    OpenRouter-specific Anthropic `cache_control` markers that MerClaw uses for
     better prompt-cache reuse on system/developer prompt blocks.
   </Accordion>
 
@@ -253,7 +253,7 @@ does **not** inject those OpenRouter-specific headers or Anthropic cache markers
   </Accordion>
 
   <Accordion title="Thinking / reasoning injection">
-    On supported non-`auto` routes, OpenClaw maps the selected thinking level to
+    On supported non-`auto` routes, MerClaw maps the selected thinking level to
     OpenRouter proxy reasoning payloads. Unsupported model hints and
     `openrouter/auto` skip that reasoning injection. Hunter Alpha also skips
     proxy reasoning for stale configured model refs because OpenRouter could
@@ -264,7 +264,7 @@ does **not** inject those OpenRouter-specific headers or Anthropic cache markers
     On verified OpenRouter routes, `openrouter/deepseek/deepseek-v4-flash` and
     `openrouter/deepseek/deepseek-v4-pro` fill missing `reasoning_content` on
     replayed assistant turns so thinking/tool conversations keep DeepSeek V4's
-    required follow-up shape. OpenClaw sends OpenRouter-supported
+    required follow-up shape. MerClaw sends OpenRouter-supported
     `reasoning_effort` values for these routes; `xhigh` is the highest advertised
     level, and stale `max` overrides are mapped to `xhigh`.
   </Accordion>
@@ -276,7 +276,7 @@ does **not** inject those OpenRouter-specific headers or Anthropic cache markers
   </Accordion>
 
   <Accordion title="Gemini-backed routes">
-    Gemini-backed OpenRouter refs stay on the proxy-Gemini path: OpenClaw keeps
+    Gemini-backed OpenRouter refs stay on the proxy-Gemini path: MerClaw keeps
     Gemini thought-signature sanitation there, but does not enable native Gemini
     replay validation or bootstrap rewrites.
   </Accordion>
@@ -304,7 +304,7 @@ does **not** inject those OpenRouter-specific headers or Anthropic cache markers
     }
     ```
 
-    OpenClaw forwards that object to OpenRouter as the request `provider`
+    MerClaw forwards that object to OpenRouter as the request `provider`
     payload. Use OpenRouter's documented snake_case fields, including `sort`,
     `only`, `ignore`, `order`, `allow_fallbacks`, `require_parameters`,
     `data_collection`, `quantizations`, `max_price`, `preferred_max_latency`,

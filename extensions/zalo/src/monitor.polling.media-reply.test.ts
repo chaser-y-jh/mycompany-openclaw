@@ -5,8 +5,8 @@ import {
   createEmptyPluginRegistry,
   createRuntimeEnv,
   setActivePluginRegistry,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+} from "merclaw/plugin-sdk/plugin-test-runtime";
+import { resolvePreferredMerClawTmpDir } from "merclaw/plugin-sdk/temp-path";
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import type { PluginRuntime } from "../runtime-api.js";
 import {
@@ -23,7 +23,7 @@ import {
 } from "./test-support/monitor-mocks-test-support.js";
 
 const prepareHostedZaloMediaUrlMock = vi.fn();
-const ZALO_OUTBOUND_MEDIA_DIR_NAME = "openclaw-zalo-outbound-media";
+const ZALO_OUTBOUND_MEDIA_DIR_NAME = "merclaw-zalo-outbound-media";
 
 vi.mock("./outbound-media.js", async () => {
   const actual = await vi.importActual<typeof import("./outbound-media.js")>("./outbound-media.js");
@@ -41,7 +41,7 @@ function resolveHostedZaloMediaDirName(): string {
 }
 
 const ZALO_OUTBOUND_MEDIA_DIR = join(
-  resolvePreferredOpenClawTmpDir(),
+  resolvePreferredMerClawTmpDir(),
   resolveHostedZaloMediaDirName(),
 );
 

@@ -63,7 +63,7 @@ function enableAdvertiserUnitMode(hostname = "test-host") {
   delete process.env.VITEST;
   process.env.NODE_ENV = "development";
   vi.spyOn(os, "hostname").mockReturnValue(hostname);
-  process.env.OPENCLAW_MDNS_HOSTNAME = hostname;
+  process.env.MERCLAW_MDNS_HOSTNAME = hostname;
 }
 
 function mockCiaoService(params?: {
@@ -182,13 +182,13 @@ describe("gateway bonjour advertiser", () => {
       sshPort: 2222,
       gatewayDirectReachable: true,
       tailnetDns: "host.tailnet.ts.net",
-      cliPath: "/opt/homebrew/bin/openclaw",
+      cliPath: "/opt/homebrew/bin/merclaw",
       minimal: false,
     });
 
     expect(createService).toHaveBeenCalledTimes(1);
     const [gatewayCall] = createService.mock.calls as Array<[Record<string, unknown>]>;
-    expect(gatewayCall?.[0]?.type).toBe("openclaw-gw");
+    expect(gatewayCall?.[0]?.type).toBe("merclaw-gw");
     const gatewayType = asString(gatewayCall?.[0]?.type, "");
     expect(gatewayType.length).toBeLessThanOrEqual(15);
     expect(gatewayCall?.[0]?.port).toBe(18789);
@@ -202,7 +202,7 @@ describe("gateway bonjour advertiser", () => {
       "host.tailnet.ts.net",
     );
     expect((gatewayCall?.[0]?.txt as Record<string, string>)?.cliPath).toBe(
-      "/opt/homebrew/bin/openclaw",
+      "/opt/homebrew/bin/merclaw",
     );
     expect((gatewayCall?.[0]?.txt as Record<string, string>)?.transport).toBe("gateway");
 
@@ -226,7 +226,7 @@ describe("gateway bonjour advertiser", () => {
     const started = await startAdvertiser({
       gatewayPort: 18789,
       sshPort: 2222,
-      cliPath: "/opt/homebrew/bin/openclaw",
+      cliPath: "/opt/homebrew/bin/merclaw",
       tailnetDns: "host.tailnet.ts.net",
       minimal: true,
     });
@@ -239,9 +239,9 @@ describe("gateway bonjour advertiser", () => {
     await started.stop();
   });
 
-  it("honors truthy OPENCLAW_DISABLE_BONJOUR values", async () => {
+  it("honors truthy MERCLAW_DISABLE_BONJOUR values", async () => {
     enableAdvertiserUnitMode();
-    process.env.OPENCLAW_DISABLE_BONJOUR = "true";
+    process.env.MERCLAW_DISABLE_BONJOUR = "true";
 
     const started = await startAdvertiser({
       gatewayPort: 18789,
@@ -268,7 +268,7 @@ describe("gateway bonjour advertiser", () => {
   it("auto-disables Bonjour on Fly Machines without Docker sentinel files", async () => {
     enableAdvertiserUnitMode();
     process.env.FLY_MACHINE_ID = "3d8d5459a03038";
-    process.env.FLY_APP_NAME = "openclaw-clawcks-test";
+    process.env.FLY_APP_NAME = "merclaw-clawcks-test";
     vi.spyOn(fs, "existsSync").mockReturnValue(false);
     vi.spyOn(fs, "readFileSync").mockReturnValue("10:cpuset:/\n9:perf_event:/\n8:memory:/\n0::/\n");
 
@@ -283,7 +283,7 @@ describe("gateway bonjour advertiser", () => {
 
   it("honors explicit Bonjour opt-in inside detected containers", async () => {
     enableAdvertiserUnitMode();
-    process.env.OPENCLAW_DISABLE_BONJOUR = "0";
+    process.env.MERCLAW_DISABLE_BONJOUR = "0";
     vi.spyOn(fs, "existsSync").mockImplementation((filePath) => String(filePath) === "/.dockerenv");
 
     const destroy = vi.fn().mockResolvedValue(undefined);
@@ -467,7 +467,7 @@ describe("gateway bonjour advertiser", () => {
     expect(
       handler?.(
         new Error(
-          "Can't probe for a service which is announced already. Received announcing for service OpenClaw Gateway._openclaw._tcp.local.",
+          "Can't probe for a service which is announced already. Received announcing for service MerClaw Gateway._merclaw._tcp.local.",
         ),
       ),
     ).toBe(true);
@@ -578,7 +578,7 @@ describe("gateway bonjour advertiser", () => {
       });
 
       console.log(
-        "[test._openclaw-gw._tcp.local.] failed probing with reason: Error: Can't probe for a service which is announced already. Received announcing for service test._openclaw-gw._tcp.local.. Trying again in 2 seconds!",
+        "[test._merclaw-gw._tcp.local.] failed probing with reason: Error: Can't probe for a service which is announced already. Received announcing for service test._merclaw-gw._tcp.local.. Trying again in 2 seconds!",
       );
       console.log("ordinary console line");
 
@@ -786,12 +786,12 @@ describe("gateway bonjour advertiser", () => {
     });
 
     await vi.advanceTimersByTimeAsync(10_000);
-    listenerMap.get("name-change")?.("test-host (OpenClaw) (2)");
+    listenerMap.get("name-change")?.("test-host (MerClaw) (2)");
 
     await vi.advanceTimersByTimeAsync(15_000);
 
     expect(createService).toHaveBeenCalledTimes(1);
-    expectWarnContaining('name conflict resolved; newName="test-host (OpenClaw) (2)"');
+    expectWarnContaining('name conflict resolved; newName="test-host (MerClaw) (2)"');
 
     await vi.advanceTimersByTimeAsync(20_000);
 
@@ -893,7 +893,7 @@ describe("gateway bonjour advertiser", () => {
     });
 
     const [gatewayCall] = createService.mock.calls as Array<[ServiceCall]>;
-    expect(gatewayCall?.[0]?.name).toBe("Mac (OpenClaw)");
+    expect(gatewayCall?.[0]?.name).toBe("Mac (MerClaw)");
     expect(gatewayCall?.[0]?.domain).toBe("local");
     expect(gatewayCall?.[0]?.hostname).toBe("Mac");
     expect((gatewayCall?.[0]?.txt as Record<string, string>)?.lanHost).toBe("Mac.local");
@@ -901,11 +901,11 @@ describe("gateway bonjour advertiser", () => {
     await started.stop();
   });
 
-  it("falls back to openclaw when system hostname is invalid for DNS", async () => {
+  it("falls back to merclaw when system hostname is invalid for DNS", async () => {
     // Allow advertiser to run in unit tests.
     delete process.env.VITEST;
     process.env.NODE_ENV = "development";
-    delete process.env.OPENCLAW_MDNS_HOSTNAME;
+    delete process.env.MERCLAW_MDNS_HOSTNAME;
     vi.spyOn(os, "hostname").mockReturnValue("My_Lobster Host");
 
     const destroy = vi.fn().mockResolvedValue(undefined);
@@ -918,8 +918,8 @@ describe("gateway bonjour advertiser", () => {
     });
 
     const [gatewayCall] = createService.mock.calls as Array<[ServiceCall]>;
-    expect(gatewayCall?.[0]?.hostname).toBe("openclaw");
-    expect((gatewayCall?.[0]?.txt as Record<string, string>)?.lanHost).toBe("openclaw.local");
+    expect(gatewayCall?.[0]?.hostname).toBe("merclaw");
+    expect((gatewayCall?.[0]?.txt as Record<string, string>)?.lanHost).toBe("merclaw.local");
 
     await started.stop();
   });
@@ -941,7 +941,7 @@ describe("gateway bonjour advertiser", () => {
     const serviceName = gatewayCall?.[0]?.name as string;
     const hostname = gatewayCall?.[0]?.hostname as string;
 
-    expectDnsLabelByteLength(`${reportedHostname} (OpenClaw)`, 64);
+    expectDnsLabelByteLength(`${reportedHostname} (MerClaw)`, 64);
     expect(hostname).toBe(reportedHostname);
     expectDnsLabelWithinLimit(serviceName);
 
@@ -975,7 +975,7 @@ describe("gateway bonjour advertiser", () => {
   });
 
   it("truncates multi-byte hostname within DNS label byte limit", async () => {
-    // 21 CJK characters = 63 bytes in UTF-8, adding " (OpenClaw)" pushes over
+    // 21 CJK characters = 63 bytes in UTF-8, adding " (MerClaw)" pushes over
     const cjkHostname = "你".repeat(21);
     enableAdvertiserUnitMode(cjkHostname);
 
@@ -997,11 +997,11 @@ describe("gateway bonjour advertiser", () => {
     await started.stop();
   });
 
-  it("uses system hostname when OPENCLAW_MDNS_HOSTNAME is unset", async () => {
+  it("uses system hostname when MERCLAW_MDNS_HOSTNAME is unset", async () => {
     // Allow advertiser to run in unit tests.
     delete process.env.VITEST;
     process.env.NODE_ENV = "development";
-    delete process.env.OPENCLAW_MDNS_HOSTNAME;
+    delete process.env.MERCLAW_MDNS_HOSTNAME;
     vi.spyOn(os, "hostname").mockReturnValue("Lobster");
 
     const destroy = vi.fn().mockResolvedValue(undefined);

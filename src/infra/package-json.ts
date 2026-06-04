@@ -1,5 +1,5 @@
 import path from "node:path";
-import { normalizeNullableString as normalizeString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeNullableString as normalizeString } from "@merclaw/normalization-core/string-coerce";
 import { tryReadJson } from "./json-files.js";
 
 type PackageJson = {

@@ -8,9 +8,9 @@ const tempDirs: string[] = [];
 const scriptPath = "scripts/create-dmg.sh";
 
 function makeApp(plistEntries: string[]): string {
-  const dir = mkdtempSync(path.join(tmpdir(), "openclaw-create-dmg-"));
+  const dir = mkdtempSync(path.join(tmpdir(), "merclaw-create-dmg-"));
   tempDirs.push(dir);
-  const app = path.join(dir, "OpenClaw.app");
+  const app = path.join(dir, "MerClaw.app");
   const contents = path.join(app, "Contents");
   mkdirSync(contents, { recursive: true });
   writeFileSync(
@@ -67,7 +67,7 @@ describe("create-dmg plist validation", () => {
     () => {
       const app = makeApp([
         "<key>CFBundleName</key>",
-        "<string>OpenClaw</string>",
+        "<string>MerClaw</string>",
       ]);
       const result = runScript([app, path.join(path.dirname(app), "out.dmg")]);
 

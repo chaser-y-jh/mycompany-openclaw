@@ -451,7 +451,7 @@ const ENUM_EXPECTATIONS: Record<string, string[]> = {
   "gateway.bind": ['"auto"', '"lan"', '"loopback"', '"custom"', '"tailnet"'],
   "gateway.auth.mode": ['"none"', '"token"', '"password"', '"trusted-proxy"'],
   "gateway.tailscale.mode": ['"off"', '"serve"', '"funnel"'],
-  "browser.profiles.*.driver": ['"openclaw"', '"clawd"', '"existing-session"'],
+  "browser.profiles.*.driver": ['"merclaw"', '"clawd"', '"existing-session"'],
   "discovery.mdns.mode": ['"off"', '"minimal"', '"full"'],
   "wizard.lastRunMode": ['"local"', '"remote"'],
   "diagnostics.otel.protocol": ['"http/protobuf"', '"grpc"'],
@@ -677,7 +677,7 @@ describe("config help copy quality", () => {
     expect(FIELD_HELP["memory.qmd.update.interval"].includes("5m")).toBe(true);
     expect(FIELD_HELP["memory.qmd.update.embedInterval"].includes("60m")).toBe(true);
     expect(FIELD_HELP["agents.defaults.memorySearch.store.path"]).toContain(
-      "~/.openclaw/memory/{agentId}.sqlite",
+      "~/.merclaw/memory/{agentId}.sqlite",
     );
   });
 
@@ -718,11 +718,11 @@ describe("config help copy quality", () => {
 
     const stale = FIELD_HELP["session.writeLock.staleMs"];
     expect(stale.includes("1800000")).toBe(true);
-    expect(stale.includes("OPENCLAW_SESSION_WRITE_LOCK_STALE_MS")).toBe(true);
+    expect(stale.includes("MERCLAW_SESSION_WRITE_LOCK_STALE_MS")).toBe(true);
 
     const maxHold = FIELD_HELP["session.writeLock.maxHoldMs"];
     expect(maxHold.includes("300000")).toBe(true);
-    expect(maxHold.includes("OPENCLAW_SESSION_WRITE_LOCK_MAX_HOLD_MS")).toBe(true);
+    expect(maxHold.includes("MERCLAW_SESSION_WRITE_LOCK_MAX_HOLD_MS")).toBe(true);
   });
 
   it("documents session maintenance duration/size examples and deprecations", () => {

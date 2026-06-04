@@ -1,9 +1,9 @@
 import deprecatedPublicPluginSdkSubpaths from "./plugin-sdk-deprecated-public-subpaths.json" with { type: "json" };
 
 const DEPRECATED_PLUGIN_SDK_EXTRA_SPECIFIERS = [
-  "openclaw/plugin-sdk",
-  "openclaw/plugin-sdk/agent-dir-compat",
-  "openclaw/plugin-sdk/test-utils",
+  "merclaw/plugin-sdk",
+  "merclaw/plugin-sdk/agent-dir-compat",
+  "merclaw/plugin-sdk/test-utils",
 ];
 
 export function buildDeprecatedPluginSdkModuleSpecifiers(
@@ -12,7 +12,7 @@ export function buildDeprecatedPluginSdkModuleSpecifiers(
   return [
     ...new Set([
       ...DEPRECATED_PLUGIN_SDK_EXTRA_SPECIFIERS,
-      ...deprecatedSubpaths.map((subpath) => `openclaw/plugin-sdk/${subpath}`),
+      ...deprecatedSubpaths.map((subpath) => `merclaw/plugin-sdk/${subpath}`),
     ]),
   ].toSorted();
 }

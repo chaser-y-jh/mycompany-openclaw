@@ -214,9 +214,9 @@ function createChatPickerScenario(): ControlUiMockGatewayScenario {
     modelProvider: "anthropic",
   });
   return {
-    assistantAgentId: "openclaw-mock",
-    assistantName: "OpenClaw mock",
-    defaultAgentId: "openclaw-mock",
+    assistantAgentId: "merclaw-mock",
+    assistantName: "MerClaw mock",
+    defaultAgentId: "merclaw-mock",
     historyMessages: buildScrollableChatHistory(baseTime),
     methodResponses: {
       "sessions.list": {
@@ -254,11 +254,11 @@ function createMockGatewayPlugin(scenario: ControlUiMockGatewayScenario): Plugin
         res.end(bootstrapBody);
       });
     },
-    name: "openclaw-control-ui-mock-gateway",
+    name: "merclaw-control-ui-mock-gateway",
     transformIndexHtml(html) {
       return html.replace(
         "</head>",
-        `    <script data-openclaw-control-ui-mock-gateway>\n${initScript}\n    </script>\n  </head>`,
+        `    <script data-merclaw-control-ui-mock-gateway>\n${initScript}\n    </script>\n  </head>`,
       );
     },
   };
@@ -293,7 +293,7 @@ const server = await createServer({
   clearScreen: false,
   configFile: false,
   define: {
-    OPENCLAW_CONTROL_UI_BUILD_ID: JSON.stringify("mock"),
+    MERCLAW_CONTROL_UI_BUILD_ID: JSON.stringify("mock"),
   },
   logLevel: "error",
   optimizeDeps: {

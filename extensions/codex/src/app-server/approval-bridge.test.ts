@@ -5,12 +5,12 @@ import {
   resolveNativeHookRelayDeferredToolApproval,
   runBeforeToolCallHook,
   type EmbeddedRunAttemptParams,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "merclaw/plugin-sdk/agent-harness-runtime";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { buildApprovalResponse, handleCodexAppServerApprovalRequest } from "./approval-bridge.js";
 
-vi.mock("openclaw/plugin-sdk/agent-harness-runtime", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("openclaw/plugin-sdk/agent-harness-runtime")>()),
+vi.mock("merclaw/plugin-sdk/agent-harness-runtime", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("merclaw/plugin-sdk/agent-harness-runtime")>()),
   callGatewayTool: vi.fn(),
   hasNativeHookRelayInvocation: vi.fn(() => false),
   invokeNativeHookRelay: vi.fn(),
@@ -201,7 +201,7 @@ describe("Codex app-server approval bridge", () => {
     expect(gatewayCallMethod()).toBe("plugin.approval.request");
     expect(typeof gatewayCallAt(0)[1]).toBe("object");
     const requestPayload = gatewayRequestPayload();
-    expect(requestPayload.pluginId).toBe("openclaw-codex-app-server");
+    expect(requestPayload.pluginId).toBe("merclaw-codex-app-server");
     expect(requestPayload.title).toBe("Codex app-server command approval");
     expect(requestPayload.twoPhase).toBe(true);
     expect(requestPayload.turnSourceChannel).toBe("telegram");
@@ -231,7 +231,7 @@ describe("Codex app-server approval bridge", () => {
     findApprovalEvent(params, { status: "approved", approvalId: "plugin:approval-1" });
   });
 
-  it("normalizes prefixed channel targets for OpenClaw tool policy context", async () => {
+  it("normalizes prefixed channel targets for MerClaw tool policy context", async () => {
     const params = createParams();
     params.messageChannel = "telegram";
     params.messageProvider = "telegram";
@@ -263,7 +263,7 @@ describe("Codex app-server approval bridge", () => {
     expect(gatewayRequestPayload().turnSourceTo).toBe("telegram:-100123");
   });
 
-  it("denies command approvals before prompting when OpenClaw tool policy blocks", async () => {
+  it("denies command approvals before prompting when MerClaw tool policy blocks", async () => {
     const params = createParams();
     mockRunBeforeToolCallHook.mockResolvedValueOnce({
       blocked: true,
@@ -333,7 +333,7 @@ describe("Codex app-server approval bridge", () => {
       event: "pre_tool_use",
       rawPayload: {
         hook_event_name: "PreToolUse",
-        openclaw_approval_mode: "report",
+        merclaw_approval_mode: "report",
         tool_name: "exec_command",
         tool_use_id: "cmd-native-relay",
         cwd: "/workspace",
@@ -525,7 +525,7 @@ describe("Codex app-server approval bridge", () => {
     findApprovalEvent(params, {
       status: "denied",
       message:
-        "OpenClaw native hook relay returned an unreadable Codex app-server approval result.",
+        "MerClaw native hook relay returned an unreadable Codex app-server approval result.",
     });
   });
 
@@ -568,7 +568,7 @@ describe("Codex app-server approval bridge", () => {
     expect(mockCallGatewayTool).not.toHaveBeenCalled();
     findApprovalEvent(params, {
       status: "denied",
-      message: "OpenClaw native hook relay returned a non-deny Codex app-server approval decision.",
+      message: "MerClaw native hook relay returned a non-deny Codex app-server approval decision.",
     });
   });
 
@@ -638,7 +638,7 @@ describe("Codex app-server approval bridge", () => {
     findApprovalEvent(params, {
       status: "denied",
       message:
-        "OpenClaw native hook relay unavailable for Codex app-server approval: native hook relay not found",
+        "MerClaw native hook relay unavailable for Codex app-server approval: native hook relay not found",
     });
   });
 
@@ -692,7 +692,7 @@ describe("Codex app-server approval bridge", () => {
     ]);
   });
 
-  it("denies command approvals when OpenClaw tool policy rewrites params", async () => {
+  it("denies command approvals when MerClaw tool policy rewrites params", async () => {
     const params = createParams();
     mockRunBeforeToolCallHook.mockResolvedValueOnce({
       blocked: false,
@@ -725,11 +725,11 @@ describe("Codex app-server approval bridge", () => {
     findApprovalEvent(params, {
       status: "denied",
       message:
-        "OpenClaw tool policy rewrote Codex app-server approval params; refusing original request.",
+        "MerClaw tool policy rewrote Codex app-server approval params; refusing original request.",
     });
   });
 
-  it("keeps OpenClaw plugin allow-always approvals scoped to one Codex request", async () => {
+  it("keeps MerClaw plugin allow-always approvals scoped to one Codex request", async () => {
     const params = createParams();
     mockRunBeforeToolCallHook.mockResolvedValueOnce({
       blocked: false,
@@ -766,7 +766,7 @@ describe("Codex app-server approval bridge", () => {
     });
   });
 
-  it("denies command approvals when OpenClaw tool policy requires approval", async () => {
+  it("denies command approvals when MerClaw tool policy requires approval", async () => {
     const params = createParams();
     mockRunBeforeToolCallHook.mockResolvedValueOnce({
       blocked: true,
@@ -1262,7 +1262,7 @@ describe("Codex app-server approval bridge", () => {
 
     expect(result).toEqual({
       decision: "decline",
-      reason: "OpenClaw codex app-server bridge does not grant native approvals yet.",
+      reason: "MerClaw codex app-server bridge does not grant native approvals yet.",
     });
     expect(mockCallGatewayTool).not.toHaveBeenCalled();
     expect(params.onAgentEvent).not.toHaveBeenCalled();
@@ -1623,7 +1623,7 @@ describe("Codex app-server approval bridge", () => {
     });
     expect(buildApprovalResponse("future/requestApproval", undefined, "approved-once")).toEqual({
       decision: "decline",
-      reason: "OpenClaw codex app-server bridge does not grant native approvals yet.",
+      reason: "MerClaw codex app-server bridge does not grant native approvals yet.",
     });
   });
 });

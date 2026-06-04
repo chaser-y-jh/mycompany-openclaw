@@ -39,12 +39,12 @@ jobs:
       - name: Checkout ClawHub docs source
         uses: actions/checkout@v6
         with:
-          repository: openclaw/clawhub
+          repository: merclaw/clawhub
           path: clawhub-source
           fetch-depth: 1
           persist-credentials: false
 
       - name: Check docs
         env:
-          OPENCLAW_DOCS_SYNC_CLAWHUB_REPO: ${{ github.workspace }}/clawhub-source
+          MERCLAW_DOCS_SYNC_CLAWHUB_REPO: ${{ github.workspace }}/clawhub-source
         run: pnpm check:docs

@@ -40,13 +40,13 @@ async function readAuthJson(rootDir: string, filePath: string): Promise<AuthJson
 /**
  * session runtime's ModelRegistry/AuthStorage expects credentials in auth.json.
  *
- * OpenClaw stores credentials in auth-profiles.json instead. This helper
+ * MerClaw stores credentials in auth-profiles.json instead. This helper
  * bridges all credentials into agentDir/auth.json so session runtime can
  * consider provider-owned configured models authenticated.
  *
  * Syncs all credential types: api_key, token (as api_key), and oauth.
  *
- * @deprecated Runtime auth now comes from OpenClaw auth-profiles snapshots.
+ * @deprecated Runtime auth now comes from MerClaw auth-profiles snapshots.
  */
 export async function ensureAgentAuthJsonFromAuthProfiles(agentDir: string): Promise<{
   wrote: boolean;

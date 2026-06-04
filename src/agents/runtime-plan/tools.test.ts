@@ -1,9 +1,9 @@
-import type { AgentTool } from "openclaw/plugin-sdk/agent-core";
+import type { AgentTool } from "merclaw/plugin-sdk/agent-core";
 import {
   createNativeOpenAIResponsesModel,
   createParameterFreeTool,
   normalizedParameterFreeSchema,
-} from "openclaw/plugin-sdk/agent-runtime-test-contracts";
+} from "merclaw/plugin-sdk/agent-runtime-test-contracts";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { logAgentRuntimeToolDiagnostics, normalizeAgentRuntimeTools } from "./tools.js";
 import type { AgentRuntimePlan } from "./types.js";
@@ -43,12 +43,12 @@ describe("AgentRuntimePlan tool policy helpers", () => {
         provider: "openai",
         modelId: "gpt-5.4",
         modelApi: "openai-responses",
-        workspaceDir: "/tmp/openclaw-runtime-plan-tools",
+        workspaceDir: "/tmp/merclaw-runtime-plan-tools",
         model,
       }),
     ).toBe(normalized);
     expect(normalize).toHaveBeenCalledWith(tools, {
-      workspaceDir: "/tmp/openclaw-runtime-plan-tools",
+      workspaceDir: "/tmp/merclaw-runtime-plan-tools",
       modelApi: "openai-responses",
       model,
     });
@@ -92,7 +92,7 @@ describe("AgentRuntimePlan tool policy helpers", () => {
       provider: "openai",
       modelId: "gpt-5.4",
       modelApi: "openai-responses",
-      workspaceDir: "/tmp/openclaw-runtime-plan-tools",
+      workspaceDir: "/tmp/merclaw-runtime-plan-tools",
       model: createNativeOpenAIResponsesModel() as never,
     });
 
@@ -102,7 +102,7 @@ describe("AgentRuntimePlan tool policy helpers", () => {
       tools: [createParameterFreeTool()],
       provider: "openai",
       config: undefined,
-      workspaceDir: "/tmp/openclaw-runtime-plan-tools",
+      workspaceDir: "/tmp/merclaw-runtime-plan-tools",
       env: process.env,
       modelId: "gpt-5.4",
       modelApi: "openai-responses",
@@ -146,12 +146,12 @@ describe("AgentRuntimePlan tool policy helpers", () => {
       provider: "openai",
       modelId: "gpt-5.4",
       modelApi: "openai-responses",
-      workspaceDir: "/tmp/openclaw-runtime-plan-tools",
+      workspaceDir: "/tmp/merclaw-runtime-plan-tools",
       model,
     });
 
     expect(logDiagnostics).toHaveBeenCalledWith(tools, {
-      workspaceDir: "/tmp/openclaw-runtime-plan-tools",
+      workspaceDir: "/tmp/merclaw-runtime-plan-tools",
       modelApi: "openai-responses",
       model,
     });

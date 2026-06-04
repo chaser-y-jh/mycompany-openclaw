@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import {
   clearAgentHarnesses,
   disposeRegisteredAgentHarnesses,
@@ -14,7 +14,7 @@ import {
 import { selectAgentHarness } from "./selection.js";
 import type { AgentHarness } from "./types.js";
 
-const originalRuntime = process.env.OPENCLAW_AGENT_RUNTIME;
+const originalRuntime = process.env.MERCLAW_AGENT_RUNTIME;
 
 beforeEach(() => {
   clearAgentHarnesses();
@@ -23,9 +23,9 @@ beforeEach(() => {
 afterEach(() => {
   clearAgentHarnesses();
   if (originalRuntime == null) {
-    delete process.env.OPENCLAW_AGENT_RUNTIME;
+    delete process.env.MERCLAW_AGENT_RUNTIME;
   } else {
-    process.env.OPENCLAW_AGENT_RUNTIME = originalRuntime;
+    process.env.MERCLAW_AGENT_RUNTIME = originalRuntime;
   }
 });
 
@@ -50,18 +50,18 @@ function makeHarness(
   };
 }
 
-function providerRuntimeConfig(provider: string, runtime: string): OpenClawConfig {
+function providerRuntimeConfig(provider: string, runtime: string): MerClawConfig {
   return {
     models: {
       providers: {
         [provider]: {
-          baseUrl: "https://api.openclaw.test/v1",
+          baseUrl: "https://api.merclaw.test/v1",
           agentRuntime: { id: runtime },
           models: [],
         },
       },
     },
-  } as OpenClawConfig;
+  } as MerClawConfig;
 }
 
 describe("agent harness registry", () => {
@@ -125,10 +125,10 @@ describe("agent harness registry", () => {
   });
 
   it("keeps model-specific harnesses behind plugin registration in auto mode", () => {
-    process.env.OPENCLAW_AGENT_RUNTIME = "auto";
+    process.env.MERCLAW_AGENT_RUNTIME = "auto";
 
     expect(selectAgentHarness({ provider: "plugin-models", modelId: "custom-1" }).id).toBe(
-      "openclaw",
+      "merclaw",
     );
 
     registerAgentHarness(makeHarness("custom", { providers: ["plugin-models"] }), {
@@ -140,16 +140,16 @@ describe("agent harness registry", () => {
     );
   });
 
-  it("falls back to OpenClaw for other models", () => {
-    process.env.OPENCLAW_AGENT_RUNTIME = "auto";
+  it("falls back to MerClaw for other models", () => {
+    process.env.MERCLAW_AGENT_RUNTIME = "auto";
 
     expect(selectAgentHarness({ provider: "anthropic", modelId: "sonnet-4.6" }).id).toBe(
-      "openclaw",
+      "merclaw",
     );
   });
 
   it("lets a plugin harness win in auto mode by priority", () => {
-    process.env.OPENCLAW_AGENT_RUNTIME = "auto";
+    process.env.MERCLAW_AGENT_RUNTIME = "auto";
     registerAgentHarness(makeHarness("plugin-harness", { priority: 200 }), {
       ownerPluginId: "plugin-a",
     });
@@ -157,7 +157,7 @@ describe("agent harness registry", () => {
     expect(selectAgentHarness({ provider: "codex", modelId: "gpt-5.4" }).id).toBe("plugin-harness");
   });
 
-  it("honors explicit provider OpenClaw runtime policy", () => {
+  it("honors explicit provider MerClaw runtime policy", () => {
     registerAgentHarness(makeHarness("plugin-harness", { priority: 200 }), {
       ownerPluginId: "plugin-a",
     });
@@ -166,9 +166,9 @@ describe("agent harness registry", () => {
       selectAgentHarness({
         provider: "codex",
         modelId: "gpt-5.4",
-        config: providerRuntimeConfig("codex", "openclaw"),
+        config: providerRuntimeConfig("codex", "merclaw"),
       }).id,
-    ).toBe("openclaw");
+    ).toBe("merclaw");
   });
 
   it("honors explicit provider plugin runtime policy when the plugin harness is registered", () => {

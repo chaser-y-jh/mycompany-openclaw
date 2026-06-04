@@ -1,14 +1,14 @@
-import { DEFAULT_ACCOUNT_ID } from "openclaw/plugin-sdk/account-id";
-import type { ChannelDoctorConfigMutation } from "openclaw/plugin-sdk/channel-contract";
-import { readChannelAllowFromStore } from "openclaw/plugin-sdk/channel-pairing";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { normalizeUniqueStringEntries } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { DEFAULT_ACCOUNT_ID } from "merclaw/plugin-sdk/account-id";
+import type { ChannelDoctorConfigMutation } from "merclaw/plugin-sdk/channel-contract";
+import { readChannelAllowFromStore } from "merclaw/plugin-sdk/channel-pairing";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { normalizeUniqueStringEntries } from "merclaw/plugin-sdk/string-coerce-runtime";
 
 function applyGroupAllowFromFromStore(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   storeAllowFrom: string[];
   changes: string[];
-}): OpenClawConfig {
+}): MerClawConfig {
   const next = structuredClone(params.cfg ?? {});
   const section = next.channels?.whatsapp as Record<string, unknown> | undefined;
   if (!section || typeof section !== "object" || params.storeAllowFrom.length === 0) {
@@ -49,7 +49,7 @@ function applyGroupAllowFromFromStore(params: {
 }
 
 export async function applyWhatsAppSecurityConfigFixes(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env: NodeJS.ProcessEnv;
 }): Promise<ChannelDoctorConfigMutation> {
   const fromStore = await readChannelAllowFromStore(

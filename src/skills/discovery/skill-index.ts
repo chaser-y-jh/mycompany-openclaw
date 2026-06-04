@@ -133,7 +133,7 @@ function createSkillIndexEntry(
     normalizedSkillKey: normalizeSkillIndexName(skillKey),
     source,
     bundled:
-      source === "openclaw-bundled" ||
+      source === "merclaw-bundled" ||
       (source === "unknown" && opts?.bundledNames?.has(name) === true),
     agentAllowed: agentSkillSet === undefined || agentSkillSet.has(name),
     runtimeVisible: isSkillRuntimeVisible(entry),

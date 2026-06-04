@@ -1,4 +1,4 @@
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import type { Command } from "commander";
 import { formatDocsLink } from "../../packages/terminal-core/src/links.js";
 import { theme } from "../../packages/terminal-core/src/theme.js";
@@ -30,21 +30,21 @@ export function registerWebhooksCli(program: Command) {
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/webhooks", "docs.openclaw.ai/cli/webhooks")}\n`,
+        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/webhooks", "docs.merclaw.ai/cli/webhooks")}\n`,
     );
 
   const gmail = webhooks.command("gmail").description("Gmail Pub/Sub hooks (via gogcli)");
 
   gmail
     .command("setup")
-    .description("Configure Gmail watch + Pub/Sub + OpenClaw hooks")
+    .description("Configure Gmail watch + Pub/Sub + MerClaw hooks")
     .requiredOption("--account <email>", "Gmail account to watch")
     .option("--project <id>", "GCP project id (OAuth client owner)")
     .option("--topic <name>", "Pub/Sub topic name", DEFAULT_GMAIL_TOPIC)
     .option("--subscription <name>", "Pub/Sub subscription name", DEFAULT_GMAIL_SUBSCRIPTION)
     .option("--label <label>", "Gmail label to watch", DEFAULT_GMAIL_LABEL)
-    .option("--hook-url <url>", "OpenClaw hook URL")
-    .option("--hook-token <token>", "OpenClaw hook token")
+    .option("--hook-url <url>", "MerClaw hook URL")
+    .option("--hook-token <token>", "MerClaw hook token")
     .option("--push-token <token>", "Push token for gog watch serve")
     .option("--bind <host>", "gog watch serve bind host", DEFAULT_GMAIL_SERVE_BIND)
     .option("--port <port>", "gog watch serve port", String(DEFAULT_GMAIL_SERVE_PORT))
@@ -81,8 +81,8 @@ export function registerWebhooksCli(program: Command) {
     .option("--topic <topic>", "Pub/Sub topic path (projects/.../topics/..)")
     .option("--subscription <name>", "Pub/Sub subscription name")
     .option("--label <label>", "Gmail label to watch")
-    .option("--hook-url <url>", "OpenClaw hook URL")
-    .option("--hook-token <token>", "OpenClaw hook token")
+    .option("--hook-url <url>", "MerClaw hook URL")
+    .option("--hook-token <token>", "MerClaw hook token")
     .option("--push-token <token>", "Push token for gog watch serve")
     .option("--bind <host>", "gog watch serve bind host")
     .option("--port <port>", "gog watch serve port")
@@ -112,7 +112,7 @@ function parseGmailSetupOptions(raw: Record<string, unknown>): GmailSetupOptions
   const account = normalizeOptionalString(accountRaw) ?? "";
   if (!account) {
     throw new Error(
-      `--account is required. Example: ${formatCliCommand("openclaw webhooks gmail setup --account default")}.`,
+      `--account is required. Example: ${formatCliCommand("merclaw webhooks gmail setup --account default")}.`,
     );
   }
   const common = parseGmailCommonOptions(raw);

@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 
 export type TranscriptSourceKind =
   | "live-audio"
@@ -44,7 +44,7 @@ export type TranscriptSessionDescriptor = {
 };
 
 export type TranscriptStartRequest = {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   session: TranscriptSessionDescriptor;
   abortSignal?: AbortSignal;
   startupWaitMs?: number;
@@ -63,7 +63,7 @@ export type TranscriptsStartResult =
     };
 
 export type TranscriptStopRequest = {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   sessionId: string;
   source: TranscriptSourceLocator;
   reason?: string;
@@ -88,7 +88,7 @@ export type TranscriptSourceStatus = {
 };
 
 export type TranscriptImportRequest = {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   session: TranscriptSessionDescriptor;
   text: string;
   speakerLabel?: string;
@@ -103,7 +103,7 @@ export type TranscriptSourceProvider = {
   stop?: (request: TranscriptStopRequest) => Promise<TranscriptsStopResult>;
   status?: (
     source: TranscriptSourceLocator,
-    cfg?: OpenClawConfig,
+    cfg?: MerClawConfig,
   ) => Promise<TranscriptSourceStatus[]>;
   importTranscript?: (request: TranscriptImportRequest) => Promise<TranscriptUtterance[]>;
 };

@@ -1,13 +1,13 @@
 import { createHash } from "node:crypto";
-import { normalizeText } from "@openclaw/acp-core/normalize-text";
-import type { AcpRuntimeSessionMode } from "@openclaw/acp-core/runtime/types";
-import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeText } from "@merclaw/acp-core/normalize-text";
+import type { AcpRuntimeSessionMode } from "@merclaw/acp-core/runtime/types";
+import { normalizeOptionalLowercaseString } from "@merclaw/normalization-core/string-coerce";
 import type { ChannelId } from "../channels/plugins/types.public.js";
 import type { SessionBindingRecord } from "../infra/outbound/session-binding-service.js";
 import { normalizeAccountId, resolveAgentIdFromSessionKey } from "../routing/session-key.js";
 import { sanitizeAgentId } from "../routing/session-key.js";
 
-export { normalizeText } from "@openclaw/acp-core/normalize-text";
+export { normalizeText } from "@merclaw/acp-core/normalize-text";
 
 export type ConfiguredAcpBindingChannel = ChannelId;
 
@@ -16,7 +16,7 @@ export type ConfiguredAcpBindingSpec = {
   accountId: string;
   conversationId: string;
   parentConversationId?: string;
-  /** Owning OpenClaw agent id (used for session identity/storage). */
+  /** Owning MerClaw agent id (used for session identity/storage). */
   agentId: string;
   /** ACP harness agent id override (falls back to agentId when omitted). */
   acpAgentId?: string;

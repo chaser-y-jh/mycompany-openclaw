@@ -1,16 +1,16 @@
 {
-  "name": "@openclaw/tavily-plugin",
+  "name": "@merclaw/tavily-plugin",
   "version": "2026.5.31",
   "private": true,
-  "description": "OpenClaw Tavily plugin",
+  "description": "MerClaw Tavily plugin",
   "type": "module",
   "dependencies": {
     "typebox": "1.1.39"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@merclaw/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ]

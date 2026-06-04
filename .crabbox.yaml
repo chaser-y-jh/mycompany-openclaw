@@ -1,5 +1,5 @@
-profile: openclaw-check
-# Default OpenClaw runner spend to the Azure-backed Crabbox account.
+profile: merclaw-check
+# Default MerClaw runner spend to the Azure-backed Crabbox account.
 # Use `--provider aws` only for AWS-specific runner proof.
 provider: azure
 class: standard
@@ -20,11 +20,11 @@ actions:
   ref: main
   runnerLabels:
     - crabbox
-    - openclaw
+    - merclaw
   runnerVersion: latest
   ephemeral: true
 blacksmith:
-  org: openclaw
+  org: merclaw
   workflow: .github/workflows/ci-check-testbox.yml
   job: check
   ref: main
@@ -49,7 +49,7 @@ env:
   allow:
     - CI
     - NODE_OPTIONS
-    - OPENCLAW_*
+    - MERCLAW_*
 ssh:
   user: crabbox
   port: "2222"

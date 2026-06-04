@@ -1,4 +1,4 @@
-import type { StreamOptions, ThinkingBudgets, ThinkingLevel } from "openclaw/plugin-sdk/llm";
+import type { StreamOptions, ThinkingBudgets, ThinkingLevel } from "merclaw/plugin-sdk/llm";
 
 export type BedrockThinkingDisplay = "summarized" | "omitted";
 

@@ -1,11 +1,11 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { createPluginStateKeyedStoreForTests as createPluginStateKeyedStore } from "openclaw/plugin-sdk/plugin-state-test-runtime";
+import { createPluginStateKeyedStoreForTests as createPluginStateKeyedStore } from "merclaw/plugin-sdk/plugin-state-test-runtime";
 import type {
   OpenKeyedStoreOptions,
   PluginDoctorStateMigrationContext,
-} from "openclaw/plugin-sdk/runtime-doctor";
+} from "merclaw/plugin-sdk/runtime-doctor";
 import { describe, expect, it } from "vitest";
 import { stateMigrations } from "./doctor-contract-api.js";
 import { createWorkboardSqliteStores } from "./src/sqlite-store.js";
@@ -24,8 +24,8 @@ function createDoctorContext(env: NodeJS.ProcessEnv): PluginDoctorStateMigration
 
 describe("workboard doctor contract", () => {
   it("migrates shipped .28 plugin-state workboard data into sqlite", async () => {
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-workboard-doctor-"));
-    const env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-workboard-doctor-"));
+    const env = { ...process.env, MERCLAW_STATE_DIR: stateDir };
     try {
       const cardStore = createPluginStateKeyedStore<PersistedWorkboardCard>("workboard", {
         namespace: "workboard.cards",
@@ -154,8 +154,8 @@ describe("workboard doctor contract", () => {
   });
 
   it("resumes attachment migration when the owning card was already copied", async () => {
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-workboard-doctor-"));
-    const env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-workboard-doctor-"));
+    const env = { ...process.env, MERCLAW_STATE_DIR: stateDir };
     try {
       const attachmentStore = createPluginStateKeyedStore("workboard", {
         namespace: "workboard.attachments",
@@ -226,8 +226,8 @@ describe("workboard doctor contract", () => {
   });
 
   it("skips malformed legacy attachments without aborting valid attachment migration", async () => {
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-workboard-doctor-"));
-    const env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-workboard-doctor-"));
+    const env = { ...process.env, MERCLAW_STATE_DIR: stateDir };
     try {
       const attachmentStore = createPluginStateKeyedStore<unknown>("workboard", {
         namespace: "workboard.attachments",
@@ -301,8 +301,8 @@ describe("workboard doctor contract", () => {
   });
 
   it("keeps orphan legacy attachments when migrated card metadata does not reference them", async () => {
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-workboard-doctor-"));
-    const env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-workboard-doctor-"));
+    const env = { ...process.env, MERCLAW_STATE_DIR: stateDir };
     try {
       const cardStore = createPluginStateKeyedStore<PersistedWorkboardCard>("workboard", {
         namespace: "workboard.cards",
@@ -365,8 +365,8 @@ describe("workboard doctor contract", () => {
   });
 
   it("keeps current sqlite rows when legacy kv ids conflict", async () => {
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-workboard-doctor-"));
-    const env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-workboard-doctor-"));
+    const env = { ...process.env, MERCLAW_STATE_DIR: stateDir };
     try {
       const cardStore = createPluginStateKeyedStore<PersistedWorkboardCard>("workboard", {
         namespace: "workboard.cards",

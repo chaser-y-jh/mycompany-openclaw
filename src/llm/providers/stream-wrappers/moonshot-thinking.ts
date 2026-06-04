@@ -1,4 +1,4 @@
-import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalLowercaseString } from "@merclaw/normalization-core/string-coerce";
 import type { StreamFn } from "../../../agents/runtime/index.js";
 import type { ThinkLevel } from "../../../auto-reply/thinking.js";
 import { createLazyImportLoader } from "../../../shared/lazy-promise.js";
@@ -7,7 +7,7 @@ import { streamWithPayloadPatch } from "./stream-payload-utils.js";
 type MoonshotThinkingType = "enabled" | "disabled";
 type MoonshotThinkingKeep = "all";
 const MOONSHOT_THINKING_KEEP_MODEL_ID = "kimi-k2.6";
-const llmRuntimeLoader = createLazyImportLoader(() => import("openclaw/plugin-sdk/llm"));
+const llmRuntimeLoader = createLazyImportLoader(() => import("merclaw/plugin-sdk/llm"));
 
 async function loadDefaultStreamFn(): Promise<StreamFn> {
   const runtime = await llmRuntimeLoader.load();

@@ -1,5 +1,5 @@
 import fs from "node:fs/promises";
-import { MAX_TIMER_TIMEOUT_MS } from "openclaw/plugin-sdk/number-runtime";
+import { MAX_TIMER_TIMEOUT_MS } from "merclaw/plugin-sdk/number-runtime";
 import { describe, expect, it, vi } from "vitest";
 import {
   CODEX_APP_SERVER_CONFIG_KEYS,
@@ -11,9 +11,9 @@ import {
   readCodexPluginConfig,
   resolveCodexAppServerRuntimeOptions,
   resolveCodexComputerUseConfig,
-  resolveOpenClawExecModeForCodexAppServer,
-  resolveOpenClawExecModeFromConfig,
-  resolveOpenClawExecPolicyForCodexAppServer,
+  resolveMerClawExecModeForCodexAppServer,
+  resolveMerClawExecModeFromConfig,
+  resolveMerClawExecPolicyForCodexAppServer,
   resolveCodexPluginsPolicy,
   shouldAutoApproveCodexAppServerApprovals,
 } from "./config.js";
@@ -100,8 +100,8 @@ describe("Codex app-server config", () => {
         },
       },
       env: {
-        OPENCLAW_CODEX_APP_SERVER_APPROVAL_POLICY: "never",
-        OPENCLAW_CODEX_APP_SERVER_SANDBOX: "read-only",
+        MERCLAW_CODEX_APP_SERVER_APPROVAL_POLICY: "never",
+        MERCLAW_CODEX_APP_SERVER_SANDBOX: "read-only",
       },
     });
 
@@ -515,7 +515,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     expectRuntimePolicy(
       resolveRuntimeForTest({
         pluginConfig: {},
-        env: { OPENCLAW_CODEX_APP_SERVER_MODE: "yolo" },
+        env: { MERCLAW_CODEX_APP_SERVER_MODE: "yolo" },
         requirementsToml,
       }),
       {
@@ -553,7 +553,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
   it("rejects the retired dynamic tool profile key", () => {
     expect(
       readCodexPluginConfig({
-        codexDynamicToolsProfile: "openclaw-compat",
+        codexDynamicToolsProfile: "merclaw-compat",
         codexDynamicToolsLoading: "direct",
       }),
     ).toEqual({});
@@ -710,7 +710,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     expectFields(
       resolveRuntimeForTest({
         pluginConfig: { appServer: { command: "/opt/codex/bin/codex" } },
-        env: { OPENCLAW_CODEX_APP_SERVER_BIN: "/usr/local/bin/codex" },
+        env: { MERCLAW_CODEX_APP_SERVER_BIN: "/usr/local/bin/codex" },
       }).start,
       "configured start",
       {
@@ -722,7 +722,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     expectFields(
       resolveRuntimeForTest({
         pluginConfig: {},
-        env: { OPENCLAW_CODEX_APP_SERVER_BIN: "/usr/local/bin/codex" },
+        env: { MERCLAW_CODEX_APP_SERVER_BIN: "/usr/local/bin/codex" },
       }).start,
       "environment start",
       {
@@ -738,7 +738,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
         pluginConfig: {
           appServer: {
             command:
-              "node C:\\Users\\me\\.openclaw\\npm\\node_modules\\@openai\\codex\\bin\\codex.js",
+              "node C:\\Users\\me\\.merclaw\\npm\\node_modules\\@openai\\codex\\bin\\codex.js",
           },
         },
       }),
@@ -749,11 +749,11 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
       resolveRuntimeForTest({
         pluginConfig: {},
         env: {
-          OPENCLAW_CODEX_APP_SERVER_BIN:
-            "node C:\\Users\\me\\.openclaw\\npm\\node_modules\\@openai\\codex\\bin\\codex.js",
+          MERCLAW_CODEX_APP_SERVER_BIN:
+            "node C:\\Users\\me\\.merclaw\\npm\\node_modules\\@openai\\codex\\bin\\codex.js",
         },
       }),
-    ).toThrow("OPENCLAW_CODEX_APP_SERVER_BIN must be only the Codex app-server executable path");
+    ).toThrow("MERCLAW_CODEX_APP_SERVER_BIN must be only the Codex app-server executable path");
   });
 
   it("preserves executable paths that contain spaces", () => {
@@ -775,7 +775,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
           },
         },
         env: {
-          OPENCLAW_CODEX_COMPUTER_USE_PLUGIN_NAME: "env-fallback-plugin",
+          MERCLAW_CODEX_COMPUTER_USE_PLUGIN_NAME: "env-fallback-plugin",
         },
       }),
     ).toEqual({
@@ -791,10 +791,10 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
       resolveCodexComputerUseConfig({
         pluginConfig: {},
         env: {
-          OPENCLAW_CODEX_COMPUTER_USE: "1",
-          OPENCLAW_CODEX_COMPUTER_USE_MARKETPLACE_SOURCE: "github:example/plugins",
-          OPENCLAW_CODEX_COMPUTER_USE_AUTO_INSTALL: "true",
-          OPENCLAW_CODEX_COMPUTER_USE_MARKETPLACE_DISCOVERY_TIMEOUT_MS: "30000",
+          MERCLAW_CODEX_COMPUTER_USE: "1",
+          MERCLAW_CODEX_COMPUTER_USE_MARKETPLACE_SOURCE: "github:example/plugins",
+          MERCLAW_CODEX_COMPUTER_USE_AUTO_INSTALL: "true",
+          MERCLAW_CODEX_COMPUTER_USE_MARKETPLACE_DISCOVERY_TIMEOUT_MS: "30000",
         },
       }),
       "computer use config",
@@ -811,8 +811,8 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
         resolveCodexComputerUseConfig({
           pluginConfig: {},
           env: {
-            OPENCLAW_CODEX_COMPUTER_USE: "1",
-            OPENCLAW_CODEX_COMPUTER_USE_MARKETPLACE_DISCOVERY_TIMEOUT_MS: value,
+            MERCLAW_CODEX_COMPUTER_USE: "1",
+            MERCLAW_CODEX_COMPUTER_USE_MARKETPLACE_DISCOVERY_TIMEOUT_MS: value,
           },
         }),
         "computer use config",
@@ -844,7 +844,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
   it("allows environment mode fallback to opt in to guardian-reviewed local execution", () => {
     const runtime = resolveRuntimeForTest({
       pluginConfig: {},
-      env: { OPENCLAW_CODEX_APP_SERVER_MODE: "guardian" },
+      env: { MERCLAW_CODEX_APP_SERVER_MODE: "guardian" },
     });
 
     expectRuntimePolicy(runtime, {
@@ -854,7 +854,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     });
   });
 
-  it("maps normalized OpenClaw auto exec mode to guardian-reviewed local execution", () => {
+  it("maps normalized MerClaw auto exec mode to guardian-reviewed local execution", () => {
     const runtime = resolveRuntimeForTest({
       pluginConfig: {},
       execMode: "auto",
@@ -877,8 +877,8 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
         },
       },
       env: {
-        OPENCLAW_CODEX_APP_SERVER_APPROVAL_POLICY: "never",
-        OPENCLAW_CODEX_APP_SERVER_SANDBOX: "danger-full-access",
+        MERCLAW_CODEX_APP_SERVER_APPROVAL_POLICY: "never",
+        MERCLAW_CODEX_APP_SERVER_SANDBOX: "danger-full-access",
       },
       execMode: "auto",
     });
@@ -907,9 +907,9 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
       pluginConfig: {},
       execMode: "auto",
       env: {
-        OPENCLAW_CODEX_APP_SERVER_MODE: "yolo",
-        OPENCLAW_CODEX_APP_SERVER_APPROVAL_POLICY: "never",
-        OPENCLAW_CODEX_APP_SERVER_SANDBOX: "read-only",
+        MERCLAW_CODEX_APP_SERVER_MODE: "yolo",
+        MERCLAW_CODEX_APP_SERVER_APPROVAL_POLICY: "never",
+        MERCLAW_CODEX_APP_SERVER_SANDBOX: "read-only",
       },
     });
 
@@ -926,7 +926,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
   });
 
   it.each(["deny", "allowlist"] as const)(
-    "blocks Codex app-server local execution for normalized OpenClaw %s exec mode",
+    "blocks Codex app-server local execution for normalized MerClaw %s exec mode",
     (execMode) => {
       expect(() =>
         resolveRuntimeForTest({
@@ -939,7 +939,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     },
   );
 
-  it("maps normalized OpenClaw ask exec mode away from Codex yolo", () => {
+  it("maps normalized MerClaw ask exec mode away from Codex yolo", () => {
     const runtime = resolveRuntimeForTest({
       pluginConfig: {},
       execMode: "ask",
@@ -965,7 +965,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     const envRuntime = resolveRuntimeForTest({
       pluginConfig: {},
       execMode: "ask",
-      env: { OPENCLAW_CODEX_APP_SERVER_MODE: "guardian" },
+      env: { MERCLAW_CODEX_APP_SERVER_MODE: "guardian" },
     });
 
     expectRuntimePolicy(configRuntime, {
@@ -997,9 +997,9 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
       pluginConfig: {},
       execMode: "ask",
       env: {
-        OPENCLAW_CODEX_APP_SERVER_MODE: "yolo",
-        OPENCLAW_CODEX_APP_SERVER_APPROVAL_POLICY: "never",
-        OPENCLAW_CODEX_APP_SERVER_SANDBOX: "danger-full-access",
+        MERCLAW_CODEX_APP_SERVER_MODE: "yolo",
+        MERCLAW_CODEX_APP_SERVER_APPROVAL_POLICY: "never",
+        MERCLAW_CODEX_APP_SERVER_SANDBOX: "danger-full-access",
       },
     });
 
@@ -1032,9 +1032,9 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
       pluginConfig: {},
       execMode: "ask",
       env: {
-        OPENCLAW_CODEX_APP_SERVER_MODE: "yolo",
-        OPENCLAW_CODEX_APP_SERVER_APPROVAL_POLICY: "never",
-        OPENCLAW_CODEX_APP_SERVER_SANDBOX: "read-only",
+        MERCLAW_CODEX_APP_SERVER_MODE: "yolo",
+        MERCLAW_CODEX_APP_SERVER_APPROVAL_POLICY: "never",
+        MERCLAW_CODEX_APP_SERVER_SANDBOX: "read-only",
       },
     });
 
@@ -1050,7 +1050,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     });
   });
 
-  it("fails closed when normalized OpenClaw ask mode cannot use user approvals", () => {
+  it("fails closed when normalized MerClaw ask mode cannot use user approvals", () => {
     expect(() =>
       resolveRuntimeForTest({
         pluginConfig: {},
@@ -1075,7 +1075,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     { execMode: "ask", policies: ["on-failure"] },
     { execMode: "ask", policies: ["untrusted"] },
   ] as const)(
-    "fails closed when normalized OpenClaw $execMode mode can only use $policies approvals",
+    "fails closed when normalized MerClaw $execMode mode can only use $policies approvals",
     ({ execMode, policies }) => {
       expect(() =>
         resolveRuntimeForTest({
@@ -1089,7 +1089,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     },
   );
 
-  it("keeps normalized OpenClaw full exec mode on default Codex yolo", () => {
+  it("keeps normalized MerClaw full exec mode on default Codex yolo", () => {
     const runtime = resolveRuntimeForTest({
       pluginConfig: {},
       execMode: "full",
@@ -1102,7 +1102,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     });
   });
 
-  it("fails closed when normalized OpenClaw auto mode can only use on-failure approvals", () => {
+  it("fails closed when normalized MerClaw auto mode can only use on-failure approvals", () => {
     expect(() =>
       resolveRuntimeForTest({
         pluginConfig: {},
@@ -1113,7 +1113,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     ).toThrow("tools.exec.mode=auto requires Codex app-server prompting approvals");
   });
 
-  it("fails closed when normalized OpenClaw auto mode cannot force prompting over yolo", () => {
+  it("fails closed when normalized MerClaw auto mode cannot force prompting over yolo", () => {
     expect(() =>
       resolveRuntimeForTest({
         pluginConfig: {},
@@ -1124,7 +1124,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     ).toThrow("tools.exec.mode=auto requires Codex app-server prompting approvals");
   });
 
-  it("fails closed when normalized OpenClaw auto mode cannot use an auto reviewer", () => {
+  it("fails closed when normalized MerClaw auto mode cannot use an auto reviewer", () => {
     expect(() =>
       resolveRuntimeForTest({
         pluginConfig: {},
@@ -1135,7 +1135,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     ).toThrow("tools.exec.mode=auto requires Codex app-server auto approvals");
   });
 
-  it("keeps normalized OpenClaw auto mode when legacy app-server yolo was schema-defaulted", () => {
+  it("keeps normalized MerClaw auto mode when legacy app-server yolo was schema-defaulted", () => {
     const runtime = resolveRuntimeForTest({
       pluginConfig: {
         appServer: {
@@ -1167,7 +1167,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     });
   });
 
-  it("forces guarded policy fields for normalized OpenClaw auto mode", () => {
+  it("forces guarded policy fields for normalized MerClaw auto mode", () => {
     const runtime = resolveRuntimeForTest({
       pluginConfig: {
         appServer: {
@@ -1186,7 +1186,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     });
   });
 
-  it("resolves agent-scoped normalized OpenClaw exec mode for Codex app-server mapping", () => {
+  it("resolves agent-scoped normalized MerClaw exec mode for Codex app-server mapping", () => {
     const config = {
       tools: {
         exec: {
@@ -1207,13 +1207,13 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
       },
     };
 
-    expect(resolveOpenClawExecModeFromConfig({ config, agentId: "codex-agent" })).toBe("auto");
-    expect(resolveOpenClawExecModeFromConfig({ config, agentId: "other-agent" })).toBe("ask");
+    expect(resolveMerClawExecModeFromConfig({ config, agentId: "codex-agent" })).toBe("auto");
+    expect(resolveMerClawExecModeFromConfig({ config, agentId: "other-agent" })).toBe("ask");
   });
 
-  it("keeps legacy exec security overrides ahead of normalized OpenClaw exec mode", () => {
+  it("keeps legacy exec security overrides ahead of normalized MerClaw exec mode", () => {
     expect(
-      resolveOpenClawExecModeFromConfig({
+      resolveMerClawExecModeFromConfig({
         config: {
           tools: {
             exec: {
@@ -1249,9 +1249,9 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
           },
         },
       };
-      const execPolicy = resolveOpenClawExecPolicyForCodexAppServer({ config });
+      const execPolicy = resolveMerClawExecPolicyForCodexAppServer({ config });
 
-      expect(resolveOpenClawExecModeForCodexAppServer({ config })).toBe("ask");
+      expect(resolveMerClawExecModeForCodexAppServer({ config })).toBe("ask");
       expectRuntimePolicy(
         resolveRuntimeForTest({
           pluginConfig: {
@@ -1282,9 +1282,9 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
         },
       },
     };
-    const execPolicy = resolveOpenClawExecPolicyForCodexAppServer({ config });
+    const execPolicy = resolveMerClawExecPolicyForCodexAppServer({ config });
 
-    expect(resolveOpenClawExecModeForCodexAppServer({ config })).toBe("full");
+    expect(resolveMerClawExecModeForCodexAppServer({ config })).toBe("full");
     expectRuntimePolicy(resolveRuntimeForTest({ execPolicy }), {
       approvalPolicy: "never",
       sandbox: "danger-full-access",
@@ -1304,13 +1304,13 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
 
     expect(() =>
       resolveRuntimeForTest({
-        execPolicy: resolveOpenClawExecPolicyForCodexAppServer({ config }),
+        execPolicy: resolveMerClawExecPolicyForCodexAppServer({ config }),
         requirementsToml: 'allowed_sandbox_modes = ["read-only", "workspace-write"]\n',
       }),
     ).toThrow("legacy full exec security with ask requires Codex app-server danger-full-access");
   });
 
-  it("clamps legacy full exec with ask when an OpenClaw sandbox is active", () => {
+  it("clamps legacy full exec with ask when an MerClaw sandbox is active", () => {
     const config = {
       tools: {
         exec: {
@@ -1322,8 +1322,8 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
 
     expectRuntimePolicy(
       resolveRuntimeForTest({
-        execPolicy: resolveOpenClawExecPolicyForCodexAppServer({ config }),
-        openClawSandboxActive: true,
+        execPolicy: resolveMerClawExecPolicyForCodexAppServer({ config }),
+        merClawSandboxActive: true,
         requirementsToml: 'allowed_sandbox_modes = ["read-only", "workspace-write"]\n',
       }),
       {
@@ -1335,7 +1335,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
   });
 
   it("applies host exec approval security floors before starting Codex app-server", () => {
-    const execPolicy = resolveOpenClawExecPolicyForCodexAppServer({
+    const execPolicy = resolveMerClawExecPolicyForCodexAppServer({
       config: {
         tools: {
           exec: {
@@ -1368,7 +1368,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
   });
 
   it("applies host exec approval ask floors before starting Codex app-server", () => {
-    const execPolicy = resolveOpenClawExecPolicyForCodexAppServer({
+    const execPolicy = resolveMerClawExecPolicyForCodexAppServer({
       config: {
         tools: {
           exec: {
@@ -1407,7 +1407,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
   });
 
   it("preserves explicit read-only sandbox for host exec approval ask floors", () => {
-    const execPolicy = resolveOpenClawExecPolicyForCodexAppServer({
+    const execPolicy = resolveMerClawExecPolicyForCodexAppServer({
       config: {
         tools: {
           exec: {
@@ -1446,7 +1446,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
   });
 
   it("applies agent-scoped exec approval security floors before starting Codex app-server", () => {
-    const execPolicy = resolveOpenClawExecPolicyForCodexAppServer({
+    const execPolicy = resolveMerClawExecPolicyForCodexAppServer({
       config: {
         tools: {
           exec: {
@@ -1484,7 +1484,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
   });
 
   it("applies agent-scoped exec approval ask floors before starting Codex app-server", () => {
-    const execPolicy = resolveOpenClawExecPolicyForCodexAppServer({
+    const execPolicy = resolveMerClawExecPolicyForCodexAppServer({
       config: {
         tools: {
           exec: {
@@ -1548,8 +1548,8 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
       },
     };
 
-    expect(resolveOpenClawExecModeFromConfig({ config, agentId: "codex-agent" })).toBe("allowlist");
-    const execMode = resolveOpenClawExecModeForCodexAppServer({
+    expect(resolveMerClawExecModeFromConfig({ config, agentId: "codex-agent" })).toBe("allowlist");
+    const execMode = resolveMerClawExecModeForCodexAppServer({
       config,
       agentId: "main",
       execOverrides: {
@@ -1574,7 +1574,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     };
 
     expect(
-      resolveOpenClawExecModeForCodexAppServer({
+      resolveMerClawExecModeForCodexAppServer({
         config,
         agentId: "main",
         execOverrides: {
@@ -1583,7 +1583,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
       }),
     ).toBe("full");
     expect(
-      resolveOpenClawExecModeForCodexAppServer({
+      resolveMerClawExecModeForCodexAppServer({
         config,
         agentId: "main",
         execOverrides: {
@@ -1592,7 +1592,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
       }),
     ).toBe("ask");
     expect(
-      resolveOpenClawExecModeForCodexAppServer({
+      resolveMerClawExecModeForCodexAppServer({
         config,
         agentId: "main",
         execOverrides: {
@@ -1605,7 +1605,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
 
   it("preserves legacy full exec security before applying current ask overrides", () => {
     expect(
-      resolveOpenClawExecModeForCodexAppServer({
+      resolveMerClawExecModeForCodexAppServer({
         config: {
           tools: {
             exec: {
@@ -1617,7 +1617,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
       }),
     ).toBe("full");
     expect(
-      resolveOpenClawExecModeForCodexAppServer({
+      resolveMerClawExecModeForCodexAppServer({
         config: {
           tools: {
             exec: {
@@ -1632,7 +1632,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
       }),
     ).toBe("full");
     expect(
-      resolveOpenClawExecModeForCodexAppServer({
+      resolveMerClawExecModeForCodexAppServer({
         config: {
           tools: {
             exec: {
@@ -1663,10 +1663,10 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     ).toBe("guardian_subagent");
   });
 
-  it("ignores removed OPENCLAW_CODEX_APP_SERVER_GUARDIAN fallback", () => {
+  it("ignores removed MERCLAW_CODEX_APP_SERVER_GUARDIAN fallback", () => {
     const runtime = resolveRuntimeForTest({
       pluginConfig: {},
-      env: { OPENCLAW_CODEX_APP_SERVER_GUARDIAN: "1" },
+      env: { MERCLAW_CODEX_APP_SERVER_GUARDIAN: "1" },
     });
 
     expectRuntimePolicy(runtime, {
@@ -1794,7 +1794,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
 
   it("keeps runtime config keys aligned with manifest schema and UI hints", async () => {
     const manifest = JSON.parse(
-      await fs.readFile(new URL("../../openclaw.plugin.json", import.meta.url), "utf8"),
+      await fs.readFile(new URL("../../merclaw.plugin.json", import.meta.url), "utf8"),
     ) as {
       configSchema: {
         properties: {
@@ -1853,7 +1853,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
 
   it("does not schema-default mode-derived policy fields", async () => {
     const manifest = JSON.parse(
-      await fs.readFile(new URL("../../openclaw.plugin.json", import.meta.url), "utf8"),
+      await fs.readFile(new URL("../../merclaw.plugin.json", import.meta.url), "utf8"),
     ) as {
       configSchema: {
         properties: {

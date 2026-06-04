@@ -2,7 +2,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { ErrorCodes } from "../../packages/gateway-protocol/src/index.js";
 import { resolveStorePath, saveSessionStore } from "../config/sessions.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { withStateDirEnv } from "../test-helpers/state-dir-env.js";
 import { resolveSessionKeyFromResolveParams } from "./sessions-resolve.js";
 
@@ -10,12 +10,12 @@ describe("resolveSessionKeyFromResolveParams store canonicalization", () => {
   const freshUpdatedAt = () => Date.now();
 
   it("resolves legacy main-alias matches by sessionId and label for the configured default agent", async () => {
-    await withStateDirEnv("openclaw-sessions-resolve-alias-", async ({ stateDir }) => {
+    await withStateDirEnv("merclaw-sessions-resolve-alias-", async ({ stateDir }) => {
       const storePath = path.join(stateDir, "sessions.json");
       const cfg = {
         session: { store: storePath, mainKey: "main" },
         agents: { list: [{ id: "ops", default: true }] },
-      } satisfies OpenClawConfig;
+      } satisfies MerClawConfig;
       await saveSessionStore(storePath, {
         "agent:main:main": {
           sessionId: "sess-default-alias",
@@ -41,8 +41,8 @@ describe("resolveSessionKeyFromResolveParams store canonicalization", () => {
   });
 
   it("does not resolve another agent store when agentId is scoped", async () => {
-    await withStateDirEnv("openclaw-sessions-resolve-agent-scope-", async () => {
-      const cfg: OpenClawConfig = {
+    await withStateDirEnv("merclaw-sessions-resolve-agent-scope-", async () => {
+      const cfg: MerClawConfig = {
         agents: { list: [{ id: "main", default: true }, { id: "work" }] },
       };
       const workStorePath = resolveStorePath(cfg.session?.store, { agentId: "work" });
@@ -83,8 +83,8 @@ describe("resolveSessionKeyFromResolveParams store canonicalization", () => {
   });
 
   it("preserves cross-agent ambiguity when agentId is absent", async () => {
-    await withStateDirEnv("openclaw-sessions-resolve-cross-agent-", async () => {
-      const cfg: OpenClawConfig = {
+    await withStateDirEnv("merclaw-sessions-resolve-cross-agent-", async () => {
+      const cfg: MerClawConfig = {
         agents: { list: [{ id: "main", default: true }, { id: "work" }] },
       };
       const updatedAt = freshUpdatedAt();
@@ -136,12 +136,12 @@ describe("resolveSessionKeyFromResolveParams store canonicalization", () => {
   });
 
   it("still rejects non-alias agent:main matches when main is no longer configured", async () => {
-    await withStateDirEnv("openclaw-sessions-resolve-stale-main-", async ({ stateDir }) => {
+    await withStateDirEnv("merclaw-sessions-resolve-stale-main-", async ({ stateDir }) => {
       const storePath = path.join(stateDir, "sessions.json");
       const cfg = {
         session: { store: storePath, mainKey: "main" },
         agents: { list: [{ id: "ops", default: true }] },
-      } satisfies OpenClawConfig;
+      } satisfies MerClawConfig;
       await saveSessionStore(storePath, {
         "agent:main:guildchat:direct:u1": {
           sessionId: "sess-stale-main",
@@ -166,8 +166,8 @@ describe("resolveSessionKeyFromResolveParams store canonicalization", () => {
   });
 
   it("does not adopt legacy main aliases from discovered deleted-agent stores", async () => {
-    await withStateDirEnv("openclaw-sessions-resolve-discovered-main-", async () => {
-      const cfg: OpenClawConfig = {
+    await withStateDirEnv("merclaw-sessions-resolve-discovered-main-", async () => {
+      const cfg: MerClawConfig = {
         agents: { list: [{ id: "ops", default: true }] },
       };
       const staleMainStorePath = resolveStorePath(cfg.session?.store, { agentId: "main" });
@@ -208,8 +208,8 @@ describe("resolveSessionKeyFromResolveParams store canonicalization", () => {
   });
 
   it("rejects an explicit listed deleted main key instead of remapping to the live default main", async () => {
-    await withStateDirEnv("openclaw-sessions-resolve-key-deleted-main-", async () => {
-      const cfg: OpenClawConfig = {
+    await withStateDirEnv("merclaw-sessions-resolve-key-deleted-main-", async () => {
+      const cfg: MerClawConfig = {
         agents: { list: [{ id: "ops", default: true }] },
       };
       const liveDefaultStorePath = resolveStorePath(cfg.session?.store, { agentId: "ops" });

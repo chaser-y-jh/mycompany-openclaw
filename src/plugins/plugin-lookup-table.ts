@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import {
   createGatewayStartupMetadataPluginIdScope,
   isMetadataSnapshotScopedForGatewayStartup,
@@ -41,8 +41,8 @@ export type PluginLookUpTable = PluginMetadataSnapshot & {
 };
 
 export type LoadPluginLookUpTableParams = {
-  config: OpenClawConfig;
-  activationSourceConfig?: OpenClawConfig;
+  config: MerClawConfig;
+  activationSourceConfig?: MerClawConfig;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
   index?: PluginRegistrySnapshot;
@@ -59,8 +59,8 @@ export function clearPluginLookUpTableMemoForTest(): void {
 }
 
 function createPluginLookUpTableMemoKey(params: {
-  config: OpenClawConfig;
-  activationSourceConfig?: OpenClawConfig;
+  config: MerClawConfig;
+  activationSourceConfig?: MerClawConfig;
   env: NodeJS.ProcessEnv;
   workspaceDir?: string;
   index?: PluginRegistrySnapshot;

@@ -235,7 +235,7 @@ vi.mock("../../agents/harness/selection.js", () => ({
   }: {
     provider?: string;
     modelId?: string;
-    config?: OpenClawConfig;
+    config?: MerClawConfig;
   }) => {
     const modelRuntime =
       provider && modelId
@@ -277,7 +277,7 @@ import {
   replaceRuntimeAuthProfileStoreSnapshots,
 } from "../../agents/auth-profiles.js";
 import type { ModelAliasIndex } from "../../agents/model-selection.js";
-import type { ModelDefinitionConfig, OpenClawConfig } from "../../config/config.js";
+import type { ModelDefinitionConfig, MerClawConfig } from "../../config/config.js";
 import type { SessionEntry } from "../../config/sessions.js";
 import {
   clearInternalHooks,
@@ -373,11 +373,11 @@ function baseAliasIndex(): ModelAliasIndex {
   return { byAlias: new Map(), byKey: new Map() };
 }
 
-function baseConfig(): OpenClawConfig {
+function baseConfig(): MerClawConfig {
   return {
     commands: { text: true },
     agents: { defaults: {} },
-  } as unknown as OpenClawConfig;
+  } as unknown as MerClawConfig;
 }
 
 function modelDefinition(id: string, name: string): ModelDefinitionConfig {
@@ -497,7 +497,7 @@ function resolveModelSelectionForCommand(params: {
 }) {
   return resolveModelSelectionFromDirective({
     directives: parseInlineDirectives(params.command),
-    cfg: { commands: { text: true } } as unknown as OpenClawConfig,
+    cfg: { commands: { text: true } } as unknown as MerClawConfig,
     agentDir: TEST_AGENT_DIR,
     defaultProvider: "anthropic",
     defaultModel: "claude-opus-4-6",
@@ -511,7 +511,7 @@ function resolveModelSelectionForCommand(params: {
 async function persistModelDirectiveForTest(params: {
   command: string;
   profiles?: Record<string, ApiKeyProfile>;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   aliasIndex?: ModelAliasIndex;
   allowedModelKeys: string[];
   sessionEntry?: SessionEntry;
@@ -623,9 +623,9 @@ describe("/model chat UX", () => {
   });
 
   it("passes workspace scope through the /model list browser alias", async () => {
-    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-model-list-auth-label-"));
+    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-model-list-auth-label-"));
     const workspaceDir = path.join(tempRoot, "workspace");
-    const pluginDir = path.join(workspaceDir, ".openclaw", "extensions", "workspace-model-list");
+    const pluginDir = path.join(workspaceDir, ".merclaw", "extensions", "workspace-model-list");
     const bundledDir = path.join(tempRoot, "bundled");
     const stateDir = path.join(tempRoot, "state");
     const credentialPath = path.join(tempRoot, "credentials.json");
@@ -635,7 +635,7 @@ describe("/model chat UX", () => {
     fs.writeFileSync(path.join(pluginDir, "index.ts"), "export default {}\n", "utf8");
     fs.writeFileSync(credentialPath, "{}", "utf8");
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "merclaw.plugin.json"),
       JSON.stringify({
         id: "workspace-model-list",
         configSchema: { type: "object" },
@@ -661,8 +661,8 @@ describe("/model chat UX", () => {
     try {
       await withEnvAsync(
         {
-          OPENCLAW_BUNDLED_PLUGINS_DIR: bundledDir,
-          OPENCLAW_STATE_DIR: stateDir,
+          MERCLAW_BUNDLED_PLUGINS_DIR: bundledDir,
+          MERCLAW_STATE_DIR: stateDir,
           WORKSPACE_MODEL_LIST_CREDENTIALS: credentialPath,
         },
         async () => {
@@ -673,7 +673,7 @@ describe("/model chat UX", () => {
             cfg: {
               ...baseConfig(),
               plugins: { allow: ["workspace-model-list"] },
-            } as unknown as OpenClawConfig,
+            } as unknown as MerClawConfig,
           });
 
           expect(reply?.text).toContain("- anthropic");
@@ -724,7 +724,7 @@ describe("/model chat UX", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       allowedModelCatalog: [
         { provider: "anthropic", id: "claude-opus-4-6", name: "Claude Opus 4.5" },
         { provider: "openai", id: "gpt-4.1-mini", name: "GPT-4.1 mini" },
@@ -755,7 +755,7 @@ describe("/model chat UX", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       allowedModelCatalog: [
         { provider: "google", id: "gemini-3-flash-preview", name: "Gemini 3 Flash" },
         {
@@ -793,7 +793,7 @@ describe("/model chat UX", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       allowedModelCatalog: [
         { provider: "google", id: "gemini-3-flash-preview", name: "Gemini 3 Flash" },
         {
@@ -843,7 +843,7 @@ describe("/model chat UX", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       allowedModelCatalog: [{ provider: "openai", id: "gpt-5.5", name: "GPT-5.5" }],
     });
 
@@ -885,7 +885,7 @@ describe("/model chat UX", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       allowedModelCatalog: [{ provider: "openai", id: "gpt-5.5", name: "GPT-5.5" }],
     });
 
@@ -894,7 +894,7 @@ describe("/model chat UX", () => {
     expect(reply?.text).not.toContain("via codex runtime");
   });
 
-  it("does not borrow Codex auth when OpenAI model policy pins OpenClaw runtime", async () => {
+  it("does not borrow Codex auth when OpenAI model policy pins MerClaw runtime", async () => {
     setAuthProfiles({
       "openai:patrick@example.test": {
         type: "oauth",
@@ -918,12 +918,12 @@ describe("/model chat UX", () => {
             model: { primary: "openai/gpt-5.5" },
             models: {
               "openai/gpt-5.5": {
-                agentRuntime: { id: "openclaw" },
+                agentRuntime: { id: "merclaw" },
               },
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       allowedModelCatalog: [{ provider: "openai", id: "gpt-5.5", name: "GPT-5.5" }],
     });
 
@@ -960,12 +960,12 @@ describe("/model chat UX", () => {
             model: { primary: "openai/gpt-5.5" },
             models: {
               "openai/gpt-5.5": {
-                agentRuntime: { id: "openclaw" },
+                agentRuntime: { id: "merclaw" },
               },
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
       allowedModelCatalog: [{ provider: "openai", id: "gpt-5.5", name: "GPT-5.5" }],
     });
 
@@ -975,9 +975,9 @@ describe("/model chat UX", () => {
   });
 
   it("uses workspace-scoped auth evidence in /model status labels", async () => {
-    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-model-status-auth-label-"));
+    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-model-status-auth-label-"));
     const workspaceDir = path.join(tempRoot, "workspace");
-    const pluginDir = path.join(workspaceDir, ".openclaw", "extensions", "workspace-model-auth");
+    const pluginDir = path.join(workspaceDir, ".merclaw", "extensions", "workspace-model-auth");
     const bundledDir = path.join(tempRoot, "bundled");
     const stateDir = path.join(tempRoot, "state");
     const credentialPath = path.join(tempRoot, "credentials.json");
@@ -987,7 +987,7 @@ describe("/model chat UX", () => {
     fs.writeFileSync(path.join(pluginDir, "index.ts"), "export default {}\n", "utf8");
     fs.writeFileSync(credentialPath, "{}", "utf8");
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "merclaw.plugin.json"),
       JSON.stringify({
         id: "workspace-model-auth",
         configSchema: { type: "object" },
@@ -1015,8 +1015,8 @@ describe("/model chat UX", () => {
         {
           ANTHROPIC_API_KEY: undefined,
           ANTHROPIC_OAUTH_TOKEN: undefined,
-          OPENCLAW_BUNDLED_PLUGINS_DIR: bundledDir,
-          OPENCLAW_STATE_DIR: stateDir,
+          MERCLAW_BUNDLED_PLUGINS_DIR: bundledDir,
+          MERCLAW_STATE_DIR: stateDir,
           WORKSPACE_MODEL_CREDENTIALS: credentialPath,
         },
         async () => {
@@ -1033,7 +1033,7 @@ describe("/model chat UX", () => {
                   },
                 },
               },
-            } as unknown as OpenClawConfig,
+            } as unknown as MerClawConfig,
             allowedModelCatalog: [
               { provider: "anthropic", id: "claude-opus-4-6", name: "Claude Opus 4.6" },
             ],
@@ -1049,7 +1049,7 @@ describe("/model chat UX", () => {
 
   it("auto-applies closest match for typos", () => {
     const directives = parseInlineDirectives("/model anthropic/claud-opus-4-5");
-    const cfg = { commands: { text: true } } as unknown as OpenClawConfig;
+    const cfg = { commands: { text: true } } as unknown as MerClawConfig;
 
     const resolved = resolveModelSelectionFromDirective({
       directives,
@@ -1093,10 +1093,10 @@ describe("/model chat UX", () => {
     expect(resolved.modelSelection).toBeUndefined();
     expect(resolved.errorText).toContain('Model "openai/gpt-5.5" is not allowed.');
     expect(resolved.errorText).toContain(
-      `openclaw config set agents.defaults.models '{"openai/gpt-5.5":{}}' --strict-json --merge`,
+      `merclaw config set agents.defaults.models '{"openai/gpt-5.5":{}}' --strict-json --merge`,
     );
     expect(resolved.errorText).toContain("Then retry: /model openai/gpt-5.5 --runtime codex");
-    expect(resolved.errorText).toContain("openclaw plugins enable codex");
+    expect(resolved.errorText).toContain("merclaw plugins enable codex");
   });
 
   it("treats explicit default /model selection as resettable default", () => {
@@ -1182,7 +1182,7 @@ describe("/model chat UX", () => {
 
     const resolved = resolveModelSelectionFromDirective({
       directives: parseInlineDirectives(`/model gpt@${OPENAI_DATE_PROFILE_ID}`),
-      cfg: { commands: { text: true } } as unknown as OpenClawConfig,
+      cfg: { commands: { text: true } } as unknown as MerClawConfig,
       agentDir: TEST_AGENT_DIR,
       defaultProvider: "anthropic",
       defaultModel: "claude-opus-4-6",
@@ -1295,7 +1295,7 @@ describe("/model chat UX", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as MerClawConfig,
     });
 
     expect(persisted.provider).toBe("openai");
@@ -1321,7 +1321,7 @@ describe("/model chat UX", () => {
     const { sessionEntry } = await persistModelDirectiveForTest({
       command: "/model openai/gpt-4o --runtime claude-cli hello",
       allowedModelKeys: ["openai/gpt-4o"],
-      sessionEntry: createSessionEntry({ agentRuntimeOverride: "openclaw" }),
+      sessionEntry: createSessionEntry({ agentRuntimeOverride: "merclaw" }),
       provider: "openai",
       model: "gpt-4o",
       initialModelLabel: "openai/gpt-4o",

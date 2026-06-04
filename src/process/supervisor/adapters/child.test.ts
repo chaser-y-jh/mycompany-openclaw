@@ -107,7 +107,7 @@ function firstMockArg(mock: { mock: { calls: readonly unknown[][] } }, label: st
 }
 
 describe("createChildAdapter", () => {
-  const originalServiceMarker = process.env.OPENCLAW_SERVICE_MARKER;
+  const originalServiceMarker = process.env.MERCLAW_SERVICE_MARKER;
   const originalPlatformDescriptor = Object.getOwnPropertyDescriptor(process, "platform");
 
   const setPlatform = (platform: NodeJS.Platform) => {
@@ -129,15 +129,15 @@ describe("createChildAdapter", () => {
       decode: (chunk: Buffer | string) => (Buffer.isBuffer(chunk) ? chunk.toString("utf8") : chunk),
       flush: () => "",
     }));
-    delete process.env.OPENCLAW_SERVICE_MARKER;
+    delete process.env.MERCLAW_SERVICE_MARKER;
     vi.useRealTimers();
   });
 
   afterAll(() => {
     if (originalServiceMarker === undefined) {
-      delete process.env.OPENCLAW_SERVICE_MARKER;
+      delete process.env.MERCLAW_SERVICE_MARKER;
     } else {
-      process.env.OPENCLAW_SERVICE_MARKER = originalServiceMarker;
+      process.env.MERCLAW_SERVICE_MARKER = originalServiceMarker;
     }
   });
 
@@ -166,7 +166,7 @@ describe("createChildAdapter", () => {
 
     // Detachment flag is now passed to signalProcessTree so it knows whether
     // it can safely group-kill via -pid. (#71662)
-    const expectedDetached = process.platform !== "win32" && !process.env.OPENCLAW_SERVICE_MARKER;
+    const expectedDetached = process.platform !== "win32" && !process.env.MERCLAW_SERVICE_MARKER;
     expect(signalProcessTreeMock).toHaveBeenCalledWith(4321, "SIGKILL", {
       detached: expectedDetached,
     });
@@ -195,14 +195,14 @@ describe("createChildAdapter", () => {
   });
 
   it("passes detached:false in service-managed mode where useDetached is false from the start (#71662)", async () => {
-    process.env.OPENCLAW_SERVICE_MARKER = "1";
+    process.env.MERCLAW_SERVICE_MARKER = "1";
     try {
       const { adapter, killMock } = await createAdapterHarness({ pid: 9999 });
       adapter.kill();
       expect(signalProcessTreeMock).toHaveBeenCalledWith(9999, "SIGKILL", { detached: false });
       expect(killMock).toHaveBeenCalledWith("SIGKILL");
     } finally {
-      delete process.env.OPENCLAW_SERVICE_MARKER;
+      delete process.env.MERCLAW_SERVICE_MARKER;
     }
   });
 
@@ -211,7 +211,7 @@ describe("createChildAdapter", () => {
 
     adapter.kill("SIGTERM");
 
-    const expectedDetached = process.platform !== "win32" && !process.env.OPENCLAW_SERVICE_MARKER;
+    const expectedDetached = process.platform !== "win32" && !process.env.MERCLAW_SERVICE_MARKER;
     expect(signalProcessTreeMock).toHaveBeenCalledWith(7654, "SIGTERM", {
       detached: expectedDetached,
     });
@@ -347,7 +347,7 @@ describe("createChildAdapter", () => {
         usedFallback: false,
       });
       const adapter = await createChildAdapter({
-        argv: ["openclaw", "version"],
+        argv: ["merclaw", "version"],
         stdinMode: "pipe-closed",
       });
       return { ...stub, adapter };
@@ -367,7 +367,7 @@ describe("createChildAdapter", () => {
   });
 
   it("disables detached mode in service-managed runtime", async () => {
-    process.env.OPENCLAW_SERVICE_MARKER = "openclaw";
+    process.env.MERCLAW_SERVICE_MARKER = "merclaw";
 
     await createAdapterHarness({ pid: 7777 });
 

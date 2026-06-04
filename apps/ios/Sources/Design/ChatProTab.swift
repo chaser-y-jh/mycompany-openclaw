@@ -1,27 +1,27 @@
-import OpenClawChatUI
-import OpenClawProtocol
+import MerClawChatUI
+import MerClawProtocol
 import SwiftUI
 
 struct ChatProTab: View {
     @Environment(NodeAppModel.self) private var appModel
     @Environment(\.colorScheme) private var colorScheme
-    @State private var viewModel: OpenClawChatViewModel?
+    @State private var viewModel: MerClawChatViewModel?
 
     var body: some View {
         NavigationStack {
             ZStack {
-                OpenClawProBackground()
+                MerClawProBackground()
                 VStack(spacing: 0) {
                     self.header
                     if let viewModel {
-                        OpenClawChatView(
+                        MerClawChatView(
                             viewModel: viewModel,
                             drawsBackground: false,
                             showsSessionSwitcher: false,
                             userAccent: self.chatUserAccent,
                             assistantName: self.agentDisplayName,
                             assistantAvatarText: self.agentBadge,
-                            assistantAvatarTint: OpenClawBrand.accent,
+                            assistantAvatarTint: MerClawBrand.accent,
                             showsAssistantAvatars: false,
                             composerChrome: .clean,
                             messagePlaceholder: "Message \(self.agentDisplayName)...",
@@ -65,13 +65,13 @@ struct ChatProTab: View {
                         .fill(
                             LinearGradient(
                                 colors: [
-                                    OpenClawBrand.accent,
-                                    OpenClawBrand.accentHot,
+                                    MerClawBrand.accent,
+                                    MerClawBrand.accentHot,
                                 ],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing)))
                 .overlay(Circle().strokeBorder(.white.opacity(0.18), lineWidth: 1))
-                .shadow(color: OpenClawBrand.accent.opacity(0.18), radius: 10, y: 5)
+                .shadow(color: MerClawBrand.accent.opacity(0.18), radius: 10, y: 5)
 
             VStack(alignment: .leading, spacing: 1) {
                 Text(self.agentDisplayName)
@@ -87,7 +87,7 @@ struct ChatProTab: View {
 
             self.connectionPill
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
         .padding(.top, 8)
         .padding(.bottom, 4)
     }
@@ -95,7 +95,7 @@ struct ChatProTab: View {
     private func syncChatViewModel() {
         let sessionKey = self.appModel.chatSessionKey
         guard let viewModel else {
-            self.viewModel = OpenClawChatViewModel(
+            self.viewModel = MerClawChatViewModel(
                 sessionKey: sessionKey,
                 transport: IOSGatewayChatTransport(gateway: self.appModel.operatorSession),
                 onSessionChanged: { sessionKey in
@@ -110,8 +110,8 @@ struct ChatProTab: View {
         viewModel.switchSession(to: sessionKey)
     }
 
-    private var talkControl: OpenClawChatTalkControl {
-        OpenClawChatTalkControl(
+    private var talkControl: MerClawChatTalkControl {
+        MerClawChatTalkControl(
             isEnabled: self.appModel.talkMode.isEnabled,
             isListening: self.appModel.talkMode.isListening,
             isSpeaking: self.appModel.talkMode.isSpeaking,
@@ -132,21 +132,21 @@ struct ChatProTab: View {
 
     private var connectionPill: some View {
         HStack(spacing: 6) {
-            ProStatusDot(color: self.gatewayConnected ? OpenClawBrand.ok : .orange)
+            ProStatusDot(color: self.gatewayConnected ? MerClawBrand.ok : .orange)
             Text(self.gatewayConnected ? "Connected" : "Connecting")
                 .font(.caption.weight(.semibold))
                 .lineLimit(1)
         }
-        .foregroundStyle(self.gatewayConnected ? OpenClawBrand.ok : .orange)
+        .foregroundStyle(self.gatewayConnected ? MerClawBrand.ok : .orange)
         .padding(.horizontal, 10)
         .frame(height: 30)
         .background {
             Capsule()
-                .fill((self.gatewayConnected ? OpenClawBrand.ok : Color.orange).opacity(0.11))
+                .fill((self.gatewayConnected ? MerClawBrand.ok : Color.orange).opacity(0.11))
         }
         .overlay {
             Capsule()
-                .strokeBorder((self.gatewayConnected ? OpenClawBrand.ok : Color.orange).opacity(0.16), lineWidth: 1)
+                .strokeBorder((self.gatewayConnected ? MerClawBrand.ok : Color.orange).opacity(0.16), lineWidth: 1)
         }
     }
 
@@ -155,7 +155,7 @@ struct ChatProTab: View {
     }
 
     private var chatUserAccent: Color {
-        self.colorScheme == .light ? Color(red: 0 / 255.0, green: 122 / 255.0, blue: 255 / 255.0) : OpenClawBrand.accent
+        self.colorScheme == .light ? Color(red: 0 / 255.0, green: 122 / 255.0, blue: 255 / 255.0) : MerClawBrand.accent
     }
 
     private var activeAgent: AgentSummary? {

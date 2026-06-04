@@ -2,7 +2,7 @@ import { isRecord } from "../../packages/normalization-core/src/record-coerce.js
 
 const FORBIDDEN_NAMESPACE_PATH_SEGMENTS = new Set(["__proto__", "constructor", "prototype"]);
 const NAMESPACE_PATH_KEY_SEPARATOR = "\u0000";
-const CODE_MODE_NAMESPACE_TOOL_CALL = Symbol.for("openclaw.codeMode.namespaceToolCall");
+const CODE_MODE_NAMESPACE_TOOL_CALL = Symbol.for("merclaw.codeMode.namespaceToolCall");
 const RESERVED_NAMESPACE_GLOBALS = new Set([
   "ALL_TOOLS",
   "Array",
@@ -25,7 +25,7 @@ const RESERVED_NAMESPACE_GLOBALS = new Set([
   "tools",
   "yield_control",
 ]);
-const CODE_MODE_NAMESPACE_REGISTRY_KEY = Symbol.for("openclaw.codeMode.namespaces");
+const CODE_MODE_NAMESPACE_REGISTRY_KEY = Symbol.for("merclaw.codeMode.namespaces");
 
 export type CodeModeNamespaceContext = {
   config?: unknown;
@@ -211,7 +211,7 @@ function normalizeRegistration(
     throw new Error("Code mode namespace pluginId must be non-empty.");
   }
   const globalName = normalizeRequiredIdentifier(registration.globalName, "globalName");
-  if (RESERVED_NAMESPACE_GLOBALS.has(globalName) || globalName.startsWith("__openclaw")) {
+  if (RESERVED_NAMESPACE_GLOBALS.has(globalName) || globalName.startsWith("__merclaw")) {
     throw new Error(`Code mode namespace globalName "${globalName}" is reserved.`);
   }
   if (globalName in globalThis) {

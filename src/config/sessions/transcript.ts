@@ -6,7 +6,7 @@ import { redactTranscriptMessage } from "../../agents/transcript-redact.js";
 import { formatErrorMessage } from "../../infra/errors.js";
 import { emitSessionTranscriptUpdate } from "../../sessions/transcript-events.js";
 import { extractAssistantVisibleText } from "../../shared/chat-message-content.js";
-import type { OpenClawConfig } from "../types.openclaw.js";
+import type { MerClawConfig } from "../types.merclaw.js";
 import {
   resolveDefaultSessionStorePath,
   resolveSessionFilePath,
@@ -61,7 +61,7 @@ export type TailAssistantTranscriptText = AssistantTranscriptText;
 
 function parseAssistantTranscriptText(
   line: string,
-  options?: { excludeTranscriptOnlyOpenClawAssistant?: boolean },
+  options?: { excludeTranscriptOnlyMerClawAssistant?: boolean },
 ): AssistantTranscriptText | undefined {
   const parsed = JSON.parse(line) as {
     id?: unknown;
@@ -74,8 +74,8 @@ function parseAssistantTranscriptText(
     return undefined;
   }
   if (
-    options?.excludeTranscriptOnlyOpenClawAssistant &&
-    isTranscriptOnlyOpenClawAssistantMessage(message)
+    options?.excludeTranscriptOnlyMerClawAssistant &&
+    isTranscriptOnlyMerClawAssistantMessage(message)
   ) {
     return undefined;
   }
@@ -92,12 +92,12 @@ function parseAssistantTranscriptText(
   };
 }
 
-function isTranscriptOnlyOpenClawAssistantMessage(message: {
+function isTranscriptOnlyMerClawAssistantMessage(message: {
   provider?: unknown;
   model?: unknown;
 }): boolean {
   return (
-    message.provider === "openclaw" &&
+    message.provider === "merclaw" &&
     (message.model === "delivery-mirror" || message.model === "gateway-injected")
   );
 }
@@ -157,7 +157,7 @@ export async function readLatestAssistantTextFromSessionTranscript(
   for await (const line of streamSessionTranscriptLinesReverse(sessionFile)) {
     try {
       const assistantText = parseAssistantTranscriptText(line, {
-        excludeTranscriptOnlyOpenClawAssistant: true,
+        excludeTranscriptOnlyMerClawAssistant: true,
       });
       if (assistantText) {
         return assistantText;
@@ -179,7 +179,7 @@ export async function readTailAssistantTextFromSessionTranscript(
   for await (const line of streamSessionTranscriptLinesReverse(sessionFile)) {
     try {
       const parsed = JSON.parse(line) as { message?: unknown };
-      // Skip non-message entries (e.g. `openclaw.cache-ttl` custom events) so
+      // Skip non-message entries (e.g. `merclaw.cache-ttl` custom events) so
       // a metadata line emitted after the canonical assistant turn doesn't
       // make the tail reader fall through to "no assistant tail" and cause
       // persistTextTurnTranscript to append a duplicate. Stop at any real
@@ -205,7 +205,7 @@ export async function appendAssistantMessageToSessionTranscript(params: {
   /** Optional override for store path (mostly for tests). */
   storePath?: string;
   updateMode?: SessionTranscriptUpdateMode;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
 }): Promise<SessionTranscriptAppendResult> {
   const sessionKey = params.sessionKey.trim();
   if (!sessionKey) {
@@ -231,7 +231,7 @@ export async function appendAssistantMessageToSessionTranscript(params: {
       role: "assistant" as const,
       content: [{ type: "text", text: mirrorText }],
       api: "openai-responses",
-      provider: "openclaw",
+      provider: "merclaw",
       model: "delivery-mirror",
       usage: {
         input: 0,
@@ -260,7 +260,7 @@ export async function appendExactAssistantMessageToSessionTranscript(params: {
   idempotencyKey?: string;
   storePath?: string;
   updateMode?: SessionTranscriptUpdateMode;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
 }): Promise<SessionTranscriptAppendResult> {
   const sessionKey = params.sessionKey.trim();
   if (!sessionKey) {
@@ -363,7 +363,7 @@ export async function appendExactAssistantMessageToSessionTranscript(params: {
 }
 
 function isRedundantDeliveryMirror(message: SessionTranscriptAssistantMessage): boolean {
-  return message.provider === "openclaw" && message.model === "delivery-mirror";
+  return message.provider === "merclaw" && message.model === "delivery-mirror";
 }
 
 function extractAssistantMessageText(message: SessionTranscriptAssistantMessage): string | null {
@@ -388,7 +388,7 @@ function extractAssistantMessageText(message: SessionTranscriptAssistantMessage)
 async function findLatestEquivalentAssistantMessageId(
   transcriptPath: string,
   message: SessionTranscriptAssistantMessage,
-  config?: OpenClawConfig,
+  config?: MerClawConfig,
 ): Promise<string | undefined> {
   const expectedText = extractAssistantMessageText(
     redactTranscriptMessage(message, config) as unknown as SessionTranscriptAssistantMessage,

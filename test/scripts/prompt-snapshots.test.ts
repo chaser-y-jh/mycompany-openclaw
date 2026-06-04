@@ -125,7 +125,7 @@ describe("happy path prompt snapshots", () => {
   });
 
   it("deletes stale generated snapshot artifacts", async () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-prompt-snapshot-stale-"));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-prompt-snapshot-stale-"));
     try {
       const snapshotDir = path.join(root, CODEX_RUNTIME_HAPPY_PATH_PROMPT_SNAPSHOT_DIR);
       fs.mkdirSync(snapshotDir, { recursive: true });
@@ -158,7 +158,7 @@ describe("happy path prompt snapshots", () => {
     );
     expect(telegram).toContain("### User: Codex Config Instructions");
     expect(telegram).toContain("### User: Turn Input Text");
-    expect(telegram).toContain("OpenClaw runtime context for this turn:");
+    expect(telegram).toContain("MerClaw runtime context for this turn:");
     expect(telegram).toContain("<SOUL.md contents will be here>");
     expect(telegram).toContain("<IDENTITY.md contents will be here>");
     expect(telegram).toContain("<TOOLS.md contents will be here>");
@@ -174,7 +174,7 @@ describe("happy path prompt snapshots", () => {
     const group = readCommittedSnapshot("discord-group-codex-message-tool.md");
     const heartbeat = readCommittedSnapshot("telegram-heartbeat-codex-tool.md");
     const heartbeatPhrase = "Use heartbeats to create useful proactive progress";
-    const agentSoulHeading = "## OpenClaw Agent Soul";
+    const agentSoulHeading = "## MerClaw Agent Soul";
 
     expect(direct).toContain('"collaborationMode": {');
     expect(direct).toContain('"developer_instructions": "# Collaboration Mode: Default');
@@ -184,15 +184,15 @@ describe("happy path prompt snapshots", () => {
     expect(group).toContain(agentSoulHeading);
     expect(direct).not.toContain(heartbeatPhrase);
     expect(group).not.toContain(heartbeatPhrase);
-    expect(direct).not.toContain("This is an OpenClaw heartbeat turn.");
-    expect(group).not.toContain("This is an OpenClaw heartbeat turn.");
+    expect(direct).not.toContain("This is an MerClaw heartbeat turn.");
+    expect(group).not.toContain("This is an MerClaw heartbeat turn.");
 
     expect(heartbeat).toContain('"collaborationMode": {');
-    expect(heartbeat).toContain('"developer_instructions": "This is an OpenClaw heartbeat turn.');
+    expect(heartbeat).toContain('"developer_instructions": "This is an MerClaw heartbeat turn.');
     expect(heartbeat).toContain(agentSoulHeading);
-    const openClawRuntimeInstructions = renderedPromptSection(
+    const merClawRuntimeInstructions = renderedPromptSection(
       heartbeat,
-      "### Developer: OpenClaw Runtime Instructions",
+      "### Developer: MerClaw Runtime Instructions",
       "### Developer: Codex Collaboration Mode Instructions",
     );
     const collaborationModeInstructions = renderedPromptSection(
@@ -201,11 +201,11 @@ describe("happy path prompt snapshots", () => {
       "### User: Turn Input Text",
     );
 
-    expect(openClawRuntimeInstructions).not.toContain(heartbeatPhrase);
+    expect(merClawRuntimeInstructions).not.toContain(heartbeatPhrase);
     expect(collaborationModeInstructions).toContain(heartbeatPhrase);
     expect(collaborationModeInstructions).toContain("HEARTBEAT.md exists");
     expect(collaborationModeInstructions).toContain(
-      "/tmp/openclaw-happy-path/workspace/HEARTBEAT.md",
+      "/tmp/merclaw-happy-path/workspace/HEARTBEAT.md",
     );
     expect(collaborationModeInstructions).not.toContain("<HEARTBEAT.md contents will be here>");
     expect(collaborationModeInstructions.split(heartbeatPhrase)).toHaveLength(2);
@@ -256,7 +256,7 @@ describe("happy path prompt snapshots", () => {
   });
 
   it("finds the first available default Codex model catalog source", async () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-codex-catalog-"));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-codex-catalog-"));
     try {
       const cachePath = path.join(root, ".codex", "models_cache.json");
       fs.mkdirSync(path.dirname(cachePath), { recursive: true });
@@ -275,7 +275,7 @@ describe("happy path prompt snapshots", () => {
   });
 
   it("skips Codex model prompt fixture sync when no default catalog exists", async () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-codex-catalog-missing-"));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-codex-catalog-missing-"));
     const chunks: string[] = [];
     try {
       const result = await runCodexModelPromptFixtureSync([], {

@@ -1,17 +1,17 @@
 // Copy to LocalSigning.xcconfig for personal local signing overrides.
 // This file is only an example and should stay committed.
 
-OPENCLAW_CODE_SIGN_STYLE = Automatic
-OPENCLAW_DEVELOPMENT_TEAM = YOUR_TEAM_ID
+MERCLAW_CODE_SIGN_STYLE = Automatic
+MERCLAW_DEVELOPMENT_TEAM = YOUR_TEAM_ID
 
-OPENCLAW_APP_BUNDLE_ID = ai.openclaw.client
-OPENCLAW_SHARE_BUNDLE_ID = ai.openclaw.client.share
-OPENCLAW_ACTIVITY_WIDGET_BUNDLE_ID = ai.openclaw.client.activitywidget
-OPENCLAW_WATCH_APP_BUNDLE_ID = ai.openclaw.client.watchkitapp
-OPENCLAW_WATCH_EXTENSION_BUNDLE_ID = ai.openclaw.client.watchkitapp.extension
+MERCLAW_APP_BUNDLE_ID = ai.merclaw.client
+MERCLAW_SHARE_BUNDLE_ID = ai.merclaw.client.share
+MERCLAW_ACTIVITY_WIDGET_BUNDLE_ID = ai.merclaw.client.activitywidget
+MERCLAW_WATCH_APP_BUNDLE_ID = ai.merclaw.client.watchkitapp
+MERCLAW_WATCH_EXTENSION_BUNDLE_ID = ai.merclaw.client.watchkitapp.extension
 
 // Leave empty with automatic signing.
-OPENCLAW_APP_PROFILE =
-OPENCLAW_SHARE_PROFILE =
-OPENCLAW_WATCH_APP_PROFILE =
-OPENCLAW_WATCH_EXTENSION_PROFILE =
+MERCLAW_APP_PROFILE =
+MERCLAW_SHARE_PROFILE =
+MERCLAW_WATCH_APP_PROFILE =
+MERCLAW_WATCH_EXTENSION_PROFILE =

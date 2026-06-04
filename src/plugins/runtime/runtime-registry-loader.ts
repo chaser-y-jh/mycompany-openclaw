@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { withActivatedPluginIds } from "../activation-context.js";
 import {
   getLoadedRuntimePluginRegistry,
@@ -10,7 +10,7 @@ import {
   resolveDiscoverableScopedChannelPluginIds,
 } from "../channel-plugin-ids.js";
 import { resolveEffectivePluginIds } from "../effective-plugin-ids.js";
-import { loadOpenClawPlugins } from "../loader.js";
+import { loadMerClawPlugins } from "../loader.js";
 import {
   hasExplicitPluginIdScope,
   hasNonEmptyPluginIdScope,
@@ -108,7 +108,7 @@ function resolveScopePluginIds(params: {
 }
 
 function resolveOrLoadRuntimePluginRegistry(
-  loadOptions: NonNullable<Parameters<typeof loadOpenClawPlugins>[0]>,
+  loadOptions: NonNullable<Parameters<typeof loadMerClawPlugins>[0]>,
 ): void {
   if (
     !getLoadedRuntimePluginRegistry({
@@ -118,14 +118,14 @@ function resolveOrLoadRuntimePluginRegistry(
       requiredPluginIds: loadOptions.onlyPluginIds,
     })
   ) {
-    loadOpenClawPlugins(loadOptions);
+    loadMerClawPlugins(loadOptions);
   }
 }
 
 export function ensurePluginRegistryLoaded(options?: {
   scope?: PluginRegistryScope;
-  config?: OpenClawConfig;
-  activationSourceConfig?: OpenClawConfig;
+  config?: MerClawConfig;
+  activationSourceConfig?: MerClawConfig;
   env?: NodeJS.ProcessEnv;
   workspaceDir?: string;
   onlyPluginIds?: string[];

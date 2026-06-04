@@ -69,13 +69,13 @@ function createManagedProfileState(profileOverrides?: Record<string, unknown>) {
     forProfile: () =>
       ({
         profile: {
-          name: "openclaw",
-          driver: "openclaw",
+          name: "merclaw",
+          driver: "merclaw",
           cdpPort: 18800,
           cdpUrl: "http://127.0.0.1:18800",
           cdpHost: "127.0.0.1",
           cdpIsLoopback: true,
-          userDataDir: "/tmp/openclaw-profile",
+          userDataDir: "/tmp/merclaw-profile",
           color: "#FF4500",
           headless: false,
           headlessSource: "default",
@@ -113,13 +113,13 @@ async function callStartRoute(params: {
 }) {
   const ensureBrowserAvailable = vi.fn(async () => {});
   const profile = {
-    name: "openclaw",
-    driver: "openclaw",
+    name: "merclaw",
+    driver: "merclaw",
     cdpPort: 18800,
     cdpUrl: "http://127.0.0.1:18800",
     cdpHost: "127.0.0.1",
     cdpIsLoopback: true,
-    userDataDir: "/tmp/openclaw-profile",
+    userDataDir: "/tmp/merclaw-profile",
     color: "#FF4500",
     headless: false,
     headlessSource: "default",
@@ -161,13 +161,13 @@ describe("basic browser routes", () => {
     delete process.env.WAYLAND_DISPLAY;
     try {
       const response = await callBasicRouteWithState({
-        query: { profile: "openclaw" },
+        query: { profile: "merclaw" },
         state: createManagedProfileState(),
       });
 
       expect(response.statusCode).toBe(200);
       const body = responseBodyRecord(response);
-      expect(body.profile).toBe("openclaw");
+      expect(body.profile).toBe("merclaw");
       expect(body.headless).toBe(true);
       expect(body.headlessSource).toBe("linux-display-fallback");
     } finally {
@@ -188,12 +188,12 @@ describe("basic browser routes", () => {
   it("reports request-local headless source for tracked local launches", async () => {
     const state = createManagedProfileState();
     const profile = (state.forProfile() as { profile: unknown }).profile as never;
-    state.profiles.set("openclaw", {
+    state.profiles.set("merclaw", {
       profile,
       running: {
         pid: 222,
         exe: { kind: "chromium", path: "/usr/bin/chromium" },
-        userDataDir: "/tmp/openclaw-profile",
+        userDataDir: "/tmp/merclaw-profile",
         cdpPort: 18800,
         startedAt: Date.now(),
         proc: {} as never,
@@ -203,13 +203,13 @@ describe("basic browser routes", () => {
     });
 
     const response = await callBasicRouteWithState({
-      query: { profile: "openclaw" },
+      query: { profile: "merclaw" },
       state,
     });
 
     expect(response.statusCode).toBe(200);
     const body = responseBodyRecord(response);
-    expect(body.profile).toBe("openclaw");
+    expect(body.profile).toBe("merclaw");
     expect(body.pid).toBe(222);
     expect(body.chosenBrowser).toBe("chromium");
     expect(body.headless).toBe(true);
@@ -218,9 +218,9 @@ describe("basic browser routes", () => {
 
   it("redacts CDP URL credentials from status responses", async () => {
     const response = await callBasicRouteWithState({
-      query: { profile: "openclaw" },
+      query: { profile: "merclaw" },
       state: createManagedProfileState({
-        cdpUrl: "http://openclaw:relay-token@127.0.0.1:18800",
+        cdpUrl: "http://merclaw:relay-token@127.0.0.1:18800",
       }),
     });
 
@@ -268,7 +268,7 @@ describe("basic browser routes", () => {
     });
 
     expect(response.statusCode).toBe(200);
-    expect(response.body).toEqual({ ok: true, profile: "openclaw" });
+    expect(response.body).toEqual({ ok: true, profile: "merclaw" });
     expect(ensureBrowserAvailable).toHaveBeenCalledWith({ headless: true });
   });
 
@@ -300,7 +300,7 @@ describe("basic browser routes", () => {
 
     expect(response.statusCode).toBe(400);
     expect(responseBodyRecord(response).error).toBe(
-      'Headless start override is only supported for locally launched openclaw profiles. Profile "chrome-live" is attach-only, remote, or existing-session.',
+      'Headless start override is only supported for locally launched merclaw profiles. Profile "chrome-live" is attach-only, remote, or existing-session.',
     );
     expect(ensureBrowserAvailable).not.toHaveBeenCalled();
   });

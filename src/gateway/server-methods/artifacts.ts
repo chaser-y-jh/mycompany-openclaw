@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
-import { asOptionalRecord } from "@openclaw/normalization-core/record-coerce";
-import { normalizeOptionalString as asNonEmptyString } from "@openclaw/normalization-core/string-coerce";
+import { asOptionalRecord } from "@merclaw/normalization-core/record-coerce";
+import { normalizeOptionalString as asNonEmptyString } from "@merclaw/normalization-core/string-coerce";
 import {
   ErrorCodes,
   errorShape,
@@ -11,7 +11,7 @@ import {
   validateArtifactsListParams,
 } from "../../../packages/gateway-protocol/src/index.js";
 import { resolveDefaultAgentId } from "../../agents/agent-scope.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import {
   normalizeAgentId,
   parseAgentSessionKey,
@@ -64,7 +64,7 @@ function artifactError(type: string, message: string, details?: Record<string, u
 
 function resolveRequesterSessionAgentId(
   sessionKey: string | undefined,
-  cfg?: OpenClawConfig,
+  cfg?: MerClawConfig,
 ): string | undefined {
   const key = asNonEmptyString(sessionKey);
   if (!key) {
@@ -88,7 +88,7 @@ function resolveRequesterSessionAgentId(
 function resolveScopedArtifactSessionKey(
   sessionKey: string | undefined,
   agentId: string | undefined,
-  cfg?: OpenClawConfig,
+  cfg?: MerClawConfig,
 ): string | undefined {
   const key = asNonEmptyString(sessionKey);
   if (!key) {
@@ -230,18 +230,18 @@ function artifactId(parts: {
 }
 
 function resolveMessageSeq(message: Record<string, unknown>, fallback: number): number {
-  const meta = asOptionalRecord(message["__openclaw"]);
+  const meta = asOptionalRecord(message["__merclaw"]);
   const seq = meta?.seq;
   return typeof seq === "number" && Number.isInteger(seq) && seq > 0 ? seq : fallback;
 }
 
 function resolveMessageRunId(message: Record<string, unknown>): string | undefined {
-  const meta = asOptionalRecord(message["__openclaw"]);
+  const meta = asOptionalRecord(message["__merclaw"]);
   return asNonEmptyString(meta?.runId) ?? asNonEmptyString(message.runId);
 }
 
 function resolveMessageTaskId(message: Record<string, unknown>): string | undefined {
-  const meta = asOptionalRecord(message["__openclaw"]);
+  const meta = asOptionalRecord(message["__merclaw"]);
   return (
     asNonEmptyString(meta?.messageTaskId) ??
     asNonEmptyString(meta?.taskId) ??
@@ -402,7 +402,7 @@ function collectArtifactsFromMessage(params: {
 
 function resolveQuerySession(
   query: ArtifactQuery,
-  cfg?: OpenClawConfig,
+  cfg?: MerClawConfig,
 ): ResolvedArtifactSession | undefined {
   if (query.sessionKey) {
     const sessionKey = resolveScopedArtifactSessionKey(query.sessionKey, query.agentId, cfg);
@@ -445,7 +445,7 @@ function resolveQuerySession(
 /** Loads artifacts from the transcript selected by sessionKey, runId, or taskId. */
 async function loadArtifacts(
   query: ArtifactQuery,
-  cfg?: OpenClawConfig,
+  cfg?: MerClawConfig,
   opts: ArtifactCollectionOptions = {},
 ): Promise<{ artifacts: ArtifactRecord[]; sessionKey?: string }> {
   const resolved = resolveQuerySession(query, cfg);
@@ -508,7 +508,7 @@ function requireQueryable(params: ArtifactQuery, respond: RespondFn): boolean {
 
 async function findArtifact(
   params: ArtifactsGetParams,
-  cfg?: OpenClawConfig,
+  cfg?: MerClawConfig,
   opts: ArtifactCollectionOptions = {},
 ): Promise<{
   artifact?: ArtifactRecord;

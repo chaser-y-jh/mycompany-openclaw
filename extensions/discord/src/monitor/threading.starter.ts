@@ -1,7 +1,7 @@
-import type { ReplyToMode } from "openclaw/plugin-sdk/config-contracts";
-import { createReplyReferencePlanner } from "openclaw/plugin-sdk/reply-reference";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+import type { ReplyToMode } from "merclaw/plugin-sdk/config-contracts";
+import { createReplyReferencePlanner } from "merclaw/plugin-sdk/reply-reference";
+import { normalizeOptionalString } from "merclaw/plugin-sdk/string-coerce-runtime";
+import { truncateUtf16Safe } from "merclaw/plugin-sdk/text-utility-runtime";
 import { ChannelType, getChannelMessage, type Client } from "../internal/discord.js";
 import {
   resolveDiscordChannelIdSafe,

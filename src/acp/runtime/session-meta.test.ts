@@ -1,5 +1,5 @@
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { MerClawConfig } from "../../config/config.js";
 
 const hoisted = vi.hoisted(() => {
   const resolveAllAgentSessionStoreTargetsMock = vi.fn();
@@ -16,7 +16,7 @@ vi.mock("../../config/sessions/store-load.js", () => ({
 }));
 
 vi.mock("../../config/sessions/targets.js", () => ({
-  resolveAllAgentSessionStoreTargets: (cfg: OpenClawConfig, opts: unknown) =>
+  resolveAllAgentSessionStoreTargets: (cfg: MerClawConfig, opts: unknown) =>
     hoisted.resolveAllAgentSessionStoreTargetsMock(cfg, opts),
 }));
 let listAcpSessionEntries: typeof import("./session-meta.js").listAcpSessionEntries;
@@ -35,7 +35,7 @@ describe("listAcpSessionEntries", () => {
       session: {
         store: "/custom/sessions/{agentId}.json",
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
     hoisted.resolveAllAgentSessionStoreTargetsMock.mockResolvedValue([
       {
         agentId: "ops",
@@ -75,7 +75,7 @@ describe("listAcpSessionEntries", () => {
   });
 
   it("can skip cloning for maintenance callers that only inspect ACP entries", async () => {
-    const cfg = { session: { store: "/custom/sessions/{agentId}.json" } } as OpenClawConfig;
+    const cfg = { session: { store: "/custom/sessions/{agentId}.json" } } as MerClawConfig;
     hoisted.resolveAllAgentSessionStoreTargetsMock.mockResolvedValue([
       { agentId: "ops", storePath: "/custom/sessions/ops.json" },
     ]);

@@ -1,15 +1,15 @@
-import { resolveExpiresAtMsFromEpochSeconds } from "openclaw/plugin-sdk/number-runtime";
+import { resolveExpiresAtMsFromEpochSeconds } from "merclaw/plugin-sdk/number-runtime";
 import {
   createProviderHttpError,
   resolveProviderRequestHeaders,
-} from "openclaw/plugin-sdk/provider-http";
-import { captureWsEvent } from "openclaw/plugin-sdk/proxy-capture";
-import { fetchWithSsrFGuard } from "openclaw/plugin-sdk/ssrf-runtime";
+} from "merclaw/plugin-sdk/provider-http";
+import { captureWsEvent } from "merclaw/plugin-sdk/proxy-capture";
+import { fetchWithSsrFGuard } from "merclaw/plugin-sdk/ssrf-runtime";
 import {
   asFiniteNumber,
   asOptionalRecord as asObjectRecord,
   normalizeOptionalString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/string-coerce-runtime";
 
 export const trimToUndefined = normalizeOptionalString;
 export { asFiniteNumber, asObjectRecord };

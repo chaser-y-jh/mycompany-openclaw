@@ -31,16 +31,16 @@ export const MEMORY_SEARCH_RESPONSE_MAX_BYTES = 256 * 1024;
 
 const SKIP_GATEWAY_ENV = {
   NODE_ENV: "test",
-  OPENCLAW_DISABLE_BONJOUR: "1",
-  OPENCLAW_NO_RESPAWN: "1",
-  OPENCLAW_SKIP_ACPX_RUNTIME: "1",
-  OPENCLAW_SKIP_ACPX_RUNTIME_PROBE: "1",
-  OPENCLAW_SKIP_BROWSER_CONTROL_SERVER: "1",
-  OPENCLAW_SKIP_CANVAS_HOST: "1",
-  OPENCLAW_SKIP_CHANNELS: "1",
-  OPENCLAW_SKIP_CRON: "1",
-  OPENCLAW_SKIP_GMAIL_WATCHER: "1",
-  OPENCLAW_SKIP_PROVIDERS: "1",
+  MERCLAW_DISABLE_BONJOUR: "1",
+  MERCLAW_NO_RESPAWN: "1",
+  MERCLAW_SKIP_ACPX_RUNTIME: "1",
+  MERCLAW_SKIP_ACPX_RUNTIME_PROBE: "1",
+  MERCLAW_SKIP_BROWSER_CONTROL_SERVER: "1",
+  MERCLAW_SKIP_CANVAS_HOST: "1",
+  MERCLAW_SKIP_CHANNELS: "1",
+  MERCLAW_SKIP_CRON: "1",
+  MERCLAW_SKIP_GMAIL_WATCHER: "1",
+  MERCLAW_SKIP_PROVIDERS: "1",
 };
 
 function usage() {
@@ -57,7 +57,7 @@ Options:
   --sample-delay-ms <n>          First post-invoke FD sample delay. Default: 1000.
   --settle-delay-ms <n>          Final FD sample delay after invoke settles. Default: 5000.
   --output-dir <path>            Artifact directory. Default: .artifacts/memory-fd-repro/<timestamp>.
-  --keep                         Keep the synthetic OPENCLAW_HOME and workspace after the run.
+  --keep                         Keep the synthetic MERCLAW_HOME and workspace after the run.
   --allow-non-darwin             Run on non-macOS platforms. lsof REG counts are most meaningful on macOS.
   --help                         Show this help.
 `.trim();
@@ -122,15 +122,15 @@ export function parseArgs(argv) {
   const stamp = new Date().toISOString().replace(/[:.]/g, "-");
   const options = {
     fileCount: undefined,
-    mode: process.env.OPENCLAW_MEMORY_FD_REPRO_MODE || "fixed",
+    mode: process.env.MERCLAW_MEMORY_FD_REPRO_MODE || "fixed",
     maxWorkspaceRegFds: undefined,
     minLeakedFds: undefined,
     invokeTimeoutMs: undefined,
     sampleDelayMs: undefined,
     settleDelayMs: undefined,
     outputDir: path.resolve(".artifacts", "memory-fd-repro", stamp),
-    keep: process.env.OPENCLAW_MEMORY_FD_REPRO_KEEP === "1",
-    allowNonDarwin: process.env.OPENCLAW_MEMORY_FD_REPRO_ALLOW_NON_DARWIN === "1",
+    keep: process.env.MERCLAW_MEMORY_FD_REPRO_KEEP === "1",
+    allowNonDarwin: process.env.MERCLAW_MEMORY_FD_REPRO_ALLOW_NON_DARWIN === "1",
   };
 
   parseArgv: for (let i = 0; i < args.length; i += 1) {
@@ -197,14 +197,14 @@ export function parseArgs(argv) {
   if (!["fixed", "leak", "report"].includes(options.mode)) {
     throw new Error('--mode must be "fixed", "leak", or "report"');
   }
-  options.fileCount ??= readPositiveNumberEnv("OPENCLAW_MEMORY_FD_REPRO_FILES", DEFAULT_FILE_COUNT);
+  options.fileCount ??= readPositiveNumberEnv("MERCLAW_MEMORY_FD_REPRO_FILES", DEFAULT_FILE_COUNT);
   options.maxWorkspaceRegFds ??= readNumberEnv(
-    "OPENCLAW_MEMORY_FD_REPRO_MAX_WORKSPACE_REG_FDS",
+    "MERCLAW_MEMORY_FD_REPRO_MAX_WORKSPACE_REG_FDS",
     DEFAULT_MAX_WORKSPACE_REG_FDS,
   );
-  options.invokeTimeoutMs ??= readPositiveNumberEnv("OPENCLAW_MEMORY_FD_REPRO_TIMEOUT_MS", 30_000);
-  options.sampleDelayMs ??= readNumberEnv("OPENCLAW_MEMORY_FD_REPRO_SAMPLE_DELAY_MS", 1_000);
-  options.settleDelayMs ??= readNumberEnv("OPENCLAW_MEMORY_FD_REPRO_SETTLE_DELAY_MS", 5_000);
+  options.invokeTimeoutMs ??= readPositiveNumberEnv("MERCLAW_MEMORY_FD_REPRO_TIMEOUT_MS", 30_000);
+  options.sampleDelayMs ??= readNumberEnv("MERCLAW_MEMORY_FD_REPRO_SAMPLE_DELAY_MS", 1_000);
+  options.settleDelayMs ??= readNumberEnv("MERCLAW_MEMORY_FD_REPRO_SETTLE_DELAY_MS", 5_000);
   if (!Number.isFinite(options.fileCount) || options.fileCount <= 0) {
     throw new Error("file count must be greater than 0");
   }
@@ -276,9 +276,9 @@ function writeSyntheticWorkspace(workspaceDir, fileCount) {
 }
 
 function writeConfig({ homeDir, workspaceDir, port, token }) {
-  const configDir = path.join(homeDir, ".openclaw");
+  const configDir = path.join(homeDir, ".merclaw");
   fs.mkdirSync(configDir, { recursive: true });
-  const configPath = path.join(configDir, "openclaw.json");
+  const configPath = path.join(configDir, "merclaw.json");
   const config = {
     agents: {
       defaults: {
@@ -651,7 +651,7 @@ async function main() {
     throw new Error("lsof is required for memory FD repro instrumentation");
   }
 
-  const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-memory-fd-repro-"));
+  const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-memory-fd-repro-"));
   const homeDir = path.join(rootDir, "home");
   const workspaceDir = path.join(rootDir, "workspace");
   fs.mkdirSync(options.outputDir, { recursive: true });
@@ -667,9 +667,9 @@ async function main() {
     ...process.env,
     ...SKIP_GATEWAY_ENV,
     HOME: homeDir,
-    OPENCLAW_STATE_DIR: path.join(homeDir, ".openclaw"),
-    OPENCLAW_CONFIG_PATH: configPath,
-    OPENCLAW_GATEWAY_TOKEN: token,
+    MERCLAW_STATE_DIR: path.join(homeDir, ".merclaw"),
+    MERCLAW_CONFIG_PATH: configPath,
+    MERCLAW_GATEWAY_TOKEN: token,
   };
   const child = spawn(
     process.execPath,

@@ -1,4 +1,4 @@
-import { withEnv, withEnvAsync } from "openclaw/plugin-sdk/test-env";
+import { withEnv, withEnvAsync } from "merclaw/plugin-sdk/test-env";
 import { describe, expect, it } from "vitest";
 import { createPerplexityWebSearchProvider } from "./perplexity-web-search-provider.js";
 import { testing } from "./perplexity-web-search-provider.runtime.js";
@@ -20,11 +20,11 @@ describe("perplexity web search provider", () => {
           throw new Error("Expected tool definition");
         }
 
-        await expect(tool.execute({ query: "OpenClaw docs" })).resolves.toEqual({
+        await expect(tool.execute({ query: "MerClaw docs" })).resolves.toEqual({
           error: "missing_perplexity_api_key",
           message:
             "web_search (perplexity) needs an API key. Set PERPLEXITY_API_KEY or OPENROUTER_API_KEY in the Gateway environment, or configure tools.web.search.perplexity.apiKey. If you do not want to configure a search API key, use web_fetch for a specific URL or the browser tool for interactive pages.",
-          docs: "https://docs.openclaw.ai/tools/web",
+          docs: "https://docs.merclaw.ai/tools/web",
         });
       },
     );
@@ -152,7 +152,7 @@ describe("perplexity web search provider", () => {
           throw new Error("Expected tool definition");
         }
 
-        await expect(tool.execute({ query: "OpenClaw docs", [key]: value })).rejects.toThrow(
+        await expect(tool.execute({ query: "MerClaw docs", [key]: value })).rejects.toThrow(
           message,
         );
       },

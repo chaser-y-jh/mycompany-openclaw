@@ -1,4 +1,4 @@
-import { MAX_TIMER_TIMEOUT_MS } from "openclaw/plugin-sdk/number-runtime";
+import { MAX_TIMER_TIMEOUT_MS } from "merclaw/plugin-sdk/number-runtime";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   browserAct,
@@ -275,7 +275,7 @@ describe("browser client", () => {
             ok: true,
             json: async () => ({
               ok: true,
-              profile: "openclaw",
+              profile: "merclaw",
               transport: "cdp",
               checks: [],
               status: {
@@ -312,14 +312,14 @@ describe("browser client", () => {
 
     const doctorResult = await browserDoctor("http://127.0.0.1:18791");
     expect(doctorResult.ok).toBe(true);
-    expect(doctorResult.profile).toBe("openclaw");
+    expect(doctorResult.profile).toBe("merclaw");
 
     const deepDoctorResult = await browserDoctor("http://127.0.0.1:18791", {
-      profile: "openclaw",
+      profile: "merclaw",
       deep: true,
     });
     expect(deepDoctorResult.ok).toBe(true);
-    expect(deepDoctorResult.profile).toBe("openclaw");
+    expect(deepDoctorResult.profile).toBe("merclaw");
 
     await expect(browserTabs("http://127.0.0.1:18791")).resolves.toHaveLength(1);
     const openedTab = await browserOpenTab("http://127.0.0.1:18791", "https://example.com");
@@ -377,12 +377,12 @@ describe("browser client", () => {
     const urls = calls.map((call) => call.url);
     expect(urls.some((url) => url.endsWith("/tabs"))).toBe(true);
     expect(urls.some((url) => url.endsWith("/doctor"))).toBe(true);
-    expect(urls.some((url) => url.endsWith("/doctor?profile=openclaw&deep=true"))).toBe(true);
+    expect(urls.some((url) => url.endsWith("/doctor?profile=merclaw&deep=true"))).toBe(true);
     const status = calls.find((c) => c.url.endsWith("/"));
     expect(status?.init?.timeoutMs).toBe(7_500);
     const doctor = calls.find((c) => c.url.endsWith("/doctor"));
     expect(doctor?.init?.timeoutMs).toBe(7_500);
-    const deepDoctor = calls.find((c) => c.url.endsWith("/doctor?profile=openclaw&deep=true"));
+    const deepDoctor = calls.find((c) => c.url.endsWith("/doctor?profile=merclaw&deep=true"));
     expect(deepDoctor?.init?.timeoutMs).toBe(10_000);
     const open = calls.find((c) => c.url.endsWith("/tabs/open"));
     expect(open?.init?.method).toBe("POST");

@@ -1,4 +1,4 @@
-import { createPluginRuntimeMock } from "openclaw/plugin-sdk/channel-test-helpers";
+import { createPluginRuntimeMock } from "merclaw/plugin-sdk/channel-test-helpers";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ResolvedIrcAccount } from "./accounts.js";
 import { handleIrcInbound } from "./inbound.js";
@@ -57,7 +57,7 @@ function createAccount(overrides?: Partial<ResolvedIrcAccount>): ResolvedIrcAcco
     accountId: "default",
     enabled: true,
     server: "irc.example.com",
-    nick: "OpenClaw",
+    nick: "MerClaw",
     config: {
       dmPolicy: "pairing",
       allowFrom: [],
@@ -124,7 +124,7 @@ describe("irc inbound behavior", () => {
     expect(sendReply).toHaveBeenCalledWith(
       "alice",
       [
-        "OpenClaw: access not configured.",
+        "MerClaw: access not configured.",
         "",
         "Your IRC id: alice!ident@example.com",
         "Pairing code:",
@@ -133,9 +133,9 @@ describe("irc inbound behavior", () => {
         "```",
         "",
         "Ask the bot owner to approve with:",
-        "openclaw pairing approve irc CODE",
+        "merclaw pairing approve irc CODE",
         "```",
-        "openclaw pairing approve irc CODE",
+        "merclaw pairing approve irc CODE",
         "```",
       ].join("\n"),
       undefined,

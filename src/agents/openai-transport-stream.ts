@@ -1,6 +1,6 @@
 import { createHash, randomUUID } from "node:crypto";
-import { isRecord } from "@openclaw/normalization-core/record-coerce";
-import { uniqueStrings } from "@openclaw/normalization-core/string-normalization";
+import { isRecord } from "@merclaw/normalization-core/record-coerce";
+import { uniqueStrings } from "@merclaw/normalization-core/string-normalization";
 import OpenAI, { AzureOpenAI } from "openai";
 import type { ChatCompletionChunk } from "openai/resources/chat/completions.js";
 import type {
@@ -88,8 +88,8 @@ const MODEL_STREAM_COOPERATIVE_YIELD_INTERVAL_MS = 12;
 const MODEL_STREAM_COOPERATIVE_YIELD_MAX_EVENTS = 64;
 const RESPONSE_FAILED_NO_DETAILS_MESSAGE = "Unknown error (no error details in response)";
 const MAX_OPENAI_STRICT_TOOL_DOWNGRADE_DIAGNOSTIC_KEYS = 256;
-const OPENAI_RESPONSES_REASONING_REPLAY_META_KEY = "__openclaw_replay";
-const OPENAI_RESPONSES_REASONING_REPLAY_BLOCK_META_KEY = "openclawReasoningReplay";
+const OPENAI_RESPONSES_REASONING_REPLAY_META_KEY = "__merclaw_replay";
+const OPENAI_RESPONSES_REASONING_REPLAY_BLOCK_META_KEY = "merclawReasoningReplay";
 const OPENAI_RESPONSES_REPLAY_ITEM_ID_MAX_LENGTH = 64;
 const OPENAI_CODEX_RESPONSES_PROVIDERS = new Set(["openai"]);
 const log = createSubsystemLogger("openai-transport");
@@ -125,7 +125,7 @@ type BaseStreamOptions = {
   authProfileId?: string;
   onPayload?: (payload: unknown, model: Model) => unknown;
   headers?: Record<string, string>;
-  openclawCodeModeToolSurface?: boolean;
+  merclawCodeModeToolSurface?: boolean;
   responseFormat?: Record<string, unknown>;
   frequencyPenalty?: number;
   presencePenalty?: number;
@@ -1336,7 +1336,7 @@ function createResponsesFirstEventTimeoutError(model: Model, timeoutMs: number):
   return new Error(
     `Azure OpenAI Responses stream did not deliver a first event within ${timeoutMs}ms after HTTP streaming headers. ` +
       `provider=${model.provider} model=${model.id}. ` +
-      "The provider may be stalled while parsing the tool payload; retry with a smaller tool surface or enable OPENCLAW_DEBUG_MODEL_PAYLOAD=tools to inspect exposed tools.",
+      "The provider may be stalled while parsing the tool payload; retry with a smaller tool surface or enable MERCLAW_DEBUG_MODEL_PAYLOAD=tools to inspect exposed tools.",
   );
 }
 
@@ -1807,8 +1807,8 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
         ) as typeof params;
         params = sanitizeResponsesImagePayload(params as Record<string, unknown>) as typeof params;
         if (
-          (options as { openclawCodeModeToolSurface?: unknown } | undefined)
-            ?.openclawCodeModeToolSurface === true
+          (options as { merclawCodeModeToolSurface?: unknown } | undefined)
+            ?.merclawCodeModeToolSurface === true
         ) {
           enforceCodeModeResponsesToolSurface(params);
           assertCodeModeResponsesToolSurface(params);
@@ -1866,7 +1866,7 @@ function resolveCacheRetention(cacheRetention: string | undefined): "short" | "l
   if (cacheRetention === "short" || cacheRetention === "long" || cacheRetention === "none") {
     return cacheRetention;
   }
-  if (typeof process !== "undefined" && process.env.OPENCLAW_CACHE_RETENTION === "long") {
+  if (typeof process !== "undefined" && process.env.MERCLAW_CACHE_RETENTION === "long") {
     return "long";
   }
   return "short";
@@ -1943,7 +1943,7 @@ function isOpenAICodexResponsesModel(model: Model): boolean {
   return (
     OPENAI_CODEX_RESPONSES_PROVIDERS.has(model.provider) &&
     (model.api === "openai-chatgpt-responses" ||
-      model.api === "openclaw-openai-responses-transport")
+      model.api === "merclaw-openai-responses-transport")
   );
 }
 
@@ -2239,8 +2239,8 @@ export function createAzureOpenAIResponsesTransportStreamFn(): StreamFn {
         ) as typeof params;
         params = sanitizeResponsesImagePayload(params as Record<string, unknown>) as typeof params;
         if (
-          (options as { openclawCodeModeToolSurface?: unknown } | undefined)
-            ?.openclawCodeModeToolSurface === true
+          (options as { merclawCodeModeToolSurface?: unknown } | undefined)
+            ?.merclawCodeModeToolSurface === true
         ) {
           enforceCodeModeResponsesToolSurface(params);
           assertCodeModeResponsesToolSurface(params);
@@ -2463,8 +2463,8 @@ export function createOpenAICompletionsTransportStreamFn(): StreamFn {
           params = nextParams as typeof params;
         }
         if (
-          (options as { openclawCodeModeToolSurface?: unknown } | undefined)
-            ?.openclawCodeModeToolSurface === true
+          (options as { merclawCodeModeToolSurface?: unknown } | undefined)
+            ?.merclawCodeModeToolSurface === true
         ) {
           enforceCodeModeResponsesToolSurface(params);
           assertCodeModeResponsesToolSurface(params);
@@ -2842,7 +2842,7 @@ function getCompletionsContentDeltas(content: unknown): CompletionsReasoningDelt
   if (!text) {
     return [];
   }
-  // Preserve provider reasoning as OpenClaw thinking blocks so channel/UI
+  // Preserve provider reasoning as MerClaw thinking blocks so channel/UI
   // surfaces can decide whether to show it instead of leaking it as answer text.
   if (type.includes("thinking") || type.includes("reasoning")) {
     return [{ kind: "thinking", signature: "content", text }];

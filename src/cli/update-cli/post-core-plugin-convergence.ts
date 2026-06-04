@@ -1,11 +1,11 @@
 import { repairMissingConfiguredPluginInstalls } from "../../commands/doctor/shared/missing-configured-plugin-install.js";
 import { UPDATE_POST_CORE_CONVERGENCE_ENV } from "../../commands/doctor/shared/update-phase.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import type { PluginInstallRecord } from "../../config/types.plugins.js";
 import { normalizePluginsConfig, resolveEffectiveEnableState } from "../../plugins/config-state.js";
 import { resolveDefaultPluginNpmDir } from "../../plugins/install-paths.js";
 import { listManagedPluginNpmRoots } from "../../plugins/npm-project-roots.js";
-import { relinkOpenClawPeerDependenciesInManagedNpmRoot } from "../../plugins/plugin-peer-link.js";
+import { relinkMerClawPeerDependenciesInManagedNpmRoot } from "../../plugins/plugin-peer-link.js";
 import { pruneStaleLocalBundledPluginInstallRecords } from "../../plugins/stale-local-bundled-plugin-install-records.js";
 import {
   resolveTrustedSourceLinkedOfficialClawHubSpec,
@@ -42,18 +42,18 @@ export type PostCoreConvergenceResult = {
   installRecords: Record<string, PluginInstallRecord>;
 };
 
-const REPAIR_GUIDANCE = "Run `openclaw doctor --fix` to retry plugin repair.";
+const REPAIR_GUIDANCE = "Run `merclaw doctor --fix` to retry plugin repair.";
 const inspectGuidance = (pluginId: string) =>
-  `Run \`openclaw plugins inspect ${pluginId} --runtime --json\` for details.`;
+  `Run \`merclaw plugins inspect ${pluginId} --runtime --json\` for details.`;
 
-async function repairManagedNpmOpenClawPeerLinks(params: {
+async function repairManagedNpmMerClawPeerLinks(params: {
   env: NodeJS.ProcessEnv;
 }): Promise<{ changes: string[]; warnings: PostCoreConvergenceWarning[] }> {
   try {
     const npmRoots = await listManagedPluginNpmRoots(resolveDefaultPluginNpmDir(params.env));
     const results = await Promise.all(
       npmRoots.map((npmRoot) =>
-        relinkOpenClawPeerDependenciesInManagedNpmRoot({
+        relinkMerClawPeerDependenciesInManagedNpmRoot({
           npmRoot,
           logger: {},
         }),
@@ -63,12 +63,12 @@ async function repairManagedNpmOpenClawPeerLinks(params: {
     return {
       changes:
         repaired > 0
-          ? [`Repaired OpenClaw host peer link(s) for ${repaired} managed npm plugin package(s).`]
+          ? [`Repaired MerClaw host peer link(s) for ${repaired} managed npm plugin package(s).`]
           : [],
       warnings: [],
     };
   } catch (err) {
-    const message = `Failed to repair managed npm OpenClaw host peer links: ${err instanceof Error ? err.message : String(err)}`;
+    const message = `Failed to repair managed npm MerClaw host peer links: ${err instanceof Error ? err.message : String(err)}`;
     return {
       changes: [],
       warnings: [
@@ -89,7 +89,7 @@ async function repairManagedNpmOpenClawPeerLinks(params: {
  * never restart with a configured plugin whose payload is unloadable.
  */
 export async function runPostCorePluginConvergence(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env: NodeJS.ProcessEnv;
   /**
    * Optional in-memory install records from earlier post-core steps (e.g.
@@ -103,7 +103,7 @@ export async function runPostCorePluginConvergence(params: {
 }): Promise<PostCoreConvergenceResult> {
   const env: NodeJS.ProcessEnv = {
     ...params.env,
-    OPENCLAW_COMPATIBILITY_HOST_VERSION: VERSION,
+    MERCLAW_COMPATIBILITY_HOST_VERSION: VERSION,
     [UPDATE_POST_CORE_CONVERGENCE_ENV]: "1",
   };
   const prunedBaseline = params.baselineInstallRecords
@@ -124,7 +124,7 @@ export async function runPostCorePluginConvergence(params: {
     message,
     guidance: [REPAIR_GUIDANCE],
   }));
-  const peerLinkRepair = await repairManagedNpmOpenClawPeerLinks({ env });
+  const peerLinkRepair = await repairManagedNpmMerClawPeerLinks({ env });
   warnings.push(...peerLinkRepair.warnings);
 
   const records: Record<string, PluginInstallRecord> = repair.records;
@@ -174,7 +174,7 @@ export async function runPostCorePluginConvergence(params: {
  * enable state is the right precision boundary.
  */
 export function filterRecordsToActive(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   records: Record<string, PluginInstallRecord>;
 }): Record<string, PluginInstallRecord> {
   const normalizedPluginConfig = normalizePluginsConfig(params.cfg.plugins);

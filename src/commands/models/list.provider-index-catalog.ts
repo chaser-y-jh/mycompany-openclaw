@@ -1,20 +1,20 @@
-import { normalizeModelCatalogProviderId } from "@openclaw/model-catalog-core/model-catalog-refs";
-import type { NormalizedModelCatalogRow } from "@openclaw/model-catalog-core/model-catalog-types";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import { normalizeModelCatalogProviderId } from "@merclaw/model-catalog-core/model-catalog-refs";
+import type { NormalizedModelCatalogRow } from "@merclaw/model-catalog-core/model-catalog-types";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import {
-  loadOpenClawProviderIndex,
+  loadMerClawProviderIndex,
   planProviderIndexModelCatalogRows,
 } from "../../model-catalog/index.js";
 import { normalizePluginsConfig, resolveEffectiveEnableState } from "../../plugins/config-state.js";
 
 export function loadProviderIndexCatalogRowsForList(params: {
   providerFilter?: string;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
 }): readonly NormalizedModelCatalogRow[] {
   const providerFilter = params.providerFilter
     ? normalizeModelCatalogProviderId(params.providerFilter)
     : undefined;
-  const index = loadOpenClawProviderIndex();
+  const index = loadMerClawProviderIndex();
   return planProviderIndexModelCatalogRows({
     index,
     ...(providerFilter ? { providerFilter } : {}),

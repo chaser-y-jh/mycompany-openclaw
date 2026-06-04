@@ -1,10 +1,10 @@
 import {
   normalizeOptionalLowercaseString,
   normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/normalization-core/string-coerce";
 import { resolveChannelGroupRequireMention } from "../../config/group-policy.js";
 import type { GroupKeyResolution, SessionEntry } from "../../config/sessions.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { createLazyImportLoader } from "../../shared/lazy-promise.js";
 import type { SilentReplyPolicy } from "../../shared/silent-reply-policy.js";
 import { isInternalMessageChannel } from "../../utils/message-channel.js";
@@ -62,7 +62,7 @@ function normalizeDiscordSlug(value?: string | null) {
 }
 
 function resolveDiscordGuilds(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   accountId?: string | null,
 ): Record<string, DiscordGroupConfig> | undefined {
   const discord = cfg.channels?.discord as DiscordConfigWithGuilds | undefined;
@@ -119,7 +119,7 @@ function resolveDiscordChannelEntry(
 }
 
 function resolveDiscordRequireMentionFallback(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   channel: string;
   groupId?: string | null;
   groupChannel?: string | null;
@@ -144,7 +144,7 @@ function resolveDiscordRequireMentionFallback(params: {
 }
 
 export async function resolveGroupRequireMention(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   ctx: TemplateContext;
   groupResolution?: GroupKeyResolution;
 }): Promise<boolean> {
@@ -260,7 +260,7 @@ export function buildGroupChatContext(params: {
   }
   if (canUseSilentReply) {
     lines.push(
-      `If no response is needed, reply with exactly "${params.silentToken}" (and nothing else) so OpenClaw stays silent.`,
+      `If no response is needed, reply with exactly "${params.silentToken}" (and nothing else) so MerClaw stays silent.`,
     );
     lines.push("Be extremely selective: reply only when directly addressed or clearly helpful.");
     lines.push(
@@ -317,7 +317,7 @@ export function resolveGroupSilentReplyBehavior(params: {
 }
 
 export function buildGroupIntro(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   sessionCtx: TemplateContext;
   sessionEntry?: SessionEntry;
   defaultActivation: "always" | "mention";

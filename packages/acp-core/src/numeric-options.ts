@@ -1,4 +1,4 @@
-import { resolveIntegerOption as resolveSharedIntegerOption } from "@openclaw/normalization-core/number-coercion";
+import { resolveIntegerOption as resolveSharedIntegerOption } from "@merclaw/normalization-core/number-coercion";
 
 export function resolveIntegerOption(
   value: number | undefined,

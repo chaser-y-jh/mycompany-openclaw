@@ -17,9 +17,9 @@ import type { UpdateRestartSentinelMeta } from "../../infra/update-restart-senti
 const PARENT_EXIT_GRACE_MS = 60_000;
 const SYSTEMD_RUN_CANDIDATE_PATHS = ["/usr/bin/systemd-run", "/bin/systemd-run"] as const;
 const SERVICE_IDENTITY_ENV_VARS = new Set<string>([
-  "OPENCLAW_LAUNCHD_LABEL",
-  "OPENCLAW_SYSTEMD_UNIT",
-  "OPENCLAW_WINDOWS_TASK_NAME",
+  "MERCLAW_LAUNCHD_LABEL",
+  "MERCLAW_SYSTEMD_UNIT",
+  "MERCLAW_WINDOWS_TASK_NAME",
 ] as const);
 
 const HANDOFF_SCRIPT = String.raw`
@@ -283,11 +283,11 @@ function resolveUpdateCliArgv(params: {
   if (execPath && !isNodeLikeRuntime(execPath)) {
     return [execPath, ...updateArgs];
   }
-  return ["openclaw", ...updateArgs];
+  return ["merclaw", ...updateArgs];
 }
 
 export function formatManagedServiceUpdateCommand(timeoutMs?: number): string {
-  const args = ["openclaw", "update", "--yes"];
+  const args = ["merclaw", "update", "--yes"];
   if (typeof timeoutMs === "number" && Number.isFinite(timeoutMs)) {
     args.push("--timeout", String(Math.max(1, Math.ceil(timeoutMs / 1000))));
   }
@@ -362,7 +362,7 @@ function buildSystemdHandoffUnitName(handoffId: string | undefined): string {
     sanitizeSystemdUnitFragment(handoffId) ||
     sanitizeSystemdUnitFragment(`${process.pid}-${Date.now()}`) ||
     "handoff";
-  return `openclaw-update-${suffix}.scope`;
+  return `merclaw-update-${suffix}.scope`;
 }
 
 async function resolveHandoffSpawn(params: {
@@ -387,7 +387,7 @@ async function resolveHandoffSpawn(params: {
   );
   if (!systemdRunPath) {
     throw new Error(
-      "systemd-run is required to start the managed update handoff outside openclaw-gateway.service",
+      "systemd-run is required to start the managed update handoff outside merclaw-gateway.service",
     );
   }
 
@@ -453,7 +453,7 @@ export async function startManagedServiceUpdateHandoff(params: {
   const env = {
     ...stripSupervisorHintEnv(params.env ?? process.env),
     [CONTROL_PLANE_UPDATE_SENTINEL_META_ENV]: metaPath,
-    OPENCLAW_UPDATE_RUN_HANDOFF: "1",
+    MERCLAW_UPDATE_RUN_HANDOFF: "1",
   };
   const spawnTarget = await resolveHandoffSpawn({
     supervisor: params.supervisor,

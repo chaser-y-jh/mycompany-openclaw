@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { MerClawConfig } from "../../config/config.js";
 
 vi.mock("../../infra/session-cost-usage.js", async () => {
   const actual = await vi.importActual<typeof import("../../infra/session-cost-usage.js")>(
@@ -154,7 +154,7 @@ describe("gateway usage helpers", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-02-05T00:00:00.000Z"));
 
-    const config = {} as OpenClawConfig;
+    const config = {} as MerClawConfig;
     const a = await testApi.loadCostUsageSummaryCached({
       startMs: 1,
       endMs: 2,
@@ -175,7 +175,7 @@ describe("gateway usage helpers", () => {
   });
 
   it("keeps cost usage cache entries scoped by agentId", async () => {
-    const config = {} as OpenClawConfig;
+    const config = {} as MerClawConfig;
 
     await testApi.loadCostUsageSummaryCached({
       startMs: 1,

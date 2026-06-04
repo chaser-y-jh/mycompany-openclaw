@@ -9,7 +9,7 @@ import {
   resolveDefaultUnitCoverageIncludePatterns,
 } from "./vitest/vitest.unit.config.ts";
 
-const patternFiles = createPatternFileHelper("openclaw-vitest-unit-config-");
+const patternFiles = createPatternFileHelper("merclaw-vitest-unit-config-");
 
 function requireTestConfig<T extends { test?: unknown }>(config: T): NonNullable<T["test"]> {
   if (!config.test) {
@@ -37,7 +37,7 @@ describe("loadIncludePatternsFromEnv", () => {
 
     expect(
       loadIncludePatternsFromEnv({
-        OPENCLAW_VITEST_INCLUDE_FILE: filePath,
+        MERCLAW_VITEST_INCLUDE_FILE: filePath,
       }),
     ).toEqual(["src/infra/update-runner.test.ts", "ui/src/ui/views/chat.test.ts"]);
   });
@@ -58,7 +58,7 @@ describe("loadExtraExcludePatternsFromEnv", () => {
 
     expect(
       loadExtraExcludePatternsFromEnv({
-        OPENCLAW_VITEST_EXTRA_EXCLUDE_FILE: filePath,
+        MERCLAW_VITEST_EXTRA_EXCLUDE_FILE: filePath,
       }),
     ).toEqual(["src/infra/update-runner.test.ts", "ui/src/ui/views/chat.test.ts"]);
   });
@@ -70,7 +70,7 @@ describe("loadExtraExcludePatternsFromEnv", () => {
 
     expect(() =>
       loadExtraExcludePatternsFromEnv({
-        OPENCLAW_VITEST_EXTRA_EXCLUDE_FILE: filePath,
+        MERCLAW_VITEST_EXTRA_EXCLUDE_FILE: filePath,
       }),
     ).toThrow(/JSON array/u);
   });
@@ -134,12 +134,12 @@ describe("unit vitest config", () => {
     expect(testConfig.passWithNoTests).toBe(true);
   });
 
-  it("adds the OpenClaw runtime setup hooks on top of the base setup", () => {
+  it("adds the MerClaw runtime setup hooks on top of the base setup", () => {
     const unitConfig = createUnitVitestConfig({});
     const testConfig = requireTestConfig(unitConfig);
     expect(normalizeConfigPaths(testConfig.setupFiles)).toEqual([
       "test/setup.ts",
-      "test/setup-openclaw-runtime.ts",
+      "test/setup-merclaw-runtime.ts",
     ]);
   });
 

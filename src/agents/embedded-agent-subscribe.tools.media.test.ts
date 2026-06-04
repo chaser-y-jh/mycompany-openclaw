@@ -137,7 +137,7 @@ describe("extractToolResultMediaPaths", () => {
   });
 
   it("falls back to details.path when image content exists", () => {
-    // Embedded read tool doesn't include structured media but OpenClaw
+    // Embedded read tool doesn't include structured media but MerClaw
     // imageResult sets details.path as fallback.
     const result = {
       content: [

@@ -10,7 +10,7 @@ coverage:
     - tools.fs.list
 objective: Verify directory inspection behavior is tracked through read while Codex owns file inspection natively.
 successCriteria:
-  - OpenClaw may expose OpenClaw read while Codex app-server mode may omit duplicate OpenClaw dynamic read.
+  - MerClaw may expose MerClaw read while Codex app-server mode may omit duplicate MerClaw dynamic read.
   - Mock provider read plans are reported as fixture intent, not as actual runtime tool calls.
   - The row stays report-only until directory fault injection proves native Codex read behavior directly.
 docsRefs:
@@ -33,7 +33,7 @@ execution:
       codexDefaultImpact: P4
       qaImpact: P2
       action: model native read/list behavior separately from provider-plan capture
-      reason: Codex app-server intentionally owns read natively; current OpenClaw coding surface has no separate list tool.
+      reason: Codex app-server intentionally owns read natively; current MerClaw coding surface has no separate list tool.
     knownHarnessGap:
       issue: "#80312"
       reason: QA mock failure-path capture currently reports provider-plan args, not proven Codex native read/list behavior.

@@ -2,7 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import type { DoctorPrompter } from "./doctor-prompter.js";
 
 const authProfileMocks = vi.hoisted(() => ({
@@ -43,7 +43,7 @@ describe("noteAuthProfileHealth", () => {
   let tempDir: string;
 
   beforeEach(() => {
-    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-doctor-auth-"));
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-doctor-auth-"));
     authProfileMocks.ensureAuthProfileStore.mockReset();
     authProfileMocks.hasAnyAuthProfileStoreSource.mockReset();
     authProfileMocks.hasAnyAuthProfileStoreSource.mockReturnValue(false);
@@ -78,7 +78,7 @@ describe("noteAuthProfileHealth", () => {
   }
   it("skips external auth profile resolution when no auth source exists", async () => {
     await noteAuthProfileHealth({
-      cfg: { channels: { telegram: { enabled: true } } } as OpenClawConfig,
+      cfg: { channels: { telegram: { enabled: true } } } as MerClawConfig,
       prompter: {} as DoctorPrompter,
       allowKeychainPrompt: false,
     });
@@ -102,7 +102,7 @@ describe("noteAuthProfileHealth", () => {
         agents: {
           list: [{ id: "main", default: true, agentDir: defaultDir }],
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       prompter: {} as DoctorPrompter,
       allowKeychainPrompt: false,
     });
@@ -139,7 +139,7 @@ describe("noteAuthProfileHealth", () => {
             { id: "coder", agentDir: coderDir },
           ],
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       prompter: {
         confirmAutoFix: vi.fn(async () => false),
       } as unknown as DoctorPrompter,
@@ -178,7 +178,7 @@ describe("noteAuthProfileHealth", () => {
             { id: "coder", agentDir: coderDir },
           ],
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       prompter: {
         confirmAutoFix: vi.fn(async () => true),
       } as unknown as DoctorPrompter,

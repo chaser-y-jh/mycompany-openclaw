@@ -29,7 +29,7 @@ function makeEvent(
   params: Partial<TrajectoryEvent> & { type: string; ts: string },
 ): TrajectoryEvent {
   return {
-    traceSchema: "openclaw-trajectory",
+    traceSchema: "merclaw-trajectory",
     schemaVersion: 1,
     traceId: "trace-1",
     source: "runtime",
@@ -77,9 +77,9 @@ describe("sessionsTailCommand", () => {
 
   beforeEach(() => {
     setSessionsTailFollowIntervalMsForTests(10);
-    previousStateDir = process.env.OPENCLAW_STATE_DIR;
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-sessions-tail-"));
-    process.env.OPENCLAW_STATE_DIR = path.join(tmpDir, "state");
+    previousStateDir = process.env.MERCLAW_STATE_DIR;
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-sessions-tail-"));
+    process.env.MERCLAW_STATE_DIR = path.join(tmpDir, "state");
     mocks.getRuntimeConfig.mockReturnValue({
       agents: {
         list: [{ id: "main" }, { id: "ops" }],
@@ -103,9 +103,9 @@ describe("sessionsTailCommand", () => {
   afterEach(() => {
     setSessionsTailFollowIntervalMsForTests();
     if (previousStateDir === undefined) {
-      delete process.env.OPENCLAW_STATE_DIR;
+      delete process.env.MERCLAW_STATE_DIR;
     } else {
-      process.env.OPENCLAW_STATE_DIR = previousStateDir;
+      process.env.MERCLAW_STATE_DIR = previousStateDir;
     }
     fs.rmSync(tmpDir, { recursive: true, force: true });
   });
@@ -182,7 +182,7 @@ describe("sessionsTailCommand", () => {
     fs.writeFileSync(
       resolveTrajectoryPointerFilePath(path.join(tmpDir, "session-one.jsonl")),
       `${JSON.stringify({
-        traceSchema: "openclaw-trajectory-pointer",
+        traceSchema: "merclaw-trajectory-pointer",
         schemaVersion: 1,
         sessionId: "session-one",
         runtimeFile: relocatedTrajectoryPath,
@@ -283,7 +283,7 @@ describe("sessionsTailCommand", () => {
   it("resolves the target store from a fully qualified non-default agent session key", async () => {
     const runtime = makeRuntime();
     const opsSessionKey = "agent:ops:telegram:direct:owner";
-    const opsSessionsDir = path.join(process.env.OPENCLAW_STATE_DIR!, "agents", "ops", "sessions");
+    const opsSessionsDir = path.join(process.env.MERCLAW_STATE_DIR!, "agents", "ops", "sessions");
     fs.mkdirSync(opsSessionsDir, { recursive: true });
     fs.writeFileSync(
       path.join(opsSessionsDir, "sessions.json"),

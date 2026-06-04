@@ -1,10 +1,10 @@
 import type { ResolveMentionPatternPolicyParams } from "../../channels/mention-pattern-policy.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 
 export type BuildMentionRegexesOptions = Omit<ResolveMentionPatternPolicyParams, "cfg" | "agentId">;
 
 export type BuildMentionRegexes = (
-  cfg: OpenClawConfig | undefined,
+  cfg: MerClawConfig | undefined,
   agentId?: string,
   options?: BuildMentionRegexesOptions,
 ) => RegExp[];

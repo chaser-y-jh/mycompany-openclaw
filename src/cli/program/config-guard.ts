@@ -86,7 +86,7 @@ function hasLegacyStateMigrationInputs(): boolean {
   const stateDir = resolveStateDir(process.env, os.homedir);
   const oauthDir = resolveOAuthDir(process.env, stateDir);
   if (
-    !process.env.OPENCLAW_STATE_DIR?.trim() &&
+    !process.env.MERCLAW_STATE_DIR?.trim() &&
     resolveLegacyStateDirs(() => resolveRequiredHomeDir(process.env, os.homedir)).some(
       fileOrDirExists,
     )
@@ -233,7 +233,7 @@ export async function ensureConfigReady(params: {
   const heading = (value: string) => colorize(rich, theme.heading, value);
   const commandText = (value: string) => colorize(rich, theme.command, value);
 
-  params.runtime.error(heading("OpenClaw config is invalid"));
+  params.runtime.error(heading("MerClaw config is invalid"));
   params.runtime.error(`${muted("File:")} ${muted(shortenHomePath(snapshot.path))}`);
   if (issues.length > 0) {
     params.runtime.error(muted("Problem:"));
@@ -246,10 +246,10 @@ export async function ensureConfigReady(params: {
   params.runtime.error("");
   const fixHint = isPluginPackagingRuntimeOutputInvalidConfigSnapshot(snapshot)
     ? formatPluginPackagingRuntimeOutputRecoveryHint()
-    : commandText(formatCliCommand("openclaw doctor --fix"));
+    : commandText(formatCliCommand("merclaw doctor --fix"));
   params.runtime.error(`${muted("Fix:")} ${fixHint}`);
   params.runtime.error(
-    `${muted("Inspect:")} ${commandText(formatCliCommand("openclaw config validate"))}`,
+    `${muted("Inspect:")} ${commandText(formatCliCommand("merclaw config validate"))}`,
   );
   params.runtime.error(
     muted(

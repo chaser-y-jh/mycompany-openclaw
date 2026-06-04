@@ -196,11 +196,11 @@ describe("current plugin metadata snapshot", () => {
     const snapshot = createSnapshot({ config });
     const snapshotEnv = {
       HOME: "/home/snapshot",
-      OPENCLAW_HOME: undefined,
+      MERCLAW_HOME: undefined,
     } as NodeJS.ProcessEnv;
     const requestedEnv = {
       HOME: "/home/requested",
-      OPENCLAW_HOME: undefined,
+      MERCLAW_HOME: undefined,
     } as NodeJS.ProcessEnv;
     setCurrentPluginMetadataSnapshot(snapshot, { config, env: snapshotEnv });
 
@@ -213,11 +213,11 @@ describe("current plugin metadata snapshot", () => {
     const snapshot = createSnapshot({ config });
     const snapshotEnv = {
       HOME: "/home/snapshot",
-      OPENCLAW_HOME: undefined,
+      MERCLAW_HOME: undefined,
     } as NodeJS.ProcessEnv;
     const requestedEnv = {
       HOME: "/home/requested",
-      OPENCLAW_HOME: undefined,
+      MERCLAW_HOME: undefined,
     } as NodeJS.ProcessEnv;
     setCurrentPluginMetadataSnapshot(snapshot, { config, env: snapshotEnv });
 
@@ -254,7 +254,7 @@ describe("current plugin metadata snapshot", () => {
     const snapshot = createSnapshot({ config });
     const env = {
       HOME: "/home/snapshot",
-      OPENCLAW_HOME: undefined,
+      MERCLAW_HOME: undefined,
     } as NodeJS.ProcessEnv;
     setCurrentPluginMetadataSnapshot(snapshot, { config, env });
 
@@ -331,7 +331,7 @@ describe("current plugin metadata snapshot", () => {
   });
 
   it("clears the current snapshot when the persisted installed index changes", () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-plugin-metadata-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-plugin-metadata-"));
     try {
       setCurrentPluginMetadataSnapshot(createSnapshot());
 

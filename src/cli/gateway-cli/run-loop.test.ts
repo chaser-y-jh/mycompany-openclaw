@@ -69,7 +69,7 @@ const respawnGatewayProcessForUpdate = vi.fn<
     detail?: string;
     child?: { kill: () => void };
   }
->(() => ({ mode: "disabled", detail: "OPENCLAW_NO_RESPAWN" }));
+>(() => ({ mode: "disabled", detail: "MERCLAW_NO_RESPAWN" }));
 const markUpdateRestartSentinelFailure = vi.fn<(reason: string) => Promise<null>>(
   async (_reason: string) => null,
 );
@@ -704,7 +704,7 @@ describe("runGatewayLoop", () => {
     peekGatewaySigusr1RestartReason.mockReturnValue(undefined);
     respawnGatewayProcessForUpdate.mockReturnValue({
       mode: "disabled",
-      detail: "OPENCLAW_NO_RESPAWN",
+      detail: "MERCLAW_NO_RESPAWN",
     });
     markUpdateRestartSentinelFailure.mockClear();
 
@@ -823,7 +823,7 @@ describe("runGatewayLoop", () => {
     peekGatewaySigusr1RestartReason.mockReturnValue(undefined);
     respawnGatewayProcessForUpdate.mockReturnValue({
       mode: "disabled",
-      detail: "OPENCLAW_NO_RESPAWN",
+      detail: "MERCLAW_NO_RESPAWN",
     });
 
     await withIsolatedSignals(async ({ captureSignal }) => {
@@ -1008,7 +1008,7 @@ describe("runGatewayLoop", () => {
     peekGatewaySigusr1RestartReason.mockReturnValue(undefined);
     respawnGatewayProcessForUpdate.mockReturnValue({
       mode: "disabled",
-      detail: "OPENCLAW_NO_RESPAWN",
+      detail: "MERCLAW_NO_RESPAWN",
     });
 
     await withIsolatedSignals(async ({ captureSignal }) => {
@@ -1074,7 +1074,7 @@ describe("runGatewayLoop", () => {
     peekGatewaySigusr1RestartReason.mockReturnValue(undefined);
     respawnGatewayProcessForUpdate.mockReturnValue({
       mode: "disabled",
-      detail: "OPENCLAW_NO_RESPAWN",
+      detail: "MERCLAW_NO_RESPAWN",
     });
 
     await withIsolatedSignals(async ({ captureSignal }) => {
@@ -1140,7 +1140,7 @@ describe("runGatewayLoop", () => {
     peekGatewaySigusr1RestartReason.mockReturnValue(undefined);
     respawnGatewayProcessForUpdate.mockReturnValue({
       mode: "disabled",
-      detail: "OPENCLAW_NO_RESPAWN",
+      detail: "MERCLAW_NO_RESPAWN",
     });
 
     await withIsolatedSignals(async ({ captureSignal }) => {
@@ -1209,7 +1209,7 @@ describe("runGatewayLoop", () => {
       expect(gatewayLog.warn).toHaveBeenNthCalledWith(
         2,
         "An unauthorized SIGUSR1 restart signal was received and ignored. " +
-          "If a pending gateway restart needs to be applied, run `openclaw gateway restart` " +
+          "If a pending gateway restart needs to be applied, run `merclaw gateway restart` " +
           "or restart the gateway through your service manager.",
       );
     });
@@ -1265,8 +1265,8 @@ describe("runGatewayLoop", () => {
   it("releases the lock before exiting on spawned restart", async () => {
     vi.clearAllMocks();
     peekGatewaySigusr1RestartReason.mockReturnValue(undefined);
-    const originalTraceEnv = process.env.OPENCLAW_GATEWAY_RESTART_TRACE;
-    process.env.OPENCLAW_GATEWAY_RESTART_TRACE = "1";
+    const originalTraceEnv = process.env.MERCLAW_GATEWAY_RESTART_TRACE;
+    process.env.MERCLAW_GATEWAY_RESTART_TRACE = "1";
 
     try {
       await withIsolatedSignals(async ({ captureSignal }) => {
@@ -1295,15 +1295,15 @@ describe("runGatewayLoop", () => {
         expect(runtime.exit).toHaveBeenCalledWith(0);
         expect(exitCallOrder).toEqual(["lockRelease", "exit"]);
         const [respawnOpts] = restartGatewayProcessWithFreshPid.mock.calls[0] ?? [];
-        expect(respawnOpts?.env?.OPENCLAW_GATEWAY_RESTART_TRACE_STARTED_AT_MS).toMatch(/^\d/u);
-        expect(respawnOpts?.env?.OPENCLAW_GATEWAY_RESTART_TRACE_LAST_AT_MS).toMatch(/^\d/u);
+        expect(respawnOpts?.env?.MERCLAW_GATEWAY_RESTART_TRACE_STARTED_AT_MS).toMatch(/^\d/u);
+        expect(respawnOpts?.env?.MERCLAW_GATEWAY_RESTART_TRACE_LAST_AT_MS).toMatch(/^\d/u);
         expect(writeGatewayRestartHandoffSync).not.toHaveBeenCalled();
       });
     } finally {
       if (originalTraceEnv === undefined) {
-        delete process.env.OPENCLAW_GATEWAY_RESTART_TRACE;
+        delete process.env.MERCLAW_GATEWAY_RESTART_TRACE;
       } else {
-        process.env.OPENCLAW_GATEWAY_RESTART_TRACE = originalTraceEnv;
+        process.env.MERCLAW_GATEWAY_RESTART_TRACE = originalTraceEnv;
       }
     }
   });
@@ -1313,7 +1313,7 @@ describe("runGatewayLoop", () => {
     peekGatewaySigusr1RestartReason.mockReturnValue(undefined);
     try {
       setPlatform("darwin");
-      process.env.OPENCLAW_LAUNCHD_LABEL = "ai.openclaw.gateway";
+      process.env.MERCLAW_LAUNCHD_LABEL = "ai.merclaw.gateway";
       restartGatewayProcessWithFreshPid.mockReturnValueOnce({
         mode: "supervised",
       });
@@ -1338,7 +1338,7 @@ describe("runGatewayLoop", () => {
       });
     } finally {
       vi.useRealTimers();
-      delete process.env.OPENCLAW_LAUNCHD_LABEL;
+      delete process.env.MERCLAW_LAUNCHD_LABEL;
       if (originalPlatformDescriptor) {
         Object.defineProperty(process, "platform", originalPlatformDescriptor);
       }
@@ -1350,7 +1350,7 @@ describe("runGatewayLoop", () => {
     consumeGatewayRestartIntentPayloadSync.mockReturnValueOnce({ reason: "gateway.restart" });
     try {
       setPlatform("darwin");
-      process.env.OPENCLAW_LAUNCHD_LABEL = "ai.openclaw.gateway";
+      process.env.MERCLAW_LAUNCHD_LABEL = "ai.merclaw.gateway";
       restartGatewayProcessWithFreshPid.mockReturnValueOnce({
         mode: "supervised",
       });
@@ -1372,7 +1372,7 @@ describe("runGatewayLoop", () => {
       });
     } finally {
       vi.useRealTimers();
-      delete process.env.OPENCLAW_LAUNCHD_LABEL;
+      delete process.env.MERCLAW_LAUNCHD_LABEL;
       if (originalPlatformDescriptor) {
         Object.defineProperty(process, "platform", originalPlatformDescriptor);
       }

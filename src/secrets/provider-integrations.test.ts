@@ -17,7 +17,7 @@ import { resolveSecretRefString } from "./resolve.js";
 const tempDirs: string[] = [];
 
 function makeTempDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-secret-provider-integrations-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-secret-provider-integrations-"));
   fs.chmodSync(dir, 0o700);
   tempDirs.push(dir);
   return dir;
@@ -69,7 +69,7 @@ describe("secret provider integration presets", () => {
     makeSecureDir(path.join(rootDir, "bin"));
     writeSecureFile(path.join(rootDir, "bin", "resolve.mjs"), "process.stdin.resume();\n");
     fs.writeFileSync(
-      path.join(rootDir, "openclaw.plugin.json"),
+      path.join(rootDir, "merclaw.plugin.json"),
       JSON.stringify({
         id: "acme-secrets",
         name: "Acme Secrets",
@@ -146,7 +146,7 @@ describe("secret provider integration presets", () => {
     fs.writeFileSync(path.join(rootDir, "index.ts"), "export default {};\n", "utf8");
     writeSecureFile(path.join(rootDir, "resolve.mjs"), "process.stdin.resume();\n");
     fs.writeFileSync(
-      path.join(rootDir, "openclaw.plugin.json"),
+      path.join(rootDir, "merclaw.plugin.json"),
       JSON.stringify({
         id: "bounded-secrets",
         secretProviderIntegrations: {
@@ -205,7 +205,7 @@ describe("secret provider integration presets", () => {
     const rootDir = makeTempDir();
     fs.writeFileSync(path.join(rootDir, "index.ts"), "export default {};\n", "utf8");
     fs.writeFileSync(
-      path.join(rootDir, "openclaw.plugin.json"),
+      path.join(rootDir, "merclaw.plugin.json"),
       JSON.stringify({
         id: "bad-secrets",
         secretProviderIntegrations: {
@@ -245,7 +245,7 @@ describe("secret provider integration presets", () => {
       "utf8",
     );
     fs.writeFileSync(
-      path.join(rootDir, "openclaw.plugin.json"),
+      path.join(rootDir, "merclaw.plugin.json"),
       JSON.stringify({
         id: "long-integration-secrets",
         secretProviderIntegrations: {
@@ -265,7 +265,7 @@ describe("secret provider integration presets", () => {
       "utf8",
     );
     fs.writeFileSync(
-      path.join(longPluginRootDir, "openclaw.plugin.json"),
+      path.join(longPluginRootDir, "merclaw.plugin.json"),
       JSON.stringify({
         id: longPluginId,
         secretProviderIntegrations: {
@@ -302,7 +302,7 @@ describe("secret provider integration presets", () => {
       fs.writeFileSync(path.join(rootDir, "index.ts"), "export default {};\n", "utf8");
       fs.mkdirSync(path.join(rootDir, "bin"));
       fs.writeFileSync(
-        path.join(rootDir, "openclaw.plugin.json"),
+        path.join(rootDir, "merclaw.plugin.json"),
         JSON.stringify({
           id: `${origin}-secrets`,
           ...(origin === "bundled" ? { enabledByDefault: true } : {}),
@@ -335,7 +335,7 @@ describe("secret provider integration presets", () => {
     fs.writeFileSync(path.join(rootDir, "index.ts"), "export default {};\n", "utf8");
     writeSecureFile(path.join(rootDir, "resolve.mjs"), "process.stdin.resume();\n");
     fs.writeFileSync(
-      path.join(rootDir, "openclaw.plugin.json"),
+      path.join(rootDir, "merclaw.plugin.json"),
       JSON.stringify({
         id: "disabled-secrets",
         secretProviderIntegrations: {
@@ -389,7 +389,7 @@ describe("secret provider integration presets", () => {
     fs.writeFileSync(path.join(rootDir, "index.ts"), "export default {};\n", "utf8");
     writeSecureFile(path.join(rootDir, "resolve.mjs"), "process.stdin.resume();\n");
     fs.writeFileSync(
-      path.join(rootDir, "openclaw.plugin.json"),
+      path.join(rootDir, "merclaw.plugin.json"),
       JSON.stringify({
         id: "openai",
         secretProviderIntegrations: {
@@ -432,7 +432,7 @@ describe("secret provider integration presets", () => {
     fs.writeFileSync(path.join(rootDir, "index.ts"), "export default {};\n", "utf8");
     writeSecureFile(path.join(rootDir, "resolve.mjs"), "process.stdin.resume();\n");
     fs.writeFileSync(
-      path.join(rootDir, "openclaw.plugin.json"),
+      path.join(rootDir, "merclaw.plugin.json"),
       JSON.stringify({
         id: "platform-secrets",
         enabledByDefaultOnPlatforms: [process.platform],
@@ -476,7 +476,7 @@ describe("secret provider integration presets", () => {
       fs.writeFileSync(path.join(rootDir, "index.ts"), "export default {};\n", "utf8");
       writeSecureFile(path.join(rootDir, "resolve.mjs"), "process.stdin.resume();\n");
       fs.writeFileSync(
-        path.join(rootDir, "openclaw.plugin.json"),
+        path.join(rootDir, "merclaw.plugin.json"),
         JSON.stringify({
           id: "linked-secrets",
           secretProviderIntegrations: {
@@ -519,7 +519,7 @@ describe("secret provider integration presets", () => {
       const rootDir = makeTempDir();
       fs.writeFileSync(path.join(rootDir, "index.ts"), "export default {};\n", "utf8");
       fs.writeFileSync(
-        path.join(rootDir, "openclaw.plugin.json"),
+        path.join(rootDir, "merclaw.plugin.json"),
         JSON.stringify({
           id: `${origin}-secrets`,
           secretProviderIntegrations: {
@@ -567,7 +567,7 @@ describe("secret provider integration presets", () => {
       "utf8",
     );
     fs.writeFileSync(
-      path.join(rootDir, "openclaw.plugin.json"),
+      path.join(rootDir, "merclaw.plugin.json"),
       JSON.stringify({
         id: "vault-secrets",
         secretProviderIntegrations: {
@@ -626,7 +626,7 @@ describe("secret provider integration presets", () => {
     fs.writeFileSync(path.join(rootDir, "index.ts"), "export default {};\n", "utf8");
     fs.writeFileSync(resolverPath, "process.stdin.resume();\n", "utf8");
     fs.writeFileSync(
-      path.join(rootDir, "openclaw.plugin.json"),
+      path.join(rootDir, "merclaw.plugin.json"),
       JSON.stringify({
         id: "revoked-secrets",
         secretProviderIntegrations: {
@@ -716,7 +716,7 @@ describe("secret provider integration presets", () => {
     const rootDir = makeTempDir();
     fs.writeFileSync(path.join(rootDir, "index.ts"), "export default {};\n", "utf8");
     fs.writeFileSync(
-      path.join(rootDir, "openclaw.plugin.json"),
+      path.join(rootDir, "merclaw.plugin.json"),
       JSON.stringify({
         id: "bad-trust-secrets",
         secretProviderIntegrations: {
@@ -755,7 +755,7 @@ describe("secret provider integration presets", () => {
         path.join(rootDir, "bin", "resolve.mjs"),
       );
       fs.writeFileSync(
-        path.join(rootDir, "openclaw.plugin.json"),
+        path.join(rootDir, "merclaw.plugin.json"),
         JSON.stringify({
           id: "symlink-secrets",
           secretProviderIntegrations: {
@@ -793,7 +793,7 @@ describe("secret provider integration presets", () => {
     makeSecureDir(path.join(realRoot, "bin"));
     writeSecureFile(path.join(realRoot, "bin", "resolve.mjs"), "process.stdin.resume();\n");
     fs.writeFileSync(
-      path.join(realRoot, "openclaw.plugin.json"),
+      path.join(realRoot, "merclaw.plugin.json"),
       JSON.stringify({
         id: "linked-root-secrets",
         secretProviderIntegrations: {
@@ -850,7 +850,7 @@ describe("secret provider integration presets", () => {
       fs.chmodSync(binDir, 0o777);
       try {
         fs.writeFileSync(
-          path.join(rootDir, "openclaw.plugin.json"),
+          path.join(rootDir, "merclaw.plugin.json"),
           JSON.stringify({
             id: "writable-parent-secrets",
             secretProviderIntegrations: {

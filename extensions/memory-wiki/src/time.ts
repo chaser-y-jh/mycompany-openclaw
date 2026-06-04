@@ -1,4 +1,4 @@
-import { timestampMsToIsoString } from "openclaw/plugin-sdk/number-runtime";
+import { timestampMsToIsoString } from "merclaw/plugin-sdk/number-runtime";
 
 export function resolveMemoryWikiTimestamp(nowMs?: number): string {
   return (

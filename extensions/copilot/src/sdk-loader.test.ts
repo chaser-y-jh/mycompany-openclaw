@@ -92,7 +92,7 @@ describe("sdk-loader", () => {
       );
       writeFileSync(
         path.join(pkgDir, "index.cjs"),
-        "module.exports = { openclawDefaultImporterSentinel: true };",
+        "module.exports = { merclawDefaultImporterSentinel: true };",
       );
 
       const primaryImport = vi.fn(async () => {
@@ -108,9 +108,9 @@ describe("sdk-loader", () => {
         fallbackDir: tmp,
         primaryImport,
         // Intentionally NOT injecting fallbackImport; exercise the default.
-      })) as unknown as { openclawDefaultImporterSentinel?: boolean };
+      })) as unknown as { merclawDefaultImporterSentinel?: boolean };
 
-      expect(sdk.openclawDefaultImporterSentinel).toBe(true);
+      expect(sdk.merclawDefaultImporterSentinel).toBe(true);
       expect(primaryImport).toHaveBeenCalledTimes(1);
     } finally {
       rmSync(tmp, { recursive: true, force: true });
@@ -134,7 +134,7 @@ describe("sdk-loader", () => {
       }),
     ).rejects.toMatchObject({
       code: "COPILOT_SDK_MISSING",
-      message: expect.stringContaining("openclaw plugins install @openclaw/copilot"),
+      message: expect.stringContaining("merclaw plugins install @merclaw/copilot"),
     });
 
     expect(fallbackImport).not.toHaveBeenCalled();
@@ -161,7 +161,7 @@ describe("sdk-loader", () => {
     expect(message).toContain("primary boom");
     expect(message).toContain(path.join(fallbackDir, "node_modules", "@github", "copilot-sdk"));
     expect(message).toContain(COPILOT_SDK_SPEC);
-    expect(message).toContain("openclaw plugins install @openclaw/copilot");
+    expect(message).toContain("merclaw plugins install @merclaw/copilot");
   });
 
   it("caches successful loads across calls when cache is enabled", async () => {
@@ -200,17 +200,17 @@ describe("sdk-loader", () => {
     expect(primaryImport).toHaveBeenCalledTimes(2);
   });
 
-  it("default fallback dir points at ~/.openclaw/npm-runtime/copilot", () => {
-    expect(COPILOT_SDK_FALLBACK_DIR).toMatch(/\.openclaw[\\/]+npm-runtime[\\/]+copilot$/);
+  it("default fallback dir points at ~/.merclaw/npm-runtime/copilot", () => {
+    expect(COPILOT_SDK_FALLBACK_DIR).toMatch(/\.merclaw[\\/]+npm-runtime[\\/]+copilot$/);
   });
 
-  it("resolves the fallback dir from OPENCLAW_STATE_DIR for relocated profiles", () => {
+  it("resolves the fallback dir from MERCLAW_STATE_DIR for relocated profiles", () => {
     expect(
       resolveCopilotSdkFallbackDir({
         ...process.env,
-        OPENCLAW_STATE_DIR: "/tmp/openclaw-state",
+        MERCLAW_STATE_DIR: "/tmp/merclaw-state",
       }),
-    ).toBe(path.join("/tmp/openclaw-state", "npm-runtime", "copilot"));
+    ).toBe(path.join("/tmp/merclaw-state", "npm-runtime", "copilot"));
   });
 
   afterEach(() => {
@@ -220,7 +220,7 @@ describe("sdk-loader", () => {
 
 describe("sdk dependency constants", () => {
   it("COPILOT_SDK_FALLBACK_DIR keeps the legacy fallback path stable", () => {
-    expect(COPILOT_SDK_FALLBACK_DIR).toMatch(/\.openclaw[\\/]+npm-runtime[\\/]+copilot$/);
+    expect(COPILOT_SDK_FALLBACK_DIR).toMatch(/\.merclaw[\\/]+npm-runtime[\\/]+copilot$/);
   });
   it("COPILOT_SDK_SPEC pins the canonical SDK spec", () => {
     expect(COPILOT_SDK_SPEC).toBe("@github/copilot-sdk@1.0.0-beta.4");

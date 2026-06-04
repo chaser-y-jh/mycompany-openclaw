@@ -1,6 +1,6 @@
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import { resolveSessionConversationRef } from "../channels/plugins/session-conversation.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { normalizeMessageChannel } from "../utils/message-channel.js";
 import {
   doesApprovalRequestMatchChannelAccount,
@@ -30,7 +30,7 @@ export type ApprovalRequestSessionConversation = {
 
 type ApprovalRequestLike = ExecApprovalRequest | PluginApprovalRequest;
 type ApprovalRequestOriginTargetResolver<TTarget> = {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   request: ApprovalRequestLike;
   channel: string;
   accountId?: string | null;
@@ -110,7 +110,7 @@ export function resolveApprovalRequestSessionConversation(params: {
 }
 
 export function resolveExecApprovalSessionTarget(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   request: ExecApprovalRequest;
   turnSourceChannel?: string | null;
   turnSourceTo?: string | null;
@@ -150,7 +150,7 @@ export function resolveExecApprovalSessionTarget(params: {
 }
 
 export function resolveApprovalRequestSessionTarget(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   request: ApprovalRequestLike;
 }): ExecApprovalSessionTarget | null {
   const execLikeRequest = toExecLikeApprovalRequest(params.request);
@@ -165,7 +165,7 @@ export function resolveApprovalRequestSessionTarget(params: {
 }
 
 function resolveApprovalRequestStoredSessionTarget(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   request: ApprovalRequestLike;
 }): ExecApprovalSessionTarget | null {
   const execLikeRequest = toExecLikeApprovalRequest(params.request);

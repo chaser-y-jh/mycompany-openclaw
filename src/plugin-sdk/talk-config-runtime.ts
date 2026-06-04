@@ -1,2 +1,2 @@
 export { resolveActiveTalkProviderConfig } from "../config/talk.js";
-export type { OpenClawConfig } from "../config/types.js";
+export type { MerClawConfig } from "../config/types.js";

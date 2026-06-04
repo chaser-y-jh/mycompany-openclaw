@@ -43,7 +43,7 @@ describe("splitSdkTools", () => {
     ]);
   });
 
-  it("keeps OpenClaw-managed custom tools in OpenClaw runtime's session allowlist", () => {
+  it("keeps MerClaw-managed custom tools in MerClaw runtime's session allowlist", () => {
     const { customTools } = splitSdkTools({
       tools: [createStubTool("read"), createStubTool("sessions_spawn")],
       sandboxEnabled: true,

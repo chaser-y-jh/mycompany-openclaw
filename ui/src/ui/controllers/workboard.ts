@@ -1528,7 +1528,7 @@ export async function dispatchWorkboard(params: {
 }
 
 function buildCardPrompt(card: WorkboardCard): string {
-  const lines = [`Work on this OpenClaw Workboard card: ${card.title}`];
+  const lines = [`Work on this MerClaw Workboard card: ${card.title}`];
   if (card.notes?.trim()) {
     lines.push("", card.notes.trim());
   }

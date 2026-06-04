@@ -3,7 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { describe, expect, it, vi } from "vitest";
-import { resolvePreferredOpenClawTmpDir } from "../../../infra/tmp-openclaw-dir.js";
+import { resolvePreferredMerClawTmpDir } from "../../../infra/tmp-merclaw-dir.js";
 import { createHostSandboxFsBridge } from "../../test-helpers/host-sandbox-fs-bridge.js";
 import { createUnsafeMountedSandbox } from "../../test-helpers/unsafe-mounted-sandbox.js";
 import {
@@ -82,10 +82,10 @@ describe("detectImageReferences", () => {
     });
   });
 
-  it("ignores OpenClaw CLI image cache paths from prior prompt transcripts", () => {
+  it("ignores MerClaw CLI image cache paths from prior prompt transcripts", () => {
     const refs = detectImageReferences(
       [
-        '<system-reminder>Called the Read tool with {"file_path":"/Users/ada/.openclaw/workspace/.openclaw-cli-images/stale.png"}</system-reminder>',
+        '<system-reminder>Called the Read tool with {"file_path":"/Users/ada/.merclaw/workspace/.merclaw-cli-images/stale.png"}</system-reminder>',
         "Compare it with /Users/ada/Pictures/current.png",
       ].join("\n"),
     );
@@ -99,33 +99,33 @@ describe("detectImageReferences", () => {
     ]);
   });
 
-  it("ignores temporary OpenClaw CLI image cache paths", () => {
+  it("ignores temporary MerClaw CLI image cache paths", () => {
     expectNoImageReferences(
-      `Prior turn wrote ${path.join(resolvePreferredOpenClawTmpDir(), "openclaw-cli-images", "stale.jpg")}`,
+      `Prior turn wrote ${path.join(resolvePreferredMerClawTmpDir(), "merclaw-cli-images", "stale.jpg")}`,
     );
     expectNoImageReferences(
-      `[media attached: ${path.join(resolvePreferredOpenClawTmpDir(), "openclaw-cli-images", "stale.jpg")} (image/jpeg)]`,
+      `[media attached: ${path.join(resolvePreferredMerClawTmpDir(), "merclaw-cli-images", "stale.jpg")} (image/jpeg)]`,
     );
     expectNoImageReferences(
-      `Prior turn wrote ${path.join(os.tmpdir(), "openclaw", "openclaw-cli-images", "stale.jpg")}`,
+      `Prior turn wrote ${path.join(os.tmpdir(), "merclaw", "merclaw-cli-images", "stale.jpg")}`,
     );
     expectNoImageReferences(
-      `Prior turn wrote ${path.join(os.tmpdir(), "openclaw-501", "openclaw-cli-images", "stale.jpg")}`,
+      `Prior turn wrote ${path.join(os.tmpdir(), "merclaw-501", "merclaw-cli-images", "stale.jpg")}`,
     );
   });
 
-  it("ignores file URLs into the OpenClaw CLI image cache", () => {
-    const stalePath = path.join(os.tmpdir(), "openclaw", "openclaw-cli-images", "stale.png");
+  it("ignores file URLs into the MerClaw CLI image cache", () => {
+    const stalePath = path.join(os.tmpdir(), "merclaw", "merclaw-cli-images", "stale.png");
 
     expectNoImageReferences(`Prior turn wrote ${pathToFileURL(stalePath).href}`);
   });
 
   it("detects normal user image paths in similarly named directories", () => {
-    expect(detectImageReferences("/workspace/openclaw-cli-images/current.png")).toStrictEqual([
+    expect(detectImageReferences("/workspace/merclaw-cli-images/current.png")).toStrictEqual([
       {
-        raw: "/workspace/openclaw-cli-images/current.png",
+        raw: "/workspace/merclaw-cli-images/current.png",
         type: "path",
-        resolved: "/workspace/openclaw-cli-images/current.png",
+        resolved: "/workspace/merclaw-cli-images/current.png",
       },
     ]);
   });
@@ -287,22 +287,22 @@ describe("detectImageReferences", () => {
     // Multi-file format uses separate brackets on separate lines
     const refs = expectImageReferenceCount(
       `[media attached: 2 files]
-[media attached 1/2: /Users/tyleryust/.openclaw/media/IMG_6430.jpeg (image/jpeg)]
-[media attached 2/2: /Users/tyleryust/.openclaw/media/IMG_6431.jpeg (image/jpeg)]
+[media attached 1/2: /Users/tyleryust/.merclaw/media/IMG_6430.jpeg (image/jpeg)]
+[media attached 2/2: /Users/tyleryust/.merclaw/media/IMG_6431.jpeg (image/jpeg)]
 what about these images?`,
       2,
     );
 
     expect(refs).toStrictEqual([
       {
-        raw: "/Users/tyleryust/.openclaw/media/IMG_6430.jpeg",
+        raw: "/Users/tyleryust/.merclaw/media/IMG_6430.jpeg",
         type: "path",
-        resolved: "/Users/tyleryust/.openclaw/media/IMG_6430.jpeg",
+        resolved: "/Users/tyleryust/.merclaw/media/IMG_6430.jpeg",
       },
       {
-        raw: "/Users/tyleryust/.openclaw/media/IMG_6431.jpeg",
+        raw: "/Users/tyleryust/.merclaw/media/IMG_6431.jpeg",
         type: "path",
-        resolved: "/Users/tyleryust/.openclaw/media/IMG_6431.jpeg",
+        resolved: "/Users/tyleryust/.merclaw/media/IMG_6431.jpeg",
       },
     ]);
   });
@@ -352,13 +352,13 @@ what is this?`);
   it("handles paths with spaces in filename", () => {
     // URL after | is https, not a local path, so only the local path should be detected
     const ref =
-      expectSingleImageReference(`[media attached: /Users/test/.openclaw/media/ChatGPT Image Apr 21, 2025.png (image/png) | https://example.com/same.png]
+      expectSingleImageReference(`[media attached: /Users/test/.merclaw/media/ChatGPT Image Apr 21, 2025.png (image/png) | https://example.com/same.png]
 what is this?`);
 
     expect(ref).toStrictEqual({
-      raw: "/Users/test/.openclaw/media/ChatGPT Image Apr 21, 2025.png",
+      raw: "/Users/test/.merclaw/media/ChatGPT Image Apr 21, 2025.png",
       type: "path",
-      resolved: "/Users/test/.openclaw/media/ChatGPT Image Apr 21, 2025.png",
+      resolved: "/Users/test/.merclaw/media/ChatGPT Image Apr 21, 2025.png",
     });
   });
 
@@ -403,14 +403,14 @@ describe("modelSupportsImages", () => {
 
 describe("loadImageFromRef", () => {
   it("hydrates managed inbound media URIs before workspace path resolution", async () => {
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-native-image-uri-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-native-image-uri-"));
     const workspaceDir = path.join(stateDir, "workspace-agent");
     const inboundDir = path.join(stateDir, "media", "inbound");
     const mediaId = "telegram-photo.png";
     await fs.mkdir(workspaceDir, { recursive: true });
     await fs.mkdir(inboundDir, { recursive: true });
     await fs.writeFile(path.join(inboundDir, mediaId), Buffer.from(TINY_PNG_BASE64, "base64"));
-    vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+    vi.stubEnv("MERCLAW_STATE_DIR", stateDir);
 
     try {
       const image = await loadImageFromRef(
@@ -433,7 +433,7 @@ describe("loadImageFromRef", () => {
   });
 
   it("hydrates sandbox-staged inbound media URIs", async () => {
-    const sandboxRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-native-image-sbx-uri-"));
+    const sandboxRoot = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-native-image-sbx-uri-"));
     const inboundDir = path.join(sandboxRoot, "media", "inbound");
     const mediaId = "telegram-photo.png";
     await fs.mkdir(inboundDir, { recursive: true });
@@ -467,7 +467,7 @@ describe("loadImageFromRef", () => {
   it("allows sandbox-validated host paths outside default media roots", async () => {
     const homeDir = os.homedir();
     await fs.mkdir(homeDir, { recursive: true });
-    const sandboxParent = await fs.mkdtemp(path.join(homeDir, "openclaw-sandbox-image-"));
+    const sandboxParent = await fs.mkdtemp(path.join(homeDir, "merclaw-sandbox-image-"));
     try {
       const sandboxRoot = path.join(sandboxParent, "sandbox");
       await fs.mkdir(sandboxRoot, { recursive: true });
@@ -534,7 +534,7 @@ describe("detectAndLoadPromptImages", () => {
   });
 
   it("skips generated media-note refs already supplied inline", async () => {
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-native-image-dedupe-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-native-image-dedupe-"));
     const imagePath = path.join(stateDir, "photo.png");
     const pngB64 = TINY_PNG_BASE64;
     await fs.writeFile(imagePath, Buffer.from(pngB64, "base64"));
@@ -616,7 +616,7 @@ describe("detectAndLoadPromptImages", () => {
   });
 
   it("blocks prompt image refs outside workspace when sandbox workspaceOnly is enabled", async () => {
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-native-image-sandbox-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-native-image-sandbox-"));
     const sandboxRoot = path.join(stateDir, "sandbox");
     const agentRoot = path.join(stateDir, "agent");
     await fs.mkdir(sandboxRoot, { recursive: true });
@@ -648,7 +648,7 @@ describe("detectAndLoadPromptImages", () => {
   });
 
   it("loads managed inbound absolute paths when workspaceOnly is enabled", async () => {
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-native-image-managed-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-native-image-managed-"));
     const workspaceDir = path.join(stateDir, "workspace-agent");
     const inboundDir = path.join(stateDir, "media", "inbound");
     await fs.mkdir(workspaceDir, { recursive: true });
@@ -656,7 +656,7 @@ describe("detectAndLoadPromptImages", () => {
     const imagePath = path.join(inboundDir, "signal-replay.png");
     const pngB64 = TINY_PNG_BASE64;
     await fs.writeFile(imagePath, Buffer.from(pngB64, "base64"));
-    vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+    vi.stubEnv("MERCLAW_STATE_DIR", stateDir);
 
     try {
       const result = await detectAndLoadPromptImages({

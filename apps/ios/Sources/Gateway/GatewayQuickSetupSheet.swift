@@ -1,4 +1,4 @@
-import OpenClawKit
+import MerClawKit
 import SwiftUI
 
 struct GatewayQuickSetupSheet: View {

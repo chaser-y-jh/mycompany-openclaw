@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { WhatsAppSendResult } from "../../inbound/send-result.js";
 import type { WebInboundMessage } from "../../inbound/types.js";
@@ -69,7 +69,7 @@ describe("createWhatsAppStatusReactionController", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as MerClawConfig;
 
     const controller = await createWhatsAppStatusReactionController({
       cfg,

@@ -7,16 +7,16 @@ describe("scripts/check-deprecated-api-usage", () => {
     const specifiers = new Set(buildDeprecatedPluginSdkModuleSpecifiers());
 
     for (const subpath of deprecatedPublicPluginSdkSubpaths) {
-      expect(specifiers.has(`openclaw/plugin-sdk/${subpath}`), subpath).toBe(true);
+      expect(specifiers.has(`merclaw/plugin-sdk/${subpath}`), subpath).toBe(true);
     }
   });
 
   it("keeps root and private compatibility aliases explicit", () => {
     expect(buildDeprecatedPluginSdkModuleSpecifiers()).toEqual(
       expect.arrayContaining([
-        "openclaw/plugin-sdk",
-        "openclaw/plugin-sdk/agent-dir-compat",
-        "openclaw/plugin-sdk/test-utils",
+        "merclaw/plugin-sdk",
+        "merclaw/plugin-sdk/agent-dir-compat",
+        "merclaw/plugin-sdk/test-utils",
       ]),
     );
   });

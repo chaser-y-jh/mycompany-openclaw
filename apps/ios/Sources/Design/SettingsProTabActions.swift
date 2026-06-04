@@ -1,4 +1,4 @@
-import OpenClawKit
+import MerClawKit
 import SwiftUI
 import UIKit
 import UserNotifications
@@ -26,7 +26,7 @@ extension SettingsProTab {
                 ProValuePill(value: value, color: color)
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     var diagnosticChecksCard: some View {
@@ -44,45 +44,45 @@ extension SettingsProTab {
                     title: "Gateway Link",
                     detail: self.appModel.gatewayDisplayStatusText,
                     value: self.gatewayConnected ? "online" : "offline",
-                    color: self.gatewayConnected ? OpenClawBrand.ok : .secondary)
+                    color: self.gatewayConnected ? MerClawBrand.ok : .secondary)
                 Divider().padding(.leading, 60)
                 self.diagnosticCheckRow(
                     icon: "dot.radiowaves.left.and.right",
                     title: "Discovery",
                     detail: self.gatewayController.discoveryStatusText,
                     value: "\(self.gatewayController.gateways.count)",
-                    color: self.gatewayController.gateways.isEmpty ? .secondary : OpenClawBrand.accent)
+                    color: self.gatewayController.gateways.isEmpty ? .secondary : MerClawBrand.accent)
                 Divider().padding(.leading, 60)
                 self.diagnosticCheckRow(
                     icon: "waveform",
                     title: "Talk Config",
                     detail: self.appModel.talkMode.gatewayTalkTransportLabel,
                     value: self.appModel.talkMode.gatewayTalkConfigLoaded ? "loaded" : "missing",
-                    color: self.appModel.talkMode.gatewayTalkConfigLoaded ? OpenClawBrand.ok : .secondary)
+                    color: self.appModel.talkMode.gatewayTalkConfigLoaded ? MerClawBrand.ok : .secondary)
                 Divider().padding(.leading, 60)
                 self.diagnosticCheckRow(
                     icon: "bell",
                     title: "Notifications",
                     detail: "Approval and event alert channel",
                     value: self.notificationStatusText,
-                    color: self.notificationStatusText == "Allowed" ? OpenClawBrand.ok : .secondary)
+                    color: self.notificationStatusText == "Allowed" ? MerClawBrand.ok : .secondary)
                 Divider().padding(.leading, 60)
                 self.diagnosticCheckRow(
                     icon: "rectangle.on.rectangle",
                     title: "Screen Capture",
                     detail: "Live foreground capture state",
                     value: self.appModel.screenRecordActive ? "live" : "idle",
-                    color: self.appModel.screenRecordActive ? OpenClawBrand.ok : .secondary)
+                    color: self.appModel.screenRecordActive ? MerClawBrand.ok : .secondary)
                 Divider().padding(.leading, 60)
                 self.diagnosticCheckRow(
                     icon: "mic",
                     title: "Voice Wake",
                     detail: self.appModel.voiceWake.statusText,
                     value: self.voiceWakeEnabled ? "on" : "off",
-                    color: self.voiceWakeEnabled ? OpenClawBrand.ok : .secondary)
+                    color: self.voiceWakeEnabled ? MerClawBrand.ok : .secondary)
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     func diagnosticCheckRow(
@@ -113,7 +113,7 @@ extension SettingsProTab {
         ProCard(padding: 0, radius: SettingsLayout.cardRadius) {
             VStack(spacing: 0, content: content)
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     func detailRow(_ label: String, value: String) -> some View {
@@ -355,7 +355,7 @@ extension SettingsProTab {
     func handleLocationModeChange(_ newValue: String) {
         guard !self.isChangingLocationMode else { return }
         guard newValue != self.previousLocationModeRaw else { return }
-        guard let mode = OpenClawLocationMode(rawValue: newValue) else { return }
+        guard let mode = MerClawLocationMode(rawValue: newValue) else { return }
         let previous = self.previousLocationModeRaw
         Task {
             await self.applyLocationMode(mode, rawValue: newValue, previous: previous)
@@ -364,7 +364,7 @@ extension SettingsProTab {
 
     @MainActor
     func applyLocationMode(
-        _ mode: OpenClawLocationMode,
+        _ mode: MerClawLocationMode,
         rawValue: String,
         previous: String) async
     {
@@ -519,7 +519,7 @@ extension SettingsProTab {
     func friendlyGatewayMessage(from raw: String) -> String? {
         let lower = raw.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         if lower.contains("pairing required") {
-            return "Pairing required. Run /pair approve in your OpenClaw chat, then connect again."
+            return "Pairing required. Run /pair approve in your MerClaw chat, then connect again."
         }
         if lower.contains("device nonce required") || lower.contains("device nonce mismatch") {
             return "Secure handshake failed. Check Tailscale, then connect again."
@@ -593,13 +593,13 @@ extension SettingsProTab {
     }
 
     var gatewayServer: String {
-        self.appModel.gatewayServerName ?? "OpenClaw Gateway"
+        self.appModel.gatewayServerName ?? "MerClaw Gateway"
     }
 
     var permissionsDetail: String {
         var enabled = 0
         if self.cameraEnabled { enabled += 1 }
-        if self.locationModeRaw != OpenClawLocationMode.off.rawValue { enabled += 1 }
+        if self.locationModeRaw != MerClawLocationMode.off.rawValue { enabled += 1 }
         if self.preventSleep { enabled += 1 }
         return "\(enabled) enabled"
     }
@@ -628,16 +628,16 @@ extension SettingsProTab {
 
     var diagnosticsRunColor: Color {
         guard let diagnosticsIssueCount else { return .secondary }
-        return diagnosticsIssueCount == 0 ? OpenClawBrand.ok : OpenClawBrand.warn
+        return diagnosticsIssueCount == 0 ? MerClawBrand.ok : MerClawBrand.warn
     }
 
     var privacyDetail: String {
-        let location = OpenClawLocationMode(rawValue: self.locationModeRaw) ?? .off
+        let location = MerClawLocationMode(rawValue: self.locationModeRaw) ?? .off
         return location == .off ? "Location off" : "Location \(self.locationLabel)"
     }
 
     var locationLabel: String {
-        switch OpenClawLocationMode(rawValue: self.locationModeRaw) ?? .off {
+        switch MerClawLocationMode(rawValue: self.locationModeRaw) ?? .off {
         case .off: "Off"
         case .whileUsing: "While Using"
         case .always: "Always"

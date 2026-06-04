@@ -23,15 +23,15 @@ describe("exec security floor", () => {
       "USERPROFILE",
       "HOMEDRIVE",
       "HOMEPATH",
-      "OPENCLAW_HOME",
-      "OPENCLAW_STATE_DIR",
+      "MERCLAW_HOME",
+      "MERCLAW_STATE_DIR",
       "SHELL",
     ]);
-    tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-exec-security-floor-"));
+    tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-exec-security-floor-"));
     process.env.HOME = tempRoot;
     process.env.USERPROFILE = tempRoot;
-    process.env.OPENCLAW_HOME = tempRoot;
-    process.env.OPENCLAW_STATE_DIR = path.join(tempRoot, "state");
+    process.env.MERCLAW_HOME = tempRoot;
+    process.env.MERCLAW_STATE_DIR = path.join(tempRoot, "state");
     if (process.platform === "win32") {
       const parsed = path.parse(tempRoot);
       process.env.HOMEDRIVE = parsed.root.slice(0, 2);
@@ -120,10 +120,10 @@ describe("exec security floor", () => {
   });
 
   it("does not let host approval defaults deny implicit sandbox execution", async () => {
-    const openclawDir = path.join(tempRoot ?? os.tmpdir(), ".openclaw");
-    fs.mkdirSync(openclawDir, { recursive: true });
+    const merclawDir = path.join(tempRoot ?? os.tmpdir(), ".merclaw");
+    fs.mkdirSync(merclawDir, { recursive: true });
     fs.writeFileSync(
-      path.join(openclawDir, "exec-approvals.json"),
+      path.join(merclawDir, "exec-approvals.json"),
       `${JSON.stringify({ version: 1, defaults: { security: "deny", ask: "off" }, agents: {} })}\n`,
     );
     const buildExecSpec = vi.fn(async () => ({
@@ -204,10 +204,10 @@ describe("exec security floor", () => {
   });
 
   it("intersects normalized gateway auto mode with host approval deny defaults", async () => {
-    const openclawDir = path.join(tempRoot ?? os.tmpdir(), ".openclaw");
-    fs.mkdirSync(openclawDir, { recursive: true });
+    const merclawDir = path.join(tempRoot ?? os.tmpdir(), ".merclaw");
+    fs.mkdirSync(merclawDir, { recursive: true });
     fs.writeFileSync(
-      path.join(openclawDir, "exec-approvals.json"),
+      path.join(merclawDir, "exec-approvals.json"),
       `${JSON.stringify({ version: 1, defaults: { security: "deny", ask: "off" }, agents: {} })}\n`,
     );
     const autoReviewer = vi.fn<ExecAutoReviewer>(async () => ({
@@ -231,10 +231,10 @@ describe("exec security floor", () => {
   });
 
   it("uses agent-scoped host policy when clamping normalized modes", async () => {
-    const openclawDir = path.join(tempRoot ?? os.tmpdir(), ".openclaw");
-    fs.mkdirSync(openclawDir, { recursive: true });
+    const merclawDir = path.join(tempRoot ?? os.tmpdir(), ".merclaw");
+    fs.mkdirSync(merclawDir, { recursive: true });
     fs.writeFileSync(
-      path.join(openclawDir, "exec-approvals.json"),
+      path.join(merclawDir, "exec-approvals.json"),
       `${JSON.stringify({
         version: 1,
         defaults: { security: "deny", ask: "off" },
@@ -257,10 +257,10 @@ describe("exec security floor", () => {
   });
 
   it("preserves host ask floors for elevated full gateway exec", async () => {
-    const openclawDir = path.join(tempRoot ?? os.tmpdir(), ".openclaw");
-    fs.mkdirSync(openclawDir, { recursive: true });
+    const merclawDir = path.join(tempRoot ?? os.tmpdir(), ".merclaw");
+    fs.mkdirSync(merclawDir, { recursive: true });
     fs.writeFileSync(
-      path.join(openclawDir, "exec-approvals.json"),
+      path.join(merclawDir, "exec-approvals.json"),
       `${JSON.stringify({ version: 1, defaults: { security: "full", ask: "always" }, agents: {} })}\n`,
     );
     const calls: string[] = [];

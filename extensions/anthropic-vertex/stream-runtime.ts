@@ -1,14 +1,14 @@
 import { AnthropicVertex as AnthropicVertexSdk } from "@anthropic-ai/vertex-sdk";
-import type { StreamFn } from "openclaw/plugin-sdk/agent-core";
+import type { StreamFn } from "merclaw/plugin-sdk/agent-core";
 import {
   stream as streamDefault,
   type Model,
   type ProviderStreamOptions,
-} from "openclaw/plugin-sdk/llm";
+} from "merclaw/plugin-sdk/llm";
 import {
   applyAnthropicPayloadPolicyToParams,
   resolveAnthropicPayloadPolicy,
-} from "openclaw/plugin-sdk/provider-stream-shared";
+} from "merclaw/plugin-sdk/provider-stream-shared";
 import { resolveAnthropicVertexClientRegion, resolveAnthropicVertexProjectId } from "./region.js";
 
 type AnthropicVertexTransportOptions = ProviderStreamOptions & {
@@ -131,7 +131,7 @@ function createAnthropicVertexOnPayload(params: {
 }
 
 /**
- * Create a StreamFn that routes through OpenClaw's generic model stream with an
+ * Create a StreamFn that routes through MerClaw's generic model stream with an
  * injected `AnthropicVertex` client.  All streaming, message conversion, and
  * event handling is handled by the shared model runtime - we only supply the GCP-authenticated
  * client and provider transport options.

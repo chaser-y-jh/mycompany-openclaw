@@ -2,7 +2,7 @@
  * Cross-platform path and detection helpers for core/ modules.
  *
  * Provides home/data/media directory helpers, platform detection,
- * silk-wasm availability checks — all without importing `openclaw/plugin-sdk`.
+ * silk-wasm availability checks — all without importing `merclaw/plugin-sdk`.
  * The temp-directory fallback is delegated to the PlatformAdapter.
  */
 
@@ -22,9 +22,9 @@ import { debugLog, debugWarn } from "./log.js";
  * 3. PlatformAdapter.getTempDir() as a last resort
  *
  * This is the *operating-system* home and intentionally ignores
- * `OPENCLAW_HOME`. Persistent QQ Bot data (sessions, known users, refs) is
+ * `MERCLAW_HOME`. Persistent QQ Bot data (sessions, known users, refs) is
  * keyed on this value to keep upgrades from hiding existing state when an
- * operator later sets `OPENCLAW_HOME`.
+ * operator later sets `MERCLAW_HOME`.
  */
 export function getHomeDir(): string {
   try {
@@ -45,23 +45,23 @@ export function getHomeDir(): string {
 }
 
 /**
- * Resolve the effective OpenClaw home directory.
+ * Resolve the effective MerClaw home directory.
  *
  * Mirrors the contract from core (`src/infra/home-dir.ts::resolveEffectiveHomeDir`)
- * so QQ Bot media roots live under the same tree the rest of OpenClaw treats as
+ * so QQ Bot media roots live under the same tree the rest of MerClaw treats as
  * `~`. The extension cannot import the core helper directly (it is a separate
- * package with `openclaw` as a peer dependency), so this re-implements the
+ * package with `merclaw` as a peer dependency), so this re-implements the
  * minimal contract:
  *
- * 1. `OPENCLAW_HOME` when set (with `~` / `~/...` expanded against the OS home).
+ * 1. `MERCLAW_HOME` when set (with `~` / `~/...` expanded against the OS home).
  * 2. Otherwise fall back to {@link getHomeDir} so existing single-home
  *    deployments are unaffected.
  *
  * Empty / `"undefined"` / `"null"` strings are treated as unset to match how
  * core normalizes the variable.
  */
-function resolveOpenClawHome(): string {
-  const raw = process.env.OPENCLAW_HOME?.trim();
+function resolveMerClawHome(): string {
+  const raw = process.env.MERCLAW_HOME?.trim();
   if (!raw || raw === "undefined" || raw === "null") {
     return getHomeDir();
   }
@@ -78,17 +78,17 @@ function resolveOpenClawHome(): string {
 }
 
 /**
- * Return a path under `~/.openclaw/qqbot` without creating it.
+ * Return a path under `~/.merclaw/qqbot` without creating it.
  *
- * Anchored on the OS home (not `OPENCLAW_HOME`) so persisted QQ Bot data
+ * Anchored on the OS home (not `MERCLAW_HOME`) so persisted QQ Bot data
  * (sessions, known users, ref index, credential backups) does not silently
- * disappear when an operator adds `OPENCLAW_HOME` after the fact.
+ * disappear when an operator adds `MERCLAW_HOME` after the fact.
  */
 export function getQQBotDataPath(...subPaths: string[]): string {
-  return path.join(getHomeDir(), ".openclaw", "qqbot", ...subPaths);
+  return path.join(getHomeDir(), ".merclaw", "qqbot", ...subPaths);
 }
 
-/** Return a path under `~/.openclaw/qqbot`, creating it on demand. */
+/** Return a path under `~/.merclaw/qqbot`, creating it on demand. */
 export function getQQBotDataDir(...subPaths: string[]): string {
   const dir = getQQBotDataPath(...subPaths);
   if (!fs.existsSync(dir)) {
@@ -98,19 +98,19 @@ export function getQQBotDataDir(...subPaths: string[]): string {
 }
 
 /**
- * Return a path under `<openclaw-home>/.openclaw/media/qqbot` without creating it.
+ * Return a path under `<merclaw-home>/.merclaw/media/qqbot` without creating it.
  *
- * Unlike `getQQBotDataPath`, this lives under OpenClaw's core media allowlist
+ * Unlike `getQQBotDataPath`, this lives under MerClaw's core media allowlist
  * so downloaded images and audio can be accessed by framework media tooling.
- * The base honors `OPENCLAW_HOME` (when set) so files written by agents into
- * the OpenClaw-managed media tree are reachable by this plugin even when
- * `HOME` and `OPENCLAW_HOME` differ (Docker, multi-user hosts). Fixes #83562.
+ * The base honors `MERCLAW_HOME` (when set) so files written by agents into
+ * the MerClaw-managed media tree are reachable by this plugin even when
+ * `HOME` and `MERCLAW_HOME` differ (Docker, multi-user hosts). Fixes #83562.
  */
 export function getQQBotMediaPath(...subPaths: string[]): string {
-  return path.join(resolveOpenClawHome(), ".openclaw", "media", "qqbot", ...subPaths);
+  return path.join(resolveMerClawHome(), ".merclaw", "media", "qqbot", ...subPaths);
 }
 
-/** Return a path under `<openclaw-home>/.openclaw/media/qqbot`, creating it on demand. */
+/** Return a path under `<merclaw-home>/.merclaw/media/qqbot`, creating it on demand. */
 export function getQQBotMediaDir(...subPaths: string[]): string {
   const dir = getQQBotMediaPath(...subPaths);
   if (!fs.existsSync(dir)) {
@@ -120,18 +120,18 @@ export function getQQBotMediaDir(...subPaths: string[]): string {
 }
 
 /**
- * Return `<openclaw-home>/.openclaw/media`, OpenClaw's shared media root.
+ * Return `<merclaw-home>/.merclaw/media`, MerClaw's shared media root.
  *
  * This mirrors the directory that core's `buildMediaLocalRoots` exposes as an
- * allowlisted location (see `openclaw/src/media/local-roots.ts`). Using it as a
+ * allowlisted location (see `merclaw/src/media/local-roots.ts`). Using it as a
  * QQ Bot payload root lets the plugin trust framework-produced files that live
  * in sibling subdirectories such as `outbound/` (written by
  * `saveMediaBuffer(..., "outbound", ...)`) or `inbound/`, while still keeping
  * the check anchored to a single, well-known directory. Like
- * {@link getQQBotMediaPath}, the base honors `OPENCLAW_HOME`.
+ * {@link getQQBotMediaPath}, the base honors `MERCLAW_HOME`.
  */
-function getOpenClawMediaDir(): string {
-  return path.join(resolveOpenClawHome(), ".openclaw", "media");
+function getMerClawMediaDir(): string {
+  return path.join(resolveMerClawHome(), ".merclaw", "media");
 }
 
 // ---- Basic platform information ----
@@ -252,16 +252,16 @@ export function resolveQQBotLocalMediaPath(p: string): string {
   }
 
   const osHomeDir = getHomeDir();
-  const openclawHomeDir = resolveOpenClawHome();
+  const merclawHomeDir = resolveMerClawHome();
   const mediaRoot = getQQBotMediaPath();
   const dataRoot = getQQBotDataPath();
-  // When OPENCLAW_HOME differs from HOME we have to consider workspace roots
+  // When MERCLAW_HOME differs from HOME we have to consider workspace roots
   // under both trees: agents may be configured with `~`-relative paths (HOME)
-  // or with the OpenClaw-managed home tree. Deduplicate when they match.
+  // or with the MerClaw-managed home tree. Deduplicate when they match.
   const workspaceRoots = Array.from(
     new Set([
-      path.join(osHomeDir, ".openclaw", "workspace", "qqbot"),
-      path.join(openclawHomeDir, ".openclaw", "workspace", "qqbot"),
+      path.join(osHomeDir, ".merclaw", "workspace", "qqbot"),
+      path.join(merclawHomeDir, ".merclaw", "workspace", "qqbot"),
     ]),
   );
   const candidateRoots = [
@@ -301,12 +301,12 @@ export function resolveQQBotPayloadLocalFilePath(p: string): string | null {
   }
 
   const canonicalCandidate = fs.realpathSync(resolvedCandidate);
-  // Trust both the QQ Bot-owned subdirectory and OpenClaw's shared `~/.openclaw/media`
+  // Trust both the QQ Bot-owned subdirectory and MerClaw's shared `~/.merclaw/media`
   // root. Core helpers like `saveMediaBuffer(..., "outbound", ...)` place framework
   // attachments under sibling directories (e.g. `media/outbound/`) that are already
   // part of the core media allowlist; we mirror that so auto-routed sends work
   // without leaving the plugin's trust boundary.
-  const allowedRoots = [getOpenClawMediaDir(), getQQBotMediaPath()];
+  const allowedRoots = [getMerClawMediaDir(), getQQBotMediaPath()];
 
   for (const root of allowedRoots) {
     const resolvedRoot = path.resolve(root);

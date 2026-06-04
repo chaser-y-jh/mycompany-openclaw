@@ -1,7 +1,7 @@
 import type { Command } from "commander";
-import { normalizeAccountId } from "openclaw/plugin-sdk/account-id";
-import { parseStrictInteger, timestampMsToIsoString } from "openclaw/plugin-sdk/number-runtime";
-import type { ChannelSetupInput } from "openclaw/plugin-sdk/setup";
+import { normalizeAccountId } from "merclaw/plugin-sdk/account-id";
+import { parseStrictInteger, timestampMsToIsoString } from "merclaw/plugin-sdk/number-runtime";
+import type { ChannelSetupInput } from "merclaw/plugin-sdk/setup";
 import { resolveMatrixAccount, resolveMatrixAccountConfig } from "./matrix/accounts.js";
 import { listMatrixOwnDevices, pruneMatrixStaleGatewayDevices } from "./matrix/actions/devices.js";
 import { updateMatrixOwnProfile } from "./matrix/actions/profile.js";
@@ -26,7 +26,7 @@ import { resolveMatrixRoomKeyBackupIssue } from "./matrix/backup-health.js";
 import { resolveMatrixAuthContext } from "./matrix/client.js";
 import { setMatrixSdkConsoleLogging, setMatrixSdkLogMode } from "./matrix/client/logging.js";
 import { resolveMatrixConfigPath, updateMatrixAccountConfig } from "./matrix/config-update.js";
-import { isOpenClawManagedMatrixDevice } from "./matrix/device-health.js";
+import { isMerClawManagedMatrixDevice } from "./matrix/device-health.js";
 import type { MatrixDirectRoomCandidate } from "./matrix/direct-management.js";
 import { formatMatrixErrorMessage } from "./matrix/errors.js";
 import { applyMatrixProfileUpdate, type MatrixProfileUpdateResult } from "./profile-update.js";
@@ -173,7 +173,7 @@ function formatMatrixCliRecoveryKeyStdinCommand(command: string, accountId?: str
 
 function formatMatrixCliCommandParts(parts: string[], accountId?: string): string {
   const normalizedAccountId = normalizeAccountId(accountId);
-  const command = ["openclaw", "matrix", ...parts];
+  const command = ["merclaw", "matrix", ...parts];
   if (normalizedAccountId !== "default") {
     const optionTerminatorIndex = command.indexOf("--");
     if (optionTerminatorIndex >= 0) {
@@ -253,7 +253,7 @@ type MatrixCliAccountAddResult = {
   encryptionEnabled: boolean;
   deviceHealth: {
     currentDeviceId: string | null;
-    staleOpenClawDeviceIds: string[];
+    staleMerClawDeviceIds: string[];
     error?: string;
   };
   verificationBootstrap: {
@@ -401,20 +401,20 @@ async function addMatrixAccount(params: {
 
   let deviceHealth: MatrixCliAccountAddResult["deviceHealth"] = {
     currentDeviceId: null,
-    staleOpenClawDeviceIds: [],
+    staleMerClawDeviceIds: [],
   };
   try {
     const addedDevices = await listMatrixOwnDevices({ accountId, cfg: updated });
     deviceHealth = {
       currentDeviceId: addedDevices.find((device) => device.current)?.deviceId ?? null,
-      staleOpenClawDeviceIds: addedDevices
-        .filter((device) => !device.current && isOpenClawManagedMatrixDevice(device.displayName))
+      staleMerClawDeviceIds: addedDevices
+        .filter((device) => !device.current && isMerClawManagedMatrixDevice(device.displayName))
         .map((device) => device.deviceId),
     };
   } catch (err) {
     deviceHealth = {
       currentDeviceId: null,
-      staleOpenClawDeviceIds: [],
+      staleMerClawDeviceIds: [],
       error: toErrorMessage(err),
     };
   }
@@ -977,7 +977,7 @@ function printMatrixVerificationSummary(summary: MatrixCliVerificationSummary): 
   console.log(`Other user: ${sanitizeMatrixCliText(summary.otherUserId)}`);
   console.log(`Other device: ${sanitizeMatrixCliText(summary.otherDeviceId ?? "unknown")}`);
   console.log(`Self-verification: ${summary.isSelfVerification ? "yes" : "no"}`);
-  console.log(`Initiated by OpenClaw: ${summary.initiatedByMe ? "yes" : "no"}`);
+  console.log(`Initiated by MerClaw: ${summary.initiatedByMe ? "yes" : "no"}`);
   console.log(`Phase: ${sanitizeMatrixCliText(summary.phaseName)}`);
   console.log(`Pending: ${summary.pending ? "yes" : "no"}`);
   console.log(`Completed: ${summary.completed ? "yes" : "no"}`);
@@ -1249,7 +1249,7 @@ function buildVerificationGuidance(
   }
   if (status.serverDeviceKnown === false) {
     nextSteps.add(
-      `This Matrix device is no longer listed on the homeserver. Create a new OpenClaw Matrix device with ${formatMatrixCliCommand("account add --homeserver <url> --user-id <@user:server> --password <password> --device-name OpenClaw-Gateway", accountId)}. If you use token auth, create a fresh Matrix access token in your Matrix client or admin UI, then run ${formatMatrixCliCommand("account add --homeserver <url> --access-token <token>", accountId)}.`,
+      `This Matrix device is no longer listed on the homeserver. Create a new MerClaw Matrix device with ${formatMatrixCliCommand("account add --homeserver <url> --user-id <@user:server> --password <password> --device-name MerClaw-Gateway", accountId)}. If you use token auth, create a fresh Matrix access token in your Matrix client or admin UI, then run ${formatMatrixCliCommand("account add --homeserver <url> --access-token <token>", accountId)}.`,
     );
   }
   for (const step of buildBackupGuidance(backup, accountId, {
@@ -1388,7 +1388,7 @@ export function registerMatrixCli(params: { program: Command }): void {
   const root = params.program
     .command("matrix")
     .description("Matrix channel utilities")
-    .addHelpText("after", () => "\nDocs: https://docs.openclaw.ai/channels/matrix\n");
+    .addHelpText("after", () => "\nDocs: https://docs.merclaw.ai/channels/matrix\n");
 
   const account = root.command("account").description("Manage matrix channel accounts");
 
@@ -1484,12 +1484,12 @@ export function registerMatrixCli(params: { program: Command }): void {
               console.error(
                 `Matrix device health warning: ${formatMatrixCliText(result.deviceHealth.error)}`,
               );
-            } else if (result.deviceHealth.staleOpenClawDeviceIds.length > 0) {
-              const staleDeviceIds = result.deviceHealth.staleOpenClawDeviceIds
+            } else if (result.deviceHealth.staleMerClawDeviceIds.length > 0) {
+              const staleDeviceIds = result.deviceHealth.staleMerClawDeviceIds
                 .map((deviceId) => formatMatrixCliText(deviceId))
                 .join(", ");
               console.log(
-                `Matrix device hygiene warning: stale OpenClaw devices detected (${staleDeviceIds}). Run ${formatMatrixCliCommand("devices prune-stale", result.accountId)}.`,
+                `Matrix device hygiene warning: stale MerClaw devices detected (${staleDeviceIds}). Run ${formatMatrixCliCommand("devices prune-stale", result.accountId)}.`,
               );
             }
             if (result.profile.attempted) {
@@ -1506,7 +1506,7 @@ export function registerMatrixCli(params: { program: Command }): void {
                 }
               }
             }
-            const bindHint = `openclaw agents bind --agent <id> --bind matrix:${result.accountId}`;
+            const bindHint = `merclaw agents bind --agent <id> --bind matrix:${result.accountId}`;
             console.log(`Bind this account to an agent: ${bindHint}`);
           },
           errorPrefix: "Account setup failed",
@@ -2267,7 +2267,7 @@ export function registerMatrixCli(params: { program: Command }): void {
 
   devices
     .command("prune-stale")
-    .description("Delete stale OpenClaw-managed devices for this account")
+    .description("Delete stale MerClaw-managed devices for this account")
     .option("--account <id>", "Account ID (for multi-account setups)")
     .option("--verbose", "Show detailed diagnostics")
     .option("--json", "Output as JSON")
@@ -2280,7 +2280,7 @@ export function registerMatrixCli(params: { program: Command }): void {
         onText: (result, verbose) => {
           printAccountLabel(accountId);
           console.log(
-            `Deleted stale OpenClaw devices: ${
+            `Deleted stale MerClaw devices: ${
               result.deletedDeviceIds.length
                 ? result.deletedDeviceIds
                     .map((deviceId) => formatMatrixCliText(deviceId))

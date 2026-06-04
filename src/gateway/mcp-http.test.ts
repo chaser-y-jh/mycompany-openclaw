@@ -171,13 +171,13 @@ describe("mcp loopback server", () => {
       headers: {
         "content-type": "application/json",
         "x-session-key": "agent:main:telegram:group:chat123",
-        "x-openclaw-account-id": "work",
-        "x-openclaw-message-channel": "telegram",
-        "x-openclaw-current-channel-id": "telegram:chat123",
-        "x-openclaw-current-thread-ts": "42",
-        "x-openclaw-current-message-id": "reply-message-1",
-        "x-openclaw-inbound-event-kind": "room_event",
-        "x-openclaw-source-reply-delivery-mode": "message_tool_only",
+        "x-merclaw-account-id": "work",
+        "x-merclaw-message-channel": "telegram",
+        "x-merclaw-current-channel-id": "telegram:chat123",
+        "x-merclaw-current-thread-ts": "42",
+        "x-merclaw-current-message-id": "reply-message-1",
+        "x-merclaw-inbound-event-kind": "room_event",
+        "x-merclaw-source-reply-delivery-mode": "message_tool_only",
       },
       body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/list" }),
     });
@@ -213,10 +213,10 @@ describe("mcp loopback server", () => {
         headers: {
           "content-type": "application/json",
           "x-session-key": "agent:main:telegram:group:chat123",
-          "x-openclaw-message-channel": "telegram",
-          "x-openclaw-inbound-event-kind": inboundEventKind,
+          "x-merclaw-message-channel": "telegram",
+          "x-merclaw-inbound-event-kind": inboundEventKind,
           ...(sourceReplyDeliveryMode
-            ? { "x-openclaw-source-reply-delivery-mode": sourceReplyDeliveryMode }
+            ? { "x-merclaw-source-reply-delivery-mode": sourceReplyDeliveryMode }
             : {}),
         },
         body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/list" }),
@@ -280,7 +280,7 @@ describe("mcp loopback server", () => {
         headers: {
           "content-type": "application/json",
           "x-session-key": "agent:main:matrix:dm:test",
-          "x-openclaw-message-channel": "matrix",
+          "x-merclaw-message-channel": "matrix",
         },
         body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/list" }),
       });
@@ -303,8 +303,8 @@ describe("mcp loopback server", () => {
       headers: {
         "content-type": "application/json",
         "x-session-key": "agent:main:matrix:dm:test",
-        "x-openclaw-message-channel": "matrix",
-        "x-openclaw-sender-is-owner": "true",
+        "x-merclaw-message-channel": "matrix",
+        "x-merclaw-sender-is-owner": "true",
       },
       body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/list" }),
     });
@@ -701,25 +701,25 @@ describe("createMcpLoopbackServerConfig", () => {
     const config = createMcpLoopbackServerConfig(23119) as {
       mcpServers?: Record<string, { url?: string; headers?: Record<string, string> }>;
     };
-    expect(config.mcpServers?.openclaw?.url).toBe("http://127.0.0.1:23119/mcp");
-    expect(config.mcpServers?.openclaw?.headers?.Authorization).toBe(
-      "Bearer ${OPENCLAW_MCP_TOKEN}",
+    expect(config.mcpServers?.merclaw?.url).toBe("http://127.0.0.1:23119/mcp");
+    expect(config.mcpServers?.merclaw?.headers?.Authorization).toBe(
+      "Bearer ${MERCLAW_MCP_TOKEN}",
     );
-    expect(config.mcpServers?.openclaw?.headers?.["x-openclaw-message-channel"]).toBe(
-      "${OPENCLAW_MCP_MESSAGE_CHANNEL}",
+    expect(config.mcpServers?.merclaw?.headers?.["x-merclaw-message-channel"]).toBe(
+      "${MERCLAW_MCP_MESSAGE_CHANNEL}",
     );
-    expect(config.mcpServers?.openclaw?.headers?.["x-openclaw-current-channel-id"]).toBe(
-      "${OPENCLAW_MCP_CURRENT_CHANNEL_ID}",
+    expect(config.mcpServers?.merclaw?.headers?.["x-merclaw-current-channel-id"]).toBe(
+      "${MERCLAW_MCP_CURRENT_CHANNEL_ID}",
     );
-    expect(config.mcpServers?.openclaw?.headers?.["x-openclaw-current-thread-ts"]).toBe(
-      "${OPENCLAW_MCP_CURRENT_THREAD_TS}",
+    expect(config.mcpServers?.merclaw?.headers?.["x-merclaw-current-thread-ts"]).toBe(
+      "${MERCLAW_MCP_CURRENT_THREAD_TS}",
     );
-    expect(config.mcpServers?.openclaw?.headers?.["x-openclaw-current-message-id"]).toBe(
-      "${OPENCLAW_MCP_CURRENT_MESSAGE_ID}",
+    expect(config.mcpServers?.merclaw?.headers?.["x-merclaw-current-message-id"]).toBe(
+      "${MERCLAW_MCP_CURRENT_MESSAGE_ID}",
     );
-    expect(config.mcpServers?.openclaw?.headers?.["x-openclaw-source-reply-delivery-mode"]).toBe(
-      "${OPENCLAW_MCP_SOURCE_REPLY_DELIVERY_MODE}",
+    expect(config.mcpServers?.merclaw?.headers?.["x-merclaw-source-reply-delivery-mode"]).toBe(
+      "${MERCLAW_MCP_SOURCE_REPLY_DELIVERY_MODE}",
     );
-    expect(config.mcpServers?.openclaw?.headers).not.toHaveProperty("x-openclaw-sender-is-owner");
+    expect(config.mcpServers?.merclaw?.headers).not.toHaveProperty("x-merclaw-sender-is-owner");
   });
 });

@@ -28,9 +28,9 @@ let envSnapshot: ReturnType<typeof captureEnv>;
 let stateDir = "";
 
 beforeEach(async () => {
-  envSnapshot = captureEnv(["OPENCLAW_STATE_DIR"]);
-  stateDir = await tempDirs.make("openclaw-skill-workshop-state-");
-  process.env.OPENCLAW_STATE_DIR = stateDir;
+  envSnapshot = captureEnv(["MERCLAW_STATE_DIR"]);
+  stateDir = await tempDirs.make("merclaw-skill-workshop-state-");
+  process.env.MERCLAW_STATE_DIR = stateDir;
 });
 
 afterEach(async () => {
@@ -40,7 +40,7 @@ afterEach(async () => {
 });
 
 async function makeWorkspace(): Promise<string> {
-  return await tempDirs.make("openclaw-skill-workshop-");
+  return await tempDirs.make("merclaw-skill-workshop-");
 }
 
 describe("skill workshop proposals", () => {
@@ -126,7 +126,7 @@ describe("skill workshop proposals", () => {
     const status = buildWorkspaceSkillStatus(workspaceDir);
     expect(status.skills.find((skill) => skill.name === "weather-helper")).toMatchObject({
       name: "weather-helper",
-      source: "openclaw-workspace",
+      source: "merclaw-workspace",
       filePath: applied.targetSkillFile,
     });
     expect((await inspectSkillProposal(proposal.record.id))?.record.status).toBe("applied");
@@ -139,7 +139,7 @@ describe("skill workshop proposals", () => {
       name: "Frontmatter Skill",
       description: "Preserve metadata",
       content:
-        "---\nuser-invocable: false\nmetadata:\n  openclaw:\n    requires:\n      env:\n        - API_TOKEN\n---\n\n# Frontmatter Skill\n",
+        "---\nuser-invocable: false\nmetadata:\n  merclaw:\n    requires:\n      env:\n        - API_TOKEN\n---\n\n# Frontmatter Skill\n",
     });
 
     await expect(
@@ -150,7 +150,7 @@ describe("skill workshop proposals", () => {
       "utf8",
     );
     expect(createdSkill).toContain("user-invocable: false");
-    expect(createdSkill).toContain("metadata:\n  openclaw:");
+    expect(createdSkill).toContain("metadata:\n  merclaw:");
     expect(createdSkill).not.toContain("status: proposal");
     expect(createdSkill).not.toContain("version: ");
     expect(createdSkill).not.toContain("date: ");

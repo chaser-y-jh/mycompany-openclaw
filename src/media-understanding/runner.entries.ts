@@ -3,8 +3,8 @@ import path from "node:path";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeNullableString,
-} from "@openclaw/normalization-core/string-coerce";
-import { normalizeStringEntries } from "@openclaw/normalization-core/string-normalization";
+} from "@merclaw/normalization-core/string-coerce";
+import { normalizeStringEntries } from "@merclaw/normalization-core/string-normalization";
 import {
   collectProviderApiKeysForExecution,
   executeWithApiKeyRotation,
@@ -17,7 +17,7 @@ import {
 } from "../agents/provider-request-config.js";
 import type { MsgContext } from "../auto-reply/templating.js";
 import { applyTemplate } from "../auto-reply/templating.js";
-import type { ModelProviderConfig, OpenClawConfig } from "../config/types.js";
+import type { ModelProviderConfig, MerClawConfig } from "../config/types.js";
 import type {
   MediaUnderstandingConfig,
   MediaUnderstandingModelConfig,
@@ -25,7 +25,7 @@ import type {
 import { logVerbose, shouldLogVerbose } from "../globals.js";
 import { writeExternalFileWithinRoot } from "../infra/fs-safe.js";
 import { resolveProxyFetchFromEnv } from "../infra/net/proxy-fetch.js";
-import { resolvePreferredOpenClawTmpDir } from "../infra/tmp-openclaw-dir.js";
+import { resolvePreferredMerClawTmpDir } from "../infra/tmp-merclaw-dir.js";
 import { runFfmpeg } from "../media/media-services.js";
 import { runExec } from "../process/exec.js";
 import { providerOperationRetryConfig } from "../provider-runtime/operation-retry.js";
@@ -69,7 +69,7 @@ async function loadModelAuth() {
 }
 
 function resolveLiteralProviderApiKey(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   providerId: string;
 }): string | null {
   return normalizeNullableString(params.cfg.models?.providers?.[params.providerId]?.apiKey);
@@ -394,7 +394,7 @@ export function buildModelDecision(params: {
 function resolveEntryRunOptions(params: {
   capability: MediaUnderstandingCapability;
   entry: MediaUnderstandingModelConfig;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   config?: MediaUnderstandingConfig;
 }): { maxBytes: number; maxChars?: number; timeoutMs: number; prompt: string } {
   const { capability, entry, cfg } = params;
@@ -444,7 +444,7 @@ type ProviderExecutionAuth =
 async function resolveProviderExecutionAuth(params: {
   providerId: string;
   provider?: MediaUnderstandingProvider;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   entry: MediaUnderstandingModelConfig;
   agentDir?: string;
   workspaceDir?: string;
@@ -547,7 +547,7 @@ async function resolveProviderExecutionAuth(params: {
 async function resolveProviderExecutionContext(params: {
   providerId: string;
   provider?: MediaUnderstandingProvider;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   entry: MediaUnderstandingModelConfig;
   config?: MediaUnderstandingConfig;
   agentDir?: string;
@@ -643,7 +643,7 @@ function assertMinAudioSize(params: { size: number; attachmentIndex: number }): 
 export async function runProviderEntry(params: {
   capability: MediaUnderstandingCapability;
   entry: MediaUnderstandingModelConfig;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   ctx: MsgContext;
   attachmentIndex: number;
   cache: MediaAttachmentCache;
@@ -863,7 +863,7 @@ export async function runProviderEntry(params: {
 export async function runCliEntry(params: {
   capability: MediaUnderstandingCapability;
   entry: MediaUnderstandingModelConfig;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   ctx: MsgContext;
   attachmentIndex: number;
   cache: MediaAttachmentCache;
@@ -892,7 +892,7 @@ export async function runCliEntry(params: {
     assertMinAudioSize({ size: stat.size, attachmentIndex: params.attachmentIndex });
   }
   const outputDir = await fs.mkdtemp(
-    path.join(resolvePreferredOpenClawTmpDir(), "openclaw-media-cli-"),
+    path.join(resolvePreferredMerClawTmpDir(), "merclaw-media-cli-"),
   );
   const mediaPath = await resolveCliMediaPath({
     capability,

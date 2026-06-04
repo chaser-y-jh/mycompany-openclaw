@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
-import { normalizeStringEntries } from "@openclaw/normalization-core/string-normalization";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
+import { normalizeStringEntries } from "@merclaw/normalization-core/string-normalization";
 import {
   resolveAutoFallbackPrimaryProbe,
   resolveAgentConfig,
@@ -13,7 +13,7 @@ import { resolveModelRefFromString } from "../../agents/model-selection.js";
 import { resolveAgentTimeoutMs } from "../../agents/timeout.js";
 import { DEFAULT_AGENT_WORKSPACE_DIR, ensureAgentWorkspace } from "../../agents/workspace.js";
 import { resolveChannelModelOverride } from "../../channels/model-overrides.js";
-import { type OpenClawConfig, getRuntimeConfig } from "../../config/config.js";
+import { type MerClawConfig, getRuntimeConfig } from "../../config/config.js";
 import { logVerbose } from "../../globals.js";
 import { measureDiagnosticsTimelineSpan } from "../../infra/diagnostics-timeline.js";
 import { formatErrorMessage } from "../../infra/errors.js";
@@ -69,7 +69,7 @@ function classifyHeartbeatPendingFinalDelivery(text: string, ackMaxChars: number
   };
 }
 
-function resolveHeartbeatAckMaxChars(cfg: OpenClawConfig, agentId: string): number {
+function resolveHeartbeatAckMaxChars(cfg: MerClawConfig, agentId: string): number {
   const agentHeartbeat = resolveAgentConfig(cfg, agentId)?.heartbeat;
   return Math.max(
     0,
@@ -165,7 +165,7 @@ function hasLinkCandidate(ctx: MsgContext): boolean {
 
 async function applyMediaUnderstandingIfNeeded(params: {
   ctx: MsgContext;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentId?: string;
   agentDir?: string;
   workspaceDir?: string;
@@ -189,7 +189,7 @@ async function applyMediaUnderstandingIfNeeded(params: {
 
 async function stageRemoteInboundMediaBeforeUnderstandingIfNeeded(params: {
   ctx: MsgContext;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   sessionKey?: string;
   workspaceDir: string;
 }): Promise<boolean> {
@@ -219,7 +219,7 @@ async function stageRemoteInboundMediaBeforeUnderstandingIfNeeded(params: {
 
 async function applyLinkUnderstandingIfNeeded(params: {
   ctx: MsgContext;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
 }): Promise<boolean> {
   if (!hasLinkCandidate(params.ctx)) {
     return false;
@@ -240,9 +240,9 @@ async function applyLinkUnderstandingIfNeeded(params: {
 export async function getReplyFromConfig(
   ctx: MsgContext,
   opts?: GetReplyOptions,
-  configOverride?: OpenClawConfig,
+  configOverride?: MerClawConfig,
 ): Promise<ReplyPayload | ReplyPayload[] | undefined> {
-  const isFastTestEnv = process.env.OPENCLAW_TEST_FAST === "1";
+  const isFastTestEnv = process.env.MERCLAW_TEST_FAST === "1";
   const cfg = resolveGetReplyConfig({
     getRuntimeConfig,
     isFastTestEnv,

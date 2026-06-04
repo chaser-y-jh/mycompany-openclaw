@@ -4,14 +4,14 @@ import path from "node:path";
 import type { AuthProfileStore } from "../agents/auth-profiles/types.js";
 import { formatCliCommand } from "../cli/command-format.js";
 import { collectDurableServiceEnvVarSources } from "../config/state-dir-dotenv.js";
-import type { OpenClawConfig } from "../config/types.js";
+import type { MerClawConfig } from "../config/types.js";
 import { resolveSecretInputRef, type SecretRef } from "../config/types.secrets.js";
 import { resolveGatewayLaunchAgentLabel } from "../daemon/constants.js";
 import { resolveGatewayStateDir, resolveGatewayTaskScriptPath } from "../daemon/paths.js";
 import {
-  OPENCLAW_WRAPPER_ENV_KEY,
+  MERCLAW_WRAPPER_ENV_KEY,
   resolveGatewayProgramArguments,
-  resolveOpenClawWrapperPath,
+  resolveMerClawWrapperPath,
 } from "../daemon/program-args.js";
 import {
   addServiceEnvPlanEntries,
@@ -168,7 +168,7 @@ type ExecSecretRefPassEnvSource = {
 
 function collectConfigSecretRefServiceEnvVars(params: {
   env: Record<string, string | undefined>;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   durableEnvironment: Record<string, string | undefined>;
   warn?: DaemonInstallWarnFn;
 }): Record<string, string> {
@@ -220,7 +220,7 @@ function collectConfigSecretRefServiceEnvVars(params: {
 
 function collectExecSecretRefPassEnvServiceEnvVars(params: {
   env: Record<string, string | undefined>;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   authStore?: AuthProfileStore;
   durableEnvironment: Record<string, string | undefined>;
   warn?: DaemonInstallWarnFn;
@@ -320,7 +320,7 @@ function collectExecSecretRefPassEnvServiceEnvVars(params: {
 
 function collectPluginConfigSecretRefs(params: {
   env: Record<string, string | undefined>;
-  config: OpenClawConfig;
+  config: MerClawConfig;
 }): SecretRef[] {
   const context = createResolverContext({
     sourceConfig: params.config,
@@ -450,7 +450,7 @@ function collectPreservedExistingServiceEnvVars(
       upper === "HOME" ||
       upper === "PATH" ||
       upper === "TMPDIR" ||
-      upper.startsWith("OPENCLAW_")
+      upper.startsWith("MERCLAW_")
     ) {
       continue;
     }
@@ -501,7 +501,7 @@ function resolveGatewayInstallWorkingDirectory(params: {
 
 async function buildGatewayInstallEnvironment(params: {
   env: Record<string, string | undefined>;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   authStore?: AuthProfileStore;
   warn?: DaemonInstallWarnFn;
   serviceEnvironment: Record<string, string | undefined>;
@@ -598,7 +598,7 @@ export async function buildGatewayInstallPlan(params: {
   platform?: NodeJS.Platform;
   warn?: DaemonInstallWarnFn;
   /** Full config to extract env vars from (env vars + inline env keys). */
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   authStore?: AuthProfileStore;
   existingEnvironmentValueSources?: Record<
     string,
@@ -612,23 +612,23 @@ export async function buildGatewayInstallPlan(params: {
     devMode: params.devMode,
     nodePath: params.nodePath,
   });
-  const wrapperInput = params.wrapperPath ?? params.env[OPENCLAW_WRAPPER_ENV_KEY];
+  const wrapperInput = params.wrapperPath ?? params.env[MERCLAW_WRAPPER_ENV_KEY];
   const wrapperPointsAtWindowsTaskScript =
     Boolean(wrapperInput?.trim()) &&
     platform === "win32" &&
     isSameServicePath(wrapperInput, resolveGatewayTaskScriptPath(params.env), platform);
   if (wrapperPointsAtWindowsTaskScript) {
     params.warn?.(
-      `Ignoring ${OPENCLAW_WRAPPER_ENV_KEY} because it points to the Windows task script; using the OpenClaw gateway entrypoint directly to avoid a recursive gateway.cmd wrapper.`,
+      `Ignoring ${MERCLAW_WRAPPER_ENV_KEY} because it points to the Windows task script; using the MerClaw gateway entrypoint directly to avoid a recursive gateway.cmd wrapper.`,
     );
   }
   const wrapperPath = wrapperPointsAtWindowsTaskScript
     ? undefined
-    : await resolveOpenClawWrapperPath(wrapperInput);
+    : await resolveMerClawWrapperPath(wrapperInput);
   const serviceInputEnv: Record<string, string | undefined> = wrapperPath
-    ? { ...params.env, [OPENCLAW_WRAPPER_ENV_KEY]: wrapperPath }
+    ? { ...params.env, [MERCLAW_WRAPPER_ENV_KEY]: wrapperPath }
     : wrapperPointsAtWindowsTaskScript
-      ? omitEnvKey(params.env, OPENCLAW_WRAPPER_ENV_KEY)
+      ? omitEnvKey(params.env, MERCLAW_WRAPPER_ENV_KEY)
       : params.env;
   const { programArguments, workingDirectory } = await resolveGatewayProgramArguments({
     port: params.port,
@@ -649,7 +649,7 @@ export async function buildGatewayInstallPlan(params: {
     port: params.port,
     launchdLabel:
       platform === "darwin"
-        ? resolveGatewayLaunchAgentLabel(serviceInputEnv.OPENCLAW_PROFILE)
+        ? resolveGatewayLaunchAgentLabel(serviceInputEnv.MERCLAW_PROFILE)
         : undefined,
     platform,
     extraPathDirs: resolveDaemonServicePathDirs({
@@ -716,5 +716,5 @@ function omitEnvKey(
 export function gatewayInstallErrorHint(platform = process.platform): string {
   return platform === "win32"
     ? "Tip: native Windows now falls back to a per-user Startup-folder login item when Scheduled Task creation is denied; if install still fails, rerun from an elevated PowerShell or skip service install."
-    : `Tip: rerun \`${formatCliCommand("openclaw gateway install")}\` after fixing the error.`;
+    : `Tip: rerun \`${formatCliCommand("merclaw gateway install")}\` after fixing the error.`;
 }

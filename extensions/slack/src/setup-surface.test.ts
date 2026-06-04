@@ -1,10 +1,10 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
 import {
   createTestWizardPrompter,
   runSetupWizardPrepare,
   runSetupWizardFinalize,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
-import type { WizardPrompter } from "openclaw/plugin-sdk/plugin-test-runtime";
+} from "merclaw/plugin-sdk/plugin-test-runtime";
+import type { WizardPrompter } from "merclaw/plugin-sdk/plugin-test-runtime";
 import { describe, expect, it, vi } from "vitest";
 import { createSlackSetupWizardBase } from "./setup-core.js";
 import { buildSlackSetupLines } from "./setup-shared.js";
@@ -27,7 +27,7 @@ const baseCfg = {
       appToken: "xapp-test",
     },
   },
-} as OpenClawConfig;
+} as MerClawConfig;
 
 function requireFirstStringArg(mock: ReturnType<typeof vi.fn>, label: string): string {
   const [call] = mock.mock.calls;
@@ -100,7 +100,7 @@ describe("slackSetupWizard.prepare", () => {
 
     await runSetupWizardPrepare({
       prepare: slackSetupWizard.prepare,
-      cfg: { channels: { slack: {} } } as OpenClawConfig,
+      cfg: { channels: { slack: {} } } as MerClawConfig,
       prompter: createTestWizardPrompter({
         plain,
         note,
@@ -112,12 +112,12 @@ describe("slackSetupWizard.prepare", () => {
     const manifest = requireFirstStringArg(plain, "Slack manifest plain text");
     expect(JSON.parse(manifest)).toEqual({
       display_information: {
-        name: "OpenClaw",
-        description: "OpenClaw connector for OpenClaw",
+        name: "MerClaw",
+        description: "MerClaw connector for MerClaw",
       },
       features: {
         bot_user: {
-          display_name: "OpenClaw",
+          display_name: "MerClaw",
           always_online: true,
         },
         app_home: {
@@ -126,7 +126,7 @@ describe("slackSetupWizard.prepare", () => {
           messages_tab_read_only_enabled: false,
         },
         assistant_view: {
-          assistant_description: "OpenClaw connects Slack assistant threads to OpenClaw agents.",
+          assistant_description: "MerClaw connects Slack assistant threads to MerClaw agents.",
           suggested_prompts: [
             {
               title: "What can you do?",
@@ -144,8 +144,8 @@ describe("slackSetupWizard.prepare", () => {
         },
         slash_commands: [
           {
-            command: "/openclaw",
-            description: "Send a message to OpenClaw",
+            command: "/merclaw",
+            description: "Send a message to MerClaw",
             should_escape: false,
           },
         ],
@@ -236,7 +236,7 @@ describe("slackSetupWizard.dmPolicy", () => {
               },
             },
           },
-        } as OpenClawConfig,
+        } as MerClawConfig,
         "alerts",
       ),
     ).toBe("allowlist");
@@ -263,7 +263,7 @@ describe("slackSetupWizard.dmPolicy", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
       "open",
       "alerts",
     );
@@ -295,7 +295,7 @@ describe("slackSetupWizard.status", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as MerClawConfig,
     });
 
     expect(configured).toBe(false);

@@ -14,14 +14,14 @@ import {
 } from "../lib/dev-tooling-safety.ts";
 
 const OPENAI_REALTIME_MODEL =
-  process.env.OPENCLAW_REALTIME_OPENAI_MODEL?.trim() || "gpt-realtime-2";
-const OPENAI_REALTIME_VOICE = process.env.OPENCLAW_REALTIME_OPENAI_VOICE?.trim() || "alloy";
+  process.env.MERCLAW_REALTIME_OPENAI_MODEL?.trim() || "gpt-realtime-2";
+const OPENAI_REALTIME_VOICE = process.env.MERCLAW_REALTIME_OPENAI_VOICE?.trim() || "alloy";
 const DEFAULT_OPENAI_HTTP_TIMEOUT_MS = 30_000;
 const OPENAI_HTTP_RESPONSE_MAX_BYTES = 256 * 1024;
 const GOOGLE_REALTIME_MODEL =
-  process.env.OPENCLAW_REALTIME_GOOGLE_MODEL?.trim() ||
+  process.env.MERCLAW_REALTIME_GOOGLE_MODEL?.trim() ||
   "gemini-2.5-flash-native-audio-preview-12-2025";
-const GOOGLE_REALTIME_VOICE = process.env.OPENCLAW_REALTIME_GOOGLE_VOICE?.trim() || "Kore";
+const GOOGLE_REALTIME_VOICE = process.env.MERCLAW_REALTIME_GOOGLE_VOICE?.trim() || "Kore";
 const GOOGLE_LIVE_WS_URL =
   "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContentConstrained";
 
@@ -73,11 +73,11 @@ async function readBoundedJsonResponse(
 }
 
 function resolveOpenAIHttpTimeoutMs(
-  raw = process.env.OPENCLAW_REALTIME_OPENAI_HTTP_TIMEOUT_MS,
+  raw = process.env.MERCLAW_REALTIME_OPENAI_HTTP_TIMEOUT_MS,
 ): number {
   return parseStrictIntegerOption({
     fallback: DEFAULT_OPENAI_HTTP_TIMEOUT_MS,
-    label: "OPENCLAW_REALTIME_OPENAI_HTTP_TIMEOUT_MS",
+    label: "MERCLAW_REALTIME_OPENAI_HTTP_TIMEOUT_MS",
     min: 1,
     raw,
   });
@@ -178,7 +178,7 @@ async function smokeOpenAIBackendBridge(apiKey: string): Promise<SmokeResult> {
       model: OPENAI_REALTIME_MODEL,
       voice: OPENAI_REALTIME_VOICE,
     },
-    instructions: "OpenClaw backend realtime live smoke. Do not speak yet.",
+    instructions: "MerClaw backend realtime live smoke. Do not speak yet.",
     onAudio: () => {},
     onClearAudio: () => {},
     onEvent: (event) => {
@@ -404,7 +404,7 @@ async function createGoogleLiveToken(apiKey: string): Promise<string> {
               prebuiltVoiceConfig: { voiceName: GOOGLE_REALTIME_VOICE },
             },
           },
-          systemInstruction: "OpenClaw browser Talk live smoke.",
+          systemInstruction: "MerClaw browser Talk live smoke.",
           inputAudioTranscription: {},
           outputAudioTranscription: {},
         },
@@ -515,7 +515,7 @@ async function smokeGoogleLiveBrowserWs(browser: Browser, apiKey: string): Promi
 
 async function smokeGatewayRelayBrowser(browser: Browser): Promise<SmokeResult> {
   let server: Awaited<ReturnType<typeof createServer>> | undefined;
-  const dir = await mkdtemp(path.join(tmpdir(), "openclaw-realtime-talk-"));
+  const dir = await mkdtemp(path.join(tmpdir(), "merclaw-realtime-talk-"));
   try {
     const repoRoot = process.cwd().replaceAll("\\", "/");
     const relayModulePath = JSON.stringify(
@@ -615,7 +615,7 @@ try {
       relaySessionId: "relay-live-smoke",
       type: "toolCall",
       callId: "call-smoke",
-      name: "openclaw_agent_consult",
+      name: "merclaw_agent_consult",
       args: { question: "confirm relay consult path" },
     },
   });

@@ -7,7 +7,7 @@ import {
 } from "../auto-reply/reply/session-fork.js";
 import { parseSessionThreadInfoFast } from "../config/sessions/thread-info.js";
 import type { SessionEntry } from "../config/sessions/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import type { RuntimeLogger, PluginRuntimeCore } from "../plugins/runtime/types-core.js";
 import { parseAgentSessionKey } from "../routing/session-key.js";
 import {
@@ -191,7 +191,7 @@ async function resolveRealtimeVoiceAgentConsultSessionEntry(params: {
 }
 
 export async function consultRealtimeVoiceAgent(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentRuntime: RealtimeVoiceAgentConsultRuntime;
   logger: Pick<RuntimeLogger, "warn">;
   sessionKey: string;
@@ -286,7 +286,7 @@ export async function consultRealtimeVoiceAgent(params: {
     lane: params.lane,
     extraSystemPrompt:
       params.extraSystemPrompt ??
-      "You are the configured OpenClaw agent receiving delegated requests from a live voice bridge. Act on behalf of the user, use available tools when appropriate, and return a brief speakable result.",
+      "You are the configured MerClaw agent receiving delegated requests from a live voice bridge. Act on behalf of the user, use available tools when appropriate, and return a brief speakable result.",
     agentDir,
   });
 

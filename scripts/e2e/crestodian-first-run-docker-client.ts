@@ -10,7 +10,7 @@ import {
   shouldStartOnboardingForFreshInstall,
 } from "../../dist/cli/run-main.js";
 import { clearConfigCache } from "../../dist/config/config.js";
-import type { OpenClawConfig } from "../../dist/config/types.openclaw.js";
+import type { MerClawConfig } from "../../dist/config/types.merclaw.js";
 import { runCrestodian } from "../../dist/crestodian/crestodian.js";
 import type { RuntimeEnv } from "../../dist/runtime.js";
 
@@ -68,25 +68,25 @@ function renderCommandTemplate(template: string, vars: Record<string, string>): 
 async function main() {
   const spec = await readFirstRunSpec();
   const stateDir =
-    process.env.OPENCLAW_STATE_DIR ??
-    (await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-crestodian-first-run-")));
-  const configPath = process.env.OPENCLAW_CONFIG_PATH ?? path.join(stateDir, "openclaw.json");
-  process.env.OPENCLAW_STATE_DIR = stateDir;
-  process.env.OPENCLAW_CONFIG_PATH = configPath;
+    process.env.MERCLAW_STATE_DIR ??
+    (await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-crestodian-first-run-")));
+  const configPath = process.env.MERCLAW_CONFIG_PATH ?? path.join(stateDir, "merclaw.json");
+  process.env.MERCLAW_STATE_DIR = stateDir;
+  process.env.MERCLAW_CONFIG_PATH = configPath;
   await fs.rm(stateDir, { recursive: true, force: true });
   await fs.mkdir(stateDir, { recursive: true });
   clearConfigCache();
 
   assert(
-    await shouldStartOnboardingForFreshInstall(["node", "openclaw"]),
-    "fresh bare OpenClaw invocation did not route to onboarding",
+    await shouldStartOnboardingForFreshInstall(["node", "merclaw"]),
+    "fresh bare MerClaw invocation did not route to onboarding",
   );
   assert(
-    shouldStartCrestodianForModernOnboard(["node", "openclaw", "onboard", "--modern"]),
+    shouldStartCrestodianForModernOnboard(["node", "merclaw", "onboard", "--modern"]),
     "modern onboard invocation did not route to Crestodian",
   );
   process.exitCode = undefined;
-  await runCli(["node", "openclaw", "onboard", "--modern", "--non-interactive", "--json"]);
+  await runCli(["node", "merclaw", "onboard", "--modern", "--non-interactive", "--json"]);
   assert(
     process.exitCode === undefined || process.exitCode === 0,
     "modern onboard overview exited nonzero",
@@ -131,7 +131,7 @@ async function main() {
     );
   }
 
-  const config = JSON.parse(await fs.readFile(configPath, "utf8")) as OpenClawConfig;
+  const config = JSON.parse(await fs.readFile(configPath, "utf8")) as MerClawConfig;
   assert(
     config.agents?.defaults?.workspace === spec.dockerDefaultWorkspace,
     "first-run setup did not write default workspace",

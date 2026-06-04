@@ -2051,7 +2051,7 @@ describe("runAgentTurnWithFallback", () => {
       payloads: [{ text: "handled" }],
       meta: {
         agentMeta: {
-          sessionId: "openclaw-session",
+          sessionId: "merclaw-session",
           provider: "codex-cli",
           model: "gpt-5.4",
         },
@@ -5573,7 +5573,7 @@ describe("runAgentTurnWithFallback", () => {
     expect(result.kind).toBe("final");
     if (result.kind === "final") {
       expect(result.payload.text).toBe(
-        "⚠️ Model login expired on the gateway for openai. Re-auth with `openclaw models auth login --provider openai`, then try again.",
+        "⚠️ Model login expired on the gateway for openai. Re-auth with `merclaw models auth login --provider openai`, then try again.",
       );
     }
   });
@@ -5628,7 +5628,7 @@ describe("runAgentTurnWithFallback", () => {
     expect(result.kind).toBe("final");
     if (result.kind === "final") {
       expect(result.payload.text).toBe(
-        '⚠️ Missing API key for provider "openai". Run `openclaw doctor --fix` to repair stale OpenAI model/session routes, restart the gateway if doctor asks, then try again. If doctor has nothing to repair or the error persists, re-auth with `openclaw models auth login --provider openai` or run `openclaw configure`.',
+        '⚠️ Missing API key for provider "openai". Run `merclaw doctor --fix` to repair stale OpenAI model/session routes, restart the gateway if doctor asks, then try again. If doctor has nothing to repair or the error persists, re-auth with `merclaw models auth login --provider openai` or run `merclaw configure`.',
       );
     }
   });
@@ -5704,7 +5704,7 @@ describe("runAgentTurnWithFallback", () => {
     expect(result.kind).toBe("final");
     if (result.kind === "final") {
       expect(result.payload.text).toBe(
-        "⚠️ Model login expired on the gateway. Re-auth with `openclaw models auth login`, then try again.",
+        "⚠️ Model login expired on the gateway. Re-auth with `merclaw models auth login`, then try again.",
       );
     }
   });
@@ -5851,7 +5851,7 @@ describe("runAgentTurnWithFallback", () => {
     if (result.kind === "final") {
       expect(result.payload.text).toContain("Agent failed before reply");
       expect(result.payload.text).toContain("INVALID_ARGUMENT: some other failure");
-      expect(result.payload.text).toContain("Logs: openclaw logs --follow");
+      expect(result.payload.text).toContain("Logs: merclaw logs --follow");
     }
   });
 
@@ -6135,7 +6135,7 @@ describe("runAgentTurnWithFallback", () => {
     const followupRun = createFollowupRun();
     followupRun.run.provider = "anthropic";
     followupRun.run.model = "claude-opus";
-    followupRun.run.authProfileId = "anthropic:openclaw";
+    followupRun.run.authProfileId = "anthropic:merclaw";
     followupRun.run.authProfileIdSource = "user";
 
     const sessionEntry: SessionEntry = {
@@ -6389,7 +6389,7 @@ describe("runAgentTurnWithFallback", () => {
     const entry = {
       sessionId: "session",
       updatedAt: 1,
-      authProfileOverride: "anthropic:openclaw",
+      authProfileOverride: "anthropic:merclaw",
       authProfileOverrideSource: "user" as const,
     } as SessionEntry;
 
@@ -6398,7 +6398,7 @@ describe("runAgentTurnWithFallback", () => {
       run: {
         provider: "anthropic",
         model: "claude-opus",
-        authProfileId: "anthropic:openclaw",
+        authProfileId: "anthropic:merclaw",
         authProfileIdSource: "user",
       } as FollowupRun["run"],
       provider: "anthropic",
@@ -6414,7 +6414,7 @@ describe("runAgentTurnWithFallback", () => {
       modelOverrideSource: "auto",
       modelOverrideFallbackOriginProvider: "anthropic",
       modelOverrideFallbackOriginModel: "claude-opus",
-      authProfileOverride: "anthropic:openclaw",
+      authProfileOverride: "anthropic:merclaw",
       authProfileOverrideSource: "user",
     });
   });

@@ -1,11 +1,11 @@
 {
-  "name": "@openclaw/media-understanding-core",
+  "name": "@merclaw/media-understanding-core",
   "version": "2026.5.31",
   "private": true,
-  "description": "OpenClaw media understanding runtime package",
+  "description": "MerClaw media understanding runtime package",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@merclaw/plugin-sdk": "workspace:*"
   },
-  "openclaw": {}
+  "merclaw": {}
 }

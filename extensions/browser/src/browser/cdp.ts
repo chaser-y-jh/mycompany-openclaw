@@ -1,4 +1,4 @@
-import { resolveIntegerOption } from "openclaw/plugin-sdk/number-runtime";
+import { resolveIntegerOption } from "merclaw/plugin-sdk/number-runtime";
 import type { SsrFPolicy } from "../infra/net/ssrf.js";
 import {
   appendCdpPath,
@@ -624,7 +624,7 @@ async function findCursorInteractiveElements(
   send: CdpSendFn,
   sessionId?: string,
 ): Promise<Map<number, CursorInteractiveInfo>> {
-  const attr = "data-openclaw-cdp-ci";
+  const attr = "data-merclaw-cdp-ci";
   const evaluated = (await send(
     "Runtime.evaluate",
     {

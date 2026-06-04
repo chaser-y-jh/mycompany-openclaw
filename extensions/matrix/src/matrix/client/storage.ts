@@ -1,9 +1,9 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { normalizeAccountId } from "openclaw/plugin-sdk/account-id";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { loadJsonFile, saveJsonFile } from "openclaw/plugin-sdk/json-store";
+import { normalizeAccountId } from "merclaw/plugin-sdk/account-id";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import { loadJsonFile, saveJsonFile } from "merclaw/plugin-sdk/json-store";
 import {
   requiresExplicitMatrixDefaultAccount,
   resolveMatrixDefaultOrOnlyAccountId,
@@ -49,7 +49,7 @@ function resolveLegacyStoragePaths(env: NodeJS.ProcessEnv = process.env): {
 }
 
 function assertLegacyMigrationAccountSelection(params: { accountKey: string }): void {
-  const cfg = getMatrixRuntime().config.current() as OpenClawConfig;
+  const cfg = getMatrixRuntime().config.current() as MerClawConfig;
   if (!cfg.channels?.matrix || typeof cfg.channels.matrix !== "object") {
     return;
   }

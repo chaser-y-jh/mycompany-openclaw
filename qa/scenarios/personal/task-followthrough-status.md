@@ -45,7 +45,7 @@ execution:
 
         Do not mark the task done until the status artifact has been written.
       FOLLOWTHROUGH_NOTE.md: |-
-        Task: prepare a local OpenClaw PR readiness note.
+        Task: prepare a local MerClaw PR readiness note.
         Pending: wait for maintainer feedback before publishing.
         Blocked: publishing needs explicit user approval.
         Done: local evidence captured in personal-task-status.txt.

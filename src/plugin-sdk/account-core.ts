@@ -1,4 +1,4 @@
-export type { OpenClawConfig } from "../config/config.js";
+export type { MerClawConfig } from "../config/config.js";
 
 export { createAccountActionGate } from "../channels/plugins/account-action-gate.js";
 export {

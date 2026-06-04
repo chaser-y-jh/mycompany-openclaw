@@ -104,20 +104,20 @@ import {
 } from "./provider-attribution.js";
 
 describe("provider attribution", () => {
-  it("resolves the canonical OpenClaw product and runtime version", () => {
+  it("resolves the canonical MerClaw product and runtime version", () => {
     const identity = resolveProviderAttributionIdentity({
-      OPENCLAW_VERSION: "2026.3.99",
+      MERCLAW_VERSION: "2026.3.99",
     });
 
     expect(identity).toEqual({
-      product: "OpenClaw",
+      product: "MerClaw",
       version: "2026.3.99",
     });
   });
 
   it("returns a documented OpenRouter attribution policy", () => {
     const policy = resolveProviderAttributionPolicy("openrouter", {
-      OPENCLAW_VERSION: "2026.3.22",
+      MERCLAW_VERSION: "2026.3.22",
     });
 
     expect(policy).toEqual({
@@ -126,12 +126,12 @@ describe("provider attribution", () => {
       verification: "vendor-documented",
       hook: "request-headers",
       docsUrl: "https://openrouter.ai/docs/app-attribution",
-      reviewNote: "Documented app attribution headers. Verified in OpenClaw runtime wrapper.",
-      product: "OpenClaw",
+      reviewNote: "Documented app attribution headers. Verified in MerClaw runtime wrapper.",
+      product: "MerClaw",
       version: "2026.3.22",
       headers: {
-        "HTTP-Referer": "https://openclaw.ai",
-        "X-OpenRouter-Title": "OpenClaw",
+        "HTTP-Referer": "https://merclaw.ai",
+        "X-OpenRouter-Title": "MerClaw",
         "X-OpenRouter-Categories":
           "cli-agent,cloud-agent,programming-app,creative-writing,writing-assistant,general-chat,personal-agent",
       },
@@ -140,7 +140,7 @@ describe("provider attribution", () => {
 
   it("returns a documented NVIDIA attribution policy", () => {
     const policy = resolveProviderAttributionPolicy("nvidia", {
-      OPENCLAW_VERSION: "2026.3.22",
+      MERCLAW_VERSION: "2026.3.22",
     });
 
     expect(policy).toEqual({
@@ -150,97 +150,97 @@ describe("provider attribution", () => {
       hook: "request-headers",
       reviewNote:
         "NVIDIA NIM billing invoke-origin attribution header. Applied only on verified NVIDIA routes.",
-      product: "OpenClaw",
+      product: "MerClaw",
       version: "2026.3.22",
       headers: {
-        "X-BILLING-INVOKE-ORIGIN": "OpenClaw",
+        "X-BILLING-INVOKE-ORIGIN": "MerClaw",
       },
     });
-    expect(resolveProviderAttributionHeaders("NVIDIA", { OPENCLAW_VERSION: "2026.3.22" })).toEqual({
-      "X-BILLING-INVOKE-ORIGIN": "OpenClaw",
+    expect(resolveProviderAttributionHeaders("NVIDIA", { MERCLAW_VERSION: "2026.3.22" })).toEqual({
+      "X-BILLING-INVOKE-ORIGIN": "MerClaw",
     });
   });
 
   it("normalizes aliases when resolving provider headers", () => {
     expect(
       resolveProviderAttributionHeaders("OpenRouter", {
-        OPENCLAW_VERSION: "2026.3.22",
+        MERCLAW_VERSION: "2026.3.22",
       }),
     ).toEqual({
-      "HTTP-Referer": "https://openclaw.ai",
-      "X-OpenRouter-Title": "OpenClaw",
+      "HTTP-Referer": "https://merclaw.ai",
+      "X-OpenRouter-Title": "MerClaw",
       "X-OpenRouter-Categories":
         "cli-agent,cloud-agent,programming-app,creative-writing,writing-assistant,general-chat,personal-agent",
     });
   });
 
   it("returns a hidden-spec OpenAI attribution policy", () => {
-    expect(resolveProviderAttributionPolicy("openai", { OPENCLAW_VERSION: "2026.3.22" })).toEqual({
+    expect(resolveProviderAttributionPolicy("openai", { MERCLAW_VERSION: "2026.3.22" })).toEqual({
       provider: "openai",
       enabledByDefault: true,
       verification: "vendor-hidden-api-spec",
       hook: "request-headers",
       reviewNote:
         "OpenAI native traffic supports hidden originator/User-Agent attribution. Verified against the Codex wire contract.",
-      product: "OpenClaw",
+      product: "MerClaw",
       version: "2026.3.22",
       headers: {
-        originator: "openclaw",
+        originator: "merclaw",
         version: "2026.3.22",
-        "User-Agent": "openclaw/2026.3.22",
+        "User-Agent": "merclaw/2026.3.22",
       },
     });
-    expect(resolveProviderAttributionHeaders("openai", { OPENCLAW_VERSION: "2026.3.22" })).toEqual({
-      originator: "openclaw",
+    expect(resolveProviderAttributionHeaders("openai", { MERCLAW_VERSION: "2026.3.22" })).toEqual({
+      originator: "merclaw",
       version: "2026.3.22",
-      "User-Agent": "openclaw/2026.3.22",
+      "User-Agent": "merclaw/2026.3.22",
     });
   });
 
   it("maps legacy OpenAI Codex attribution to canonical OpenAI policy", () => {
-    expect(resolveProviderAttributionPolicy("openai", { OPENCLAW_VERSION: "2026.3.22" })).toEqual({
+    expect(resolveProviderAttributionPolicy("openai", { MERCLAW_VERSION: "2026.3.22" })).toEqual({
       provider: "openai",
       enabledByDefault: true,
       verification: "vendor-hidden-api-spec",
       hook: "request-headers",
       reviewNote:
         "OpenAI native traffic supports hidden originator/User-Agent attribution. Verified against the Codex wire contract.",
-      product: "OpenClaw",
+      product: "MerClaw",
       version: "2026.3.22",
       headers: {
-        originator: "openclaw",
+        originator: "merclaw",
         version: "2026.3.22",
-        "User-Agent": "openclaw/2026.3.22",
+        "User-Agent": "merclaw/2026.3.22",
       },
     });
   });
 
   it("returns a hidden-spec xAI attribution policy", () => {
-    expect(resolveProviderAttributionPolicy("xai", { OPENCLAW_VERSION: "2026.3.22" })).toEqual({
+    expect(resolveProviderAttributionPolicy("xai", { MERCLAW_VERSION: "2026.3.22" })).toEqual({
       provider: "xai",
       enabledByDefault: true,
       verification: "vendor-hidden-api-spec",
       hook: "request-headers",
       reviewNote:
-        "xAI api.x.ai accepts a standard openclaw User-Agent. Companion originator/version headers mirror the OpenAI attribution shape for consistency; they are not validated against an xAI-specific spec and are expected to be ignored by xAI's OpenAI-compatible surface.",
-      product: "OpenClaw",
+        "xAI api.x.ai accepts a standard merclaw User-Agent. Companion originator/version headers mirror the OpenAI attribution shape for consistency; they are not validated against an xAI-specific spec and are expected to be ignored by xAI's OpenAI-compatible surface.",
+      product: "MerClaw",
       version: "2026.3.22",
       headers: {
-        originator: "openclaw",
+        originator: "merclaw",
         version: "2026.3.22",
-        "User-Agent": "openclaw/2026.3.22",
+        "User-Agent": "merclaw/2026.3.22",
       },
     });
-    expect(resolveProviderAttributionHeaders("xai", { OPENCLAW_VERSION: "2026.3.22" })).toEqual({
-      originator: "openclaw",
+    expect(resolveProviderAttributionHeaders("xai", { MERCLAW_VERSION: "2026.3.22" })).toEqual({
+      originator: "merclaw",
       version: "2026.3.22",
-      "User-Agent": "openclaw/2026.3.22",
+      "User-Agent": "merclaw/2026.3.22",
     });
   });
 
   it("lists the current attribution support matrix", () => {
     expect(
-      listProviderAttributionPolicies({ OPENCLAW_VERSION: "2026.3.22" }).map((policy) => [
+      listProviderAttributionPolicies({ MERCLAW_VERSION: "2026.3.22" }).map((policy) => [
         policy.provider,
         policy.enabledByDefault,
         policy.verification,
@@ -269,7 +269,7 @@ describe("provider attribution", () => {
           transport: "stream",
           capability: "llm",
         },
-        { OPENCLAW_VERSION: "2026.3.22" },
+        { MERCLAW_VERSION: "2026.3.22" },
       ),
       {
         endpointClass: "xai-native",
@@ -286,12 +286,12 @@ describe("provider attribution", () => {
           transport: "stream",
           capability: "llm",
         },
-        { OPENCLAW_VERSION: "2026.3.22" },
+        { MERCLAW_VERSION: "2026.3.22" },
       ),
     ).toEqual({
-      originator: "openclaw",
+      originator: "merclaw",
       version: "2026.3.22",
-      "User-Agent": "openclaw/2026.3.22",
+      "User-Agent": "merclaw/2026.3.22",
     });
 
     expectRecordFields(
@@ -302,7 +302,7 @@ describe("provider attribution", () => {
           transport: "stream",
           capability: "llm",
         },
-        { OPENCLAW_VERSION: "2026.3.22" },
+        { MERCLAW_VERSION: "2026.3.22" },
       ),
       {
         endpointClass: "default",
@@ -320,7 +320,7 @@ describe("provider attribution", () => {
           transport: "stream",
           capability: "llm",
         },
-        { OPENCLAW_VERSION: "2026.3.22" },
+        { MERCLAW_VERSION: "2026.3.22" },
       ),
       {
         endpointClass: "custom",
@@ -340,7 +340,7 @@ describe("provider attribution", () => {
           transport: "stream",
           capability: "llm",
         },
-        { OPENCLAW_VERSION: "2026.3.22" },
+        { MERCLAW_VERSION: "2026.3.22" },
       ),
       {
         endpointClass: "openai-public",
@@ -361,7 +361,7 @@ describe("provider attribution", () => {
           transport: "stream",
           capability: "llm",
         },
-        { OPENCLAW_VERSION: "2026.3.22" },
+        { MERCLAW_VERSION: "2026.3.22" },
       ),
       {
         endpointClass: "custom",
@@ -568,7 +568,7 @@ describe("provider attribution", () => {
         capability: "llm",
       }),
     ).toEqual({
-      "X-BILLING-INVOKE-ORIGIN": "OpenClaw",
+      "X-BILLING-INVOKE-ORIGIN": "MerClaw",
     });
 
     expect(

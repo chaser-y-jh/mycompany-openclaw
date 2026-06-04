@@ -1,10 +1,10 @@
-import { normalizeModelCatalogProviderRows } from "@openclaw/model-catalog-core/model-catalog-normalize";
-import { normalizeModelCatalogProviderId } from "@openclaw/model-catalog-core/model-catalog-refs";
+import { normalizeModelCatalogProviderRows } from "@merclaw/model-catalog-core/model-catalog-normalize";
+import { normalizeModelCatalogProviderId } from "@merclaw/model-catalog-core/model-catalog-refs";
 import type {
   ModelCatalogProvider,
   NormalizedModelCatalogRow,
-} from "@openclaw/model-catalog-core/model-catalog-types";
-import type { OpenClawProviderIndex } from "./provider-index/index.js";
+} from "@merclaw/model-catalog-core/model-catalog-types";
+import type { MerClawProviderIndex } from "./provider-index/index.js";
 
 type ProviderIndexModelCatalogPlanEntry = {
   provider: string;
@@ -28,7 +28,7 @@ function withPreviewStatusDefaults(providerCatalog: ModelCatalogProvider): Model
 }
 
 export function planProviderIndexModelCatalogRows(params: {
-  index: OpenClawProviderIndex;
+  index: MerClawProviderIndex;
   providerFilter?: string;
 }): ProviderIndexModelCatalogPlan {
   const providerFilter = params.providerFilter

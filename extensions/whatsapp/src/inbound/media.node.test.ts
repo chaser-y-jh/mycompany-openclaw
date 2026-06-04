@@ -18,7 +18,7 @@ vi.mock("baileys", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/media-store", () => ({
+vi.mock("merclaw/plugin-sdk/media-store", () => ({
   saveMediaStream,
 }));
 

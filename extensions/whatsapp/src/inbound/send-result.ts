@@ -5,8 +5,8 @@ import {
   type MessageReceipt,
   type MessageReceiptPartKind,
   type MessageReceiptSourceResult,
-} from "openclaw/plugin-sdk/channel-outbound";
-import { normalizeStringEntries, uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/channel-outbound";
+import { normalizeStringEntries, uniqueStrings } from "merclaw/plugin-sdk/string-coerce-runtime";
 
 export type WhatsAppSendKind = "media" | "poll" | "reaction" | "text";
 

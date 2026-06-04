@@ -1,19 +1,19 @@
 ---
 summary: "Contract for `secrets apply` plans: target validation, path matching, and `auth-profiles.json` target scope"
 read_when:
-  - Generating or reviewing `openclaw secrets apply` plans
+  - Generating or reviewing `merclaw secrets apply` plans
   - Debugging `Invalid plan target path` errors
   - Understanding target type and path validation behavior
 title: "Secrets apply plan contract"
 ---
 
-This page defines the strict contract enforced by `openclaw secrets apply`.
+This page defines the strict contract enforced by `merclaw secrets apply`.
 
 If a target does not match these rules, apply fails before mutating configuration.
 
 ## Plan file shape
 
-`openclaw secrets apply --from <plan.json>` expects a `targets` array of plan targets:
+`merclaw secrets apply --from <plan.json>` expects a `targets` array of plan targets:
 
 ```json5
 {
@@ -45,14 +45,14 @@ Plans may also include two optional top-level fields that mutate the
 
 - `providerUpserts` — an object keyed by provider alias. Each value is a
   provider definition (the same shape accepted under
-  `secrets.providers.<alias>` in `openclaw.json`, e.g. an `exec` or `file`
+  `secrets.providers.<alias>` in `merclaw.json`, e.g. an `exec` or `file`
   provider).
 - `providerDeletes` — an array of provider aliases to remove.
 
 `providerUpserts` runs before `targets`, so a `target.ref.provider` may
 reference a provider alias that the same plan introduces in
 `providerUpserts`. Without this, plans that reference an alias not yet
-configured in `openclaw.json` fail with `provider "<alias>" is not
+configured in `merclaw.json` fail with `provider "<alias>" is not
 configured`.
 
 ```json5
@@ -133,23 +133,23 @@ No writes are committed for an invalid plan.
 ## Runtime and audit scope notes
 
 - Ref-only `auth-profiles.json` entries (`keyRef`/`tokenRef`) are included in runtime resolution and audit coverage.
-- `secrets apply` writes supported `openclaw.json` targets, supported `auth-profiles.json` targets, and optional scrub targets.
+- `secrets apply` writes supported `merclaw.json` targets, supported `auth-profiles.json` targets, and optional scrub targets.
 
 ## Operator checks
 
 ```bash
 # Validate plan without writes
-openclaw secrets apply --from /tmp/openclaw-secrets-plan.json --dry-run
+merclaw secrets apply --from /tmp/merclaw-secrets-plan.json --dry-run
 
 # Then apply for real
-openclaw secrets apply --from /tmp/openclaw-secrets-plan.json
+merclaw secrets apply --from /tmp/merclaw-secrets-plan.json
 
 # For exec-containing plans, opt in explicitly in both modes
-openclaw secrets apply --from /tmp/openclaw-secrets-plan.json --dry-run --allow-exec
-openclaw secrets apply --from /tmp/openclaw-secrets-plan.json --allow-exec
+merclaw secrets apply --from /tmp/merclaw-secrets-plan.json --dry-run --allow-exec
+merclaw secrets apply --from /tmp/merclaw-secrets-plan.json --allow-exec
 ```
 
-If apply fails with an invalid target path message, regenerate the plan with `openclaw secrets configure` or fix the target path to a supported shape above.
+If apply fails with an invalid target path message, regenerate the plan with `merclaw secrets configure` or fix the target path to a supported shape above.
 
 ## Related docs
 

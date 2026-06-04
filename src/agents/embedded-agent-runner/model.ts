@@ -1,6 +1,6 @@
-import { finiteSecondsToTimerSafeMilliseconds } from "@openclaw/normalization-core/number-coercion";
+import { finiteSecondsToTimerSafeMilliseconds } from "@merclaw/normalization-core/number-coercion";
 import type { ModelCompatConfig, ModelMediaInputConfig } from "../../config/types.models.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import type { ModelRegistry as CoreModelRegistry } from "../../llm/model-registry.js";
 import type { Api, Model } from "../../llm/types.js";
 import type { ProviderRuntimeModel } from "../../plugins/provider-runtime-model.types.js";
@@ -147,7 +147,7 @@ function resolveRuntimeHooks(params?: {
 
 function discoverCachedAgentStoresForAgent(
   resolvedAgentDir: string,
-  cfg: OpenClawConfig | undefined,
+  cfg: MerClawConfig | undefined,
   workspaceDir: string | undefined,
 ): {
   authStorage: AuthStorage;
@@ -178,7 +178,7 @@ function canonicalizeLegacyResolvedModel(params: { provider: string; model: Mode
 
 function applyResolvedTransportFallback(params: {
   provider: string;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   workspaceDir?: string;
   runtimeHooks: ProviderRuntimeHooks;
   model: Model;
@@ -213,7 +213,7 @@ function applyResolvedTransportFallback(params: {
 function normalizeResolvedModel(params: {
   provider: string;
   model: Model;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   runtimeHooks?: ProviderRuntimeHooks;
@@ -311,7 +311,7 @@ function resolveProviderTransport(params: {
   provider: string;
   api?: Api | null;
   baseUrl?: string;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   workspaceDir?: string;
   runtimeHooks?: ProviderRuntimeHooks;
 }): {
@@ -423,7 +423,7 @@ function findInlineModelMatch(params: {
 export { buildModelAliasLines, buildInlineProviderModels };
 
 function resolveConfiguredProviderConfig(
-  cfg: OpenClawConfig | undefined,
+  cfg: MerClawConfig | undefined,
   provider: string,
 ): InlineProviderConfig | undefined {
   const configuredProviders = cfg?.models?.providers;
@@ -489,7 +489,7 @@ function mergeModelParams(
 }
 
 function findConfiguredAgentModelParams(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   provider: string;
   modelId: string;
 }): Record<string, unknown> | undefined {
@@ -531,7 +531,7 @@ function findConfiguredAgentModelParams(params: {
 }
 
 function mergeConfiguredRuntimeModelParams(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   provider: string;
   modelId: string;
   discoveredParams?: unknown;
@@ -555,7 +555,7 @@ function applyConfiguredProviderOverrides(params: {
   discoveredModel: ProviderRuntimeModel;
   providerConfig?: InlineProviderConfig;
   modelId: string;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   runtimeHooks?: ProviderRuntimeHooks;
   preferDiscoveredModelMetadata?: boolean;
   workspaceDir?: string;
@@ -736,7 +736,7 @@ function resolveExplicitModelWithRegistry(params: {
   provider: string;
   modelId: string;
   modelRegistry: CoreModelRegistry;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   runtimeHooks?: ProviderRuntimeHooks;
@@ -869,7 +869,7 @@ function resolveExplicitModelWithRegistry(params: {
 
 function resolveDynamicModelAuthProfile(params: {
   provider: string;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   agentDir?: string;
   authProfileId?: string;
   preferredProfile?: string;
@@ -924,7 +924,7 @@ function resolvePluginDynamicModelWithRegistry(params: {
   provider: string;
   modelId: string;
   modelRegistry: CoreModelRegistry;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   authProfileId?: string;
@@ -990,7 +990,7 @@ function resolvePluginDynamicModelWithRegistry(params: {
 function resolveConfiguredFallbackModel(params: {
   provider: string;
   modelId: string;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   runtimeHooks?: ProviderRuntimeHooks;
@@ -1111,7 +1111,7 @@ function resolveConfiguredFallbackModel(params: {
 function shouldCompareProviderRuntimeResolvedModel(params: {
   provider: string;
   modelId: string;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   runtimeHooks: ProviderRuntimeHooks;
@@ -1215,7 +1215,7 @@ function preferProviderRuntimeResolvedModel(params: {
 function normalizeProviderModelRef(params: {
   provider: string;
   modelId: string;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   workspaceDir?: string;
 }): { provider: string; model: string } {
   const provider = canonicalizeManifestModelCatalogProviderAlias({
@@ -1233,7 +1233,7 @@ export function resolveModelWithRegistry(params: {
   provider: string;
   modelId: string;
   modelRegistry: CoreModelRegistry;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   authProfileId?: string;
@@ -1287,7 +1287,7 @@ export function resolveModel(
   provider: string,
   modelId: string,
   agentDir?: string,
-  cfg?: OpenClawConfig,
+  cfg?: MerClawConfig,
   options?: {
     authStorage?: AuthStorage;
     modelRegistry?: ModelRegistry;
@@ -1350,7 +1350,7 @@ export async function resolveModelAsync(
   provider: string,
   modelId: string,
   agentDir?: string,
-  cfg?: OpenClawConfig,
+  cfg?: MerClawConfig,
   options?: {
     authStorage?: AuthStorage;
     modelRegistry?: ModelRegistry;
@@ -1536,12 +1536,12 @@ export async function resolveModelAsync(
  * providers before setup, the raw `Unknown model` error is too vague. Provider
  * plugins can append a targeted recovery hint here.
  *
- * See: https://github.com/openclaw/openclaw/issues/17328
+ * See: https://github.com/merclaw/merclaw/issues/17328
  */
 function buildUnknownModelError(params: {
   provider: string;
   modelId: string;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   runtimeHooks?: ProviderRuntimeHooks;
@@ -1585,7 +1585,7 @@ function buildUnknownModelError(params: {
 function buildMissingProviderModelRegistrationHint(params: {
   provider: string;
   modelId: string;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
 }): string | undefined {
   const configuredModels = params.cfg?.agents?.defaults?.models;
   if (!configuredModels) {

@@ -24,7 +24,7 @@
  * (slack/discord/cli/tui). Per proposal §50, this bridge does NOT
  * import that flow directly (the package boundary
  * `tsconfig.package-boundary.base.json` only allows
- * `openclaw/plugin-sdk/*` and `@github/copilot-sdk`). Instead, this
+ * `merclaw/plugin-sdk/*` and `@github/copilot-sdk`). Instead, this
  * module:
  *
  *   1. Defines a small `CopilotUserInputPolicy` contract that the

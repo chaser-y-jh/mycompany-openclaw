@@ -1,6 +1,6 @@
-import { normalizeOptionalString as resolveOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString as resolveOptionalString } from "@merclaw/normalization-core/string-coerce";
 import type { PluginInstallRecord } from "../config/types.plugins.js";
-import { discoverOpenClawPlugins, type PluginDiscoveryResult } from "./discovery.js";
+import { discoverMerClawPlugins, type PluginDiscoveryResult } from "./discovery.js";
 import { loadInstalledPluginIndexInstallRecordsSync } from "./installed-plugin-index-record-reader.js";
 import type { PluginPackageChannel, PluginPackageInstall } from "./manifest.js";
 import type { PluginOrigin } from "./plugin-origin.types.js";
@@ -33,7 +33,7 @@ export function listChannelCatalogEntries(
   const installRecords = resolveInstallRecords(params);
   const discovery =
     params.discovery ??
-    discoverOpenClawPlugins({
+    discoverMerClawPlugins({
       workspaceDir: params.workspaceDir,
       env: params.env,
       ...(installRecords && Object.keys(installRecords).length > 0 ? { installRecords } : {}),

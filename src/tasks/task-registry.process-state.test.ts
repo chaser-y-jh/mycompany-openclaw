@@ -1,4 +1,4 @@
-import { importFreshModule } from "openclaw/plugin-sdk/test-fixtures";
+import { importFreshModule } from "merclaw/plugin-sdk/test-fixtures";
 import { describe, expect, it } from "vitest";
 
 describe("task registry process state", () => {

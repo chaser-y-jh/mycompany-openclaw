@@ -1,8 +1,8 @@
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalLowercaseString,
-} from "@openclaw/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+} from "@merclaw/normalization-core/string-coerce";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { consumeRootOptionToken } from "../infra/cli-root-options.js";
 import {
   resolveManifestCommandAliasOwnerInRegistry,
@@ -110,7 +110,7 @@ export function shouldUseRootHelpFastPath(
 ): boolean {
   const invocation = resolveCliArgvInvocation(argv);
   return (
-    env.OPENCLAW_DISABLE_CLI_STARTUP_HELP_FAST_PATH !== "1" &&
+    env.MERCLAW_DISABLE_CLI_STARTUP_HELP_FAST_PATH !== "1" &&
     (invocation.isRootHelpInvocation ||
       (invocation.commandPath.length === 1 &&
         ROOT_HELP_ALIASES.has(invocation.commandPath[0] ?? "") &&
@@ -125,7 +125,7 @@ export function shouldUseBrowserHelpFastPath(
   argv: string[],
   env: NodeJS.ProcessEnv = process.env,
 ): boolean {
-  if (env.OPENCLAW_DISABLE_CLI_STARTUP_HELP_FAST_PATH === "1") {
+  if (env.MERCLAW_DISABLE_CLI_STARTUP_HELP_FAST_PATH === "1") {
     return false;
   }
   const invocation = resolveCliArgvInvocation(argv);
@@ -140,7 +140,7 @@ export function shouldUseSecretsHelpFastPath(
   argv: string[],
   env: NodeJS.ProcessEnv = process.env,
 ): boolean {
-  if (env.OPENCLAW_DISABLE_CLI_STARTUP_HELP_FAST_PATH === "1") {
+  if (env.MERCLAW_DISABLE_CLI_STARTUP_HELP_FAST_PATH === "1") {
     return false;
   }
   const invocation = resolveCliArgvInvocation(argv);
@@ -155,7 +155,7 @@ export function shouldUseNodesHelpFastPath(
   argv: string[],
   env: NodeJS.ProcessEnv = process.env,
 ): boolean {
-  if (env.OPENCLAW_DISABLE_CLI_STARTUP_HELP_FAST_PATH === "1") {
+  if (env.MERCLAW_DISABLE_CLI_STARTUP_HELP_FAST_PATH === "1") {
     return false;
   }
   const invocation = resolveCliArgvInvocation(argv);
@@ -170,7 +170,7 @@ export function shouldUseSetupOnboardConfigureHelpFastPath(
   argv: string[],
   env: NodeJS.ProcessEnv = process.env,
 ): boolean {
-  if (env.OPENCLAW_DISABLE_CLI_STARTUP_HELP_FAST_PATH === "1") {
+  if (env.MERCLAW_DISABLE_CLI_STARTUP_HELP_FAST_PATH === "1") {
     return false;
   }
   const invocation = resolveCliArgvInvocation(argv);
@@ -185,7 +185,7 @@ export function resolvePrecomputedSubcommandHelpFastPath(
   argv: string[],
   env: NodeJS.ProcessEnv = process.env,
 ): string | null {
-  if (env.OPENCLAW_DISABLE_CLI_STARTUP_HELP_FAST_PATH === "1") {
+  if (env.MERCLAW_DISABLE_CLI_STARTUP_HELP_FAST_PATH === "1") {
     return null;
   }
   return resolveStrictPrecomputedSubcommandHelpCommand(argv);
@@ -220,22 +220,22 @@ export function shouldStartProxyForCli(argv: string[]): boolean {
 
 export function resolveMissingPluginCommandMessage(
   pluginId: string,
-  config?: OpenClawConfig,
+  config?: MerClawConfig,
   options?: {
     registry?: PluginManifestCommandAliasRegistry;
     resolveCommandAliasOwner?: (params: {
       command: string | undefined;
-      config?: OpenClawConfig;
+      config?: MerClawConfig;
       registry?: PluginManifestCommandAliasRegistry;
     }) => PluginManifestCommandAliasRecord | undefined;
     resolveToolOwner?: (params: {
       toolName: string | undefined;
-      config?: OpenClawConfig;
+      config?: MerClawConfig;
       registry?: PluginManifestCommandAliasRegistry;
     }) => PluginManifestToolOwnerRecord | undefined;
     resolveCliCommandSurfaceOwner?: (params: {
       command: string | undefined;
-      config?: OpenClawConfig;
+      config?: MerClawConfig;
       registry?: PluginManifestCommandAliasRegistry;
     }) => string | undefined;
   },
@@ -266,7 +266,7 @@ export function resolveMissingPluginCommandMessage(
     if (allow.length > 0 && !allow.includes(parentPluginId)) {
       if (parentPluginId === normalizedPluginId) {
         return (
-          `The \`openclaw ${normalizedPluginId}\` command is unavailable because ` +
+          `The \`merclaw ${normalizedPluginId}\` command is unavailable because ` +
           `\`plugins.allow\` excludes "${normalizedPluginId}". Add "${normalizedPluginId}" to ` +
           `\`plugins.allow\` if you want that bundled plugin CLI surface.`
         );
@@ -279,7 +279,7 @@ export function resolveMissingPluginCommandMessage(
     }
     if (config?.plugins?.entries?.[parentPluginId]?.enabled === false) {
       return (
-        `The \`openclaw ${normalizedPluginId}\` command is unavailable because ` +
+        `The \`merclaw ${normalizedPluginId}\` command is unavailable because ` +
         `\`plugins.entries.${parentPluginId}.enabled=false\`. Re-enable that entry if you want ` +
         "the bundled plugin command surface."
       );
@@ -290,14 +290,14 @@ export function resolveMissingPluginCommandMessage(
       config?.plugins?.entries?.[parentPluginId]?.enabled !== true
     ) {
       return (
-        `The \`openclaw ${normalizedPluginId}\` command is provided by the ` +
+        `The \`merclaw ${normalizedPluginId}\` command is provided by the ` +
         `"${parentPluginId}" plugin, but that bundled plugin is disabled by default. Run ` +
-        `\`openclaw plugins enable ${parentPluginId}\` to enable that CLI surface.`
+        `\`merclaw plugins enable ${parentPluginId}\` to enable that CLI surface.`
       );
     }
     if (commandAlias.kind === "runtime-slash") {
       const cliHint = commandAlias.cliCommand
-        ? `Use \`openclaw ${commandAlias.cliCommand}\` for related CLI operations, or `
+        ? `Use \`merclaw ${commandAlias.cliCommand}\` for related CLI operations, or `
         : "Use ";
       return (
         `"${normalizedPluginId}" is a runtime slash command (/${normalizedPluginId}), not a CLI command. ` +
@@ -341,13 +341,13 @@ export function resolveMissingPluginCommandMessage(
         return (
           `"${normalizedPluginId}" may be provided by the "${toolOwner.pluginId}" plugin ` +
           `as an agent tool, not a CLI subcommand. ` +
-          "Run `openclaw --help` to see available CLI subcommands."
+          "Run `merclaw --help` to see available CLI subcommands."
         );
       }
       return (
         `"${normalizedPluginId}" is an agent tool available from the "${toolOwner.pluginId}" plugin, ` +
         `not a CLI subcommand. Use it from an agent turn (model tool-use), not the CLI. ` +
-        "Run `openclaw --help` to see available CLI subcommands."
+        "Run `merclaw --help` to see available CLI subcommands."
       );
     }
   }
@@ -384,14 +384,14 @@ export function resolveMissingPluginCommandMessage(
       );
     }
     return (
-      `The \`openclaw ${normalizedPluginId}\` command is unavailable because ` +
+      `The \`merclaw ${normalizedPluginId}\` command is unavailable because ` +
       `\`plugins.allow\` excludes "${normalizedPluginId}". Add "${normalizedPluginId}" to ` +
       `\`plugins.allow\` if you want that bundled plugin CLI surface.`
     );
   }
   if (config?.plugins?.entries?.[normalizedPluginId]?.enabled === false) {
     return (
-      `The \`openclaw ${normalizedPluginId}\` command is unavailable because ` +
+      `The \`merclaw ${normalizedPluginId}\` command is unavailable because ` +
       `\`plugins.entries.${normalizedPluginId}.enabled=false\`. Re-enable that entry if you want ` +
       "the bundled plugin CLI surface."
     );

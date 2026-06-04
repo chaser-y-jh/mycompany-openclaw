@@ -61,7 +61,7 @@ Link the issue, PR, discussion, maintainer request, or owner request that explai
 <details>
 <summary>Real behavior proof guidance</summary>
 
-External contributors must show after-fix evidence from a real OpenClaw setup. Unit tests, mocks, lint, typechecks, snapshots, and CI are supplemental only.
+External contributors must show after-fix evidence from a real MerClaw setup. Unit tests, mocks, lint, typechecks, snapshots, and CI are supplemental only.
 
 Screenshots are encouraged even for CLI, console, text, or log changes. Terminal screenshots, copied live output, redacted runtime logs, recordings, and linked artifacts count.
 

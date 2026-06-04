@@ -3,11 +3,11 @@ import { existsSync } from "node:fs";
 import {
   normalizeOptionalLowercaseString,
   normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/normalization-core/string-coerce";
 import {
   normalizeStringEntries,
   uniqueStrings,
-} from "@openclaw/normalization-core/string-normalization";
+} from "@merclaw/normalization-core/string-normalization";
 import {
   GATEWAY_CLIENT_CAPS,
   GATEWAY_CLIENT_MODES,
@@ -62,7 +62,7 @@ import {
   updateSessionStore,
 } from "../../config/sessions.js";
 import { resolveMaintenanceConfigFromInput } from "../../config/sessions/store-maintenance.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { registerAgentRunContext } from "../../infra/agent-events.js";
 import { formatUncaughtError, readErrorName } from "../../infra/errors.js";
 import {
@@ -159,7 +159,7 @@ import type {
 const RESET_COMMAND_RE = /^\/(new|reset)(?:\s+([\s\S]*))?$/i;
 
 type AgentSendSessionLifecycleTransition = {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   sessionKey: string;
   sessionId: string;
   storePath: string;
@@ -300,7 +300,7 @@ function buildBareSessionResetResponse(params: {
 }
 
 async function deliverBareSessionResetResult(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   context: GatewayRequestHandlerOptions["context"];
   reason: "new" | "reset";
   sessionId?: string;
@@ -364,7 +364,7 @@ async function deliverBareSessionResetResult(params: {
 }
 
 async function resolveBareSessionResetResult(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   context: GatewayRequestHandlerOptions["context"];
   reason: "new" | "reset";
   sessionId?: string;
@@ -439,11 +439,11 @@ async function resolveBareSessionResetResult(params: {
 }
 
 function loadBareSessionResetDeliverySession(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   sessionKey: string;
   agentId?: string;
 }): {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   entry?: SessionEntry;
   agentId: string;
 } {
@@ -1456,7 +1456,7 @@ export const agentHandlers: GatewayRequestHandlers = {
       let resolvedSessionId = requestedSessionId;
       let sessionEntry: SessionEntry | undefined;
       let bestEffortDeliver = requestedBestEffortDeliver ?? false;
-      let cfgForAgent: OpenClawConfig | undefined;
+      let cfgForAgent: MerClawConfig | undefined;
       let resolvedSessionKey = requestedSessionKey;
       let resolvedSessionAgentId: string | undefined;
       let isNewSession = false;
@@ -1541,7 +1541,7 @@ export const agentHandlers: GatewayRequestHandlers = {
       // Inject timestamp into user-authored messages that don't already have one.
       // Channel messages (Discord, Telegram, etc.) get timestamps via envelope
       // formatting in a separate code path — they never reach this handler.
-      // See: https://github.com/openclaw/openclaw/issues/3658
+      // See: https://github.com/merclaw/merclaw/issues/3658
       if (!isRawModelRun && inputProvenance?.kind !== "inter_session") {
         message = injectTimestamp(message, timestampOptsFromConfig(cfg));
       }

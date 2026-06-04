@@ -1,11 +1,11 @@
-export type { AcpRuntimeErrorCode } from "openclaw/plugin-sdk/acp-runtime-backend";
+export type { AcpRuntimeErrorCode } from "merclaw/plugin-sdk/acp-runtime-backend";
 export {
   AcpRuntimeError,
   getAcpRuntimeBackend,
   tryDispatchAcpReplyHook,
   registerAcpRuntimeBackend,
   unregisterAcpRuntimeBackend,
-} from "openclaw/plugin-sdk/acp-runtime-backend";
+} from "merclaw/plugin-sdk/acp-runtime-backend";
 export type {
   AcpRuntime,
   AcpRuntimeCapabilities,
@@ -20,30 +20,30 @@ export type {
   AcpRuntimeTurnResult,
   AcpRuntimeTurnResultError,
   AcpSessionUpdateTag,
-} from "openclaw/plugin-sdk/acp-runtime-backend";
+} from "merclaw/plugin-sdk/acp-runtime-backend";
 export type {
-  OpenClawPluginApi,
-  OpenClawPluginConfigSchema,
-  OpenClawPluginService,
-  OpenClawPluginServiceContext,
+  MerClawPluginApi,
+  MerClawPluginConfigSchema,
+  MerClawPluginService,
+  MerClawPluginServiceContext,
   PluginLogger,
-} from "openclaw/plugin-sdk/core";
+} from "merclaw/plugin-sdk/core";
 export type {
   PluginHookReplyDispatchContext,
   PluginHookReplyDispatchEvent,
   PluginHookReplyDispatchResult,
-} from "openclaw/plugin-sdk/core";
+} from "merclaw/plugin-sdk/core";
 export type {
   WindowsSpawnProgram,
   WindowsSpawnProgramCandidate,
   WindowsSpawnResolution,
-} from "openclaw/plugin-sdk/windows-spawn";
+} from "merclaw/plugin-sdk/windows-spawn";
 export {
   applyWindowsSpawnProgramPolicy,
   materializeWindowsSpawnProgram,
   resolveWindowsSpawnProgramCandidate,
-} from "openclaw/plugin-sdk/windows-spawn";
+} from "merclaw/plugin-sdk/windows-spawn";
 export {
   listKnownProviderAuthEnvVarNames,
   omitEnvKeysCaseInsensitive,
-} from "openclaw/plugin-sdk/provider-env-vars";
+} from "merclaw/plugin-sdk/provider-env-vars";

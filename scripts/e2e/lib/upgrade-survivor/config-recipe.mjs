@@ -111,7 +111,7 @@ const scenarioConfigSteps = new Map([
       {
         id: "logging-file",
         intent: "logging",
-        argv: ["config", "set", "logging.file", "~/openclaw-upgrade-survivor/gateway.jsonl"],
+        argv: ["config", "set", "logging.file", "~/merclaw-upgrade-survivor/gateway.jsonl"],
       },
     ],
   ],
@@ -155,7 +155,7 @@ const recipe = [
 ];
 
 function selectedScenario() {
-  return process.env.OPENCLAW_UPGRADE_SURVIVOR_SCENARIO || "base";
+  return process.env.MERCLAW_UPGRADE_SURVIVOR_SCENARIO || "base";
 }
 
 function adaptStepForBaseline(step, baselineVersion, summary) {
@@ -197,28 +197,28 @@ function adaptStepForBaseline(step, baselineVersion, summary) {
   return step;
 }
 
-export function resolveUpgradeSurvivorOpenClawCommand(argv, params = {}) {
+export function resolveUpgradeSurvivorMerClawCommand(argv, params = {}) {
   const platform = params.platform ?? process.platform;
   if (platform === "win32") {
     const comSpec = params.comSpec ?? process.env.ComSpec ?? "cmd.exe";
     return {
       command: comSpec,
-      args: ["/d", "/s", "/c", buildCmdExeCommandLine("openclaw.cmd", argv)],
-      commandLabel: ["openclaw", ...argv].join(" "),
+      args: ["/d", "/s", "/c", buildCmdExeCommandLine("merclaw.cmd", argv)],
+      commandLabel: ["merclaw", ...argv].join(" "),
       shell: false,
       windowsVerbatimArguments: true,
     };
   }
   return {
-    command: "openclaw",
+    command: "merclaw",
     args: argv,
-    commandLabel: ["openclaw", ...argv].join(" "),
+    commandLabel: ["merclaw", ...argv].join(" "),
     shell: false,
   };
 }
 
-function runOpenClaw(step) {
-  const invocation = resolveUpgradeSurvivorOpenClawCommand(step.argv);
+function runMerClaw(step) {
+  const invocation = resolveUpgradeSurvivorMerClawCommand(step.argv);
   const result = spawnSync(invocation.command, invocation.args, {
     encoding: "utf8",
     env: process.env,
@@ -268,7 +268,7 @@ function applyRecipe() {
     if (!adaptedStep) {
       continue;
     }
-    const outcome = runOpenClaw(adaptedStep);
+    const outcome = runMerClaw(adaptedStep);
     summary.steps.push(outcome);
     writeJson(summaryPath, summary);
     if (!outcome.ok) {

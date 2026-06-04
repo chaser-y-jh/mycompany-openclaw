@@ -5,11 +5,11 @@ import {
   queueAgentHarnessMessage,
   resetAgentEventsForTest,
   type EmbeddedRunAttemptParams,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import { resetDiagnosticEventsForTest } from "openclaw/plugin-sdk/diagnostic-runtime";
-import { clearInternalHooks, resetGlobalHookRunner } from "openclaw/plugin-sdk/hook-runtime";
-import { clearPluginCommands } from "openclaw/plugin-sdk/plugin-runtime";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+} from "merclaw/plugin-sdk/agent-harness-runtime";
+import { resetDiagnosticEventsForTest } from "merclaw/plugin-sdk/diagnostic-runtime";
+import { clearInternalHooks, resetGlobalHookRunner } from "merclaw/plugin-sdk/hook-runtime";
+import { clearPluginCommands } from "merclaw/plugin-sdk/plugin-runtime";
+import { resolvePreferredMerClawTmpDir } from "merclaw/plugin-sdk/temp-path";
 import { afterEach, beforeEach, expect, vi } from "vitest";
 import { defaultCodexAppInventoryCache } from "./app-inventory-cache.js";
 import type { CodexAppServerClientFactory } from "./client-factory.js";
@@ -185,7 +185,7 @@ export function threadStartResult(threadId = "thread-1") {
       updatedAt: 1,
       status: { type: "idle" },
       path: null,
-      cwd: tempDir || "/tmp/openclaw-codex-test",
+      cwd: tempDir || "/tmp/merclaw-codex-test",
       cliVersion: "0.125.0",
       source: "unknown",
       agentNickname: null,
@@ -197,7 +197,7 @@ export function threadStartResult(threadId = "thread-1") {
     model: "gpt-5.4-codex",
     modelProvider: "openai",
     serviceTier: null,
-    cwd: tempDir || "/tmp/openclaw-codex-test",
+    cwd: tempDir || "/tmp/merclaw-codex-test",
     instructionSources: [],
     approvalPolicy: "never",
     approvalsReviewer: "user",
@@ -466,17 +466,17 @@ export function setupRunAttemptTestHooks(): void {
     clearInternalHooks();
     resetAgentEventsForTest();
     resetDiagnosticEventsForTest();
-    vi.stubEnv("OPENCLAW_TRAJECTORY", "0");
+    vi.stubEnv("MERCLAW_TRAJECTORY", "0");
     vi.stubEnv("CODEX_API_KEY", "");
     vi.stubEnv("OPENAI_API_KEY", "");
-    tempDir = await fs.mkdtemp(path.join(resolvePreferredOpenClawTmpDir(), "openclaw-codex-run-"));
+    tempDir = await fs.mkdtemp(path.join(resolvePreferredMerClawTmpDir(), "merclaw-codex-run-"));
   });
 
   afterEach(async () => {
     await drainActiveAppServerAttemptsForTest();
     await closeCodexSandboxExecServersForTests();
     resetCodexAppServerClientFactoryForTest();
-    testing.resetOpenClawCodingToolsFactoryForTests();
+    testing.resetMerClawCodingToolsFactoryForTests();
     testing.resetEnsuredCodexWorkspaceDirsForTests();
     testing.clearPendingCodexNativeHookRelayUnregistersForTests();
     resetCodexRateLimitCacheForTests();

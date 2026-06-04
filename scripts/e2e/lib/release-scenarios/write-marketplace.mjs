@@ -32,7 +32,7 @@ fs.writeFileSync(
     {
       [alias]: {
         installLocation: root,
-        source: { type: "github", repo: "openclaw/release-fixture-marketplace" },
+        source: { type: "github", repo: "merclaw/release-fixture-marketplace" },
       },
     },
     null,

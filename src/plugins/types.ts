@@ -3,7 +3,7 @@ import type { Duplex } from "node:stream";
 import type {
   UnifiedModelCatalogEntry,
   UnifiedModelCatalogKind,
-} from "@openclaw/model-catalog-core/model-catalog-types";
+} from "@merclaw/model-catalog-core/model-catalog-types";
 import type { Command } from "commander";
 import type {
   ApiKeyCredential,
@@ -24,7 +24,7 @@ import type { ThinkLevel } from "../auto-reply/thinking.shared.js";
 import type { ChannelPlugin } from "../channels/plugins/types.plugin.js";
 import type { ChannelId } from "../channels/plugins/types.public.js";
 import type { ModelProviderConfig } from "../config/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import type { OperatorScope } from "../gateway/operator-scopes.js";
 import type { GatewayRequestHandler } from "../gateway/server-methods/types.js";
 import type { InternalHookHandler } from "../hooks/internal-hook-types.js";
@@ -145,9 +145,9 @@ import type {
 } from "./provider-thinking.types.js";
 import type { PluginRuntime } from "./runtime/types.js";
 import type {
-  OpenClawPluginHookOptions,
-  OpenClawPluginToolFactory,
-  OpenClawPluginToolOptions,
+  MerClawPluginHookOptions,
+  MerClawPluginToolFactory,
+  MerClawPluginToolOptions,
 } from "./tool-types.js";
 import type { WebFetchProviderPlugin, WebSearchProviderPlugin } from "./web-provider-types.js";
 
@@ -163,11 +163,11 @@ export type {
   PluginFormat,
 } from "./manifest-types.js";
 export type {
-  OpenClawPluginActiveModelContext,
-  OpenClawPluginHookOptions,
-  OpenClawPluginToolContext,
-  OpenClawPluginToolFactory,
-  OpenClawPluginToolOptions,
+  MerClawPluginActiveModelContext,
+  MerClawPluginHookOptions,
+  MerClawPluginToolContext,
+  MerClawPluginToolFactory,
+  MerClawPluginToolOptions,
 } from "./tool-types.js";
 export type { AnyAgentTool } from "../agents/tools/common.js";
 export type { AgentHarness } from "../agents/harness/types.js";
@@ -179,7 +179,7 @@ export type {
   AgentToolResultMiddlewareOptions,
   AgentToolResultMiddlewareResult,
   AgentToolResultMiddlewareRuntime,
-  OpenClawAgentToolResult,
+  MerClawAgentToolResult,
 } from "./agent-tool-result-middleware-types.js";
 export type {
   PluginConversationBinding,
@@ -290,7 +290,7 @@ export type PluginConfigValidation =
  * function, or both. `uiHints` and `jsonSchema` are optional extras for docs,
  * forms, and config UIs.
  */
-export type OpenClawPluginConfigSchema = {
+export type MerClawPluginConfigSchema = {
   safeParse?: (value: unknown) => {
     success: boolean;
     data?: unknown;
@@ -316,7 +316,7 @@ export type ProviderAuthResult = {
    * `models.providers.<id>` entries, default aliases, or agent model helpers.
    * The caller still persists auth-profile bindings separately.
    */
-  configPatch?: Partial<OpenClawConfig>;
+  configPatch?: Partial<MerClawConfig>;
   defaultModel?: string;
   notes?: string[];
   /**
@@ -329,7 +329,7 @@ export type ProviderAuthResult = {
 
 /** Interactive auth context passed to provider login/setup methods. */
 export type ProviderAuthContext = {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   env?: NodeJS.ProcessEnv;
   agentDir?: string;
   workspaceDir?: string;
@@ -393,8 +393,8 @@ export type ProviderNonInteractiveApiKeyCredentialParams = {
 
 export type ProviderAuthMethodNonInteractiveContext = {
   authChoice: string;
-  config: OpenClawConfig;
-  baseConfig: OpenClawConfig;
+  config: MerClawConfig;
+  baseConfig: MerClawConfig;
   opts: ProviderAuthOptionBag;
   runtime: RuntimeEnv;
   agentDir?: string;
@@ -416,20 +416,20 @@ export type ProviderAuthMethod = {
    * Optional wizard/onboarding metadata for this specific auth method.
    *
    * Use this when one provider exposes multiple setup entries (for example API
-   * key + OAuth, or region-specific login flows). OpenClaw uses this to expose
+   * key + OAuth, or region-specific login flows). MerClaw uses this to expose
    * method-specific auth choices while keeping the provider id stable.
    */
   wizard?: ProviderPluginWizardSetup;
   run: (ctx: ProviderAuthContext) => Promise<ProviderAuthResult>;
   runNonInteractive?: (
     ctx: ProviderAuthMethodNonInteractiveContext,
-  ) => Promise<OpenClawConfig | null>;
+  ) => Promise<MerClawConfig | null>;
 };
 
 export type ProviderCatalogOrder = "simple" | "profile" | "paired" | "late";
 
 export type ProviderCatalogContext = {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
@@ -504,7 +504,7 @@ export type ProviderRuntimeProviderConfig = {
  * belong in `prepareDynamicModel`.
  */
 export type ProviderResolveDynamicModelContext = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   provider: string;
@@ -525,7 +525,7 @@ export type ProviderResolveDynamicModelContext = {
 export type ProviderPrepareDynamicModelContext = ProviderResolveDynamicModelContext;
 
 export type ProviderPreferRuntimeResolvedModelContext = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   provider: string;
@@ -535,12 +535,12 @@ export type ProviderPreferRuntimeResolvedModelContext = {
 /**
  * Last-chance rewrite hook for provider-owned transport normalization.
  *
- * Runs after OpenClaw resolves an explicit/discovered/dynamic model and before
+ * Runs after MerClaw resolves an explicit/discovered/dynamic model and before
  * the embedded runner uses it. Typical uses: swap API ids, fix base URLs, or
  * patch provider-specific compat bits.
  */
 export type ProviderNormalizeResolvedModelContext = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   provider: string;
@@ -573,7 +573,7 @@ export type {
  * plugin-owned transport family.
  */
 export type ProviderNormalizeTransportContext = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   workspaceDir?: string;
   provider: string;
   api?: string | null;
@@ -587,7 +587,7 @@ export type ProviderNormalizeTransportContext = {
  * for the request.
  */
 export type ProviderPrepareRuntimeAuthContext = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
@@ -621,7 +621,7 @@ export type ProviderPreparedRuntimeAuth = {
  * snapshots often need a different credential source than live inference
  * requests, and they run outside the embedded runner.
  *
- * The helper methods cover the common OpenClaw auth resolution paths:
+ * The helper methods cover the common MerClaw auth resolution paths:
  *
  * - `resolveApiKeyFromConfigAndStore`: env/config/plain token/api_key profiles
  * - `resolveOAuthToken`: oauth/token profiles resolved through the auth store,
@@ -631,7 +631,7 @@ export type ProviderPreparedRuntimeAuth = {
  * token blob, read a legacy credential file, or pick between aliases).
  */
 export type ProviderResolveUsageAuthContext = {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
@@ -663,7 +663,7 @@ export type ProviderResolvedUsageAuth = {
  * owns the provider-specific HTTP request + response normalization.
  */
 export type ProviderFetchUsageSnapshotContext = {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
@@ -677,26 +677,26 @@ export type ProviderFetchUsageSnapshotContext = {
 /**
  * Provider-owned auth-doctor hint input.
  *
- * Called when OAuth refresh fails and OpenClaw wants a provider-specific repair
+ * Called when OAuth refresh fails and MerClaw wants a provider-specific repair
  * hint to append to the generic re-auth message. Use this for legacy profile-id
  * migrations or other provider-owned auth-store cleanup guidance.
  */
 export type ProviderAuthDoctorHintContext = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   store: AuthProfileStore;
   provider: string;
   profileId?: string;
 };
 
 /**
- * Provider-owned extra-param normalization before OpenClaw builds its generic
+ * Provider-owned extra-param normalization before MerClaw builds its generic
  * stream option wrapper.
  *
  * Use this to set provider defaults or rewrite provider-specific config keys
  * into the merged `extraParams` object. Return the full next extraParams object.
  */
 export type ProviderPrepareExtraParamsContext = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   provider: string;
@@ -724,7 +724,7 @@ export type ProviderResolvePromptOverlayContext = ProviderSystemPromptContributi
 };
 
 export type ProviderFollowupFallbackRouteContext = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   provider: string;
@@ -742,7 +742,7 @@ export type ProviderFollowupFallbackRouteResult = {
 };
 
 export type ProviderResolveAuthProfileIdContext = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   provider: string;
@@ -763,7 +763,7 @@ export type ProviderReasoningOutputMode = "native" | "tagged";
  * @deprecated Legacy static provider capability bag.
  *
  * Core replay/runtime ownership now lives on explicit provider hooks such as
- * `buildReplayPolicy`, `normalizeToolSchemas`, and `wrapStreamFn`. OpenClaw no
+ * `buildReplayPolicy`, `normalizeToolSchemas`, and `wrapStreamFn`. MerClaw no
  * longer reads this bag at runtime, but the field remains typed so existing
  * third-party plugins do not fail to compile immediately.
  */
@@ -802,7 +802,7 @@ export type ProviderReplayPolicy = {
  * behavior and should stay with the provider plugin instead of core tables.
  */
 export type ProviderReplayPolicyContext = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
@@ -879,7 +879,7 @@ export type ProviderReasoningOutputModeContext = ProviderReplayPolicyContext;
  * as a wrapper around `streamSimple`).
  */
 export type ProviderCreateStreamFnContext = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   provider: string;
@@ -888,7 +888,7 @@ export type ProviderCreateStreamFnContext = {
 };
 
 /**
- * Provider-owned stream wrapper hook after OpenClaw applies its generic
+ * Provider-owned stream wrapper hook after MerClaw applies its generic
  * transport-independent wrappers.
  *
  * Use this for provider-specific payload/header/model mutations that still run
@@ -988,7 +988,7 @@ export type PluginEmbeddingProvider = {
  * plugin instead of the core memory switchboard.
  */
 export type ProviderCreateEmbeddingProviderContext = {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   provider: string;
@@ -1009,7 +1009,7 @@ export type ProviderCreateEmbeddingProviderContext = {
 /**
  * Provider-owned prompt-cache eligibility.
  *
- * Return `true` or `false` to override OpenClaw's built-in provider cache TTL
+ * Return `true` or `false` to override MerClaw's built-in provider cache TTL
  * detection for this provider. Return `undefined` to fall back to core rules.
  */
 export type ProviderCacheTtlEligibilityContext = {
@@ -1021,12 +1021,12 @@ export type ProviderCacheTtlEligibilityContext = {
 /**
  * Provider-owned missing-auth message override.
  *
- * Runs only after OpenClaw exhausts normal env/profile/config auth resolution
+ * Runs only after MerClaw exhausts normal env/profile/config auth resolution
  * for the requested provider. Return a custom message to replace the generic
  * "No API key found" error.
  */
 export type ProviderBuildMissingAuthMessageContext = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
@@ -1038,11 +1038,11 @@ export type ProviderBuildMissingAuthMessageContext = {
  * Provider-owned unknown-model hint override.
  *
  * Runs after catalog/runtime lookup misses for the requested provider. Return a
- * hint suffix that OpenClaw should append to the generic `Unknown model`
+ * hint suffix that MerClaw should append to the generic `Unknown model`
  * error.
  */
 export type ProviderBuildUnknownModelHintContext = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
@@ -1058,7 +1058,7 @@ export type ProviderBuildUnknownModelHintContext = {
  * hooks are no longer called by model resolution.
  */
 export type ProviderBuiltInModelSuppressionContext = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
@@ -1092,13 +1092,13 @@ export type ProviderModernModelPolicyContext = {
 /**
  * Final catalog augmentation hook.
  *
- * Runs after OpenClaw loads the discovered model catalog and merges configured
+ * Runs after MerClaw loads the discovered model catalog and merges configured
  * opt-in providers. Use this for forward-compat rows or vendor-owned synthetic
  * entries that should appear in `models list` and model pickers even when the
  * upstream registry has not caught up yet.
  */
 export type ProviderAugmentModelCatalogContext = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
@@ -1185,7 +1185,7 @@ export type ProviderOAuthProfileIdRepair = {
   /**
    * Legacy OAuth profile id to migrate away from.
    *
-   * When omitted, OpenClaw falls back to `<provider>:default`.
+   * When omitted, MerClaw falls back to `<provider>:default`.
    */
   legacyProfileId?: string;
   /**
@@ -1197,7 +1197,7 @@ export type ProviderOAuthProfileIdRepair = {
 };
 
 export type ProviderModelSelectedContext = {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   model: string;
   prompter: WizardPrompter;
   agentDir?: string;
@@ -1205,14 +1205,14 @@ export type ProviderModelSelectedContext = {
 };
 
 export type ProviderDeferSyntheticProfileAuthContext = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   provider: string;
   providerConfig?: ModelProviderConfig;
   resolvedApiKey?: string;
 };
 
 export type ProviderSystemPromptContributionContext = {
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentDir?: string;
   workspaceDir?: string;
   provider: string;
@@ -1311,7 +1311,7 @@ export type ProviderPlugin = {
   /**
    * Optional async prefetch for dynamic model resolution.
    *
-   * OpenClaw calls this only from async model resolution paths. After it
+   * MerClaw calls this only from async model resolution paths. After it
    * completes, `resolveDynamicModel` is called again.
    */
   prepareDynamicModel?: (ctx: ProviderPrepareDynamicModelContext) => Promise<void>;
@@ -1388,7 +1388,7 @@ export type ProviderPlugin = {
   /**
    * Provider-owned replay-history sanitization.
    *
-   * Runs after OpenClaw performs generic transcript cleanup. Use this for
+   * Runs after MerClaw performs generic transcript cleanup. Use this for
    * provider-specific replay rewrites that should stay with the provider
    * plugin rather than in shared core compaction helpers.
    */
@@ -1408,7 +1408,7 @@ export type ProviderPlugin = {
   /**
    * Provider-owned tool-schema normalization.
    *
-   * Use this for transport-family schema cleanup before OpenClaw registers
+   * Use this for transport-family schema cleanup before MerClaw registers
    * tools with the embedded runner.
    */
   normalizeToolSchemas?: (
@@ -1460,7 +1460,7 @@ export type ProviderPlugin = {
    */
   createStreamFn?: (ctx: ProviderCreateStreamFnContext) => StreamFn | null | undefined;
   /**
-   * Provider-owned stream wrapper applied after generic OpenClaw wrappers.
+   * Provider-owned stream wrapper applied after generic MerClaw wrappers.
    *
    * Typical uses: provider attribution headers, request-body rewrites, or
    * provider-specific compat payload patches that do not justify a separate
@@ -1503,7 +1503,7 @@ export type ProviderPlugin = {
   /**
    * Runtime auth exchange hook.
    *
-   * Called after OpenClaw resolves the raw configured credential but before the
+   * Called after MerClaw resolves the raw configured credential but before the
    * runner stores it in runtime auth storage. This lets plugins exchange a
    * source credential (for example a GitHub token) into a short-lived runtime
    * token plus optional base URL override.
@@ -1561,7 +1561,7 @@ export type ProviderPlugin = {
    * Provider-owned missing-auth message override.
    *
    * Return a custom message when the provider wants a more specific recovery
-   * hint than OpenClaw's generic auth-store guidance.
+   * hint than MerClaw's generic auth-store guidance.
    */
   buildMissingAuthMessage?: (
     ctx: ProviderBuildMissingAuthMessageContext,
@@ -1570,7 +1570,7 @@ export type ProviderPlugin = {
    * Provider-owned unknown-model hint override.
    *
    * Return a suffix when the provider wants a more specific recovery hint than
-   * OpenClaw's generic `Unknown model` error after catalog/runtime lookup
+   * MerClaw's generic `Unknown model` error after catalog/runtime lookup
    * fails.
    */
   buildUnknownModelHint?: (ctx: ProviderBuildUnknownModelHintContext) => string | null | undefined;
@@ -1578,7 +1578,7 @@ export type ProviderPlugin = {
    * Provider-owned built-in model suppression.
    *
    * Return `{ suppress: true }` to hide a stale upstream row. Include
-   * `errorMessage` when OpenClaw should surface a provider-specific hint for
+   * `errorMessage` when MerClaw should surface a provider-specific hint for
    * direct model resolution failures.
    *
    * @deprecated Use manifest `modelCatalog.suppressions`. Runtime suppression
@@ -1595,7 +1595,7 @@ export type ProviderPlugin = {
    * compatibility during the migration window.
    *
    * Return extra rows to append to the final catalog after discovery/config
-   * merging. OpenClaw deduplicates by `provider/id`, so plugins only need to
+   * merging. MerClaw deduplicates by `provider/id`, so plugins only need to
    * describe the desired supplemental rows.
    */
   augmentModelCatalog?: (
@@ -1627,7 +1627,7 @@ export type ProviderPlugin = {
    * Provider-owned thinking level profile.
    *
    * Prefer this over the individual thinking capability hooks when a provider
-   * or model exposes a custom set of thinking levels. OpenClaw stores the
+   * or model exposes a custom set of thinking levels. MerClaw stores the
    * canonical `id`, shows `label` when provided, and downgrades stale stored
    * values by profile rank.
    */
@@ -1649,7 +1649,7 @@ export type ProviderPlugin = {
    * Provider-owned system-prompt contribution.
    *
    * Use this when a provider/model family needs cache-aware prompt tuning
-   * without replacing the full OpenClaw-owned system prompt.
+   * without replacing the full MerClaw-owned system prompt.
    */
   resolveSystemPromptContribution?: (
     ctx: ProviderSystemPromptContributionContext,
@@ -1657,7 +1657,7 @@ export type ProviderPlugin = {
   /**
    * Provider-owned GPT/model prompt overlay seam.
    *
-   * Runs after OpenClaw's built-in overlay is resolved and before the
+   * Runs after MerClaw's built-in overlay is resolved and before the
    * provider's regular system-prompt contribution is merged.
    */
   resolvePromptOverlay?: (
@@ -1666,7 +1666,7 @@ export type ProviderPlugin = {
   /**
    * Provider-owned fallback route override for model/profile failure handling.
    *
-   * Return undefined/null to keep OpenClaw's default fallback policy.
+   * Return undefined/null to keep MerClaw's default fallback policy.
    */
   followupFallbackRoute?: (
     ctx: ProviderFollowupFallbackRouteContext,
@@ -1682,7 +1682,7 @@ export type ProviderPlugin = {
    * Provider-owned final system-prompt transform.
    *
    * Use this sparingly when a provider transport needs small compatibility
-   * rewrites after OpenClaw has assembled the complete prompt. Return
+   * rewrites after MerClaw has assembled the complete prompt. Return
    * `undefined`/`null` to leave the prompt unchanged.
    */
   transformSystemPrompt?: (ctx: ProviderTransformSystemPromptContext) => string | null | undefined;
@@ -1690,7 +1690,7 @@ export type ProviderPlugin = {
    * Provider-owned bidirectional text replacements.
    *
    * `input` applies to system prompts and text message content before transport.
-   * `output` applies to assistant text deltas/final text before OpenClaw handles
+   * `output` applies to assistant text deltas/final text before MerClaw handles
    * its own control markers or channel delivery.
    */
   textTransforms?: PluginTextTransforms;
@@ -1702,7 +1702,7 @@ export type ProviderPlugin = {
    */
   applyConfigDefaults?: (
     ctx: ProviderApplyConfigDefaultsContext,
-  ) => OpenClawConfig | null | undefined;
+  ) => MerClawConfig | null | undefined;
   /**
    * Provider-owned "modern model" matcher used by live profile/smoke filters.
    *
@@ -1714,14 +1714,14 @@ export type ProviderPlugin = {
   /**
    * Provider-owned auth-profile API-key formatter.
    *
-   * OpenClaw uses this when a stored auth profile is already valid and needs to
+   * MerClaw uses this when a stored auth profile is already valid and needs to
    * be converted into the runtime `apiKey` string expected by the provider. Use
    * this for providers whose auth profile stores extra metadata alongside the
    * bearer token (for example Gemini CLI's `{ token, projectId }` payload).
    */
   formatApiKey?: (cred: AuthProfileCredential) => string;
   /**
-   * Legacy auth-profile ids that should be retired by `openclaw doctor`.
+   * Legacy auth-profile ids that should be retired by `merclaw doctor`.
    *
    * Use this when a provider plugin replaces an older core-managed profile id
    * and wants cleanup/migration messaging to live with the provider instead of
@@ -1729,7 +1729,7 @@ export type ProviderPlugin = {
    */
   deprecatedProfileIds?: string[];
   /**
-   * Legacy OAuth profile-id migrations that `openclaw doctor` should offer.
+   * Legacy OAuth profile-id migrations that `merclaw doctor` should offer.
    *
    * Use this when a provider moved from a legacy default OAuth profile id to a
    * newer identity-based id and wants doctor to own the config rewrite without
@@ -1739,7 +1739,7 @@ export type ProviderPlugin = {
   /**
    * Provider-owned OAuth refresh.
    *
-   * OpenClaw calls this before falling back to the shared `shared model runtime` OAuth
+   * MerClaw calls this before falling back to the shared `shared model runtime` OAuth
    * refreshers. Use it when the provider has a custom refresh endpoint, or when
    * the provider needs custom refresh-failure behavior that should stay out of
    * core auth-profile code.
@@ -1750,7 +1750,7 @@ export type ProviderPlugin = {
    *
    * Return a multiline repair hint when OAuth refresh fails and the provider
    * wants to steer users toward a specific auth-profile migration or recovery
-   * path. Return nothing to keep OpenClaw's generic error text.
+   * path. Return nothing to keep MerClaw's generic error text.
    */
   buildAuthDoctorHint?: (
     ctx: ProviderAuthDoctorHintContext,
@@ -1817,7 +1817,7 @@ export type ProviderPlugin = {
    *
    * Return true when a stored profile API key is only a provider-owned
    * synthetic placeholder and should yield to env/config-backed auth before
-   * OpenClaw falls back to that stored profile.
+   * MerClaw falls back to that stored profile.
    */
   shouldDeferSyntheticProfileAuth?: (
     ctx: ProviderDeferSyntheticProfileAuthContext,
@@ -1913,7 +1913,7 @@ export type ImageGenerationProviderPlugin = ImageGenerationProvider;
 export type VideoGenerationProviderPlugin = VideoGenerationProvider;
 export type MusicGenerationProviderPlugin = MusicGenerationProvider;
 
-export type OpenClawPluginGatewayMethod = {
+export type MerClawPluginGatewayMethod = {
   method: string;
   handler: GatewayRequestHandler;
 };
@@ -1925,9 +1925,9 @@ export type OpenClawPluginGatewayMethod = {
 export type PluginCommandDiagnosticsSession = {
   /** Stable host session key when available. */
   sessionKey?: string;
-  /** Ephemeral OpenClaw session id when available. */
+  /** Ephemeral MerClaw session id when available. */
   sessionId?: string;
-  /** Transcript file for this OpenClaw session when available. */
+  /** Transcript file for this MerClaw session when available. */
   sessionFile?: string;
   /** Embedded agent harness selected for this session. */
   agentHarnessId?: string;
@@ -1963,14 +1963,14 @@ export type PluginCommandContext = {
   sessionKey?: string;
   /** Ephemeral host session id for the active conversation when available. */
   sessionId?: string;
-  /** Transcript file for the active OpenClaw session when available. */
+  /** Transcript file for the active MerClaw session when available. */
   sessionFile?: string;
   /** Raw command arguments after the command name */
   args?: string;
   /** The full normalized command body */
   commandBody: string;
-  /** Current OpenClaw configuration */
-  config: OpenClawConfig;
+  /** Current MerClaw configuration */
+  config: MerClawConfig;
   /** Raw "From" value (channel-scoped id) */
   from?: string;
   /** Raw "To" value (channel-scoped id) */
@@ -2016,8 +2016,8 @@ export type PluginCommandHandler = (
  * Definition for a plugin-registered command.
  */
 export const AGENT_PROMPT_SURFACE_KINDS = [
-  "openclaw_main",
-  /** @deprecated Use openclaw_main. */
+  "merclaw_main",
+  /** @deprecated Use merclaw_main. */
   "pi_main",
   "codex_app_server",
   "cli_backend",
@@ -2034,7 +2034,7 @@ export type AgentPromptGuidanceEntry = {
 
 export type AgentPromptGuidance = string | AgentPromptGuidanceEntry;
 
-export type OpenClawPluginCommandDefinition = {
+export type MerClawPluginCommandDefinition = {
   /** Command name without leading slash (e.g., "tts") */
   name: string;
   /**
@@ -2095,28 +2095,28 @@ export type PluginInteractiveRegistration<
 
 export type PluginInteractiveHandlerRegistration = PluginInteractiveRegistration;
 
-export type OpenClawPluginHttpRouteAuth = "gateway" | "plugin";
-export type OpenClawPluginHttpRouteMatch = "exact" | "prefix";
-export type OpenClawPluginGatewayRuntimeScopeSurface = "write-default" | "trusted-operator";
+export type MerClawPluginHttpRouteAuth = "gateway" | "plugin";
+export type MerClawPluginHttpRouteMatch = "exact" | "prefix";
+export type MerClawPluginGatewayRuntimeScopeSurface = "write-default" | "trusted-operator";
 
-export type OpenClawPluginHttpRouteHandler = (
+export type MerClawPluginHttpRouteHandler = (
   req: IncomingMessage,
   res: ServerResponse,
 ) => Promise<boolean | void> | boolean | void;
 
-export type OpenClawPluginHttpRouteUpgradeHandler = (
+export type MerClawPluginHttpRouteUpgradeHandler = (
   req: IncomingMessage,
   socket: Duplex,
   head: Buffer,
 ) => Promise<boolean | void> | boolean | void;
 
-export type OpenClawPluginHttpRouteParams = {
+export type MerClawPluginHttpRouteParams = {
   path: string;
-  handler: OpenClawPluginHttpRouteHandler;
-  handleUpgrade?: OpenClawPluginHttpRouteUpgradeHandler;
-  auth: OpenClawPluginHttpRouteAuth;
-  match?: OpenClawPluginHttpRouteMatch;
-  gatewayRuntimeScopeSurface?: OpenClawPluginGatewayRuntimeScopeSurface;
+  handler: MerClawPluginHttpRouteHandler;
+  handleUpgrade?: MerClawPluginHttpRouteUpgradeHandler;
+  auth: MerClawPluginHttpRouteAuth;
+  match?: MerClawPluginHttpRouteMatch;
+  gatewayRuntimeScopeSurface?: MerClawPluginGatewayRuntimeScopeSurface;
   nodeCapability?: {
     surface: string;
     ttlMs?: number;
@@ -2124,66 +2124,66 @@ export type OpenClawPluginHttpRouteParams = {
   replaceExisting?: boolean;
 };
 
-export type OpenClawPluginHostedMediaResolver = (
+export type MerClawPluginHostedMediaResolver = (
   mediaUrl: string,
 ) => string | null | undefined | Promise<string | null | undefined>;
 
-export type OpenClawPluginCliContext = {
+export type MerClawPluginCliContext = {
   /**
    * Command object where this plugin should register its commands.
    *
-   * For root CLI registrations this is the root `openclaw` program. For nested
+   * For root CLI registrations this is the root `merclaw` program. For nested
    * registrations it is the resolved parent command from `parentPath`.
    */
   program: Command;
   parentPath: readonly string[];
-  config: OpenClawConfig;
+  config: MerClawConfig;
   workspaceDir?: string;
   logger: PluginLogger;
 };
 
-export type OpenClawPluginCliRegistrar = (ctx: OpenClawPluginCliContext) => void | Promise<void>;
+export type MerClawPluginCliRegistrar = (ctx: MerClawPluginCliContext) => void | Promise<void>;
 
 /**
  * Top-level CLI metadata for plugin-owned commands.
  *
  * Descriptors are the parse-time contract for lazy plugin CLI registration.
- * If you want OpenClaw to keep a plugin command lazy-loaded while still
+ * If you want MerClaw to keep a plugin command lazy-loaded while still
  * advertising it at the root CLI level, provide descriptors that cover every
  * top-level command root registered by that plugin CLI surface.
  */
-export type OpenClawPluginCliCommandDescriptor = {
+export type MerClawPluginCliCommandDescriptor = {
   name: string;
   description: string;
   hasSubcommands: boolean;
 };
 
-export type OpenClawPluginNodeCliFeatureOptions = {
-  /** Explicit node feature command names owned under `openclaw nodes`. */
+export type MerClawPluginNodeCliFeatureOptions = {
+  /** Explicit node feature command names owned under `merclaw nodes`. */
   commands?: string[];
   /**
    * Parse-time command descriptors for lazy node feature CLI registration.
    *
-   * Descriptors are registered under `openclaw nodes`, so a descriptor named
-   * `"camera"` exposes `openclaw nodes camera`.
+   * Descriptors are registered under `merclaw nodes`, so a descriptor named
+   * `"camera"` exposes `merclaw nodes camera`.
    */
-  descriptors?: OpenClawPluginCliCommandDescriptor[];
+  descriptors?: MerClawPluginCliCommandDescriptor[];
 };
 
-export type OpenClawPluginReloadRegistration = {
+export type MerClawPluginReloadRegistration = {
   restartPrefixes?: string[];
   hotPrefixes?: string[];
   noopPrefixes?: string[];
 };
 
-export type OpenClawPluginNodeHostCommand = {
+export type MerClawPluginNodeHostCommand = {
   command: string;
   cap?: string;
   dangerous?: boolean;
   handle: (paramsJSON?: string | null) => Promise<string>;
 };
 
-export type OpenClawPluginNodeInvokeTransportResult =
+export type MerClawPluginNodeInvokeTransportResult =
   | {
       ok: true;
       payload?: unknown;
@@ -2196,9 +2196,9 @@ export type OpenClawPluginNodeInvokeTransportResult =
       details?: Record<string, unknown>;
     };
 
-export type OpenClawPluginNodeInvokeApprovalDecision = "allow-once" | "allow-always" | "deny";
+export type MerClawPluginNodeInvokeApprovalDecision = "allow-once" | "allow-always" | "deny";
 
-export type OpenClawPluginNodeInvokePolicyApprovalRuntime = {
+export type MerClawPluginNodeInvokePolicyApprovalRuntime = {
   request: (input: {
     title: string;
     description: string;
@@ -2210,17 +2210,17 @@ export type OpenClawPluginNodeInvokePolicyApprovalRuntime = {
     timeoutMs?: number;
   }) => Promise<{
     id?: string;
-    decision?: OpenClawPluginNodeInvokeApprovalDecision | null;
+    decision?: MerClawPluginNodeInvokeApprovalDecision | null;
   }>;
 };
 
-export type OpenClawPluginNodeInvokePolicyContext = {
+export type MerClawPluginNodeInvokePolicyContext = {
   nodeId: string;
   command: string;
   params: unknown;
   timeoutMs?: number;
   idempotencyKey?: string;
-  config: OpenClawConfig;
+  config: MerClawConfig;
   pluginConfig?: Record<string, unknown>;
   node?: {
     nodeId: string;
@@ -2233,15 +2233,15 @@ export type OpenClawPluginNodeInvokePolicyContext = {
     connId?: string;
     scopes?: string[];
   } | null;
-  approvals?: OpenClawPluginNodeInvokePolicyApprovalRuntime;
+  approvals?: MerClawPluginNodeInvokePolicyApprovalRuntime;
   invokeNode: (input?: {
     params?: unknown;
     timeoutMs?: number;
     idempotencyKey?: string;
-  }) => Promise<OpenClawPluginNodeInvokeTransportResult>;
+  }) => Promise<MerClawPluginNodeInvokeTransportResult>;
 };
 
-export type OpenClawPluginNodeInvokePolicyResult =
+export type MerClawPluginNodeInvokePolicyResult =
   | {
       ok: true;
       payload?: unknown;
@@ -2255,7 +2255,7 @@ export type OpenClawPluginNodeInvokePolicyResult =
       unavailable?: boolean;
     };
 
-export type OpenClawPluginNodeInvokePolicy = {
+export type MerClawPluginNodeInvokePolicy = {
   commands: string[];
   /**
    * Platforms where these node-handled commands should be allowlisted by default.
@@ -2273,23 +2273,23 @@ export type OpenClawPluginNodeInvokePolicy = {
    */
   foregroundRestrictedOnIos?: boolean;
   handle: (
-    ctx: OpenClawPluginNodeInvokePolicyContext,
-  ) => Promise<OpenClawPluginNodeInvokePolicyResult> | OpenClawPluginNodeInvokePolicyResult;
+    ctx: MerClawPluginNodeInvokePolicyContext,
+  ) => Promise<MerClawPluginNodeInvokePolicyResult> | MerClawPluginNodeInvokePolicyResult;
 };
 
-export type OpenClawPluginSecurityAuditContext = {
-  config: OpenClawConfig;
-  sourceConfig: OpenClawConfig;
+export type MerClawPluginSecurityAuditContext = {
+  config: MerClawConfig;
+  sourceConfig: MerClawConfig;
   env: NodeJS.ProcessEnv;
   stateDir: string;
   configPath: string;
 };
 
-export type OpenClawPluginSecurityAuditCollector = (
-  ctx: OpenClawPluginSecurityAuditContext,
+export type MerClawPluginSecurityAuditCollector = (
+  ctx: MerClawPluginSecurityAuditContext,
 ) => SecurityAuditFinding[] | Promise<SecurityAuditFinding[]>;
 
-export type OpenClawGatewayDiscoveryAdvertiseContext = {
+export type MerClawGatewayDiscoveryAdvertiseContext = {
   machineDisplayName: string;
   gatewayPort: number;
   gatewayTlsEnabled: boolean;
@@ -2302,16 +2302,16 @@ export type OpenClawGatewayDiscoveryAdvertiseContext = {
   minimal: boolean;
 };
 
-export type OpenClawGatewayDiscoveryService = {
+export type MerClawGatewayDiscoveryService = {
   id: string;
   advertise: (
-    ctx: OpenClawGatewayDiscoveryAdvertiseContext,
+    ctx: MerClawGatewayDiscoveryAdvertiseContext,
   ) => void | Promise<void | { stop?: () => void | Promise<void> }>;
 };
 
 /** Context passed to long-lived plugin services. */
-export type OpenClawPluginServiceContext = {
-  config: OpenClawConfig;
+export type MerClawPluginServiceContext = {
+  config: MerClawConfig;
   workspaceDir?: string;
   stateDir: string;
   logger: PluginLogger;
@@ -2332,38 +2332,38 @@ export type OpenClawPluginServiceContext = {
 };
 
 /** Background service registered by a plugin during `register(api)`. */
-export type OpenClawPluginService = {
+export type MerClawPluginService = {
   id: string;
-  start: (ctx: OpenClawPluginServiceContext) => void | Promise<void>;
-  stop?: (ctx: OpenClawPluginServiceContext) => void | Promise<void>;
+  start: (ctx: MerClawPluginServiceContext) => void | Promise<void>;
+  stop?: (ctx: MerClawPluginServiceContext) => void | Promise<void>;
 };
 
-export type OpenClawPluginChannelRegistration = {
+export type MerClawPluginChannelRegistration = {
   plugin: ChannelPlugin;
 };
 
 /** Module-level plugin definition loaded from a native plugin entry file. */
-export type OpenClawPluginDefinition = {
+export type MerClawPluginDefinition = {
   id?: string;
   name?: string;
   description?: string;
   version?: string;
   /**
-   * @deprecated Declare exclusive plugin kind in `openclaw.plugin.json` via
+   * @deprecated Declare exclusive plugin kind in `merclaw.plugin.json` via
    * manifest `kind`. Runtime-exported `kind` is kept as a compatibility
    * fallback for older plugins and may require loading plugin runtime on
    * metadata-only command paths.
    */
   kind?: PluginKind | PluginKind[];
-  configSchema?: OpenClawPluginConfigSchema;
-  reload?: OpenClawPluginReloadRegistration;
-  nodeHostCommands?: OpenClawPluginNodeHostCommand[];
-  securityAuditCollectors?: OpenClawPluginSecurityAuditCollector[];
-  register?: (api: OpenClawPluginApi) => void;
-  activate?: (api: OpenClawPluginApi) => void;
+  configSchema?: MerClawPluginConfigSchema;
+  reload?: MerClawPluginReloadRegistration;
+  nodeHostCommands?: MerClawPluginNodeHostCommand[];
+  securityAuditCollectors?: MerClawPluginSecurityAuditCollector[];
+  register?: (api: MerClawPluginApi) => void;
+  activate?: (api: MerClawPluginApi) => void;
 };
 
-export type OpenClawPluginModule = OpenClawPluginDefinition | ((api: OpenClawPluginApi) => void);
+export type MerClawPluginModule = MerClawPluginDefinition | ((api: MerClawPluginApi) => void);
 
 /**
  * Public label exposed to plugin `register(api)` calls.
@@ -2387,9 +2387,9 @@ export type PluginRegistrationMode =
   | "setup-runtime"
   | "cli-metadata";
 
-export type PluginConfigMigration = (config: OpenClawConfig) =>
+export type PluginConfigMigration = (config: MerClawConfig) =>
   | {
-      config: OpenClawConfig;
+      config: MerClawConfig;
       changes: string[];
     }
   | null
@@ -2475,7 +2475,7 @@ export type MigrationProviderPreparation = {
 };
 
 export type MigrationProviderContext = {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   runtime?: PluginRuntime;
   logger: PluginLogger;
   stateDir: string;
@@ -2488,7 +2488,7 @@ export type MigrationProviderContext = {
   signal?: AbortSignal;
 };
 
-/** Migration source implemented by a plugin and orchestrated by `openclaw migrate`. */
+/** Migration source implemented by a plugin and orchestrated by `merclaw migrate`. */
 export type MigrationProviderPlugin = {
   id: string;
   label: string;
@@ -2505,7 +2505,7 @@ export type MigrationProviderPlugin = {
 };
 
 export type PluginSetupAutoEnableContext = {
-  config: OpenClawConfig;
+  config: MerClawConfig;
   env: NodeJS.ProcessEnv;
 };
 
@@ -2513,12 +2513,12 @@ export type PluginSetupAutoEnableProbe = (
   ctx: PluginSetupAutoEnableContext,
 ) => string | string[] | null | undefined;
 
-export type OpenClawPluginSessionStateApi = {
+export type MerClawPluginSessionStateApi = {
   /** Register plugin-owned session state projected into Gateway session rows. */
   registerSessionExtension: (extension: PluginSessionExtensionRegistration) => void;
 };
 
-export type OpenClawPluginSessionWorkflowApi = {
+export type MerClawPluginSessionWorkflowApi = {
   /** Queue one plugin-owned context injection for the next agent turn in a session. */
   enqueueNextTurnInjection: (
     injection: PluginNextTurnInjection,
@@ -2548,31 +2548,31 @@ export type OpenClawPluginSessionWorkflowApi = {
   ) => Promise<PluginSessionTurnUnscheduleByTagResult>;
 };
 
-export type OpenClawPluginSessionControlsApi = {
+export type MerClawPluginSessionControlsApi = {
   /** Register a typed session action that clients can dispatch through the Gateway. */
   registerSessionAction: (action: PluginSessionActionRegistration) => void;
   /** Register a generic Control UI contribution descriptor. */
   registerControlUiDescriptor: (descriptor: PluginControlUiDescriptor) => void;
 };
 
-export type OpenClawPluginSessionApi = {
-  state: OpenClawPluginSessionStateApi;
-  workflow: OpenClawPluginSessionWorkflowApi;
-  controls: OpenClawPluginSessionControlsApi;
+export type MerClawPluginSessionApi = {
+  state: MerClawPluginSessionStateApi;
+  workflow: MerClawPluginSessionWorkflowApi;
+  controls: MerClawPluginSessionControlsApi;
 };
 
-export type OpenClawPluginAgentEventsApi = {
+export type MerClawPluginAgentEventsApi = {
   /** Subscribe to sanitized agent events through the host-owned plugin lifecycle. */
   registerAgentEventSubscription: (subscription: PluginAgentEventSubscriptionRegistration) => void;
   /** Emit a host-routed, plugin-attributed event for workflow/UI subscribers. */
   emitAgentEvent: (params: PluginAgentEventEmitParams) => PluginAgentEventEmitResult;
 };
 
-export type OpenClawPluginAgentApi = {
-  events: OpenClawPluginAgentEventsApi;
+export type MerClawPluginAgentApi = {
+  events: MerClawPluginAgentEventsApi;
 };
 
-export type OpenClawPluginRunContextApi = {
+export type MerClawPluginRunContextApi = {
   /** Store namespaced, JSON-compatible data for the active run. Cleared on run end/error. */
   setRunContext: (patch: PluginRunContextPatch) => boolean;
   /** Read namespaced plugin data for a run. */
@@ -2581,13 +2581,13 @@ export type OpenClawPluginRunContextApi = {
   clearRunContext: (params: { runId: string; namespace?: string }) => void;
 };
 
-export type OpenClawPluginLifecycleApi = {
+export type MerClawPluginLifecycleApi = {
   /** Register cleanup hooks for plugin-owned host state and background work. */
   registerRuntimeLifecycle: (lifecycle: PluginRuntimeLifecycleRegistration) => void;
 };
 
 /** Main registration API injected into native plugin entry files. */
-export type OpenClawPluginApi = {
+export type MerClawPluginApi = {
   id: string;
   name: string;
   version?: string;
@@ -2595,7 +2595,7 @@ export type OpenClawPluginApi = {
   source: string;
   rootDir?: string;
   registrationMode: PluginRegistrationMode;
-  config: OpenClawConfig;
+  config: MerClawConfig;
   pluginConfig?: Record<string, unknown>;
   /**
    * In-process runtime helpers for trusted native plugins.
@@ -2609,27 +2609,27 @@ export type OpenClawPluginApi = {
    * Grouped facade over the existing flat session-related plugin API.
    * Flat methods remain supported for compatibility.
    */
-  session: OpenClawPluginSessionApi;
+  session: MerClawPluginSessionApi;
   /** Grouped facade for agent-event workflow seams. */
-  agent: OpenClawPluginAgentApi;
+  agent: MerClawPluginAgentApi;
   /** Grouped facade for run-scoped plugin scratch state. */
-  runContext: OpenClawPluginRunContextApi;
+  runContext: MerClawPluginRunContextApi;
   /** Grouped facade for plugin-owned lifecycle cleanup hooks. */
-  lifecycle: OpenClawPluginLifecycleApi;
+  lifecycle: MerClawPluginLifecycleApi;
   registerTool: (
-    tool: AnyAgentTool | OpenClawPluginToolFactory,
-    opts?: OpenClawPluginToolOptions,
+    tool: AnyAgentTool | MerClawPluginToolFactory,
+    opts?: MerClawPluginToolOptions,
   ) => void;
   registerHook: (
     events: string | string[],
     handler: InternalHookHandler,
-    opts?: OpenClawPluginHookOptions,
+    opts?: MerClawPluginHookOptions,
   ) => void;
-  registerHttpRoute: (params: OpenClawPluginHttpRouteParams) => void;
+  registerHttpRoute: (params: MerClawPluginHttpRouteParams) => void;
   /** Register a plugin-owned resolver for browser-style hosted media URLs. */
-  registerHostedMediaResolver: (resolver: OpenClawPluginHostedMediaResolver) => void;
+  registerHostedMediaResolver: (resolver: MerClawPluginHostedMediaResolver) => void;
   /** Register a native messaging channel plugin (channel capability). */
-  registerChannel: (registration: OpenClawPluginChannelRegistration | ChannelPlugin) => void;
+  registerChannel: (registration: MerClawPluginChannelRegistration | ChannelPlugin) => void;
   /**
    * Register a gateway RPC method for this plugin.
    *
@@ -2643,7 +2643,7 @@ export type OpenClawPluginApi = {
     opts?: { scope?: OperatorScope },
   ) => void;
   registerCli: (
-    registrar: OpenClawPluginCliRegistrar,
+    registrar: MerClawPluginCliRegistrar,
     opts?: {
       /** Parent command path for nested command groups, for example `["nodes"]`. */
       parentPath?: string[];
@@ -2652,37 +2652,37 @@ export type OpenClawPluginApi = {
       /**
        * Parse-time command descriptors for lazy CLI registration.
        *
-       * When descriptors cover every command exposed at `parentPath`, OpenClaw
+       * When descriptors cover every command exposed at `parentPath`, MerClaw
        * can keep the plugin registrar lazy. Command-only registrations stay on
        * the eager compatibility path.
        */
-      descriptors?: OpenClawPluginCliCommandDescriptor[];
+      descriptors?: MerClawPluginCliCommandDescriptor[];
     },
   ) => void;
   /**
-   * Register a plugin-owned node feature command group under `openclaw nodes`.
+   * Register a plugin-owned node feature command group under `merclaw nodes`.
    *
    * This is equivalent to `registerCli(registrar, { parentPath: ["nodes"], ... })`
    * and is intended for paired-node capabilities such as camera, screen, or Canvas.
    */
   registerNodeCliFeature: (
-    registrar: OpenClawPluginCliRegistrar,
-    opts?: OpenClawPluginNodeCliFeatureOptions,
+    registrar: MerClawPluginCliRegistrar,
+    opts?: MerClawPluginNodeCliFeatureOptions,
   ) => void;
-  registerReload: (registration: OpenClawPluginReloadRegistration) => void;
-  registerNodeHostCommand: (command: OpenClawPluginNodeHostCommand) => void;
-  registerNodeInvokePolicy: (policy: OpenClawPluginNodeInvokePolicy) => void;
-  registerSecurityAuditCollector: (collector: OpenClawPluginSecurityAuditCollector) => void;
-  registerService: (service: OpenClawPluginService) => void;
+  registerReload: (registration: MerClawPluginReloadRegistration) => void;
+  registerNodeHostCommand: (command: MerClawPluginNodeHostCommand) => void;
+  registerNodeInvokePolicy: (policy: MerClawPluginNodeInvokePolicy) => void;
+  registerSecurityAuditCollector: (collector: MerClawPluginSecurityAuditCollector) => void;
+  registerService: (service: MerClawPluginService) => void;
   /** Register a local gateway discovery advertiser such as mDNS/Bonjour. */
-  registerGatewayDiscoveryService: (service: OpenClawGatewayDiscoveryService) => void;
+  registerGatewayDiscoveryService: (service: MerClawGatewayDiscoveryService) => void;
   /** Register a text-only CLI backend used by the local CLI runner. */
   registerCliBackend: (backend: CliBackendPlugin) => void;
   /** Register plugin-owned prompt/message compatibility text transforms. */
   registerTextTransforms: (transforms: PluginTextTransformRegistration) => void;
   /** Register a lightweight config migration that can run before plugin runtime loads. */
   registerConfigMigration: (migrate: PluginConfigMigration) => void;
-  /** Register an importer for `openclaw migrate` (migration capability). */
+  /** Register an importer for `merclaw migrate` (migration capability). */
   registerMigrationProvider: (provider: MigrationProviderPlugin) => void;
   /** Register a lightweight config probe that can auto-enable this plugin generically. */
   registerAutoEnableProbe: (probe: PluginSetupAutoEnableProbe) => void;
@@ -2723,7 +2723,7 @@ export type OpenClawPluginApi = {
    * Plugin commands are processed before built-in commands and before agent invocation.
    * Use this for simple state-toggling or status commands that don't need AI reasoning.
    */
-  registerCommand: (command: OpenClawPluginCommandDefinition) => void;
+  registerCommand: (command: MerClawPluginCommandDefinition) => void;
   /** Register a context engine implementation (exclusive slot - only one active at a time). */
   registerContextEngine: (
     id: string,

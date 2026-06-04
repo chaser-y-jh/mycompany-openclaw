@@ -35,7 +35,7 @@ describe("release-beta-smoke", () => {
   it("parses workflow run urls when gh includes them in dispatch output", () => {
     expect(
       parseWorkflowRunIdFromOutput(
-        "Dispatched: https://github.com/openclaw/openclaw/actions/runs/1234567890",
+        "Dispatched: https://github.com/merclaw/merclaw/actions/runs/1234567890",
       ),
     ).toBe("1234567890");
   });
@@ -76,7 +76,7 @@ describe("release-beta-smoke", () => {
       "",
       "### Release verification",
       "",
-      "- npm package: https://www.npmjs.com/package/openclaw/v/2026.5.20-beta.1",
+      "- npm package: https://www.npmjs.com/package/merclaw/v/2026.5.20-beta.1",
       "- npm Telegram beta E2E: not supplied",
       "",
       "### Assets",
@@ -87,7 +87,7 @@ describe("release-beta-smoke", () => {
 
     const merged = mergeTelegramProofIntoReleaseBody(
       body,
-      "- npm Telegram beta E2E: https://github.com/openclaw/openclaw/actions/runs/123",
+      "- npm Telegram beta E2E: https://github.com/merclaw/merclaw/actions/runs/123",
     );
 
     expect(merged).toContain("actions/runs/123");
@@ -101,7 +101,7 @@ describe("release-beta-smoke", () => {
       "",
       "### Release verification",
       "",
-      "- npm package: https://www.npmjs.com/package/openclaw/v/2026.5.20-beta.1",
+      "- npm package: https://www.npmjs.com/package/merclaw/v/2026.5.20-beta.1",
       "",
       "### Assets",
       "",
@@ -111,7 +111,7 @@ describe("release-beta-smoke", () => {
 
     const merged = mergeTelegramProofIntoReleaseBody(
       body,
-      "- npm Telegram beta E2E: https://github.com/openclaw/openclaw/actions/runs/123",
+      "- npm Telegram beta E2E: https://github.com/merclaw/merclaw/actions/runs/123",
     );
 
     expect(merged.indexOf("actions/runs/123")).toBeLessThan(merged.indexOf("### Assets"));
@@ -144,12 +144,12 @@ describe("release-beta-smoke", () => {
     const sleeps: number[] = [];
 
     await expect(
-      pollRun("openclaw/openclaw", "123", {
+      pollRun("merclaw/merclaw", "123", {
         now: () => now,
         pollIntervalMs: 400,
         readRun: () => ({
           conclusion: null,
-          html_url: "https://github.com/openclaw/openclaw/actions/runs/123",
+          html_url: "https://github.com/merclaw/merclaw/actions/runs/123",
           status: "queued",
           updated_at: "2026-05-28T12:00:00Z",
         }),
@@ -165,10 +165,10 @@ describe("release-beta-smoke", () => {
 
   it("returns when the Telegram workflow succeeds", async () => {
     await expect(
-      pollRun("openclaw/openclaw", "123", {
+      pollRun("merclaw/merclaw", "123", {
         readRun: () => ({
           conclusion: "success",
-          html_url: "https://github.com/openclaw/openclaw/actions/runs/123",
+          html_url: "https://github.com/merclaw/merclaw/actions/runs/123",
           status: "completed",
           updated_at: "2026-05-28T12:00:00Z",
         }),

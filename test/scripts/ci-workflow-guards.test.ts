@@ -147,8 +147,8 @@ describe("ci workflow guards", () => {
     const runStep = nodeTestJob.steps.find((step) => step.name === "Run Node test shard");
 
     expect(nodeTestJob["timeout-minutes"]).toBe(60);
-    expect(runStep.env.OPENCLAW_VITEST_NO_OUTPUT_TIMEOUT_MS).toBe("900000");
-    expect(runStep.env.OPENCLAW_TEST_PROJECTS_PARALLEL).toBe("2");
+    expect(runStep.env.MERCLAW_VITEST_NO_OUTPUT_TIMEOUT_MS).toBe("900000");
+    expect(runStep.env.MERCLAW_TEST_PROJECTS_PARALLEL).toBe("2");
   });
 
   it("uploads a CI timing summary after the run lanes finish", () => {
@@ -206,10 +206,10 @@ describe("ci workflow guards", () => {
   it("keeps push docs validation ClawHub-backed", () => {
     const workflow = readFileSync(".github/workflows/docs.yml", "utf8");
 
-    expect(workflow).toContain("repository: openclaw/clawhub");
+    expect(workflow).toContain("repository: merclaw/clawhub");
     expect(workflow).toContain("path: clawhub-source");
     expect(workflow).toContain(
-      "OPENCLAW_DOCS_SYNC_CLAWHUB_REPO: ${{ github.workspace }}/clawhub-source",
+      "MERCLAW_DOCS_SYNC_CLAWHUB_REPO: ${{ github.workspace }}/clawhub-source",
     );
   });
 

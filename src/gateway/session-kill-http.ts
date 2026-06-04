@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import {
   killControlledSubagentRun,
   killSubagentRunAdmin,
@@ -22,7 +22,7 @@ import {
 import { authorizeOperatorScopesForMethod } from "./method-scopes.js";
 import { loadSessionEntry } from "./session-utils.js";
 
-const REQUESTER_SESSION_KEY_HEADER = "x-openclaw-requester-session-key";
+const REQUESTER_SESSION_KEY_HEADER = "x-merclaw-requester-session-key";
 
 type SessionKeyPathResolution =
   | { matched: false }

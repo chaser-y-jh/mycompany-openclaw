@@ -1,11 +1,11 @@
-import { optionalStringEnum } from "openclaw/plugin-sdk/channel-actions";
-import type { OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-runtime";
+import { optionalStringEnum } from "merclaw/plugin-sdk/channel-actions";
+import type { MerClawPluginApi } from "merclaw/plugin-sdk/plugin-runtime";
 import {
   jsonResult,
   readNonNegativeIntegerParam,
   readPositiveIntegerParam,
   readStringParam,
-} from "openclaw/plugin-sdk/provider-web-search";
+} from "merclaw/plugin-sdk/provider-web-search";
 import { Type } from "typebox";
 import { runFirecrawlScrape } from "./firecrawl-client.js";
 
@@ -50,7 +50,7 @@ const FirecrawlScrapeToolSchema = Type.Object(
   { additionalProperties: false },
 );
 
-export function createFirecrawlScrapeTool(api: OpenClawPluginApi) {
+export function createFirecrawlScrapeTool(api: MerClawPluginApi) {
   return {
     name: "firecrawl_scrape",
     label: "Firecrawl Scrape",

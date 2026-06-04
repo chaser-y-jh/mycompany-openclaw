@@ -169,7 +169,7 @@ describe("withOperatorApprovalsGatewayClient", () => {
 
   it("omits approval runtime token for env loopback gateway URL overrides", async () => {
     bootstrapState.url = "ws://127.0.0.1:18789";
-    bootstrapState.urlSource = "env OPENCLAW_GATEWAY_URL";
+    bootstrapState.urlSource = "env MERCLAW_GATEWAY_URL";
 
     await withOperatorApprovalsGatewayClient(
       {

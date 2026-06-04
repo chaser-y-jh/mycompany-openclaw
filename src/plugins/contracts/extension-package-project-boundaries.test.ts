@@ -59,17 +59,17 @@ const MEMORY_HOST_SDK_EXPORTS = [
   "./status",
 ] as const;
 const MEMORY_HOST_SDK_ALLOWED_CORE_BRIDGE_FILES = [
-  "packages/memory-host-sdk/src/host/openclaw-runtime-auth.ts",
-  "packages/memory-host-sdk/src/host/openclaw-runtime-network.ts",
-  "packages/memory-host-sdk/src/host/openclaw-runtime.ts",
+  "packages/memory-host-sdk/src/host/merclaw-runtime-auth.ts",
+  "packages/memory-host-sdk/src/host/merclaw-runtime-network.ts",
+  "packages/memory-host-sdk/src/host/merclaw-runtime.ts",
 ] as const;
 const MEMORY_HOST_SDK_RUNTIME_ADAPTER_FILES = [
-  "packages/memory-host-sdk/src/host/openclaw-runtime-agent.ts",
-  "packages/memory-host-sdk/src/host/openclaw-runtime-cli.ts",
-  "packages/memory-host-sdk/src/host/openclaw-runtime-config.ts",
-  "packages/memory-host-sdk/src/host/openclaw-runtime-io.ts",
-  "packages/memory-host-sdk/src/host/openclaw-runtime-memory.ts",
-  "packages/memory-host-sdk/src/host/openclaw-runtime-session.ts",
+  "packages/memory-host-sdk/src/host/merclaw-runtime-agent.ts",
+  "packages/memory-host-sdk/src/host/merclaw-runtime-cli.ts",
+  "packages/memory-host-sdk/src/host/merclaw-runtime-config.ts",
+  "packages/memory-host-sdk/src/host/merclaw-runtime-io.ts",
+  "packages/memory-host-sdk/src/host/merclaw-runtime-memory.ts",
+  "packages/memory-host-sdk/src/host/merclaw-runtime-session.ts",
 ] as const;
 
 // oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- Test helper lets assertions ascribe JSON file shape.
@@ -123,10 +123,10 @@ function collectCoreReferenceFiles(relativeDir: string): string[] {
   });
 }
 
-function collectOpenClawRuntimeDirectImportFiles(relativeDir: string): string[] {
+function collectMerClawRuntimeDirectImportFiles(relativeDir: string): string[] {
   return collectCodeFiles(relativeDir).filter((file) => {
     const source = fs.readFileSync(resolve(REPO_ROOT, file), "utf8");
-    return source.includes('"./openclaw-runtime.js"');
+    return source.includes('"./merclaw-runtime.js"');
   });
 }
 
@@ -167,7 +167,7 @@ describe("opt-in extension package boundaries", () => {
       expect(tsconfig.exclude).toEqual([...EXTENSION_PACKAGE_BOUNDARY_EXCLUDE]);
 
       const packageJson = readExtensionPackageBoundaryPackageJson(extensionName, REPO_ROOT);
-      expect(packageJson.devDependencies?.["@openclaw/plugin-sdk"]).toBe("workspace:*");
+      expect(packageJson.devDependencies?.["@merclaw/plugin-sdk"]).toBe("workspace:*");
     }
   });
 
@@ -208,7 +208,7 @@ describe("opt-in extension package boundaries", () => {
     ]);
 
     const packageJson = readJsonFile<PackageJson>("packages/plugin-sdk/package.json");
-    expect(packageJson.name).toBe("@openclaw/plugin-sdk");
+    expect(packageJson.name).toBe("@merclaw/plugin-sdk");
     expect(packageJson.exports?.["./account-id"]?.types).toBe(
       "./dist/src/plugin-sdk/account-id.d.ts",
     );
@@ -299,7 +299,7 @@ describe("opt-in extension package boundaries", () => {
     const packageJson = readJsonFile<PackageJson>("packages/memory-host-sdk/package.json");
     const packageExports = packageJson.exports as unknown as Record<string, string>;
 
-    expect(packageJson.name).toBe("@openclaw/memory-host-sdk");
+    expect(packageJson.name).toBe("@merclaw/memory-host-sdk");
     expect(packageJson.version).toBe("0.0.0-private");
     expect(packageJson.private).toBe(true);
     expect(packageJson.type).toBe("module");
@@ -321,7 +321,7 @@ describe("opt-in extension package boundaries", () => {
     expect(collectCoreReferenceFiles("packages/memory-host-sdk/src")).toEqual([
       ...MEMORY_HOST_SDK_ALLOWED_CORE_BRIDGE_FILES,
     ]);
-    expect(collectOpenClawRuntimeDirectImportFiles("packages/memory-host-sdk/src")).toEqual([
+    expect(collectMerClawRuntimeDirectImportFiles("packages/memory-host-sdk/src")).toEqual([
       ...MEMORY_HOST_SDK_RUNTIME_ADAPTER_FILES,
     ]);
   });

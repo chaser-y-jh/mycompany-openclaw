@@ -28,7 +28,7 @@ describe("bench-cli-startup", () => {
   it("fails reports with no measured samples", () => {
     expect(
       testing.collectFailedSamples({
-        entry: "openclaw.mjs",
+        entry: "merclaw.mjs",
         cases: [
           {
             id: "version",
@@ -46,7 +46,7 @@ describe("bench-cli-startup", () => {
           },
         ],
       }),
-    ).toEqual(["openclaw.mjs version: no measured samples"]);
+    ).toEqual(["merclaw.mjs version: no measured samples"]);
   });
 
   it("fails reports with nonzero or signaled CLI samples", () => {
@@ -100,7 +100,7 @@ describe("bench-cli-startup", () => {
 
     expect(
       testing.collectFailedSamples({
-        entry: "openclaw.mjs",
+        entry: "merclaw.mjs",
         cases: [
           {
             id: "health",
@@ -135,7 +135,7 @@ describe("bench-cli-startup", () => {
 
     expect(
       testing.collectFailedSamples({
-        entry: "openclaw.mjs",
+        entry: "merclaw.mjs",
         cases: [
           {
             id: "health",
@@ -156,7 +156,7 @@ describe("bench-cli-startup", () => {
         ],
       }),
     ).toEqual([
-      "openclaw.mjs health sample 1: exited with expected code 1 but output did not match expected clean-state markers (Gateway target:)",
+      "merclaw.mjs health sample 1: exited with expected code 1 but output did not match expected clean-state markers (Gateway target:)",
     ]);
   });
 
@@ -188,7 +188,7 @@ describe("bench-cli-startup", () => {
 
   it("writes a config fixture for config get benchmarks", () => {
     expect(
-      withEnv({ OPENCLAW_GATEWAY_PORT: undefined }, () =>
+      withEnv({ MERCLAW_GATEWAY_PORT: undefined }, () =>
         testing.buildConfigFixture({
           id: "configGetGatewayPort",
           name: "config get gateway.port",
@@ -205,7 +205,7 @@ describe("bench-cli-startup", () => {
       },
     });
     expect(
-      withEnv({ OPENCLAW_GATEWAY_PORT: undefined }, () =>
+      withEnv({ MERCLAW_GATEWAY_PORT: undefined }, () =>
         testing.buildConfigFixture({
           id: "gatewayHealthJson",
           name: "gateway health --json",
@@ -231,7 +231,7 @@ describe("bench-cli-startup", () => {
     expect(testing.parseGatewayPortEnv("[::1]")).toBe(32123);
 
     expect(
-      withEnv({ OPENCLAW_GATEWAY_PORT: "45678" }, () =>
+      withEnv({ MERCLAW_GATEWAY_PORT: "45678" }, () =>
         testing.buildConfigFixture({
           id: "gatewayHealthJson",
           name: "gateway health --json",
@@ -243,7 +243,7 @@ describe("bench-cli-startup", () => {
 
     for (const invalid of ["45678abc", "127.0.0.1:45678abc"]) {
       expect(() =>
-        withEnv({ OPENCLAW_GATEWAY_PORT: invalid }, () =>
+        withEnv({ MERCLAW_GATEWAY_PORT: invalid }, () =>
           testing.buildConfigFixture({
             id: "gatewayHealthJson",
             name: "gateway health --json",
@@ -251,7 +251,7 @@ describe("bench-cli-startup", () => {
             presets: ["real"],
           }),
         ),
-      ).toThrow("OPENCLAW_GATEWAY_PORT must be an integer >= 1");
+      ).toThrow("MERCLAW_GATEWAY_PORT must be an integer >= 1");
     }
   });
 });

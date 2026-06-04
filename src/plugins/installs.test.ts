@@ -45,17 +45,17 @@ describe("buildNpmResolutionInstallFields", () => {
     {
       name: "maps npm resolution metadata into install record fields",
       input: {
-        name: "@openclaw/demo",
+        name: "@merclaw/demo",
         version: "1.2.3",
-        resolvedSpec: "@openclaw/demo@1.2.3",
+        resolvedSpec: "@merclaw/demo@1.2.3",
         integrity: "sha512-abc",
         shasum: "deadbeef",
         resolvedAt: "2026-02-22T00:00:00.000Z",
       },
       expected: createExpectedResolutionFields({
-        resolvedName: "@openclaw/demo",
+        resolvedName: "@merclaw/demo",
         resolvedVersion: "1.2.3",
-        resolvedSpec: "@openclaw/demo@1.2.3",
+        resolvedSpec: "@merclaw/demo@1.2.3",
         integrity: "sha512-abc",
         shasum: "deadbeef",
         resolvedAt: "2026-02-22T00:00:00.000Z",
@@ -69,10 +69,10 @@ describe("buildNpmResolutionInstallFields", () => {
     {
       name: "keeps missing partial resolution fields undefined",
       input: {
-        name: "@openclaw/demo",
+        name: "@merclaw/demo",
       },
       expected: createExpectedResolutionFields({
-        resolvedName: "@openclaw/demo",
+        resolvedName: "@merclaw/demo",
       }),
     },
   ] as const)("$name", expectResolutionFieldsCase);

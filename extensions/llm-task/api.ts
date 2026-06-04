@@ -1,6 +1,6 @@
-export { resolvePreferredOpenClawTmpDir, withTempWorkspace } from "./src/runtime-api.js";
+export { resolvePreferredMerClawTmpDir, withTempWorkspace } from "./src/runtime-api.js";
 export {
   definePluginEntry,
   type AnyAgentTool,
-  type OpenClawPluginApi,
-} from "openclaw/plugin-sdk/plugin-entry";
+  type MerClawPluginApi,
+} from "merclaw/plugin-sdk/plugin-entry";

@@ -1,17 +1,17 @@
 import path from "node:path";
-import type { BaseProbeResult } from "openclaw/plugin-sdk/channel-contract";
+import type { BaseProbeResult } from "merclaw/plugin-sdk/channel-contract";
 import {
   asDateTimestampMs,
   resolveExpiresAtMsFromDurationMs,
-} from "openclaw/plugin-sdk/number-runtime";
-import { runCommandWithTimeout } from "openclaw/plugin-sdk/process-runtime";
-import { getRuntimeConfig } from "openclaw/plugin-sdk/runtime-config-snapshot";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
-import { detectBinary } from "openclaw/plugin-sdk/setup";
+} from "merclaw/plugin-sdk/number-runtime";
+import { runCommandWithTimeout } from "merclaw/plugin-sdk/process-runtime";
+import { getRuntimeConfig } from "merclaw/plugin-sdk/runtime-config-snapshot";
+import type { RuntimeEnv } from "merclaw/plugin-sdk/runtime-env";
+import { detectBinary } from "merclaw/plugin-sdk/setup";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeStringEntries,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/string-coerce-runtime";
 import { createIMessageRpcClient } from "./client.js";
 import { DEFAULT_IMESSAGE_PROBE_TIMEOUT_MS } from "./constants.js";
 import {
@@ -104,7 +104,7 @@ export function resolveIMessageNonMacHostError(
   if (platform === "darwin" || !isDefaultLocalIMessageCliPath(cliPath)) {
     return undefined;
   }
-  return "iMessage via the default imsg CLI must run on macOS. Run OpenClaw on the signed-in Messages Mac, or set channels.imessage.cliPath to an SSH wrapper that runs imsg on that Mac.";
+  return "iMessage via the default imsg CLI must run on macOS. Run MerClaw on the signed-in Messages Mac, or set channels.imessage.cliPath to an SSH wrapper that runs imsg on that Mac.";
 }
 
 async function probeRpcSupport(cliPath: string, timeoutMs: number): Promise<RpcSupportResult> {
@@ -184,7 +184,7 @@ function rpcMethodsFromPayload(payload: Record<string, unknown>): string[] {
 }
 
 // Probe whether the installed imsg CLI accepts `--file` on the `send-rich`
-// subcommand (added by openclaw/imsg#114, which lets a single bridge call
+// subcommand (added by merclaw/imsg#114, which lets a single bridge call
 // combine `--reply-to` and an attachment). We grep the help output rather
 // than trying a real send so the probe is side-effect-free, and we resolve
 // to `false` on any failure (timeout, non-zero exit, missing binary) so
@@ -237,7 +237,7 @@ export async function probeIMessagePrivateApi(
     const advancedFeatures = payload?.advanced_features === true;
     const v2Ready = payload?.v2_ready === true;
     // Probe `imsg send-rich --help` for the `--file` flag added by
-    // openclaw/imsg#114. We do this even when the bridge is unavailable
+    // merclaw/imsg#114. We do this even when the bridge is unavailable
     // because the help output ships with the CLI binary itself, and the
     // result is what gates whether reply-with-attachment can route through
     // the threaded send path. Treat any failure as "not supported" so

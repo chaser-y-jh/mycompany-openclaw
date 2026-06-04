@@ -1,4 +1,4 @@
-import type { ChannelConfigUiHint } from "openclaw/plugin-sdk/channel-core";
+import type { ChannelConfigUiHint } from "merclaw/plugin-sdk/channel-core";
 
 export const telegramChannelConfigUiHints = {
   "": {
@@ -91,7 +91,7 @@ export const telegramChannelConfigUiHints = {
   },
   "streaming.progress.labels": {
     label: "Telegram Progress Label Pool",
-    help: 'Candidate labels for streaming.progress.label="auto". Leave unset to use OpenClaw built-in progress labels.',
+    help: 'Candidate labels for streaming.progress.label="auto". Leave unset to use MerClaw built-in progress labels.',
   },
   "streaming.progress.maxLines": {
     label: "Telegram Progress Max Lines",
@@ -175,7 +175,7 @@ export const telegramChannelConfigUiHints = {
   },
   execApprovals: {
     label: "Telegram Exec Approvals",
-    help: "Telegram-native exec approval routing and approver authorization. When unset, OpenClaw auto-enables DM-first native approvals if approvers can be resolved for the selected bot account.",
+    help: "Telegram-native exec approval routing and approver authorization. When unset, MerClaw auto-enables DM-first native approvals if approvers can be resolved for the selected bot account.",
   },
   "execApprovals.enabled": {
     label: "Telegram Exec Approvals Enabled",
@@ -183,7 +183,7 @@ export const telegramChannelConfigUiHints = {
   },
   "execApprovals.approvers": {
     label: "Telegram Exec Approval Approvers",
-    help: "Telegram user IDs allowed to approve exec requests for this bot account. Use numeric Telegram user IDs. If you leave this unset, OpenClaw falls back to numeric owner IDs inferred from commands.ownerAllowFrom when possible.",
+    help: "Telegram user IDs allowed to approve exec requests for this bot account. Use numeric Telegram user IDs. If you leave this unset, MerClaw falls back to numeric owner IDs inferred from commands.ownerAllowFrom when possible.",
   },
   "execApprovals.agentFilter": {
     label: "Telegram Exec Approval Agent Filter",

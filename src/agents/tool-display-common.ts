@@ -1,7 +1,7 @@
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/normalization-core/string-coerce";
 import { parseStrictFiniteNumber } from "../infra/parse-finite-number.js";
 import { redactToolDetail } from "../logging/redact.js";
 import { resolveExecDetail, type ToolDetailMode } from "./tool-display-exec.js";
@@ -364,7 +364,7 @@ function collectWebSearchQueries(record: Record<string, unknown>): string[] {
 }
 
 function parseToolSearchCall(code: string): { target: string; args?: string } | undefined {
-  const prefixMatch = code.match(/openclaw\.tools\.call\s*\(\s*/s);
+  const prefixMatch = code.match(/merclaw\.tools\.call\s*\(\s*/s);
   if (!prefixMatch || prefixMatch.index === undefined) {
     return undefined;
   }
@@ -387,14 +387,14 @@ function normalizeToolSearchDisplayToolName(toolName: string | undefined): strin
   if (!value) {
     return undefined;
   }
-  const catalogIdMatch = value.match(/^(?:openclaw|mcp|client):[^:]+:(.+)$/s);
+  const catalogIdMatch = value.match(/^(?:merclaw|mcp|client):[^:]+:(.+)$/s);
   return normalizeOptionalString(catalogIdMatch?.[1]) ?? value;
 }
 
 function collectToolSearchDescribeBindings(code: string): Map<string, string> {
   const bindings = new Map<string, string>();
   const bindingPattern =
-    /\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:await\s+)?openclaw\.tools\.describe\s*\(\s*("[^"]{1,240}"|'[^']{1,240}')\s*(?:,|\))/gs;
+    /\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:await\s+)?merclaw\.tools\.describe\s*\(\s*("[^"]{1,240}"|'[^']{1,240}')\s*(?:,|\))/gs;
   for (const match of code.matchAll(bindingPattern)) {
     const variableName = match[1];
     const target = summarizeToolSearchTarget(match[2]);
@@ -587,14 +587,14 @@ export function resolveToolSearchCodeDisplayTarget(
       bridgeVerb: "call",
     };
   }
-  const describeMatch = code.match(/openclaw\.tools\.describe\s*\(\s*([^)]+?)\s*(?:,|\))/s);
+  const describeMatch = code.match(/merclaw\.tools\.describe\s*\(\s*([^)]+?)\s*(?:,|\))/s);
   if (describeMatch) {
     const toolName = summarizeToolSearchTarget(describeMatch[1]);
     return toolName
       ? { toolName, detail: "describe via tool search", bridgeVerb: "describe" }
       : { toolName: "tool_search_code", detail: "describe selected tool", bridgeVerb: "describe" };
   }
-  const searchMatch = code.match(/openclaw\.tools\.search\s*\(\s*([^)]+?)\s*(?:,|\))/s);
+  const searchMatch = code.match(/merclaw\.tools\.search\s*\(\s*([^)]+?)\s*(?:,|\))/s);
   if (searchMatch) {
     const query = summarizeToolSearchTarget(searchMatch[1]);
     return {

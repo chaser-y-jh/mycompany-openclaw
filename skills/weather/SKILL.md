@@ -4,7 +4,7 @@ description: "Current weather and forecasts with wttr.in via curl for locations,
 homepage: https://wttr.in/:help
 metadata:
   {
-    "openclaw":
+    "merclaw":
       {
         "emoji": "☔",
         "requires": { "bins": ["curl"] },

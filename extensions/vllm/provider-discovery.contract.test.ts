@@ -1,6 +1,6 @@
 import { fileURLToPath } from "node:url";
-import { registerSingleProviderPlugin } from "openclaw/plugin-sdk/plugin-test-runtime";
-import { describeVllmProviderDiscoveryContract } from "openclaw/plugin-sdk/provider-test-contracts";
+import { registerSingleProviderPlugin } from "merclaw/plugin-sdk/plugin-test-runtime";
+import { describeVllmProviderDiscoveryContract } from "merclaw/plugin-sdk/provider-test-contracts";
 import { describe, expect, it } from "vitest";
 import vllmPlugin from "./index.js";
 

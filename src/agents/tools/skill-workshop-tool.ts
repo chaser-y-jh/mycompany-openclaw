@@ -1,5 +1,5 @@
 import { Type } from "typebox";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import {
   applySkillProposal,
   inspectSkillProposal,
@@ -120,7 +120,7 @@ const SkillWorkshopToolSchema = Type.Object(
 
 export type SkillWorkshopToolOptions = {
   workspaceDir: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   agentId?: string;
 };
 

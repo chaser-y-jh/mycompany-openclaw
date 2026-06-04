@@ -38,12 +38,12 @@ fi
 package_name="$(node -e 'const pkg = require(require("node:path").resolve(process.argv[1], "package.json")); console.log(pkg.name)' "${package_source}")"
 package_version="$(node -e 'const pkg = require(require("node:path").resolve(process.argv[1], "package.json")); console.log(pkg.version)' "${package_source}")"
 publish_tag="${PACKAGE_TAG:-latest}"
-source_repo="${SOURCE_REPO:-${GITHUB_REPOSITORY:-openclaw/openclaw}}"
+source_repo="${SOURCE_REPO:-${GITHUB_REPOSITORY:-merclaw/merclaw}}"
 source_commit="${SOURCE_COMMIT:-$(git -C "${invocation_root}" rev-parse HEAD)}"
 source_ref="${SOURCE_REF:-$(git -C "${invocation_root}" symbolic-ref -q HEAD || true)}"
 clawhub_workdir="${CLAWDHUB_WORKDIR:-${CLAWHUB_WORKDIR:-${invocation_root}}}"
 
-pack_dir="$(mktemp -d "${RUNNER_TEMP:-/tmp}/openclaw-clawhub-pack.XXXXXX")"
+pack_dir="$(mktemp -d "${RUNNER_TEMP:-/tmp}/merclaw-clawhub-pack.XXXXXX")"
 cleanup() {
   rm -rf "${pack_dir}"
 }
@@ -62,7 +62,7 @@ pack_cmd=(
 )
 
 build_package_runtime() {
-  if [[ "${OPENCLAW_PLUGIN_NPM_RUNTIME_BUILD:-1}" == "0" || "${OPENCLAW_PLUGIN_NPM_RUNTIME_BUILD:-1}" == "false" ]]; then
+  if [[ "${MERCLAW_PLUGIN_NPM_RUNTIME_BUILD:-1}" == "0" || "${MERCLAW_PLUGIN_NPM_RUNTIME_BUILD:-1}" == "false" ]]; then
     echo "Package-local runtime build: skipped"
     return
   fi
@@ -155,16 +155,16 @@ if [[ "${mode}" == "--dry-run" ]]; then
 fi
 
 publish_log="${pack_dir}/publish.log"
-for attempt in $(seq 1 "${OPENCLAW_CLAWHUB_PUBLISH_ATTEMPTS:-8}"); do
+for attempt in $(seq 1 "${MERCLAW_CLAWHUB_PUBLISH_ATTEMPTS:-8}"); do
   if CLAWHUB_WORKDIR="${clawhub_workdir}" "${publish_cmd[@]}" > >(tee "${publish_log}") 2>&1; then
     exit 0
   fi
   if ! grep -Eqi "rate limit|too many requests|\\b429\\b" "${publish_log}"; then
     exit 1
   fi
-  echo "ClawHub publish hit a rate limit; retrying (${attempt}/${OPENCLAW_CLAWHUB_PUBLISH_ATTEMPTS:-8})." >&2
-  sleep "${OPENCLAW_CLAWHUB_PUBLISH_RETRY_DELAY_SECONDS:-60}"
+  echo "ClawHub publish hit a rate limit; retrying (${attempt}/${MERCLAW_CLAWHUB_PUBLISH_ATTEMPTS:-8})." >&2
+  sleep "${MERCLAW_CLAWHUB_PUBLISH_RETRY_DELAY_SECONDS:-60}"
 done
 
-echo "ClawHub publish failed after ${OPENCLAW_CLAWHUB_PUBLISH_ATTEMPTS:-8} attempts." >&2
+echo "ClawHub publish failed after ${MERCLAW_CLAWHUB_PUBLISH_ATTEMPTS:-8} attempts." >&2
 exit 1

@@ -1,10 +1,10 @@
 run_plugins_clawhub_scenario() {
-  if [ "${OPENCLAW_PLUGINS_E2E_CLAWHUB:-1}" = "0" ]; then
-    echo "Skipping ClawHub plugin install and uninstall (OPENCLAW_PLUGINS_E2E_CLAWHUB=0)."
+  if [ "${MERCLAW_PLUGINS_E2E_CLAWHUB:-1}" = "0" ]; then
+    echo "Skipping ClawHub plugin install and uninstall (MERCLAW_PLUGINS_E2E_CLAWHUB=0)."
   else
     echo "Testing ClawHub plugin install and uninstall..."
-    CLAWHUB_PLUGIN_SPEC="${OPENCLAW_PLUGINS_E2E_CLAWHUB_SPEC:-clawhub:@openclaw/kitchen-sink}"
-    CLAWHUB_PLUGIN_ID="${OPENCLAW_PLUGINS_E2E_CLAWHUB_ID:-openclaw-kitchen-sink-fixture}"
+    CLAWHUB_PLUGIN_SPEC="${MERCLAW_PLUGINS_E2E_CLAWHUB_SPEC:-clawhub:@merclaw/kitchen-sink}"
+    CLAWHUB_PLUGIN_ID="${MERCLAW_PLUGINS_E2E_CLAWHUB_ID:-merclaw-kitchen-sink-fixture}"
     export CLAWHUB_PLUGIN_SPEC CLAWHUB_PLUGIN_ID
 
     start_clawhub_fixture_server() {
@@ -19,8 +19,8 @@ run_plugins_clawhub_scenario() {
 
       for _ in $(seq 1 100); do
         if [[ -s "$server_port_file" ]]; then
-          export OPENCLAW_CLAWHUB_URL="http://127.0.0.1:$(cat "$server_port_file")"
-          openclaw_plugins_register_fixture_pid_file "$server_pid_file"
+          export MERCLAW_CLAWHUB_URL="http://127.0.0.1:$(cat "$server_port_file")"
+          merclaw_plugins_register_fixture_pid_file "$server_pid_file"
           return 0
         fi
         if ! kill -0 "$server_pid" 2>/dev/null; then
@@ -35,35 +35,35 @@ run_plugins_clawhub_scenario() {
       return 1
     }
 
-    if [[ "${OPENCLAW_PLUGINS_E2E_LIVE_CLAWHUB:-0}" = "1" ]]; then
-      export OPENCLAW_CLAWHUB_URL="${OPENCLAW_CLAWHUB_URL:-${CLAWHUB_URL:-https://clawhub.ai}}"
-      export NPM_CONFIG_REGISTRY="${OPENCLAW_PLUGINS_E2E_LIVE_NPM_REGISTRY:-https://registry.npmjs.org/}"
+    if [[ "${MERCLAW_PLUGINS_E2E_LIVE_CLAWHUB:-0}" = "1" ]]; then
+      export MERCLAW_CLAWHUB_URL="${MERCLAW_CLAWHUB_URL:-${CLAWHUB_URL:-https://clawhub.ai}}"
+      export NPM_CONFIG_REGISTRY="${MERCLAW_PLUGINS_E2E_LIVE_NPM_REGISTRY:-https://registry.npmjs.org/}"
     else
       # Keep the release-path smoke hermetic; live ClawHub can rate-limit CI.
-      if [[ -n "${OPENCLAW_CLAWHUB_URL:-}" || -n "${CLAWHUB_URL:-}" ]]; then
-        echo "Ignoring ambient ClawHub URL for fixture-mode plugin E2E; set OPENCLAW_PLUGINS_E2E_LIVE_CLAWHUB=1 for live ClawHub."
+      if [[ -n "${MERCLAW_CLAWHUB_URL:-}" || -n "${CLAWHUB_URL:-}" ]]; then
+        echo "Ignoring ambient ClawHub URL for fixture-mode plugin E2E; set MERCLAW_PLUGINS_E2E_LIVE_CLAWHUB=1 for live ClawHub."
       fi
-      unset OPENCLAW_CLAWHUB_URL CLAWHUB_URL
-      clawhub_fixture_dir="$(mktemp -d "$OPENCLAW_PLUGINS_TMP_DIR/openclaw-clawhub-fixture.XXXXXX")"
+      unset MERCLAW_CLAWHUB_URL CLAWHUB_URL
+      clawhub_fixture_dir="$(mktemp -d "$MERCLAW_PLUGINS_TMP_DIR/merclaw-clawhub-fixture.XXXXXX")"
       start_clawhub_fixture_server "$clawhub_fixture_dir"
     fi
 
     node scripts/e2e/lib/plugins/assertions.mjs clawhub-preflight
 
-    run_plugins_openclaw_logged install-clawhub plugins install "$CLAWHUB_PLUGIN_SPEC"
-    run_plugins_openclaw_capture "$OPENCLAW_PLUGINS_TMP_DIR/plugins-clawhub-installed.json" plugins list --json
-    run_plugins_openclaw_capture "$OPENCLAW_PLUGINS_TMP_DIR/plugins-clawhub-inspect.json" plugins inspect "$CLAWHUB_PLUGIN_ID" --json
+    run_plugins_merclaw_logged install-clawhub plugins install "$CLAWHUB_PLUGIN_SPEC"
+    run_plugins_merclaw_capture "$MERCLAW_PLUGINS_TMP_DIR/plugins-clawhub-installed.json" plugins list --json
+    run_plugins_merclaw_capture "$MERCLAW_PLUGINS_TMP_DIR/plugins-clawhub-inspect.json" plugins inspect "$CLAWHUB_PLUGIN_ID" --json
 
     node scripts/e2e/lib/plugins/assertions.mjs clawhub-installed
 
-    openclaw_e2e_maybe_timeout "$OPENCLAW_PLUGINS_CLI_TIMEOUT" node "$OPENCLAW_ENTRY" plugins update "$CLAWHUB_PLUGIN_ID" >"$OPENCLAW_PLUGINS_TMP_DIR/plugins-clawhub-update.log" 2>&1
-    run_plugins_openclaw_capture "$OPENCLAW_PLUGINS_TMP_DIR/plugins-clawhub-updated.json" plugins list --json
-    run_plugins_openclaw_capture "$OPENCLAW_PLUGINS_TMP_DIR/plugins-clawhub-updated-inspect.json" plugins inspect "$CLAWHUB_PLUGIN_ID" --json
+    merclaw_e2e_maybe_timeout "$MERCLAW_PLUGINS_CLI_TIMEOUT" node "$MERCLAW_ENTRY" plugins update "$CLAWHUB_PLUGIN_ID" >"$MERCLAW_PLUGINS_TMP_DIR/plugins-clawhub-update.log" 2>&1
+    run_plugins_merclaw_capture "$MERCLAW_PLUGINS_TMP_DIR/plugins-clawhub-updated.json" plugins list --json
+    run_plugins_merclaw_capture "$MERCLAW_PLUGINS_TMP_DIR/plugins-clawhub-updated-inspect.json" plugins inspect "$CLAWHUB_PLUGIN_ID" --json
 
     node scripts/e2e/lib/plugins/assertions.mjs clawhub-updated
 
-    run_plugins_openclaw_logged uninstall-clawhub plugins uninstall "$CLAWHUB_PLUGIN_SPEC" --force
-    run_plugins_openclaw_capture "$OPENCLAW_PLUGINS_TMP_DIR/plugins-clawhub-uninstalled.json" plugins list --json
+    run_plugins_merclaw_logged uninstall-clawhub plugins uninstall "$CLAWHUB_PLUGIN_SPEC" --force
+    run_plugins_merclaw_capture "$MERCLAW_PLUGINS_TMP_DIR/plugins-clawhub-uninstalled.json" plugins list --json
 
     node scripts/e2e/lib/plugins/assertions.mjs clawhub-removed
   fi

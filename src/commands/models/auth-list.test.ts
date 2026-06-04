@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AuthProfileStore } from "../../agents/auth-profiles.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import type { OutputRuntimeEnv } from "../../runtime.js";
 import { modelsAuthListCommand } from "./auth-list.js";
 
@@ -13,7 +13,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("../../agents/agent-scope.js", () => ({
-  resolveAgentDir: (_cfg: OpenClawConfig, agentId: string) => `/tmp/openclaw/agents/${agentId}`,
+  resolveAgentDir: (_cfg: MerClawConfig, agentId: string) => `/tmp/merclaw/agents/${agentId}`,
   resolveDefaultAgentId: () => "main",
 }));
 
@@ -54,7 +54,7 @@ function createRuntime(): OutputRuntimeEnv & { logs: string[]; jsonPayloads: unk
 
 describe("modelsAuthListCommand", () => {
   beforeEach(() => {
-    mocks.loadModelsConfig.mockReset().mockResolvedValue({} as OpenClawConfig);
+    mocks.loadModelsConfig.mockReset().mockResolvedValue({} as MerClawConfig);
     mocks.ensureAuthProfileStore.mockReset();
     mocks.externalCliDiscoveryForProviderAuth.mockClear();
     mocks.resolveAuthProfileDisplayLabel.mockClear();
@@ -96,9 +96,9 @@ describe("modelsAuthListCommand", () => {
     });
     expect(runtime.jsonPayloads).toStrictEqual([
       {
-        agentDir: "/tmp/openclaw/agents/coder",
+        agentDir: "/tmp/merclaw/agents/coder",
         agentId: "coder",
-        authStatePath: "/tmp/openclaw/agents/coder/auth-state.json",
+        authStatePath: "/tmp/merclaw/agents/coder/auth-state.json",
         profiles: [
           {
             cooldownUntil: "2027-01-15T08:00:10.000Z",
@@ -151,9 +151,9 @@ describe("modelsAuthListCommand", () => {
     });
     expect(runtime.jsonPayloads).toStrictEqual([
       {
-        agentDir: "/tmp/openclaw/agents/main",
+        agentDir: "/tmp/merclaw/agents/main",
         agentId: "main",
-        authStatePath: "/tmp/openclaw/agents/main/auth-state.json",
+        authStatePath: "/tmp/merclaw/agents/main/auth-state.json",
         profiles: [
           {
             id: "openai:api-key-backup",
@@ -184,7 +184,7 @@ describe("modelsAuthListCommand", () => {
 
     expect(runtime.logs).toEqual([
       "Agent: main",
-      "Auth state file: /tmp/openclaw/agents/main/auth-state.json",
+      "Auth state file: /tmp/merclaw/agents/main/auth-state.json",
       "Profiles: (none)",
     ]);
   });
@@ -215,9 +215,9 @@ describe("modelsAuthListCommand", () => {
 
     expect(runtime.jsonPayloads).toStrictEqual([
       {
-        agentDir: "/tmp/openclaw/agents/main",
+        agentDir: "/tmp/merclaw/agents/main",
         agentId: "main",
-        authStatePath: "/tmp/openclaw/agents/main/auth-state.json",
+        authStatePath: "/tmp/merclaw/agents/main/auth-state.json",
         profiles: [
           {
             email: "user@example.com",

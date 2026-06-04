@@ -1,5 +1,5 @@
-import { parseExecApprovalCommandText } from "openclaw/plugin-sdk/approval-reply-runtime";
-import { reduceInteractiveReply } from "openclaw/plugin-sdk/interactive-runtime";
+import { parseExecApprovalCommandText } from "merclaw/plugin-sdk/approval-reply-runtime";
+import { reduceInteractiveReply } from "merclaw/plugin-sdk/interactive-runtime";
 import {
   isMessagePresentationInteractiveBlock,
   normalizeMessagePresentation,
@@ -7,7 +7,7 @@ import {
   type InteractiveReply,
   type MessagePresentation,
   type MessagePresentationButton,
-} from "openclaw/plugin-sdk/interactive-runtime";
+} from "merclaw/plugin-sdk/interactive-runtime";
 import { sanitizeTelegramCallbackData } from "./approval-callback-data.js";
 import { buildTelegramNativeCommandCallbackData } from "./native-command-callback-data.js";
 

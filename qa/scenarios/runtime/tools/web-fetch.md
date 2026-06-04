@@ -8,7 +8,7 @@ runtimeParityTier: standard
 coverage:
   primary:
     - tools.web-fetch
-objective: Verify web_fetch preserves arguments and result shape across OpenClaw and Codex.
+objective: Verify web_fetch preserves arguments and result shape across MerClaw and Codex.
 successCriteria:
   - Effective tools expose web_fetch.
   - The mock provider plans exactly one happy-path web_fetch call.
@@ -27,14 +27,14 @@ execution:
     toolCoverage:
       family: web_fetch
       actualTool: web_fetch
-      bucket: openclaw-dynamic-integration
-      expectedLayer: openclaw-dynamic
-      capabilityLayer: openclaw-dynamic-direct
+      bucket: merclaw-dynamic-integration
+      expectedLayer: merclaw-dynamic
+      capabilityLayer: merclaw-dynamic-direct
       required: true
       codexDefaultImpact: P4
       qaImpact: P1
       action: hard gate in the standard direct-loading tier
-      reason: web_fetch is an OpenClaw integration tool and must stay visible and callable under OpenClaw and Codex direct runtime parity.
+      reason: web_fetch is an MerClaw integration tool and must stay visible and callable under MerClaw and Codex direct runtime parity.
     promptSnippet: "target=web_fetch"
     failurePromptSnippet: "failure target=web_fetch"
 ```

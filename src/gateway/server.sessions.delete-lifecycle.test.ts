@@ -158,9 +158,9 @@ test("sessions.delete scopes selected global deletes to the requested agent", as
     JSON.stringify({ global: sessionStoreEntry("sess-work-global") }, null, 2),
     "utf-8",
   );
-  const configPath = process.env.OPENCLAW_CONFIG_PATH;
+  const configPath = process.env.MERCLAW_CONFIG_PATH;
   if (!configPath) {
-    throw new Error("OPENCLAW_CONFIG_PATH is required");
+    throw new Error("MERCLAW_CONFIG_PATH is required");
   }
   await fs.writeFile(
     configPath,

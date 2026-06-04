@@ -1,11 +1,11 @@
-import OpenClawKit
+import MerClawKit
 import SwiftUI
 
 extension SettingsProTab {
     var settingsHeader: some View {
         Text("Settings")
             .font(.system(size: 28, weight: .bold))
-            .padding(.horizontal, OpenClawProMetric.pagePadding)
+            .padding(.horizontal, MerClawProMetric.pagePadding)
             .padding(.top, 6)
     }
 
@@ -25,7 +25,7 @@ extension SettingsProTab {
                         .foregroundStyle(.secondary)
                 }
             }
-            .padding(.horizontal, OpenClawProMetric.pagePadding)
+            .padding(.horizontal, MerClawProMetric.pagePadding)
         }
     }
 
@@ -50,7 +50,7 @@ extension SettingsProTab {
                         .padding(14)
                 }
             }
-            .padding(.horizontal, OpenClawProMetric.pagePadding)
+            .padding(.horizontal, MerClawProMetric.pagePadding)
         }
     }
 
@@ -58,14 +58,14 @@ extension SettingsProTab {
         HStack(spacing: 12) {
             ProIconBadge(
                 systemName: "antenna.radiowaves.left.and.right",
-                color: self.gatewayConnected ? OpenClawBrand.ok : .secondary)
+                color: self.gatewayConnected ? MerClawBrand.ok : .secondary)
 
             VStack(alignment: .leading, spacing: 3) {
                 Text("Connection")
                     .font(.subheadline.weight(.semibold))
                 Text(self.gatewayConnected ? "Connected" : self.appModel.gatewayDisplayStatusText)
                     .font(.caption)
-                    .foregroundStyle(self.gatewayConnected ? OpenClawBrand.ok : .secondary)
+                    .foregroundStyle(self.gatewayConnected ? MerClawBrand.ok : .secondary)
             }
 
             Spacer(minLength: 8)
@@ -97,7 +97,7 @@ extension SettingsProTab {
             self.gatewayActionButton(
                 title: "Reconnect",
                 icon: "arrow.triangle.2.circlepath",
-                color: OpenClawBrand.warn,
+                color: MerClawBrand.warn,
                 isBusy: self.isReconnectingGateway)
             {
                 Task { await self.reconnectGateway() }
@@ -144,10 +144,10 @@ extension SettingsProTab {
             self.settingsListRow(
                 icon: "info.circle",
                 title: "About",
-                detail: DeviceInfoHelper.openClawVersionString(),
+                detail: DeviceInfoHelper.merClawVersionString(),
                 route: .about)
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     func settingsListRow(
@@ -181,7 +181,7 @@ extension SettingsProTab {
 
     func destination(for route: SettingsRoute) -> some View {
         ZStack {
-            OpenClawProBackground()
+            MerClawProBackground()
             ScrollView {
                 VStack(alignment: .leading, spacing: 14) {
                     switch route {
@@ -203,7 +203,7 @@ extension SettingsProTab {
                 }
                 .padding(.vertical, 18)
             }
-            .safeAreaPadding(.bottom, OpenClawProMetric.bottomScrollInset)
+            .safeAreaPadding(.bottom, MerClawProMetric.bottomScrollInset)
         }
         .navigationTitle(self.title(for: route))
         .navigationBarTitleDisplayMode(.inline)
@@ -220,7 +220,7 @@ extension SettingsProTab {
                 title: "Gateway",
                 detail: self.gatewayConnected ? "Connected" : self.appModel.gatewayDisplayStatusText,
                 value: self.gatewayConnected ? "online" : "offline",
-                color: self.gatewayConnected ? OpenClawBrand.ok : .secondary)
+                color: self.gatewayConnected ? MerClawBrand.ok : .secondary)
 
             self.detailListCard {
                 self.detailRow("Address", value: self.gatewayAddress)
@@ -237,7 +237,7 @@ extension SettingsProTab {
             ProCard(radius: SettingsLayout.cardRadius) {
                 self.gatewayActions
             }
-            .padding(.horizontal, OpenClawProMetric.pagePadding)
+            .padding(.horizontal, MerClawProMetric.pagePadding)
 
             self.deviceIdentityCard
             self.agentSelectionCard
@@ -253,7 +253,7 @@ extension SettingsProTab {
             self.toggleCard(
                 icon: "camera",
                 title: "Camera",
-                detail: "Allow the gateway to request photos or video while OpenClaw is foregrounded.",
+                detail: "Allow the gateway to request photos or video while MerClaw is foregrounded.",
                 isOn: self.$cameraEnabled)
 
             self.locationModeCard
@@ -261,7 +261,7 @@ extension SettingsProTab {
             self.toggleCard(
                 icon: "lock.display",
                 title: "Keep Awake",
-                detail: "Keep the screen awake while OpenClaw is open.",
+                detail: "Keep the screen awake while MerClaw is open.",
                 isOn: self.$preventSleep)
 
             self.privacyAccessCard
@@ -275,7 +275,7 @@ extension SettingsProTab {
                 title: "Voice & Talk",
                 detail: self.appModel.talkMode.gatewayTalkVoiceModeTitle,
                 value: self.voiceDetail,
-                color: self.talkEnabled || self.voiceWakeEnabled ? OpenClawBrand.accent : .secondary)
+                color: self.talkEnabled || self.voiceWakeEnabled ? MerClawBrand.accent : .secondary)
 
             self.voiceFeatureCard
             self.talkVoiceSettingsCard
@@ -290,7 +290,7 @@ extension SettingsProTab {
                 title: "Health Check",
                 detail: "Run app, permission, and gateway-adjacent checks without editing setup.",
                 value: self.diagnosticsHealthValue,
-                color: self.gatewayConnected ? OpenClawBrand.ok : OpenClawBrand.warn)
+                color: self.gatewayConnected ? MerClawBrand.ok : MerClawBrand.warn)
 
             self.diagnosticChecksCard
 
@@ -299,7 +299,7 @@ extension SettingsProTab {
                 Divider()
                 self.detailRow("Platform", value: DeviceInfoHelper.platformStringForDisplay())
                 Divider()
-                self.detailRow("App", value: DeviceInfoHelper.openClawVersionString())
+                self.detailRow("App", value: DeviceInfoHelper.merClawVersionString())
                 Divider()
                 self.detailRow("Model", value: DeviceInfoHelper.modelIdentifier())
             }
@@ -314,7 +314,7 @@ extension SettingsProTab {
                     Task { await self.runDiagnostics() }
                 }
             }
-            .padding(.horizontal, OpenClawProMetric.pagePadding)
+            .padding(.horizontal, MerClawProMetric.pagePadding)
 
             self.diagnosticsAdvancedCard
         }
@@ -325,7 +325,7 @@ extension SettingsProTab {
             self.detailStatusCard(
                 icon: "hand.raised",
                 title: "Privacy",
-                detail: "Control what device context OpenClaw can expose to the gateway.",
+                detail: "Control what device context MerClaw can expose to the gateway.",
                 value: self.privacyDetail,
                 color: .secondary)
 
@@ -352,9 +352,9 @@ extension SettingsProTab {
             self.detailStatusCard(
                 icon: "bell",
                 title: "Notifications",
-                detail: "Approvals and event alerts from OpenClaw.",
+                detail: "Approvals and event alerts from MerClaw.",
                 value: self.notificationStatusText,
-                color: self.notificationStatusText == "Allowed" ? OpenClawBrand.ok : .secondary)
+                color: self.notificationStatusText == "Allowed" ? MerClawBrand.ok : .secondary)
 
             ProCard(radius: SettingsLayout.cardRadius) {
                 VStack(alignment: .leading, spacing: 12) {
@@ -369,12 +369,12 @@ extension SettingsProTab {
                     .buttonStyle(.borderedProminent)
                     .controlSize(.small)
 
-                    Text("OpenClaw uses notifications for approval prompts and mirrored event alerts.")
+                    Text("MerClaw uses notifications for approval prompts and mirrored event alerts.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
             }
-            .padding(.horizontal, OpenClawProMetric.pagePadding)
+            .padding(.horizontal, MerClawProMetric.pagePadding)
         }
     }
 
@@ -382,13 +382,13 @@ extension SettingsProTab {
         VStack(alignment: .leading, spacing: 14) {
             self.detailStatusCard(
                 icon: "info.circle",
-                title: "OpenClaw",
+                title: "MerClaw",
                 detail: "iOS companion app",
-                value: DeviceInfoHelper.openClawVersionString(),
-                color: OpenClawBrand.accent)
+                value: DeviceInfoHelper.merClawVersionString(),
+                color: MerClawBrand.accent)
 
             self.detailListCard {
-                self.detailRow("Version", value: DeviceInfoHelper.openClawVersionString())
+                self.detailRow("Version", value: DeviceInfoHelper.merClawVersionString())
                 Divider()
                 self.detailRow("Device", value: DeviceInfoHelper.deviceFamily())
                 Divider()
@@ -437,7 +437,7 @@ extension SettingsProTab {
         ProCard(radius: SettingsLayout.cardRadius) {
             Toggle(isOn: isOn) {
                 HStack(spacing: 12) {
-                    ProIconBadge(systemName: icon, color: isOn.wrappedValue ? OpenClawBrand.accent : .secondary)
+                    ProIconBadge(systemName: icon, color: isOn.wrappedValue ? MerClawBrand.accent : .secondary)
                     VStack(alignment: .leading, spacing: 3) {
                         Text(title)
                             .font(.subheadline.weight(.semibold))
@@ -450,7 +450,7 @@ extension SettingsProTab {
             }
             .toggleStyle(.switch)
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     var locationModeCard: some View {
@@ -459,7 +459,7 @@ extension SettingsProTab {
                 HStack(spacing: 12) {
                     ProIconBadge(
                         systemName: "location",
-                        color: self.locationModeRaw == OpenClawLocationMode.off.rawValue ? .secondary : OpenClawBrand
+                        color: self.locationModeRaw == MerClawLocationMode.off.rawValue ? .secondary : MerClawBrand
                             .accent)
                     VStack(alignment: .leading, spacing: 3) {
                         Text("Location")
@@ -477,9 +477,9 @@ extension SettingsProTab {
                 }
 
                 Picker("Location", selection: self.$locationModeRaw) {
-                    Text("Off").tag(OpenClawLocationMode.off.rawValue)
-                    Text("While Using").tag(OpenClawLocationMode.whileUsing.rawValue)
-                    Text("Always").tag(OpenClawLocationMode.always.rawValue)
+                    Text("Off").tag(MerClawLocationMode.off.rawValue)
+                    Text("While Using").tag(MerClawLocationMode.whileUsing.rawValue)
+                    Text("Always").tag(MerClawLocationMode.always.rawValue)
                 }
                 .pickerStyle(.segmented)
                 .disabled(self.isChangingLocationMode)
@@ -487,11 +487,11 @@ extension SettingsProTab {
                 if let locationStatusText {
                     Text(locationStatusText)
                         .font(.caption2)
-                        .foregroundStyle(OpenClawBrand.warn)
+                        .foregroundStyle(MerClawBrand.warn)
                 }
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     var agentSelectionCard: some View {
@@ -513,7 +513,7 @@ extension SettingsProTab {
                     .foregroundStyle(.secondary)
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     var gatewaySetupCard: some View {
@@ -529,7 +529,7 @@ extension SettingsProTab {
                     self.gatewayActionButton(
                         title: "Scan QR",
                         icon: "qrcode.viewfinder",
-                        color: OpenClawBrand.accent,
+                        color: MerClawBrand.accent,
                         isBusy: self.connectingGatewayID != nil)
                     {
                         self.openGatewayQRScanner()
@@ -537,7 +537,7 @@ extension SettingsProTab {
                     self.gatewayActionButton(
                         title: "Connect",
                         icon: "bolt.horizontal.circle",
-                        color: OpenClawBrand.ok,
+                        color: MerClawBrand.ok,
                         isBusy: self.connectingGatewayID == "manual")
                     {
                         Task { await self.applySetupCodeAndConnect() }
@@ -553,11 +553,11 @@ extension SettingsProTab {
                 if let warning = self.tailnetWarningText {
                     Text(warning)
                         .font(.caption.weight(.semibold))
-                        .foregroundStyle(OpenClawBrand.warn)
+                        .foregroundStyle(MerClawBrand.warn)
                 }
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     var discoveredGatewaysCard: some View {
@@ -579,7 +579,7 @@ extension SettingsProTab {
                 }
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     func discoveredGatewayRow(_ gateway: GatewayDiscoveryModel.DiscoveredGateway) -> some View {
@@ -622,7 +622,7 @@ extension SettingsProTab {
                 self.gatewayActionButton(
                     title: "Connect Manual",
                     icon: "network",
-                    color: OpenClawBrand.accent,
+                    color: MerClawBrand.accent,
                     isBusy: self.connectingGatewayID == "manual")
                 {
                     Task { await self.connectManual() }
@@ -631,7 +631,7 @@ extension SettingsProTab {
                     || !self.manualPortIsValid)
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     var gatewayAdvancedCard: some View {
@@ -649,7 +649,7 @@ extension SettingsProTab {
                 }
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     var voiceFeatureCard: some View {
@@ -677,7 +677,7 @@ extension SettingsProTab {
                 }
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     var talkVoiceSettingsCard: some View {
@@ -703,7 +703,7 @@ extension SettingsProTab {
                 self.detailRow("API Key", value: self.talkApiKeyStatus)
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     var shareSettingsCard: some View {
@@ -725,14 +725,14 @@ extension SettingsProTab {
                     .foregroundStyle(.secondary)
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     var privacyAccessCard: some View {
         ProCard(radius: SettingsLayout.cardRadius) {
             PrivacyAccessSectionView()
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     var diagnosticsAdvancedCard: some View {
@@ -750,7 +750,7 @@ extension SettingsProTab {
                 }
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     var deviceIdentityCard: some View {
@@ -761,7 +761,7 @@ extension SettingsProTab {
                 self.detailRow("Instance ID", value: self.instanceId)
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     func gatewayProblemCard(_ problem: GatewayConnectionProblem) -> some View {
@@ -776,7 +776,7 @@ extension SettingsProTab {
                     self.showGatewayProblemDetails = true
                 })
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, MerClawProMetric.pagePadding)
     }
 
     func settingsToggle(

@@ -1,4 +1,4 @@
-import type { ProviderPlugin } from "openclaw/plugin-sdk/provider-model-shared";
+import type { ProviderPlugin } from "merclaw/plugin-sdk/provider-model-shared";
 import { buildGoogleStaticCatalogProvider } from "./provider-catalog.js";
 
 const googleProviderDiscovery: ProviderPlugin = {

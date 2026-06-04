@@ -1,23 +1,23 @@
 import type { Chat, Message } from "grammy/types";
-import { formatLocationText } from "openclaw/plugin-sdk/channel-inbound";
+import { formatLocationText } from "merclaw/plugin-sdk/channel-inbound";
 import {
   resolveCommandAuthorization,
   type CommandAuthorization,
-} from "openclaw/plugin-sdk/command-auth-native";
+} from "merclaw/plugin-sdk/command-auth-native";
 import type {
-  OpenClawConfig,
+  MerClawConfig,
   DmPolicy,
   TelegramDirectConfig,
   TelegramGroupConfig,
   TelegramTopicConfig,
-} from "openclaw/plugin-sdk/config-contracts";
-import { readChannelAllowFromStore } from "openclaw/plugin-sdk/conversation-runtime";
+} from "merclaw/plugin-sdk/config-contracts";
+import { readChannelAllowFromStore } from "merclaw/plugin-sdk/conversation-runtime";
 import {
   asDateTimestampMs,
   resolveExpiresAtMsFromDurationMs,
-} from "openclaw/plugin-sdk/number-runtime";
-import { normalizeAccountId } from "openclaw/plugin-sdk/routing";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/number-runtime";
+import { normalizeAccountId } from "merclaw/plugin-sdk/routing";
+import { normalizeOptionalString } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { expandTelegramAllowFromWithAccessGroups } from "../access-groups.js";
 import {
   firstDefined,
@@ -198,7 +198,7 @@ export function withResolvedTelegramForumFlag<T extends { chat: object }>(
 }
 
 export async function resolveTelegramGroupAllowFromContext(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   chatId: string | number;
   accountId?: string;
   dmPolicy?: DmPolicy;
@@ -284,7 +284,7 @@ export async function resolveTelegramGroupAllowFromContext(params: {
 }
 
 async function isTelegramDmAllowedByConfiguredAllowFrom(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   allowFrom?: Array<string | number>;
   groupAllowOverride?: Array<string | number>;
   accountId: string;
@@ -321,7 +321,7 @@ export class TelegramPairingStoreReadError extends Error {
 
 // Could add bounded retries to absorb short FD-pressure spikes; deferred. See #85555.
 export async function loadTelegramPairingStoreIfNeeded(params: {
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   allowFrom?: Array<string | number>;
   groupAllowOverride?: Array<string | number>;
   accountId: string;
@@ -511,7 +511,7 @@ export function buildTelegramGroupFrom(chatId: number | string, messageThreadId?
   return `telegram:group:${buildTelegramGroupPeerId(chatId, messageThreadId)}`;
 }
 
-export function isTelegramCommandsAllowFromConfigured(cfg: OpenClawConfig): boolean {
+export function isTelegramCommandsAllowFromConfigured(cfg: MerClawConfig): boolean {
   const commandsAllowFrom = cfg.commands?.allowFrom;
   return (
     commandsAllowFrom != null &&
@@ -521,7 +521,7 @@ export function isTelegramCommandsAllowFromConfigured(cfg: OpenClawConfig): bool
 }
 
 export function resolveTelegramCommandAuthorization(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   accountId: string;
   chatId: number;
   isGroup: boolean;

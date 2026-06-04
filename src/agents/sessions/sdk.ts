@@ -39,7 +39,7 @@ import {
 export interface CreateAgentSessionOptions {
   /** Working directory for project-local discovery. Default: process.cwd() */
   cwd?: string;
-  /** Global config directory. Default: ~/.openclaw/agents/default */
+  /** Global config directory. Default: ~/.merclaw/agents/default */
   agentDir?: string;
 
   /** Auth storage for credentials. Default: AuthStorage.create(agentDir/auth.json) */
@@ -65,7 +65,7 @@ export interface CreateAgentSessionOptions {
   /**
    * Optional allowlist of tool names.
    *
-   * When omitted, OpenClaw enables the default built-in tools (read, bash, edit, write)
+   * When omitted, MerClaw enables the default built-in tools (read, bash, edit, write)
    * and leaves extension/custom tools enabled unless `noTools` changes that default.
    * When provided, only the listed tool names are enabled.
    */
@@ -142,8 +142,8 @@ function getAttributionHeaders(
 
   if (model.provider === "openrouter" || model.baseUrl.includes("openrouter.ai")) {
     return {
-      "HTTP-Referer": "https://openclaw.ai",
-      "X-OpenRouter-Title": "OpenClaw",
+      "HTTP-Referer": "https://merclaw.ai",
+      "X-OpenRouter-Title": "MerClaw",
       "X-OpenRouter-Categories": "cli-agent",
     };
   }
@@ -155,7 +155,7 @@ function getAttributionHeaders(
     model.baseUrl.includes("gateway.ai.cloudflare.com")
   ) {
     return {
-      "User-Agent": "openclaw",
+      "User-Agent": "merclaw",
     };
   }
 

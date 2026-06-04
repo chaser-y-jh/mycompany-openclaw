@@ -3,7 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
-  createOpenClawGatewaySpawnSpec,
+  createMerClawGatewaySpawnSpec,
   readLogTail,
   readTelegramUserProofLogTailBytes,
   waitForLog,
@@ -12,7 +12,7 @@ import {
 const tempDirs: string[] = [];
 
 function makeTempDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-telegram-proof-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-telegram-proof-"));
   tempDirs.push(dir);
   return dir;
 }
@@ -30,8 +30,8 @@ describe("telegram user Crabbox proof log polling", () => {
     const fakePnpm = path.join(root, "pnpm.cjs");
     fs.writeFileSync(fakePnpm, "#!/usr/bin/env node\n", { mode: 0o755 });
 
-    const spec = createOpenClawGatewaySpawnSpec({
-      env: { ...process.env, OPENCLAW_TELEGRAM_PROOF_SENTINEL: "1" },
+    const spec = createMerClawGatewaySpawnSpec({
+      env: { ...process.env, MERCLAW_TELEGRAM_PROOF_SENTINEL: "1" },
       gatewayPort: 19042,
       nodeExecPath: "/opt/node/bin/node",
       npmExecPath: fakePnpm,
@@ -39,26 +39,26 @@ describe("telegram user Crabbox proof log polling", () => {
     });
 
     expect(spec.command).toBe("/opt/node/bin/node");
-    expect(spec.args).toEqual([fakePnpm, "openclaw", "gateway", "--port", "19042"]);
+    expect(spec.args).toEqual([fakePnpm, "merclaw", "gateway", "--port", "19042"]);
     expect(spec.options.cwd).toBe(root);
-    expect(spec.options.env?.OPENCLAW_TELEGRAM_PROOF_SENTINEL).toBe("1");
+    expect(spec.options.env?.MERCLAW_TELEGRAM_PROOF_SENTINEL).toBe("1");
     expect(spec.options.shell).toBe(false);
   });
 
   it("rejects loose numeric log tail limits instead of parsing prefixes", () => {
     expect(() =>
       readTelegramUserProofLogTailBytes({
-        OPENCLAW_TELEGRAM_USER_PROOF_LOG_TAIL_BYTES: "1e3",
+        MERCLAW_TELEGRAM_USER_PROOF_LOG_TAIL_BYTES: "1e3",
       }),
-    ).toThrow("invalid OPENCLAW_TELEGRAM_USER_PROOF_LOG_TAIL_BYTES: 1e3");
+    ).toThrow("invalid MERCLAW_TELEGRAM_USER_PROOF_LOG_TAIL_BYTES: 1e3");
     expect(() =>
       readTelegramUserProofLogTailBytes({
-        OPENCLAW_TELEGRAM_USER_PROOF_LOG_TAIL_BYTES: "1000bytes",
+        MERCLAW_TELEGRAM_USER_PROOF_LOG_TAIL_BYTES: "1000bytes",
       }),
-    ).toThrow("invalid OPENCLAW_TELEGRAM_USER_PROOF_LOG_TAIL_BYTES: 1000bytes");
+    ).toThrow("invalid MERCLAW_TELEGRAM_USER_PROOF_LOG_TAIL_BYTES: 1000bytes");
     expect(
       readTelegramUserProofLogTailBytes({
-        OPENCLAW_TELEGRAM_USER_PROOF_LOG_TAIL_BYTES: "4096",
+        MERCLAW_TELEGRAM_USER_PROOF_LOG_TAIL_BYTES: "4096",
       }),
     ).toBe(4096);
   });

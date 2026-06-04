@@ -50,14 +50,14 @@ describe("run-oxlint", () => {
       "node scripts/prepare-extension-package-boundary-artifacts.mjs",
     );
     expect(shardedLintRunner).toContain("prepare-extension-package-boundary-artifacts.mjs");
-    expect(shardedLintRunner).toContain('OPENCLAW_OXLINT_SKIP_PREPARE: "1"');
+    expect(shardedLintRunner).toContain('MERCLAW_OXLINT_SKIP_PREPARE: "1"');
   });
 
   it("holds one parent heavy-check lock for sharded lint runs", () => {
     const shardedLintRunner = readFileSync("scripts/run-oxlint-shards.mjs", "utf8");
-    const skipLockIndex = shardedLintRunner.indexOf('env.OPENCLAW_OXLINT_SKIP_LOCK === "1"');
+    const skipLockIndex = shardedLintRunner.indexOf('env.MERCLAW_OXLINT_SKIP_LOCK === "1"');
     const lockIndex = shardedLintRunner.indexOf("acquireLocalHeavyCheckLockSync({");
-    const childSkipIndex = shardedLintRunner.indexOf('OPENCLAW_OXLINT_SKIP_LOCK: "1"');
+    const childSkipIndex = shardedLintRunner.indexOf('MERCLAW_OXLINT_SKIP_LOCK: "1"');
 
     expect(shardedLintRunner).toContain("resolveLocalHeavyCheckEnv");
     expect(shardedLintRunner).toContain("shouldAcquireLocalHeavyCheckLockForOxlint");
@@ -70,7 +70,7 @@ describe("run-oxlint", () => {
   it("lets dev update preflight run oxlint shards serially", () => {
     const shardedLintRunner = readFileSync("scripts/run-oxlint-shards.mjs", "utf8");
 
-    expect(shardedLintRunner).toContain("OPENCLAW_OXLINT_SHARDS_SERIAL");
+    expect(shardedLintRunner).toContain("MERCLAW_OXLINT_SHARDS_SERIAL");
     expect(shardedLintRunner).toContain('platform === "win32"');
     expect(shardedLintRunner).toContain("runShardsSerial");
   });
@@ -97,7 +97,7 @@ describe("run-oxlint", () => {
     ).toBe(true);
     expect(
       shouldRunOxlintShardsSerial({
-        env: { CI: "true", OPENCLAW_LOCAL_CHECK_MODE: "throttled" },
+        env: { CI: "true", MERCLAW_LOCAL_CHECK_MODE: "throttled" },
         platform: "linux",
         hostResources: constrainedHost,
       }),
@@ -117,7 +117,7 @@ describe("run-oxlint", () => {
     ).toBe(false);
     expect(
       shouldRunOxlintShardsSerial({
-        env: { OPENCLAW_LOCAL_CHECK_MODE: "full" },
+        env: { MERCLAW_LOCAL_CHECK_MODE: "full" },
         platform: "linux",
         hostResources: constrainedHost,
       }),
@@ -129,14 +129,14 @@ describe("run-oxlint", () => {
 
     expect(
       shouldRunOxlintShardsSerial({
-        env: { OPENCLAW_OXLINT_SHARDS_SERIAL: "1", CI: "true" },
+        env: { MERCLAW_OXLINT_SHARDS_SERIAL: "1", CI: "true" },
         platform: "linux",
         hostResources: roomyHost,
       }),
     ).toBe(true);
     expect(
       shouldRunOxlintShardsSerial({
-        env: { OPENCLAW_OXLINT_SHARDS_SERIAL: "0" },
+        env: { MERCLAW_OXLINT_SHARDS_SERIAL: "0" },
         platform: "linux",
         hostResources: roomyHost,
       }),
@@ -145,22 +145,22 @@ describe("run-oxlint", () => {
 
   it("uses a bounded oxlint shard heartbeat by default", () => {
     expect(resolveShardHeartbeatMs({})).toBe(30_000);
-    expect(resolveShardHeartbeatMs({ OPENCLAW_OXLINT_SHARD_HEARTBEAT_MS: "0" })).toBe(0);
-    expect(resolveShardHeartbeatMs({ OPENCLAW_OXLINT_SHARD_HEARTBEAT_MS: "5000" })).toBe(5000);
-    expect(resolveShardHeartbeatMs({ OPENCLAW_OXLINT_SHARD_HEARTBEAT_MS: "bad" })).toBe(30_000);
+    expect(resolveShardHeartbeatMs({ MERCLAW_OXLINT_SHARD_HEARTBEAT_MS: "0" })).toBe(0);
+    expect(resolveShardHeartbeatMs({ MERCLAW_OXLINT_SHARD_HEARTBEAT_MS: "5000" })).toBe(5000);
+    expect(resolveShardHeartbeatMs({ MERCLAW_OXLINT_SHARD_HEARTBEAT_MS: "bad" })).toBe(30_000);
   });
 
   it("uses a bounded oxlint shard timeout by default", () => {
     expect(resolveShardTimeoutMs({})).toBe(900_000);
-    expect(resolveShardTimeoutMs({ OPENCLAW_OXLINT_SHARD_TIMEOUT_MS: "0" })).toBe(0);
-    expect(resolveShardTimeoutMs({ OPENCLAW_OXLINT_SHARD_TIMEOUT_MS: "5000" })).toBe(5000);
-    expect(resolveShardTimeoutMs({ OPENCLAW_OXLINT_SHARD_TIMEOUT_MS: "bad" })).toBe(900_000);
+    expect(resolveShardTimeoutMs({ MERCLAW_OXLINT_SHARD_TIMEOUT_MS: "0" })).toBe(0);
+    expect(resolveShardTimeoutMs({ MERCLAW_OXLINT_SHARD_TIMEOUT_MS: "5000" })).toBe(5000);
+    expect(resolveShardTimeoutMs({ MERCLAW_OXLINT_SHARD_TIMEOUT_MS: "bad" })).toBe(900_000);
     expect(resolveShardKillGraceMs({})).toBe(5_000);
-    expect(resolveShardKillGraceMs({ OPENCLAW_OXLINT_SHARD_KILL_GRACE_MS: "0" })).toBe(0);
+    expect(resolveShardKillGraceMs({ MERCLAW_OXLINT_SHARD_KILL_GRACE_MS: "0" })).toBe(0);
   });
 
   it("fails a stuck oxlint shard instead of waiting forever", async () => {
-    const tempDir = mkdtempSync(join(tmpdir(), "openclaw-oxlint-shard-"));
+    const tempDir = mkdtempSync(join(tmpdir(), "merclaw-oxlint-shard-"));
     const runner = join(tempDir, "hang-runner.mjs");
     try {
       writeFileSync(runner, "setInterval(() => {}, 1000);\n", "utf8");
@@ -168,9 +168,9 @@ describe("run-oxlint", () => {
       const status = await runShard({
         env: {
           ...process.env,
-          OPENCLAW_OXLINT_SHARD_HEARTBEAT_MS: "0",
-          OPENCLAW_OXLINT_SHARD_TIMEOUT_MS: "25",
-          OPENCLAW_OXLINT_SHARD_KILL_GRACE_MS: "25",
+          MERCLAW_OXLINT_SHARD_HEARTBEAT_MS: "0",
+          MERCLAW_OXLINT_SHARD_TIMEOUT_MS: "25",
+          MERCLAW_OXLINT_SHARD_KILL_GRACE_MS: "25",
         },
         extraArgs: [],
         runner,
@@ -186,7 +186,7 @@ describe("run-oxlint", () => {
   it.runIf(process.platform !== "win32")(
     "forwards parent termination to detached oxlint shard processes",
     () => {
-      const tempDir = mkdtempSync(join(tmpdir(), "openclaw-oxlint-signal-"));
+      const tempDir = mkdtempSync(join(tmpdir(), "merclaw-oxlint-signal-"));
       const runner = join(tempDir, "signal-runner.mjs");
       const harness = join(tempDir, "signal-harness.mjs");
       const readyFile = join(tempDir, "ready");
@@ -215,8 +215,8 @@ describe("run-oxlint", () => {
             "const promise = runShard({",
             "  env: {",
             "    ...process.env,",
-            "    OPENCLAW_OXLINT_SHARD_HEARTBEAT_MS: '0',",
-            "    OPENCLAW_OXLINT_SHARD_TIMEOUT_MS: '0',",
+            "    MERCLAW_OXLINT_SHARD_HEARTBEAT_MS: '0',",
+            "    MERCLAW_OXLINT_SHARD_TIMEOUT_MS: '0',",
             "  },",
             "  extraArgs: [],",
             "  runner: process.env.RUNNER_FILE,",
@@ -261,7 +261,7 @@ describe("run-oxlint", () => {
   it.runIf(process.platform !== "win32")(
     "force kills detached shard processes that ignore parent termination",
     () => {
-      const tempDir = mkdtempSync(join(tmpdir(), "openclaw-oxlint-signal-"));
+      const tempDir = mkdtempSync(join(tmpdir(), "merclaw-oxlint-signal-"));
       const runner = join(tempDir, "signal-runner.mjs");
       const harness = join(tempDir, "signal-harness.mjs");
       const readyFile = join(tempDir, "ready");
@@ -289,9 +289,9 @@ describe("run-oxlint", () => {
             "const promise = runShard({",
             "  env: {",
             "    ...process.env,",
-            "    OPENCLAW_OXLINT_SHARD_HEARTBEAT_MS: '0',",
-            "    OPENCLAW_OXLINT_SHARD_TIMEOUT_MS: '0',",
-            "    OPENCLAW_OXLINT_SHARD_KILL_GRACE_MS: '25',",
+            "    MERCLAW_OXLINT_SHARD_HEARTBEAT_MS: '0',",
+            "    MERCLAW_OXLINT_SHARD_TIMEOUT_MS: '0',",
+            "    MERCLAW_OXLINT_SHARD_KILL_GRACE_MS: '25',",
             "  },",
             "  extraArgs: [],",
             "  runner: process.env.RUNNER_FILE,",
@@ -337,7 +337,7 @@ describe("run-oxlint", () => {
     const shards = createOxlintShards({
       cwd: "/repo",
       env: {
-        OPENCLAW_OXLINT_WINDOWS_EXTENSION_CHUNK_SIZE: "2",
+        MERCLAW_OXLINT_WINDOWS_EXTENSION_CHUNK_SIZE: "2",
       },
       platform: "win32",
       readDir: () =>
@@ -465,10 +465,10 @@ describe("run-oxlint", () => {
   it("keeps the default Windows oxlint extension chunk size for invalid overrides", () => {
     expect(resolveWindowsExtensionChunkSize({})).toBe(8);
     expect(
-      resolveWindowsExtensionChunkSize({ OPENCLAW_OXLINT_WINDOWS_EXTENSION_CHUNK_SIZE: "0" }),
+      resolveWindowsExtensionChunkSize({ MERCLAW_OXLINT_WINDOWS_EXTENSION_CHUNK_SIZE: "0" }),
     ).toBe(8);
     expect(
-      resolveWindowsExtensionChunkSize({ OPENCLAW_OXLINT_WINDOWS_EXTENSION_CHUNK_SIZE: "abc" }),
+      resolveWindowsExtensionChunkSize({ MERCLAW_OXLINT_WINDOWS_EXTENSION_CHUNK_SIZE: "abc" }),
     ).toBe(8);
   });
 

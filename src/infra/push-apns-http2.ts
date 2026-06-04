@@ -1,5 +1,5 @@
 import http2 from "node:http2";
-import { resolveTimerTimeoutMs } from "@openclaw/normalization-core/number-coercion";
+import { resolveTimerTimeoutMs } from "@merclaw/normalization-core/number-coercion";
 import { openHttpConnectTunnel } from "./net/http-connect-tunnel.js";
 import {
   getActiveManagedProxyUrl,
@@ -157,8 +157,8 @@ export async function probeApnsHttp2ReachabilityViaProxy(
         ":path": `/3/device/${"0".repeat(64)}`,
         // APNs should reject this token with InvalidProviderToken. That failure
         // is the success signal that the proxy actually tunneled to Apple.
-        authorization: "bearer intentionally.invalid.openclaw.proxy.validation",
-        "apns-topic": "ai.openclaw.ios",
+        authorization: "bearer intentionally.invalid.merclaw.proxy.validation",
+        "apns-topic": "ai.merclaw.ios",
         "apns-push-type": "alert",
         "apns-priority": "10",
       });
@@ -190,7 +190,7 @@ export async function probeApnsHttp2ReachabilityViaProxy(
         }
         resolve({ status, body, responseHeaders });
       });
-      request.end(JSON.stringify({ aps: { alert: "OpenClaw APNs proxy validation" } }));
+      request.end(JSON.stringify({ aps: { alert: "MerClaw APNs proxy validation" } }));
     });
   } finally {
     if (!session.closed && !session.destroyed) {

@@ -13,7 +13,7 @@ import {
 
 describe("completion-runtime", () => {
   const originalHome = process.env.HOME;
-  const originalStateDir = process.env.OPENCLAW_STATE_DIR;
+  const originalStateDir = process.env.MERCLAW_STATE_DIR;
 
   afterEach(() => {
     if (originalHome === undefined) {
@@ -22,15 +22,15 @@ describe("completion-runtime", () => {
       process.env.HOME = originalHome;
     }
     if (originalStateDir === undefined) {
-      delete process.env.OPENCLAW_STATE_DIR;
+      delete process.env.MERCLAW_STATE_DIR;
     } else {
-      process.env.OPENCLAW_STATE_DIR = originalStateDir;
+      process.env.MERCLAW_STATE_DIR = originalStateDir;
     }
   });
 
   it("formats PowerShell source and reload commands with single-quoted paths", () => {
     expect(
-      formatCompletionSourceLine("powershell", "openclaw", "C:\\Users\\Ada\\open'claw.ps1"),
+      formatCompletionSourceLine("powershell", "merclaw", "C:\\Users\\Ada\\open'claw.ps1"),
     ).toBe(". 'C:\\Users\\Ada\\open''claw.ps1'");
     expect(formatCompletionReloadCommand("powershell", "C:\\Users\\Ada\\profile.ps1")).toBe(
       ". 'C:\\Users\\Ada\\profile.ps1'",
@@ -86,22 +86,22 @@ describe("completion-runtime", () => {
   });
 
   it("installs PowerShell completion into the concrete profile path", async () => {
-    const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-completion-home-"));
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-completion-state-"));
+    const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-completion-home-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-completion-state-"));
 
     process.env.HOME = homeDir;
-    process.env.OPENCLAW_STATE_DIR = stateDir;
+    process.env.MERCLAW_STATE_DIR = stateDir;
 
     try {
-      const cachePath = resolveCompletionCachePath("powershell", "openclaw");
+      const cachePath = resolveCompletionCachePath("powershell", "merclaw");
       await fs.mkdir(path.dirname(cachePath), { recursive: true });
       await fs.writeFile(cachePath, "# powershell completion\n", "utf-8");
 
-      await installCompletion("powershell", true, "openclaw");
+      await installCompletion("powershell", true, "merclaw");
 
       const profilePath = resolveCompletionProfilePath("powershell");
       const profile = await fs.readFile(profilePath, "utf-8");
-      expect(profile).toBe(`# OpenClaw Completion\n. '${cachePath}'\n`);
+      expect(profile).toBe(`# MerClaw Completion\n. '${cachePath}'\n`);
     } finally {
       await fs.rm(homeDir, { recursive: true, force: true });
       await fs.rm(stateDir, { recursive: true, force: true });
@@ -109,14 +109,14 @@ describe("completion-runtime", () => {
   });
 
   it("rejects install when the completion cache is missing", async () => {
-    const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-completion-home-"));
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-completion-state-"));
+    const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-completion-home-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-completion-state-"));
 
     process.env.HOME = homeDir;
-    process.env.OPENCLAW_STATE_DIR = stateDir;
+    process.env.MERCLAW_STATE_DIR = stateDir;
 
     try {
-      await expect(installCompletion("zsh", true, "openclaw")).rejects.toThrow(
+      await expect(installCompletion("zsh", true, "merclaw")).rejects.toThrow(
         "Completion cache not found",
       );
     } finally {

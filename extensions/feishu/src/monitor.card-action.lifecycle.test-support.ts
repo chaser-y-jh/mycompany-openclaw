@@ -1,4 +1,4 @@
-import { createRuntimeEnv } from "openclaw/plugin-sdk/plugin-test-runtime";
+import { createRuntimeEnv } from "merclaw/plugin-sdk/plugin-test-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import "./lifecycle.test-support.js";
 import { resetProcessedFeishuCardActionTokensForTests } from "./card-action.js";
@@ -36,7 +36,7 @@ const {
 
 let handlers: Record<string, (data: unknown) => Promise<void>> = {};
 let lastRuntime = createRuntimeEnv();
-const originalStateDir = process.env.OPENCLAW_STATE_DIR;
+const originalStateDir = process.env.MERCLAW_STATE_DIR;
 const lifecycleConfig = createFeishuLifecycleConfig({
   accountId: "acct-card",
   appId: "cli_test",
@@ -146,7 +146,7 @@ describe("Feishu card-action lifecycle", () => {
     handlers = {};
     lastRuntime = createRuntimeEnv();
     resetProcessedFeishuCardActionTokensForTests();
-    setFeishuLifecycleStateDir("openclaw-feishu-card-action");
+    setFeishuLifecycleStateDir("merclaw-feishu-card-action");
 
     createFeishuReplyDispatcherMock.mockReturnValue(createFeishuLifecycleReplyDispatcher());
 

@@ -64,7 +64,7 @@ const baseRunParams = {
   agentId: "main",
   sessionFile: "/tmp/test-session.jsonl",
   workspaceDir: "/tmp/test-workspace",
-  prompt: "__openclaw_memory_core_short_term_promotion_dream__",
+  prompt: "__merclaw_memory_core_short_term_promotion_dream__",
   provider: "codex-cli",
   model: "gpt-5.5",
   timeoutMs: 30_000,

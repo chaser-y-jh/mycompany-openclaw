@@ -1,8 +1,8 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { ChannelAccountSnapshot } from "openclaw/plugin-sdk/channel-contract";
-import { MAX_TIMER_TIMEOUT_MS } from "openclaw/plugin-sdk/number-runtime";
+import type { ChannelAccountSnapshot } from "merclaw/plugin-sdk/channel-contract";
+import { MAX_TIMER_TIMEOUT_MS } from "merclaw/plugin-sdk/number-runtime";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import type { TelegramIngressWorkerMessage } from "./telegram-ingress-worker.js";
 
@@ -25,7 +25,7 @@ vi.mock("./network-errors.js", () => ({
   isRecoverableTelegramNetworkError: isRecoverableTelegramNetworkErrorMock,
 }));
 
-vi.mock("openclaw/plugin-sdk/delivery-queue-runtime", () => ({
+vi.mock("merclaw/plugin-sdk/delivery-queue-runtime", () => ({
   drainPendingDeliveries: drainPendingDeliveriesMock,
 }));
 
@@ -33,7 +33,7 @@ vi.mock("./api-logging.js", () => ({
   withTelegramApiErrorLogging: async ({ fn }: { fn: () => Promise<unknown> }) => await fn(),
 }));
 
-vi.mock("openclaw/plugin-sdk/runtime-env", () => ({
+vi.mock("merclaw/plugin-sdk/runtime-env", () => ({
   computeBackoff: computeBackoffMock,
   createSubsystemLogger: vi.fn(() => {
     const logger = {
@@ -425,7 +425,7 @@ async function failedUpdateIds(spoolDir: string): Promise<number[]> {
 }
 
 async function withTempSpool<T>(fn: (spoolDir: string) => Promise<T>): Promise<T> {
-  const spoolDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-spool-"));
+  const spoolDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-telegram-spool-"));
   try {
     return await fn(spoolDir);
   } finally {
@@ -617,13 +617,13 @@ describe("TelegramPollingSession", () => {
     await session.runUntilAbort();
 
     // Offset confirmation was removed because it could self-conflict with the runner.
-    // OpenClaw middleware still skips duplicates using the persisted update offset.
+    // MerClaw middleware still skips duplicates using the persisted update offset.
     expect(bot.api.getUpdates).not.toHaveBeenCalled();
   });
 
   it("initializes the main-thread bot before draining isolated ingress spool", async () => {
     const abort = new AbortController();
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-spool-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-telegram-spool-"));
     const handleUpdate = vi.fn(async () => undefined);
     const init = vi.fn(async () => undefined);
     const bot = {
@@ -692,7 +692,7 @@ describe("TelegramPollingSession", () => {
 
   it("drains existing isolated ingress spool entries below the persisted offset", async () => {
     const abort = new AbortController();
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-spool-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-telegram-spool-"));
     const handleUpdate = vi.fn(async () => undefined);
     createTelegramBotMock.mockReturnValueOnce({
       api: {
@@ -1268,7 +1268,7 @@ describe("TelegramPollingSession", () => {
 
   it("lets isolated ingress drain interleave different Telegram topic lanes", async () => {
     const abort = new AbortController();
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-spool-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-telegram-spool-"));
     const events: string[] = [];
     let releaseTopicTenTurn: (() => void) | undefined;
     const topicTenTurnDone = new Promise<void>((resolve) => {
@@ -1369,7 +1369,7 @@ describe("TelegramPollingSession", () => {
 
   it("lets isolated ingress drain interleave different Telegram chats", async () => {
     const abort = new AbortController();
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-spool-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-telegram-spool-"));
     const events: string[] = [];
     let releaseFirstChatTurn: (() => void) | undefined;
     const firstChatTurnDone = new Promise<void>((resolve) => {
@@ -1468,7 +1468,7 @@ describe("TelegramPollingSession", () => {
 
   it("lets isolated ingress control updates bypass an active spooled turn", async () => {
     const abort = new AbortController();
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-spool-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-telegram-spool-"));
     const events: string[] = [];
     let releaseRegularTurn: (() => void) | undefined;
     const regularTurnDone = new Promise<void>((resolve) => {
@@ -1585,7 +1585,7 @@ describe("TelegramPollingSession", () => {
 
   it("preserves spool order when a control update is already queued after a regular turn", async () => {
     const abort = new AbortController();
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-spool-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-telegram-spool-"));
     const events: string[] = [];
     let releaseRegularTurn: (() => void) | undefined;
     const regularTurnDone = new Promise<void>((resolve) => {
@@ -1672,7 +1672,7 @@ describe("TelegramPollingSession", () => {
 
   it("waits for active spooled handlers before stopping the bot", async () => {
     const abort = new AbortController();
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-spool-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-telegram-spool-"));
     const events: string[] = [];
     let releaseRegularTurn: (() => void) | undefined;
     const regularTurnDone = new Promise<void>((resolve) => {
@@ -1743,7 +1743,7 @@ describe("TelegramPollingSession", () => {
   it("keeps active spooled lanes blocked across isolated ingress restarts", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const abort = new AbortController();
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-spool-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-telegram-spool-"));
     let releaseRegularTurn: (() => void) | undefined;
     const regularTurnDone = new Promise<void>((resolve) => {
       releaseRegularTurn = resolve;
@@ -1826,7 +1826,7 @@ describe("TelegramPollingSession", () => {
   it("restarts isolated ingress when the worker task rejects before shutdown", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const abort = new AbortController();
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-spool-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-telegram-spool-"));
     const log = vi.fn();
     const setStatus = vi.fn();
     createTelegramBotMock.mockImplementation(() => ({
@@ -1894,7 +1894,7 @@ describe("TelegramPollingSession", () => {
   it("treats isolated ingress worker rejection after abort as clean shutdown", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const abort = new AbortController();
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-spool-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-telegram-spool-"));
     const log = vi.fn();
     createTelegramBotMock.mockImplementation(() => ({
       api: {
@@ -1949,7 +1949,7 @@ describe("TelegramPollingSession", () => {
   it("propagates fatal isolated ingress polling errors", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const abort = new AbortController();
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-spool-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-telegram-spool-"));
     const log = vi.fn();
     const setStatus = vi.fn();
     isRecoverableTelegramNetworkErrorMock.mockReturnValue(false);
@@ -2013,7 +2013,7 @@ describe("TelegramPollingSession", () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const firstAbort = new AbortController();
     const secondAbort = new AbortController();
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-spool-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-telegram-spool-"));
     let releaseRegularTurn: (() => void) | undefined;
     const regularTurnDone = new Promise<void>((resolve) => {
       releaseRegularTurn = resolve;
@@ -2107,7 +2107,7 @@ describe("TelegramPollingSession", () => {
   it("fails a timed-out spooled handler and restarts before draining later same-lane updates", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const abort = new AbortController();
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-spool-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-telegram-spool-"));
     const log = vi.fn();
     const setStatus = vi.fn();
     const events: string[] = [];
@@ -2184,7 +2184,7 @@ describe("TelegramPollingSession", () => {
   it("keeps a timed-out lane guarded until the old handler stops", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const abort = new AbortController();
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-spool-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-telegram-spool-"));
     const log = vi.fn();
     const events: string[] = [];
     let releaseFirstTurn: (() => void) | undefined;
@@ -2257,7 +2257,7 @@ describe("TelegramPollingSession", () => {
   it("does not drain more updates on the old bot while a timeout restart is pending", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const abort = new AbortController();
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-spool-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-telegram-spool-"));
     const events: string[] = [];
     const firstBot = {
       api: {
@@ -2362,7 +2362,7 @@ describe("TelegramPollingSession", () => {
   it("keeps a timed-out lane guarded when its failed tombstone cannot be written", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const abort = new AbortController();
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-spool-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-telegram-spool-"));
     const log = vi.fn();
     const setStatus = vi.fn();
     const events: string[] = [];
@@ -2471,7 +2471,7 @@ describe("TelegramPollingSession", () => {
   it("marks isolated ingress unhealthy when a spooled backlog handler times out", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const abort = new AbortController();
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-spool-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-telegram-spool-"));
     const log = vi.fn();
     const setStatus = vi.fn();
     let releaseRegularTurn: (() => void) | undefined;
@@ -3211,7 +3211,7 @@ describe("TelegramPollingSession", () => {
 
     await session.runUntilAbort();
 
-    expectLogIncludes(log, "Another OpenClaw gateway, script, or Telegram poller");
+    expectLogIncludes(log, "Another MerClaw gateway, script, or Telegram poller");
   });
 
   it("logs polling cycle start after a transport rebuild", async () => {

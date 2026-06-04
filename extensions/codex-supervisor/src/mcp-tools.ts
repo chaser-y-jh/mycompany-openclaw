@@ -7,8 +7,8 @@ import type {
   CodexSupervisorSessionListResult,
 } from "./types.js";
 
-export const RAW_TRANSCRIPTS_ENV = "OPENCLAW_CODEX_SUPERVISOR_ALLOW_RAW_TRANSCRIPTS";
-export const WRITE_CONTROLS_ENV = "OPENCLAW_CODEX_SUPERVISOR_ALLOW_WRITE_CONTROLS";
+export const RAW_TRANSCRIPTS_ENV = "MERCLAW_CODEX_SUPERVISOR_ALLOW_RAW_TRANSCRIPTS";
+export const WRITE_CONTROLS_ENV = "MERCLAW_CODEX_SUPERVISOR_ALLOW_WRITE_CONTROLS";
 
 export type CodexSupervisorMcpToolOptions = {
   rawTranscriptReadsAllowed?: () => boolean;
@@ -156,7 +156,7 @@ export function registerCodexSupervisorMcpTools(
 
   server.tool(
     "codex_sessions_list",
-    "List Codex sessions visible to the OpenClaw supervisor.",
+    "List Codex sessions visible to the MerClaw supervisor.",
     {
       include_stored: z.boolean().optional(),
       max_stored_sessions: z.number().int().min(1).max(1000).optional(),

@@ -8,7 +8,7 @@ const tempDirs: string[] = [];
 const scriptPath = "scripts/package-mac-dist.sh";
 
 function makePlist(): string {
-  const dir = mkdtempSync(path.join(tmpdir(), "openclaw-dist-plist-"));
+  const dir = mkdtempSync(path.join(tmpdir(), "merclaw-dist-plist-"));
   tempDirs.push(dir);
   const plist = path.join(dir, "Info.plist");
   writeFileSync(
@@ -47,7 +47,7 @@ describe("package-mac-dist plist validation", () => {
     const script = readFileSync(scriptPath, "utf8");
     const readBlock = script.slice(
       script.indexOf("VERSION="),
-      script.indexOf('ZIP="$ROOT_DIR/dist/OpenClaw-$VERSION.zip"'),
+      script.indexOf('ZIP="$ROOT_DIR/dist/MerClaw-$VERSION.zip"'),
     );
 
     expect(script).toContain('source "$ROOT_DIR/scripts/lib/plistbuddy.sh"');

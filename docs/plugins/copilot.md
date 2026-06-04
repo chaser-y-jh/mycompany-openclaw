@@ -1,71 +1,71 @@
 ---
-summary: "Run OpenClaw embedded agent turns through the external GitHub Copilot SDK harness"
+summary: "Run MerClaw embedded agent turns through the external GitHub Copilot SDK harness"
 title: "Copilot SDK harness"
 read_when:
   - You want to use the GitHub Copilot SDK harness for an agent
   - You need configuration examples for the `copilot` runtime
-  - You are wiring an agent to subscription Copilot (github / openclaw / copilot) and want it to run through the Copilot CLI
+  - You are wiring an agent to subscription Copilot (github / merclaw / copilot) and want it to run through the Copilot CLI
 ---
 
-The external `@openclaw/copilot` plugin lets OpenClaw run embedded subscription
+The external `@merclaw/copilot` plugin lets MerClaw run embedded subscription
 Copilot agent turns through the GitHub Copilot CLI (`@github/copilot-sdk`)
 instead of the built-in PI harness.
 
 Use the Copilot SDK harness when you want the Copilot CLI session to own the
 low-level agent loop: native tool execution, native compaction
 (`infiniteSessions`), and CLI-managed thread state under `copilotHome`.
-OpenClaw still owns chat channels, session files, model selection, OpenClaw
+MerClaw still owns chat channels, session files, model selection, MerClaw
 dynamic tools (bridged), approvals, media delivery, the visible transcript
 mirror, `/btw` side questions (handled by the in-tree PI fallback — see
-[Side questions (`/btw`)](#side-questions-btw)), and `openclaw doctor`.
+[Side questions (`/btw`)](#side-questions-btw)), and `merclaw doctor`.
 
 For the broader model/provider/runtime split, start with
 [Agent runtimes](/concepts/agent-runtimes).
 
 ## Requirements
 
-- OpenClaw with the `@openclaw/copilot` plugin installed.
+- MerClaw with the `@merclaw/copilot` plugin installed.
 - If your config uses `plugins.allow`, include `copilot` (the manifest
   id declared by the plugin). A restrictive
-  allowlist that uses the npm-style `@openclaw/copilot` package name
+  allowlist that uses the npm-style `@merclaw/copilot` package name
   will leave the plugin blocked and the runtime will not load
   even with `agentRuntime.id: "copilot"`.
 - A GitHub Copilot subscription that can drive the Copilot CLI (or a
   `gitHubToken` env / auth-profile entry for headless / cron runs).
 - A writable `copilotHome` directory. The harness defaults to
-  `~/.openclaw/agents/<agentId>/copilot` for full per-agent isolation. The
+  `~/.merclaw/agents/<agentId>/copilot` for full per-agent isolation. The
   platform default (`%APPDATA%\copilot` on Windows, `$XDG_CONFIG_HOME/copilot`
   or `~/.config/copilot` elsewhere) is used as the doctor probe fallback when
   no explicit home is set.
 
-`openclaw doctor` runs the plugin
+`merclaw doctor` runs the plugin
 [doctor contract](#doctor-and-probes) for the extension; failures there are
 the canonical way to confirm the environment is ready before opting an agent
 in.
 
 ## Plugin install
 
-The Copilot runtime is an external plugin so the core `openclaw` package does
+The Copilot runtime is an external plugin so the core `merclaw` package does
 not carry the `@github/copilot-sdk` dependency or its platform-specific
 `@github/copilot-<platform>-<arch>` CLI binary. Together they add roughly
 260 MB, so install them only for agents that opt into this runtime:
 
 ```bash
-openclaw plugins install @openclaw/copilot
+merclaw plugins install @merclaw/copilot
 ```
 
 The wizard installs the plugin the first time you select a
 `github-copilot/*` model **and** your config opts the model (or its
 provider) into the Copilot agent runtime via
 `agentRuntime: { id: "copilot" }` (see [Quickstart](#quickstart) below).
-Without the opt-in, openclaw uses its built-in GitHub Copilot provider
+Without the opt-in, merclaw uses its built-in GitHub Copilot provider
 and never installs the runtime plugin.
 
 The runtime resolves the SDK in this order:
 
-1. `import("@github/copilot-sdk")` from the installed `@openclaw/copilot`
+1. `import("@github/copilot-sdk")` from the installed `@merclaw/copilot`
    package.
-2. The well-known fallback dir `~/.openclaw/npm-runtime/copilot/` (the
+2. The well-known fallback dir `~/.merclaw/npm-runtime/copilot/` (the
    legacy on-demand install target).
 
 A missing SDK surfaces a single error with code `COPILOT_SDK_MISSING`
@@ -126,8 +126,8 @@ Per-agent precedence, applied during `runCopilotAttempt`:
    precedence order, mirroring the shipped `github-copilot` provider
    (`extensions/github-copilot/auth.ts`) and the documented Copilot SDK
    setup:
-   1. `OPENCLAW_GITHUB_TOKEN` -- harness-specific override; set this
-      to pin a token for the OpenClaw harness without disturbing
+   1. `MERCLAW_GITHUB_TOKEN` -- harness-specific override; set this
+      to pin a token for the MerClaw harness without disturbing
       system-wide `gh` / Copilot CLI config.
    2. `COPILOT_GITHUB_TOKEN` -- standard Copilot SDK / CLI env var.
    3. `GH_TOKEN` -- standard `gh` CLI env var (matches the existing
@@ -144,8 +144,8 @@ Per-agent precedence, applied during `runCopilotAttempt`:
 Each agent gets a dedicated `copilotHome` so Copilot CLI tokens, sessions, and
 config do not leak between agents on the same machine. The default is
 `<agentDir>/copilot` when the host hands the harness an agent directory
-(isolating SDK state from OpenClaw's `models.json` / `auth-profiles.json` in
-the same directory), or `~/.openclaw/agents/<agentId>/copilot` otherwise.
+(isolating SDK state from MerClaw's `models.json` / `auth-profiles.json` in
+the same directory), or `~/.merclaw/agents/<agentId>/copilot` otherwise.
 Override with `copilotHome: <path>` on the attempt input when you need a
 custom location (for example, a shared mount for migration).
 
@@ -160,29 +160,29 @@ The harness reads its config from per-attempt input
 `extensions/copilot/src/`:
 
 - `copilotHome` — per-agent CLI state directory (defaults documented above).
-- `model` — string or `{ provider, id, api? }`. When omitted, OpenClaw uses
+- `model` — string or `{ provider, id, api? }`. When omitted, MerClaw uses
   the agent's normal model selection and the harness verifies the resolved
   provider is in the supported set.
 - `reasoningEffort` — `"low" | "medium" | "high" | "xhigh"`. Maps from
-  OpenClaw's `ThinkLevel` / `ReasoningLevel` resolution in
+  MerClaw's `ThinkLevel` / `ReasoningLevel` resolution in
   `auto-reply/thinking.ts`.
 - `infiniteSessionConfig` — optional override for the SDK
   `infiniteSessions` block driven by `harness.compact`. Defaults are safe to
   leave as-is.
-- `hooksConfig` — optional bridge config exposing OpenClaw
+- `hooksConfig` — optional bridge config exposing MerClaw
   before/after-message-write hooks to the SDK loop.
 - `permissionPolicy` — optional override for the SDK's
   `onPermissionRequest` handler used for built-in SDK tool kinds
   (`shell`, `write`, `read`, `url`, `mcp`, `memory`, `hook`). Defaults
   to `rejectAllPolicy` as a safety net; in practice the SDK never
-  invokes any of those kinds because every bridged OpenClaw tool is
+  invokes any of those kinds because every bridged MerClaw tool is
   registered with `overridesBuiltInTool: true` and
-  `skipPermission: true` so 100% of tool calls flow through OpenClaw's
+  `skipPermission: true` so 100% of tool calls flow through MerClaw's
   wrapped `execute()`. See [Permissions and ask_user](#permissions-and-ask_user).
 - `enableSessionTelemetry` — opt-in OpenTelemetry routing via
   `telemetry-bridge.ts`.
 
-Nothing in the rest of OpenClaw needs to know about these fields. Other
+Nothing in the rest of MerClaw needs to know about these fields. Other
 plugins, channels, and core code only see the standard
 `AgentHarnessAttemptParams` / `AgentHarnessAttemptResult` shape.
 
@@ -192,17 +192,17 @@ When `harness.compact` runs, the Copilot SDK harness:
 
 1. Enables `infiniteSessions` on the SDK session.
 2. Lets the SDK perform its native compaction.
-3. Writes an OpenClaw-shaped marker at
-   `workspacePath/files/openclaw-compaction-<ts>.json` so existing OpenClaw
+3. Writes an MerClaw-shaped marker at
+   `workspacePath/files/merclaw-compaction-<ts>.json` so existing MerClaw
    transcript readers still see a familiar artifact.
 
-The OpenClaw side transcript mirror (see below) continues to receive the
+The MerClaw side transcript mirror (see below) continues to receive the
 post-compaction messages, so user-facing chat history stays consistent.
 
 ## Transcript mirroring
 
 `runCopilotAttempt` dual-writes each turn's mirrorable messages into the
-OpenClaw audit transcript via
+MerClaw audit transcript via
 `extensions/copilot/src/dual-write-transcripts.ts`. The mirror is
 per-session scoped (`copilot:${sessionId}`) and uses a per-message
 identity (`${role}:${sha256_16(role,content)}`) so re-emits of prior-turn
@@ -216,7 +216,7 @@ not surfaced.
 ## Side questions (`/btw`)
 
 `/btw` is **not** native on this harness. `createCopilotAgentHarness()`
-deliberately leaves `harness.runSideQuestion` undefined, so OpenClaw's `/btw`
+deliberately leaves `harness.runSideQuestion` undefined, so MerClaw's `/btw`
 dispatcher (`src/agents/btw.ts`) falls through to the same in-tree PI fallback
 path it uses for every non-Codex runtime: the configured model provider is
 called directly with a short side-question prompt and streamed back via
@@ -225,7 +225,7 @@ called directly with a short side-question prompt and streamed back via
 This keeps Copilot CLI sessions reserved for the agent's main turn loop, and
 keeps `/btw` behavior identical to other PI-backed runtimes. The contract is
 asserted in
-[`extensions/copilot/harness.test.ts`](https://github.com/openclaw/openclaw/blob/main/extensions/copilot/harness.test.ts)
+[`extensions/copilot/harness.test.ts`](https://github.com/merclaw/merclaw/blob/main/extensions/copilot/harness.test.ts)
 under `describe("runSideQuestion")`.
 
 ## Doctor and probes
@@ -241,7 +241,7 @@ under `describe("runSideQuestion")`.
   prefix `github-copilot:`.
 
 `extensions/copilot/src/doctor-probes.ts` exports three imperative probes
-that hosts (including `openclaw doctor`) can call to verify the environment:
+that hosts (including `merclaw doctor`) can call to verify the environment:
 
 | Probe                      | What it checks                                                                    | Reasons it can fail                                                              |
 | -------------------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
@@ -268,35 +268,35 @@ real Copilot CLI or touch the host fs.
   decisions from the initial prompt rather than asking clarifying
   questions mid-turn. A follow-up will port the codex pattern at
   `extensions/codex/src/app-server/user-input-bridge.ts` to route SDK
-  `UserInputRequest`s through the OpenClaw channel/TUI prompt path; the
+  `UserInputRequest`s through the MerClaw channel/TUI prompt path; the
   dormant scaffolding in `extensions/copilot/src/user-input-bridge.ts`
   is the surface that follow-up will wire.
 
 ## Permissions and ask_user
 
-Permission enforcement for bridged OpenClaw tools happens **inside the
+Permission enforcement for bridged MerClaw tools happens **inside the
 tool wrapper**, not via the SDK's `onPermissionRequest` callback. The
 same `wrapToolWithBeforeToolCallHook` that PI uses
 (`src/agents/pi-tools.before-tool-call.ts`) is applied by
-`createOpenClawCodingTools` to every coding tool: loop detection,
+`createMerClawCodingTools` to every coding tool: loop detection,
 trusted plugin policies, before-tool-call hooks, and two-phase plugin
 approvals via the gateway (`plugin.approval.request`) all run with the
 exact same code path as native PI attempts.
 
 To let that wrapper own the decision, the SDK Tool returned by
-`convertOpenClawToolToSdkTool` is marked with:
+`convertMerClawToolToSdkTool` is marked with:
 
 - `overridesBuiltInTool: true` — replaces the Copilot CLI's built-in
   tool of the same name (edit, read, write, bash, …) so every tool
-  invocation routes back to OpenClaw.
+  invocation routes back to MerClaw.
 - `skipPermission: true` — tells the SDK not to fire
   `onPermissionRequest({kind: "custom-tool"})` before invoking the tool.
-  The wrapped `execute()` performs the richer OpenClaw policy check
-  internally; an SDK-level prompt would either short-circuit OpenClaw's
+  The wrapped `execute()` performs the richer MerClaw policy check
+  internally; an SDK-level prompt would either short-circuit MerClaw's
   enforcement (if we allow-all) or block every tool call (if we
   reject-all) — neither matches PI parity.
 
-The in-tree codex harness uses the same split: bridged OpenClaw tools
+The in-tree codex harness uses the same split: bridged MerClaw tools
 are wrapped (`extensions/codex/src/app-server/dynamic-tools.ts`) and
 the codex-app-server's _own_ native approval kinds
 (`item/commandExecution/requestApproval`,
@@ -311,7 +311,7 @@ displaces every built-in.
 
 For the wrapped-tool layer to make policy decisions equivalent to PI,
 the harness forwards the full PI attempt-tool context to
-`createOpenClawCodingTools` — identity (`senderIsOwner`,
+`createMerClawCodingTools` — identity (`senderIsOwner`,
 `memberRoleIds`, `ownerOnlyToolAllowlist`, …), channel/routing
 (`groupId`, `currentChannelId`, `replyToMode`, message-tool toggles),
 auth (`authProfileStore`), run identity

@@ -1,5 +1,5 @@
 import type { ModelCompatConfig, ModelMediaInputConfig } from "../config/types.models.js";
-import type { Model } from "openclaw/plugin-sdk/llm";
+import type { Model } from "merclaw/plugin-sdk/llm";
 
 /**
  * Fully-resolved runtime model shape used after provider/plugin-owned

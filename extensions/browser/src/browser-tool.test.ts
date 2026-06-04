@@ -4,7 +4,7 @@ const browserClientMocks = vi.hoisted(() => ({
   browserCloseTab: vi.fn(async (..._args: unknown[]) => ({})),
   browserDoctor: vi.fn(async (..._args: unknown[]) => ({
     ok: true,
-    profile: "openclaw",
+    profile: "merclaw",
     transport: "cdp",
     checks: [],
     status: {
@@ -68,7 +68,7 @@ const browserConfigMocks = vi.hoisted(() => ({
     enabled: true,
     controlPort: 18791,
     profiles: {},
-    defaultProfile: "openclaw",
+    defaultProfile: "merclaw",
     actionTimeoutMs: 60_000,
   })),
   resolveProfile: vi.fn((resolved: Record<string, unknown>, name: string) => {
@@ -78,7 +78,7 @@ const browserConfigMocks = vi.hoisted(() => ({
     if (!profile) {
       return null;
     }
-    const driver = profile.driver === "existing-session" ? "existing-session" : "openclaw";
+    const driver = profile.driver === "existing-session" ? "existing-session" : "merclaw";
     if (driver === "existing-session") {
       return {
         name,
@@ -127,10 +127,10 @@ const configMocks = vi.hoisted(() => ({
     }
   >(() => ({ browser: {} })),
 }));
-vi.mock("openclaw/plugin-sdk/runtime-config-snapshot", async () => {
+vi.mock("merclaw/plugin-sdk/runtime-config-snapshot", async () => {
   const actual = await vi.importActual<
-    typeof import("openclaw/plugin-sdk/runtime-config-snapshot")
-  >("openclaw/plugin-sdk/runtime-config-snapshot");
+    typeof import("merclaw/plugin-sdk/runtime-config-snapshot")
+  >("merclaw/plugin-sdk/runtime-config-snapshot");
   return {
     ...actual,
     getRuntimeConfig: configMocks.loadConfig,
@@ -159,7 +159,7 @@ const toolCommonMocks = vi.hoisted(() => ({
   imageResultFromFile: vi.fn(),
   describeImageFile: vi.fn(async () => ({ text: undefined, decision: { outcome: "skipped" } })),
   normalizeBrowserScreenshot: vi.fn(async (buffer: Buffer) => ({ buffer })),
-  saveMediaBuffer: vi.fn(async () => ({ path: "/tmp/openclaw-media/resized.jpg" })),
+  saveMediaBuffer: vi.fn(async () => ({ path: "/tmp/merclaw-media/resized.jpg" })),
 }));
 vi.mock("./sdk-setup-tools.js", async () => {
   const actual =
@@ -193,7 +193,7 @@ vi.mock("./browser-tool.runtime.js", () => {
 
   return {
     DEFAULT_AI_SNAPSHOT_MAX_CHARS: 40_000,
-    DEFAULT_UPLOAD_DIR: "/tmp/openclaw-browser-uploads",
+    DEFAULT_UPLOAD_DIR: "/tmp/merclaw-browser-uploads",
     BrowserToolSchema: {},
     ...browserActionsMocks,
     ...browserClientMocks,
@@ -283,7 +283,7 @@ function resetBrowserToolMocks() {
     enabled: true,
     controlPort: 18791,
     profiles: {},
-    defaultProfile: "openclaw",
+    defaultProfile: "merclaw",
     actionTimeoutMs: 60_000,
   });
   nodesUtilsMocks.listNodes.mockResolvedValue([]);
@@ -294,7 +294,7 @@ function resetBrowserToolMocks() {
   toolCommonMocks.normalizeBrowserScreenshot.mockImplementation(async (buffer: Buffer) => ({
     buffer,
   }));
-  toolCommonMocks.saveMediaBuffer.mockResolvedValue({ path: "/tmp/openclaw-media/resized.jpg" });
+  toolCommonMocks.saveMediaBuffer.mockResolvedValue({ path: "/tmp/merclaw-media/resized.jpg" });
   browserToolTesting.setDepsForTest({
     browserAct: browserActionsMocks.browserAct as never,
     browserArmDialog: browserActionsMocks.browserArmDialog as never,
@@ -332,7 +332,7 @@ function resetBrowserToolMocks() {
 
 function setResolvedBrowserProfiles(
   profiles: Record<string, Record<string, unknown>>,
-  defaultProfile = "openclaw",
+  defaultProfile = "merclaw",
 ) {
   browserConfigMocks.resolveBrowserConfig.mockReturnValue({
     enabled: true,
@@ -1772,7 +1772,7 @@ describe("browser tool upload inbound media fallback (#83544)", () => {
   afterEach(() => vi.restoreAllMocks());
 
   it("resolves upload paths before arming the file chooser", async () => {
-    const inboundPath = "/home/user/.openclaw/media/inbound/report.pdf";
+    const inboundPath = "/home/user/.merclaw/media/inbound/report.pdf";
     pathValidationMocks.resolveExistingUploadPaths.mockResolvedValue({
       ok: true,
       paths: [inboundPath],

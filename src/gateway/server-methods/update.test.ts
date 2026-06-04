@@ -10,8 +10,8 @@ const runGatewayUpdateMock = vi.fn<() => Promise<UpdateRunResult>>();
 const resolveUpdateInstallSurfaceMock = vi.fn<() => Promise<UpdateInstallSurface>>(async () => ({
   kind: "git",
   mode: "git",
-  root: "/tmp/openclaw",
-  packageRoot: "/tmp/openclaw",
+  root: "/tmp/merclaw",
+  packageRoot: "/tmp/merclaw",
 }));
 const getLatestUpdateRestartSentinelMock = vi.fn<() => RestartSentinelPayload | null>(() => null);
 const recordLatestUpdateRestartSentinelMock = vi.fn();
@@ -21,8 +21,8 @@ const detectRespawnSupervisorMock = vi.fn<() => RespawnSupervisor | null>(() => 
 const startManagedServiceUpdateHandoffMock = vi.fn(async () => ({
   status: "started" as const,
   pid: 12345,
-  command: "openclaw update --yes --timeout 1800",
-  logPath: "/tmp/openclaw-update-run-handoff/handoff.log",
+  command: "merclaw update --yes --timeout 1800",
+  logPath: "/tmp/merclaw-update-run-handoff/handoff.log",
 }));
 
 const scheduleGatewaySigusr1RestartMock = vi.fn(() => ({ scheduled: true }));
@@ -54,13 +54,13 @@ vi.mock("../../config/sessions.js", () => ({
   },
 }));
 
-vi.mock("../../infra/openclaw-root.js", async () => {
-  const actual = await vi.importActual<typeof import("../../infra/openclaw-root.js")>(
-    "../../infra/openclaw-root.js",
+vi.mock("../../infra/merclaw-root.js", async () => {
+  const actual = await vi.importActual<typeof import("../../infra/merclaw-root.js")>(
+    "../../infra/merclaw-root.js",
   );
   return {
     ...actual,
-    resolveOpenClawPackageRoot: async () => "/tmp/openclaw",
+    resolveMerClawPackageRoot: async () => "/tmp/merclaw",
   };
 });
 
@@ -119,8 +119,8 @@ vi.mock("./update-managed-service-handoff.js", () => ({
   startManagedServiceUpdateHandoff: startManagedServiceUpdateHandoffMock,
   formatManagedServiceUpdateCommand: (timeoutMs?: number) =>
     timeoutMs
-      ? `openclaw update --yes --timeout ${Math.ceil(timeoutMs / 1000)}`
-      : "openclaw update --yes",
+      ? `merclaw update --yes --timeout ${Math.ceil(timeoutMs / 1000)}`
+      : "merclaw update --yes",
   buildManagedServiceHandoffUnavailableMessage: (command: string) =>
     `Run \`${command}\` from a shell outside the gateway service.`,
 }));
@@ -149,8 +149,8 @@ beforeEach(() => {
   resolveUpdateInstallSurfaceMock.mockResolvedValue({
     kind: "git",
     mode: "git",
-    root: "/tmp/openclaw",
-    packageRoot: "/tmp/openclaw",
+    root: "/tmp/merclaw",
+    packageRoot: "/tmp/merclaw",
   });
   getLatestUpdateRestartSentinelMock.mockClear();
   recordLatestUpdateRestartSentinelMock.mockClear();
@@ -336,8 +336,8 @@ describe("update.run restart scheduling", () => {
     resolveUpdateInstallSurfaceMock.mockResolvedValueOnce({
       kind: "global",
       mode: "npm",
-      root: "/tmp/openclaw-global",
-      packageRoot: "/tmp/openclaw-global",
+      root: "/tmp/merclaw-global",
+      packageRoot: "/tmp/merclaw-global",
     });
 
     let payload:
@@ -356,7 +356,7 @@ describe("update.run restart scheduling", () => {
     expect(startManagedServiceUpdateHandoffMock).toHaveBeenCalledTimes(1);
     expect(startManagedServiceUpdateHandoffMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        root: "/tmp/openclaw",
+        root: "/tmp/merclaw",
         handoffId: expect.any(String),
         supervisor: "launchd",
         meta: expect.objectContaining({
@@ -385,7 +385,7 @@ describe("update.run restart scheduling", () => {
     ).toEqual({
       status: "started",
       pid: 12345,
-      command: "openclaw update --yes --timeout 1800",
+      command: "merclaw update --yes --timeout 1800",
     });
     expect(payload?.sentinel?.path).toBe("/tmp/sentinel.json");
     const sentinel = readCapturedPayload();
@@ -413,8 +413,8 @@ describe("update.run restart scheduling", () => {
     resolveUpdateInstallSurfaceMock.mockResolvedValueOnce({
       kind: "global",
       mode: "npm",
-      root: "/tmp/openclaw-global",
-      packageRoot: "/tmp/openclaw-global",
+      root: "/tmp/merclaw-global",
+      packageRoot: "/tmp/merclaw-global",
     });
 
     await invokeUpdateRun({ restartDelayMs: 0 });
@@ -440,8 +440,8 @@ describe("update.run restart scheduling", () => {
     resolveUpdateInstallSurfaceMock.mockResolvedValueOnce({
       kind: "global",
       mode: "npm",
-      root: "/tmp/openclaw-global",
-      packageRoot: "/tmp/openclaw-global",
+      root: "/tmp/merclaw-global",
+      packageRoot: "/tmp/merclaw-global",
     });
     const cwdSpy = vi.spyOn(process, "cwd").mockImplementation(() => {
       throw Object.assign(new Error("uv_cwd"), { code: "ENOENT", syscall: "uv_cwd" });
@@ -455,7 +455,7 @@ describe("update.run restart scheduling", () => {
     expect(startManagedServiceUpdateHandoffMock).toHaveBeenCalledTimes(1);
     expect(startManagedServiceUpdateHandoffMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        root: "/tmp/openclaw",
+        root: "/tmp/merclaw",
       }),
     );
   });
@@ -471,8 +471,8 @@ describe("update.run restart scheduling", () => {
     resolveUpdateInstallSurfaceMock.mockResolvedValueOnce({
       kind: "git",
       mode: "git",
-      root: "/tmp/openclaw-git",
-      packageRoot: "/tmp/openclaw-git",
+      root: "/tmp/merclaw-git",
+      packageRoot: "/tmp/merclaw-git",
     });
 
     let payload:
@@ -496,8 +496,8 @@ describe("update.run restart scheduling", () => {
     resolveUpdateInstallSurfaceMock.mockResolvedValueOnce({
       kind: "global",
       mode: "npm",
-      root: "/tmp/openclaw-global",
-      packageRoot: "/tmp/openclaw-global",
+      root: "/tmp/merclaw-global",
+      packageRoot: "/tmp/merclaw-global",
     });
 
     let payload:
@@ -522,9 +522,9 @@ describe("update.run restart scheduling", () => {
     expect(payload?.result?.reason).toBe("managed-service-handoff-unavailable");
     expect(payload?.handoff).toEqual({
       status: "unavailable",
-      command: "openclaw update --yes --timeout 1800",
+      command: "merclaw update --yes --timeout 1800",
       message:
-        "Run `openclaw update --yes --timeout 1800` from a shell outside the gateway service.",
+        "Run `merclaw update --yes --timeout 1800` from a shell outside the gateway service.",
     });
   });
 
@@ -534,8 +534,8 @@ describe("update.run restart scheduling", () => {
     resolveUpdateInstallSurfaceMock.mockResolvedValueOnce({
       kind: "global",
       mode: "npm",
-      root: "/tmp/openclaw-global",
-      packageRoot: "/tmp/openclaw-global",
+      root: "/tmp/merclaw-global",
+      packageRoot: "/tmp/merclaw-global",
     });
 
     let payload:

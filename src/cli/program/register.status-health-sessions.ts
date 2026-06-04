@@ -122,21 +122,21 @@ export function registerStatusHealthSessionsCommands(program: Command) {
       "after",
       () =>
         `\n${theme.heading("Examples:")}\n${formatHelpExamples([
-          ["openclaw status", "Show channel health + session summary."],
-          ["openclaw status --all", "Full diagnosis (read-only)."],
-          ["openclaw status --json", "Machine-readable output."],
-          ["openclaw status --usage", "Show model provider usage/quota snapshots."],
+          ["merclaw status", "Show channel health + session summary."],
+          ["merclaw status --all", "Full diagnosis (read-only)."],
+          ["merclaw status --json", "Machine-readable output."],
+          ["merclaw status --usage", "Show model provider usage/quota snapshots."],
           [
-            "openclaw status --deep",
+            "merclaw status --deep",
             "Run channel probes (WA + Telegram + Discord + Slack + Signal).",
           ],
-          ["openclaw status --deep --timeout 5000", "Tighten probe timeout."],
+          ["merclaw status --deep --timeout 5000", "Tighten probe timeout."],
         ])}`,
     )
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/status", "docs.openclaw.ai/cli/status")}\n`,
+        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/status", "docs.merclaw.ai/cli/status")}\n`,
     )
     .action(async (opts) => {
       await runWithVerboseAndTimeout(opts, async ({ verbose, timeoutMs }) => {
@@ -165,7 +165,7 @@ export function registerStatusHealthSessionsCommands(program: Command) {
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/health", "docs.openclaw.ai/cli/health")}\n`,
+        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/health", "docs.merclaw.ai/cli/health")}\n`,
     )
     .action(async (opts) => {
       await runWithVerboseAndTimeout(opts, async ({ verbose, timeoutMs }) => {
@@ -188,13 +188,13 @@ export function registerStatusHealthSessionsCommands(program: Command) {
       "after",
       () =>
         `\n${theme.heading("Examples:")}\n${formatHelpExamples([
-          ["openclaw sessions", "List all sessions."],
-          ["openclaw sessions --agent work", "List sessions for one agent."],
-          ["openclaw sessions --all-agents", "Aggregate sessions across agents."],
-          ["openclaw sessions --active 120", "Only last 2 hours."],
-          ["openclaw sessions --limit 25", "Show the newest 25 sessions."],
-          ["openclaw sessions --json", "Machine-readable output."],
-          ["openclaw sessions --store ./tmp/sessions.json", "Use a specific session store."],
+          ["merclaw sessions", "List all sessions."],
+          ["merclaw sessions --agent work", "List sessions for one agent."],
+          ["merclaw sessions --all-agents", "Aggregate sessions across agents."],
+          ["merclaw sessions --active 120", "Only last 2 hours."],
+          ["merclaw sessions --limit 25", "Show the newest 25 sessions."],
+          ["merclaw sessions --json", "Machine-readable output."],
+          ["merclaw sessions --store ./tmp/sessions.json", "Use a specific session store."],
         ])}\n\n${theme.muted(
           "Shows token usage per session when the agent reports it; set agents.defaults.contextTokens to cap the window and show %.",
         )}`,
@@ -202,7 +202,7 @@ export function registerStatusHealthSessionsCommands(program: Command) {
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/sessions", "docs.openclaw.ai/cli/sessions")}\n`,
+        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/sessions", "docs.merclaw.ai/cli/sessions")}\n`,
     )
     .action(async (opts) => {
       await runSessionsListCli(opts as SessionsListCliOptions);
@@ -240,20 +240,20 @@ export function registerStatusHealthSessionsCommands(program: Command) {
       "after",
       () =>
         `\n${theme.heading("Examples:")}\n${formatHelpExamples([
-          ["openclaw sessions cleanup --dry-run", "Preview stale/cap cleanup."],
+          ["merclaw sessions cleanup --dry-run", "Preview stale/cap cleanup."],
           [
-            "openclaw sessions cleanup --dry-run --fix-missing",
+            "merclaw sessions cleanup --dry-run --fix-missing",
             "Also preview pruning entries with missing transcript files.",
           ],
           [
-            "openclaw sessions cleanup --dry-run --fix-dm-scope",
+            "merclaw sessions cleanup --dry-run --fix-dm-scope",
             "Preview stale direct-DM rows after returning dmScope to main.",
           ],
-          ["openclaw sessions cleanup --enforce", "Apply maintenance now."],
-          ["openclaw sessions cleanup --agent work --dry-run", "Preview one agent store."],
-          ["openclaw sessions cleanup --all-agents --dry-run", "Preview all agent stores."],
+          ["merclaw sessions cleanup --enforce", "Apply maintenance now."],
+          ["merclaw sessions cleanup --agent work --dry-run", "Preview one agent store."],
+          ["merclaw sessions cleanup --all-agents --dry-run", "Preview all agent stores."],
           [
-            "openclaw sessions cleanup --enforce --store ./tmp/sessions.json",
+            "merclaw sessions cleanup --enforce --store ./tmp/sessions.json",
             "Use a specific store.",
           ],
         ])}`,
@@ -323,7 +323,7 @@ export function registerStatusHealthSessionsCommands(program: Command) {
     .command("export-trajectory")
     .description("Export a redacted trajectory bundle for a stored session")
     .option("--session-key <key>", "Session key to export")
-    .option("--output <path>", "Output directory name inside .openclaw/trajectory-exports")
+    .option("--output <path>", "Output directory name inside .merclaw/trajectory-exports")
     .option("--workspace <path>", "Workspace root for the export (default: current directory)")
     .option("--store <path>", "Path to session store (default: resolved from session key)")
     .option("--agent <id>", "Agent id for resolving the default session store")
@@ -365,10 +365,10 @@ export function registerStatusHealthSessionsCommands(program: Command) {
       "after",
       () =>
         `\n${theme.heading("Examples:")}\n${formatHelpExamples([
-          ["openclaw commitments", "List pending inferred follow-ups."],
-          ["openclaw commitments --all", "List all inferred follow-ups."],
-          ["openclaw commitments --agent work", "List one agent's inferred follow-ups."],
-          ["openclaw commitments dismiss cm_abc123", "Dismiss a follow-up."],
+          ["merclaw commitments", "List pending inferred follow-ups."],
+          ["merclaw commitments --all", "List all inferred follow-ups."],
+          ["merclaw commitments --agent work", "List one agent's inferred follow-ups."],
+          ["merclaw commitments dismiss cm_abc123", "Dismiss a follow-up."],
         ])}`,
     )
     .action(async (opts) => {

@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import {
   resolvePluginCapabilityProvider,
   resolvePluginCapabilityProviders,
@@ -15,27 +15,27 @@ export function normalizeTranscriptSourceProviderId(
   return normalizeCapabilityProviderId(providerId);
 }
 
-function resolveTranscriptsSourceProviderEntries(cfg?: OpenClawConfig): TranscriptSourceProvider[] {
+function resolveTranscriptsSourceProviderEntries(cfg?: MerClawConfig): TranscriptSourceProvider[] {
   return resolvePluginCapabilityProviders({
     key: "transcriptSourceProviders",
     cfg,
   });
 }
 
-function buildProviderMaps(cfg?: OpenClawConfig): {
+function buildProviderMaps(cfg?: MerClawConfig): {
   canonical: Map<string, TranscriptSourceProvider>;
   aliases: Map<string, TranscriptSourceProvider>;
 } {
   return buildCapabilityProviderMaps(resolveTranscriptsSourceProviderEntries(cfg));
 }
 
-export function listTranscriptSourceProviders(cfg?: OpenClawConfig): TranscriptSourceProvider[] {
+export function listTranscriptSourceProviders(cfg?: MerClawConfig): TranscriptSourceProvider[] {
   return [...buildProviderMaps(cfg).canonical.values()];
 }
 
 export function getTranscriptSourceProvider(
   providerId: string | undefined,
-  cfg?: OpenClawConfig,
+  cfg?: MerClawConfig,
 ): TranscriptSourceProvider | undefined {
   const normalized = normalizeTranscriptSourceProviderId(providerId);
   if (!normalized) {

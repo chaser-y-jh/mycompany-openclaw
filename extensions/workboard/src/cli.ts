@@ -1,7 +1,7 @@
 import type { Command } from "commander";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { addGatewayClientOptions, callGatewayFromCli } from "openclaw/plugin-sdk/gateway-runtime";
-import { getRuntimeConfig } from "openclaw/plugin-sdk/runtime-config-snapshot";
+import { formatErrorMessage } from "merclaw/plugin-sdk/error-runtime";
+import { addGatewayClientOptions, callGatewayFromCli } from "merclaw/plugin-sdk/gateway-runtime";
+import { getRuntimeConfig } from "merclaw/plugin-sdk/runtime-config-snapshot";
 import { resolveWorkboardCardByIdOrPrefix } from "./card-lookup.js";
 import type { WorkboardDispatchResult, WorkboardStore } from "./store.js";
 import type { WorkboardCard } from "./types.js";
@@ -108,7 +108,7 @@ function hasExplicitGatewayTarget(options: GatewayOptions): boolean {
 }
 
 function hasConfiguredRemoteGatewayTarget(): boolean {
-  if (process.env.OPENCLAW_GATEWAY_URL?.trim()) {
+  if (process.env.MERCLAW_GATEWAY_URL?.trim()) {
     return true;
   }
   try {

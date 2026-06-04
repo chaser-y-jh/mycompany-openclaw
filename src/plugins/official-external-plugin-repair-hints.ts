@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { resolveConfiguredChannelPresencePolicy } from "./channel-plugin-ids.js";
 import {
   getOfficialExternalPluginCatalogEntry,
@@ -37,8 +37,8 @@ export function resolveOfficialExternalPluginRepairHint(
   const pluginId = resolveOfficialExternalPluginId(entry) ?? pluginIdOrChannelId.trim();
   const channelId = manifest?.channel?.id?.trim();
   const label = resolveOfficialExternalPluginLabel(entry);
-  const installCommand = `openclaw plugins install ${installSpec}`;
-  const doctorFixCommand = "openclaw doctor --fix";
+  const installCommand = `merclaw plugins install ${installSpec}`;
+  const doctorFixCommand = "merclaw doctor --fix";
   return {
     pluginId,
     ...(channelId ? { channelId } : {}),
@@ -51,8 +51,8 @@ export function resolveOfficialExternalPluginRepairHint(
 }
 
 export function resolveMissingOfficialExternalChannelPluginRepairHint(params: {
-  config: OpenClawConfig;
-  activationSourceConfig?: OpenClawConfig;
+  config: MerClawConfig;
+  activationSourceConfig?: MerClawConfig;
   channelId: string;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;

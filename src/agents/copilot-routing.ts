@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { resolveModelRuntimePolicy } from "./model-runtime-policy.js";
 import { parseModelRefProvider } from "./openai-routing.js";
 
@@ -23,7 +23,7 @@ function parseModelRefId(model: string | undefined): string | undefined {
 
 /**
  * Returns true when the selected model should trigger the external
- * `@openclaw/copilot` runtime plugin install.
+ * `@merclaw/copilot` runtime plugin install.
  *
  * Gating contract (review #2, P1):
  *   - Model ref must use the `github-copilot/*` provider prefix.
@@ -38,7 +38,7 @@ function parseModelRefId(model: string | undefined): string | undefined {
  */
 export function modelSelectionShouldEnsureCopilotRuntimePlugin(params: {
   model?: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
 }): boolean {
   if (parseModelRefProvider(params.model) !== GITHUB_COPILOT_PROVIDER_ID) {
     return false;

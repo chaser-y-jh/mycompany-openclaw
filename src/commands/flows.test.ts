@@ -9,7 +9,7 @@ import {
   resetTaskRegistryDeliveryRuntimeForTests,
   resetTaskRegistryForTests,
 } from "../tasks/task-registry.js";
-import { withOpenClawTestState } from "../test-utils/openclaw-test-state.js";
+import { withMerClawTestState } from "../test-utils/merclaw-test-state.js";
 import { flowsCancelCommand, flowsListCommand, flowsShowCommand } from "./flows.js";
 
 vi.mock("../config/config.js", () => ({
@@ -17,7 +17,7 @@ vi.mock("../config/config.js", () => ({
   loadConfig: vi.fn(() => ({})),
 }));
 
-const ORIGINAL_STATE_DIR = process.env.OPENCLAW_STATE_DIR;
+const ORIGINAL_STATE_DIR = process.env.MERCLAW_STATE_DIR;
 
 function jsonRoundTrip<T>(value: T): T {
   const serialized = JSON.stringify(value);
@@ -33,10 +33,10 @@ function createRuntime(): RuntimeEnv {
 }
 
 async function withTaskFlowCommandStateDir(run: (root: string) => Promise<void>): Promise<void> {
-  await withOpenClawTestState(
+  await withMerClawTestState(
     {
       layout: "state-only",
-      prefix: "openclaw-flows-command-",
+      prefix: "merclaw-flows-command-",
     },
     async (state) => {
       resetTaskRegistryDeliveryRuntimeForTests();
@@ -56,9 +56,9 @@ async function withTaskFlowCommandStateDir(run: (root: string) => Promise<void>)
 describe("flows commands", () => {
   afterEach(() => {
     if (ORIGINAL_STATE_DIR === undefined) {
-      delete process.env.OPENCLAW_STATE_DIR;
+      delete process.env.MERCLAW_STATE_DIR;
     } else {
-      process.env.OPENCLAW_STATE_DIR = ORIGINAL_STATE_DIR;
+      process.env.MERCLAW_STATE_DIR = ORIGINAL_STATE_DIR;
     }
     resetTaskRegistryDeliveryRuntimeForTests();
     resetTaskRegistryForTests({ persist: false });

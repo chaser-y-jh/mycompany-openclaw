@@ -1,6 +1,6 @@
 import type { SourceReplyDeliveryMode } from "../../auto-reply/get-reply-options.types.js";
 import type { ReasoningLevel, ThinkLevel } from "../../auto-reply/thinking.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import type { ContextEngine, ContextEngineRuntimeContext } from "../../context-engine/types.js";
 import type { CommandQueueEnqueueFn } from "../../process/command-queue.types.js";
 import type { SkillSnapshot } from "../../skills/types.js";
@@ -42,7 +42,7 @@ export type CompactEmbeddedAgentSessionParams = {
   /** Optional task working directory; workspaceDir remains the agent bootstrap workspace. */
   cwd?: string;
   agentDir?: string;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
   skillsSnapshot?: SkillSnapshot;
   senderIsOwner?: boolean;
   provider?: string;
@@ -57,7 +57,7 @@ export type CompactEmbeddedAgentSessionParams = {
   contextEngineRuntimeContext?: ContextEngineRuntimeContext;
   /** Session-pinned embedded harness id. Prevents compaction hot-switching. */
   agentHarnessId?: string;
-  /** OpenClaw-owned runtime policy prepared for this compaction path. */
+  /** MerClaw-owned runtime policy prepared for this compaction path. */
   runtimePlan?: AgentRuntimePlan;
   thinkLevel?: ThinkLevel;
   reasoningLevel?: ReasoningLevel;

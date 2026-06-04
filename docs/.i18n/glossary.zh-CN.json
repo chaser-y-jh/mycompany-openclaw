@@ -1,7 +1,7 @@
 [
   {
-    "source": "OpenClaw",
-    "target": "OpenClaw"
+    "source": "MerClaw",
+    "target": "MerClaw"
   },
   {
     "source": "macOS platform notes",
@@ -56,12 +56,12 @@
     "target": "Mantis"
   },
   {
-    "source": "OpenClaw App SDK",
-    "target": "OpenClaw 应用 SDK"
+    "source": "MerClaw App SDK",
+    "target": "MerClaw 应用 SDK"
   },
   {
-    "source": "OpenClaw App SDK API design",
-    "target": "OpenClaw 应用 SDK API 设计"
+    "source": "MerClaw App SDK API design",
+    "target": "MerClaw 应用 SDK API 设计"
   },
   {
     "source": "Message lifecycle refactor",
@@ -1084,12 +1084,12 @@
     "target": "Agent runtime architecture"
   },
   {
-    "source": "OpenClaw agent runtime workflow",
-    "target": "OpenClaw agent runtime workflow"
+    "source": "MerClaw agent runtime workflow",
+    "target": "MerClaw agent runtime workflow"
   },
   {
-    "source": "OpenClaw agent runtime architecture",
-    "target": "OpenClaw agent runtime architecture"
+    "source": "MerClaw agent runtime architecture",
+    "target": "MerClaw agent runtime architecture"
   },
   {
     "source": "Install and Configure Plugins",

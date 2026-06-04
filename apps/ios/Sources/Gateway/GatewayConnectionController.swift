@@ -8,7 +8,7 @@ import EventKit
 import Foundation
 import Network
 import Observation
-import OpenClawKit
+import MerClawKit
 import os
 import Photos
 import ReplayKit
@@ -960,7 +960,7 @@ extension GatewayConnectionController {
         if manualClientId?.isEmpty == false {
             return manualClientId!
         }
-        return "openclaw-ios"
+        return "merclaw-ios"
     }
 
     private func resolveManualPort(host: String, port: Int, useTLS: Bool) -> Int? {
@@ -990,33 +990,33 @@ extension GatewayConnectionController {
     }
 
     private func currentCaps() -> [String] {
-        var caps = [OpenClawCapability.canvas.rawValue, OpenClawCapability.screen.rawValue]
+        var caps = [MerClawCapability.canvas.rawValue, MerClawCapability.screen.rawValue]
 
         // Default-on: if the key doesn't exist yet, treat it as enabled.
         let cameraEnabled =
             UserDefaults.standard.object(forKey: "camera.enabled") == nil
                 ? true
                 : UserDefaults.standard.bool(forKey: "camera.enabled")
-        if cameraEnabled { caps.append(OpenClawCapability.camera.rawValue) }
+        if cameraEnabled { caps.append(MerClawCapability.camera.rawValue) }
 
         let voiceWakeEnabled = UserDefaults.standard.bool(forKey: VoiceWakePreferences.enabledKey)
-        if voiceWakeEnabled { caps.append(OpenClawCapability.voiceWake.rawValue) }
+        if voiceWakeEnabled { caps.append(MerClawCapability.voiceWake.rawValue) }
 
         let locationModeRaw = UserDefaults.standard.string(forKey: "location.enabledMode") ?? "off"
-        let locationMode = OpenClawLocationMode(rawValue: locationModeRaw) ?? .off
-        if locationMode != .off { caps.append(OpenClawCapability.location.rawValue) }
+        let locationMode = MerClawLocationMode(rawValue: locationModeRaw) ?? .off
+        if locationMode != .off { caps.append(MerClawCapability.location.rawValue) }
 
-        caps.append(OpenClawCapability.device.rawValue)
-        caps.append(OpenClawCapability.talk.rawValue)
+        caps.append(MerClawCapability.device.rawValue)
+        caps.append(MerClawCapability.talk.rawValue)
         if WatchMessagingService.isSupportedOnDevice() {
-            caps.append(OpenClawCapability.watch.rawValue)
+            caps.append(MerClawCapability.watch.rawValue)
         }
-        caps.append(OpenClawCapability.photos.rawValue)
-        caps.append(OpenClawCapability.contacts.rawValue)
-        caps.append(OpenClawCapability.calendar.rawValue)
-        caps.append(OpenClawCapability.reminders.rawValue)
+        caps.append(MerClawCapability.photos.rawValue)
+        caps.append(MerClawCapability.contacts.rawValue)
+        caps.append(MerClawCapability.calendar.rawValue)
+        caps.append(MerClawCapability.reminders.rawValue)
         if Self.motionAvailable() {
-            caps.append(OpenClawCapability.motion.rawValue)
+            caps.append(MerClawCapability.motion.rawValue)
         }
 
         return caps
@@ -1024,58 +1024,58 @@ extension GatewayConnectionController {
 
     private func currentCommands() -> [String] {
         var commands: [String] = [
-            OpenClawCanvasCommand.present.rawValue,
-            OpenClawCanvasCommand.hide.rawValue,
-            OpenClawCanvasCommand.navigate.rawValue,
-            OpenClawCanvasCommand.evalJS.rawValue,
-            OpenClawCanvasCommand.snapshot.rawValue,
-            OpenClawCanvasA2UICommand.push.rawValue,
-            OpenClawCanvasA2UICommand.pushJSONL.rawValue,
-            OpenClawCanvasA2UICommand.reset.rawValue,
-            OpenClawScreenCommand.record.rawValue,
-            OpenClawSystemCommand.notify.rawValue,
-            OpenClawChatCommand.push.rawValue,
-            OpenClawTalkCommand.pttStart.rawValue,
-            OpenClawTalkCommand.pttStop.rawValue,
-            OpenClawTalkCommand.pttCancel.rawValue,
-            OpenClawTalkCommand.pttOnce.rawValue,
+            MerClawCanvasCommand.present.rawValue,
+            MerClawCanvasCommand.hide.rawValue,
+            MerClawCanvasCommand.navigate.rawValue,
+            MerClawCanvasCommand.evalJS.rawValue,
+            MerClawCanvasCommand.snapshot.rawValue,
+            MerClawCanvasA2UICommand.push.rawValue,
+            MerClawCanvasA2UICommand.pushJSONL.rawValue,
+            MerClawCanvasA2UICommand.reset.rawValue,
+            MerClawScreenCommand.record.rawValue,
+            MerClawSystemCommand.notify.rawValue,
+            MerClawChatCommand.push.rawValue,
+            MerClawTalkCommand.pttStart.rawValue,
+            MerClawTalkCommand.pttStop.rawValue,
+            MerClawTalkCommand.pttCancel.rawValue,
+            MerClawTalkCommand.pttOnce.rawValue,
         ]
 
         let caps = Set(self.currentCaps())
-        if caps.contains(OpenClawCapability.camera.rawValue) {
-            commands.append(OpenClawCameraCommand.list.rawValue)
-            commands.append(OpenClawCameraCommand.snap.rawValue)
-            commands.append(OpenClawCameraCommand.clip.rawValue)
+        if caps.contains(MerClawCapability.camera.rawValue) {
+            commands.append(MerClawCameraCommand.list.rawValue)
+            commands.append(MerClawCameraCommand.snap.rawValue)
+            commands.append(MerClawCameraCommand.clip.rawValue)
         }
-        if caps.contains(OpenClawCapability.location.rawValue) {
-            commands.append(OpenClawLocationCommand.get.rawValue)
+        if caps.contains(MerClawCapability.location.rawValue) {
+            commands.append(MerClawLocationCommand.get.rawValue)
         }
-        if caps.contains(OpenClawCapability.device.rawValue) {
-            commands.append(OpenClawDeviceCommand.status.rawValue)
-            commands.append(OpenClawDeviceCommand.info.rawValue)
+        if caps.contains(MerClawCapability.device.rawValue) {
+            commands.append(MerClawDeviceCommand.status.rawValue)
+            commands.append(MerClawDeviceCommand.info.rawValue)
         }
-        if caps.contains(OpenClawCapability.watch.rawValue) {
-            commands.append(OpenClawWatchCommand.status.rawValue)
-            commands.append(OpenClawWatchCommand.notify.rawValue)
+        if caps.contains(MerClawCapability.watch.rawValue) {
+            commands.append(MerClawWatchCommand.status.rawValue)
+            commands.append(MerClawWatchCommand.notify.rawValue)
         }
-        if caps.contains(OpenClawCapability.photos.rawValue) {
-            commands.append(OpenClawPhotosCommand.latest.rawValue)
+        if caps.contains(MerClawCapability.photos.rawValue) {
+            commands.append(MerClawPhotosCommand.latest.rawValue)
         }
-        if caps.contains(OpenClawCapability.contacts.rawValue) {
-            commands.append(OpenClawContactsCommand.search.rawValue)
-            commands.append(OpenClawContactsCommand.add.rawValue)
+        if caps.contains(MerClawCapability.contacts.rawValue) {
+            commands.append(MerClawContactsCommand.search.rawValue)
+            commands.append(MerClawContactsCommand.add.rawValue)
         }
-        if caps.contains(OpenClawCapability.calendar.rawValue) {
-            commands.append(OpenClawCalendarCommand.events.rawValue)
-            commands.append(OpenClawCalendarCommand.add.rawValue)
+        if caps.contains(MerClawCapability.calendar.rawValue) {
+            commands.append(MerClawCalendarCommand.events.rawValue)
+            commands.append(MerClawCalendarCommand.add.rawValue)
         }
-        if caps.contains(OpenClawCapability.reminders.rawValue) {
-            commands.append(OpenClawRemindersCommand.list.rawValue)
-            commands.append(OpenClawRemindersCommand.add.rawValue)
+        if caps.contains(MerClawCapability.reminders.rawValue) {
+            commands.append(MerClawRemindersCommand.list.rawValue)
+            commands.append(MerClawRemindersCommand.add.rawValue)
         }
-        if caps.contains(OpenClawCapability.motion.rawValue) {
-            commands.append(OpenClawMotionCommand.activity.rawValue)
-            commands.append(OpenClawMotionCommand.pedometer.rawValue)
+        if caps.contains(MerClawCapability.motion.rawValue) {
+            commands.append(MerClawMotionCommand.activity.rawValue)
+            commands.append(MerClawMotionCommand.pedometer.rawValue)
         }
 
         return commands

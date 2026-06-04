@@ -201,7 +201,7 @@ export function describeAnthropicProviderRuntimeContract(
       });
 
       expect(hint).toContain("suggested profile: anthropic:oauth-user@example.com");
-      expect(hint).toContain("openclaw doctor --yes");
+      expect(hint).toContain("merclaw doctor --yes");
     });
 
     it("owns usage snapshot fetching", async () => {
@@ -578,7 +578,7 @@ export function describeOpenAIProviderRuntimeContract(load: ProviderRuntimeContr
       });
     });
 
-    it("keeps OpenClaw cost metadata but applies Codex context metadata for gpt-5.5 models", () => {
+    it("keeps MerClaw cost metadata but applies Codex context metadata for gpt-5.5 models", () => {
       const provider = requireProviderContractProvider("openai");
       const model = provider.resolveDynamicModel?.({
         provider: "openai",

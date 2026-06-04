@@ -6,7 +6,7 @@ import type { MigrationPlan, MigrationProviderPlugin } from "../../plugins/types
 import { createNonExitingRuntime } from "../../runtime.js";
 import { runMigrationApply } from "./apply.js";
 
-const stateDir = mkdtempSync(path.join(tmpdir(), "openclaw-migrate-apply-"));
+const stateDir = mkdtempSync(path.join(tmpdir(), "merclaw-migrate-apply-"));
 
 vi.mock("../../config/paths.js", () => ({
   resolveStateDir: () => stateDir,

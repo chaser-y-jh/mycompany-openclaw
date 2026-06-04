@@ -1,7 +1,7 @@
-import type { ReplyPayload } from "openclaw/plugin-sdk/reply-dispatch-runtime";
-import { resolveSendableOutboundReplyParts } from "openclaw/plugin-sdk/reply-payload";
-import { sanitizeAssistantVisibleText } from "openclaw/plugin-sdk/text-chunking";
-import { stripPlainTextToolCallBlocks } from "openclaw/plugin-sdk/tool-payload";
+import type { ReplyPayload } from "merclaw/plugin-sdk/reply-dispatch-runtime";
+import { resolveSendableOutboundReplyParts } from "merclaw/plugin-sdk/reply-payload";
+import { sanitizeAssistantVisibleText } from "merclaw/plugin-sdk/text-chunking";
+import { stripPlainTextToolCallBlocks } from "merclaw/plugin-sdk/tool-payload";
 
 const DISCORD_INTERNAL_TRACE_LINE_RE =
   /^(?:>\s*)?(?:📊|🛠️|📖|📝|🔍|🔎|⚙️)\s*(?:Session Status|Exec|Read|Edit|Write|Patch|Search|Open|Click|Find|Screenshot|Update Plan|Tool Call|Tool Result|Function Call|Shell|Command)\s*:/i;

@@ -743,7 +743,7 @@ describe("createCliJsonlStreamingParser", () => {
           event: {
             type: "content_block_delta",
             index: 0,
-            delta: { type: "input_json_delta", partial_json: '{"query":"openclaw"}' },
+            delta: { type: "input_json_delta", partial_json: '{"query":"merclaw"}' },
           },
         }),
         JSON.stringify({
@@ -755,7 +755,7 @@ describe("createCliJsonlStreamingParser", () => {
     parser.finish();
 
     expect(starts).toEqual([
-      { toolCallId: "toolu_hosted", name: "web_search", args: { query: "openclaw" } },
+      { toolCallId: "toolu_hosted", name: "web_search", args: { query: "merclaw" } },
     ]);
   });
 
@@ -765,8 +765,8 @@ describe("createCliJsonlStreamingParser", () => {
       resultType: "web_search_tool_result",
       toolCallId: "srvtoolu_1",
       name: "web_search",
-      input: { query: "openclaw" },
-      result: [{ type: "web_search_result", title: "OpenClaw", url: "https://example.com" }],
+      input: { query: "merclaw" },
+      result: [{ type: "web_search_result", title: "MerClaw", url: "https://example.com" }],
       isError: false,
     },
     {

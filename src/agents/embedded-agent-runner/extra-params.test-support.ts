@@ -1,5 +1,5 @@
 import type { ThinkLevel } from "../../auto-reply/thinking.shared.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import type { Context, Model, SimpleStreamOptions } from "../../llm/types.js";
 import type { StreamFn } from "../runtime/index.js";
 import { testing as extraParamsTesting, applyExtraParamsToAgent } from "./extra-params.js";
@@ -29,7 +29,7 @@ type RunExtraParamsCaseParams<
   applyModelId?: string;
   applyProvider?: string;
   callerHeaders?: Record<string, string>;
-  cfg?: OpenClawConfig;
+  cfg?: MerClawConfig;
   model: Model<TApi>;
   mockProviderRuntime?: boolean;
   options?: SimpleStreamOptions;

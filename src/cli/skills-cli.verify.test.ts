@@ -48,7 +48,7 @@ vi.mock("../runtime.js", () => ({
 
 vi.mock("../utils.js", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../utils.js")>()),
-  CONFIG_DIR: "/tmp/openclaw-config",
+  CONFIG_DIR: "/tmp/merclaw-config",
 }));
 
 vi.mock("../config/config.js", () => ({
@@ -78,7 +78,7 @@ describe("skills verify CLI", () => {
   let workspaceDir: string;
 
   beforeEach(async () => {
-    workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-verify-cli-"));
+    workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-skill-verify-cli-"));
     mocks.runtimeStdout.length = 0;
     mocks.runtimeErrors.length = 0;
     mocks.resolveAgentWorkspaceDirMock.mockReset();
@@ -163,7 +163,7 @@ describe("skills verify CLI", () => {
       decision: "pass",
       reasons: [],
       skill: { slug: "agentreceipt" },
-      publisher: { handle: "openclaw" },
+      publisher: { handle: "merclaw" },
       version: { version: "1.2.3" },
       card: { available: true },
       artifact: {

@@ -21,7 +21,7 @@ describe("list-prod-store-packages", () => {
   });
 
   it("accepts pnpm list array output", () => {
-    const cwd = makeTempRepoRoot(tempDirs, "openclaw-prod-store-packages-");
+    const cwd = makeTempRepoRoot(tempDirs, "merclaw-prod-store-packages-");
     const result = runListProdStorePackages(
       [
         {
@@ -42,7 +42,7 @@ describe("list-prod-store-packages", () => {
   });
 
   it("accepts pnpm list object output", () => {
-    const cwd = makeTempRepoRoot(tempDirs, "openclaw-prod-store-packages-");
+    const cwd = makeTempRepoRoot(tempDirs, "merclaw-prod-store-packages-");
     const result = runListProdStorePackages(
       {
         dependencies: {
@@ -61,7 +61,7 @@ describe("list-prod-store-packages", () => {
   });
 
   it("adds lockfile snapshot dependencies missing from pnpm list output", () => {
-    const cwd = makeTempRepoRoot(tempDirs, "openclaw-prod-store-packages-");
+    const cwd = makeTempRepoRoot(tempDirs, "merclaw-prod-store-packages-");
     mkdirSync(join(cwd, "scripts"));
     writeFileSync(
       join(cwd, "pnpm-lock.yaml"),
@@ -101,7 +101,7 @@ describe("list-prod-store-packages", () => {
   });
 
   it("adds lockfile packages missing from pnpm list output", () => {
-    const cwd = makeTempRepoRoot(tempDirs, "openclaw-prod-store-packages-");
+    const cwd = makeTempRepoRoot(tempDirs, "merclaw-prod-store-packages-");
     writeFileSync(
       join(cwd, "pnpm-lock.yaml"),
       [

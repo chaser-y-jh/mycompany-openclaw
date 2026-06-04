@@ -1,14 +1,14 @@
 import {
   normalizeOptionalLowercaseString,
   normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@merclaw/normalization-core/string-coerce";
 import { runBeforeToolCallHook } from "../agents/agent-tools.before-tool-call.js";
 import { resolveToolLoopDetectionConfig } from "../agents/agent-tools.js";
 import { getChannelAgentToolMeta } from "../agents/channel-tools.js";
 import { isKnownCoreToolId } from "../agents/tool-catalog.js";
 import { ToolInputError, type AnyAgentTool } from "../agents/tools/common.js";
 import { resolveMainSessionKey } from "../config/sessions.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { logWarn } from "../logger.js";
 import { isTestDefaultMemorySlotDisabled } from "../plugins/config-state.js";
 import { defaultSlotIdForKey } from "../plugins/slots.js";
@@ -50,7 +50,7 @@ type ToolsInvokeOutcome =
       };
     };
 
-function resolveSessionKey(params: { cfg: OpenClawConfig; input: ToolsInvokeInput }): string {
+function resolveSessionKey(params: { cfg: MerClawConfig; input: ToolsInvokeInput }): string {
   const rawSessionKey = normalizeOptionalString(params.input.sessionKey);
   if (rawSessionKey && rawSessionKey !== "main") {
     return rawSessionKey;
@@ -62,7 +62,7 @@ function resolveSessionKey(params: { cfg: OpenClawConfig; input: ToolsInvokeInpu
   return resolveMainSessionKey(params.cfg);
 }
 
-function resolveMemoryToolDisableReasons(cfg: OpenClawConfig): string[] {
+function resolveMemoryToolDisableReasons(cfg: MerClawConfig): string[] {
   if (!process.env.VITEST) {
     return [];
   }
@@ -144,7 +144,7 @@ function resolveToolSource(tool: AnyAgentTool): "core" | "plugin" | "channel" {
 }
 
 export async function invokeGatewayTool(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   input: ToolsInvokeInput;
   messageChannel?: string;
   accountId?: string;

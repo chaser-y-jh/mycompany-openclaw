@@ -1,16 +1,16 @@
-import type { ImageGenerationProvider } from "openclaw/plugin-sdk/image-generation";
-import type { MediaUnderstandingProvider } from "openclaw/plugin-sdk/media-understanding";
-import type { MusicGenerationProvider } from "openclaw/plugin-sdk/music-generation";
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
+import type { ImageGenerationProvider } from "merclaw/plugin-sdk/image-generation";
+import type { MediaUnderstandingProvider } from "merclaw/plugin-sdk/media-understanding";
+import type { MusicGenerationProvider } from "merclaw/plugin-sdk/music-generation";
+import { definePluginEntry } from "merclaw/plugin-sdk/plugin-entry";
 import type {
   RealtimeVoiceBridge,
   RealtimeVoiceBridgeCreateRequest,
   RealtimeVoiceProviderConfig,
   RealtimeVoiceProviderPlugin,
-} from "openclaw/plugin-sdk/realtime-voice";
-import { normalizeResolvedSecretInputString } from "openclaw/plugin-sdk/secret-input";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
-import type { VideoGenerationProvider } from "openclaw/plugin-sdk/video-generation";
+} from "merclaw/plugin-sdk/realtime-voice";
+import { normalizeResolvedSecretInputString } from "merclaw/plugin-sdk/secret-input";
+import { normalizeOptionalString } from "merclaw/plugin-sdk/string-coerce-runtime";
+import type { VideoGenerationProvider } from "merclaw/plugin-sdk/video-generation";
 import { buildGoogleGeminiCliBackend } from "./cli-backend.js";
 import { registerGoogleGeminiCliProvider } from "./gemini-cli-provider.js";
 import {

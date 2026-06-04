@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { MerClawConfig } from "../config/config.js";
 import { isRecord } from "../utils.js";
 import { loadEnabledBundleLspConfig } from "./bundle-lsp.js";
 import { loadEnabledBundleMcpConfig } from "./bundle-mcp.js";
@@ -46,7 +46,7 @@ afterEach(async () => {
   await tempHarness.cleanup();
 });
 
-function createEnabledBundleConfig(pluginIds: string[]): OpenClawConfig {
+function createEnabledBundleConfig(pluginIds: string[]): MerClawConfig {
   return {
     plugins: {
       entries: createEnabledPluginEntries(pluginIds),
@@ -92,11 +92,11 @@ describe("loadEnabledBundleMcpConfig", () => {
   it("loads enabled Claude bundle MCP config and absolutizes relative args", async () => {
     await withBundleHomeEnv(
       tempHarness,
-      "openclaw-bundle-mcp",
+      "merclaw-bundle-mcp",
       async ({ homeDir, workspaceDir }) => {
         const { pluginRoot, serverPath } = await createBundleProbePlugin(homeDir);
 
-        const config: OpenClawConfig = {
+        const config: MerClawConfig = {
           plugins: {
             entries: {
               "bundle-probe": { enabled: true },
@@ -129,8 +129,8 @@ describe("loadEnabledBundleMcpConfig", () => {
   });
 
   it("uses a provided manifest registry instead of rediscovering bundle plugins", async () => {
-    const homeDir = await tempHarness.createTempDir("openclaw-bundle-mcp-home-");
-    const workspaceDir = await tempHarness.createTempDir("openclaw-bundle-mcp-workspace-");
+    const homeDir = await tempHarness.createTempDir("merclaw-bundle-mcp-home-");
+    const workspaceDir = await tempHarness.createTempDir("merclaw-bundle-mcp-workspace-");
     const { pluginRoot } = await createBundleProbePlugin(homeDir);
 
     const loaded = loadEnabledBundleMcpConfig({
@@ -165,7 +165,7 @@ describe("loadEnabledBundleMcpConfig", () => {
   it("merges inline bundle MCP servers and skips disabled bundles", async () => {
     await withBundleHomeEnv(
       tempHarness,
-      "openclaw-bundle-inline",
+      "merclaw-bundle-inline",
       async ({ homeDir, workspaceDir }) => {
         await writeClaudeBundleManifest({
           homeDir,
@@ -223,7 +223,7 @@ describe("loadEnabledBundleMcpConfig", () => {
   it("resolves inline Claude MCP paths from the plugin root and expands CLAUDE_PLUGIN_ROOT", async () => {
     await withBundleHomeEnv(
       tempHarness,
-      "openclaw-bundle-inline-placeholder",
+      "merclaw-bundle-inline-placeholder",
       async ({ homeDir, workspaceDir }) => {
         const pluginRoot = await writeClaudeBundleManifest({
           homeDir,
@@ -266,7 +266,7 @@ describe("loadEnabledBundleMcpConfig", () => {
   it("loads Link-style Codex bundle MCP config", async () => {
     await withBundleHomeEnv(
       tempHarness,
-      "openclaw-bundle-link",
+      "merclaw-bundle-link",
       async ({ homeDir, workspaceDir }) => {
         const pluginRoot = resolveBundlePluginRoot(homeDir, "link");
         await writeBundleTextFiles(pluginRoot, {
@@ -313,7 +313,7 @@ describe("loadEnabledBundleMcpConfig", () => {
   it("reports malformed file-backed MCP configs instead of silently dropping servers", async () => {
     await withBundleHomeEnv(
       tempHarness,
-      "openclaw-bundle-malformed-mcp",
+      "merclaw-bundle-malformed-mcp",
       async ({ homeDir, workspaceDir }) => {
         const pluginRoot = await writeClaudeBundleManifest({
           homeDir,
@@ -341,7 +341,7 @@ describe("loadEnabledBundleMcpConfig", () => {
   it("reports malformed file-backed LSP configs instead of silently dropping servers", async () => {
     await withBundleHomeEnv(
       tempHarness,
-      "openclaw-bundle-malformed-lsp",
+      "merclaw-bundle-malformed-lsp",
       async ({ homeDir, workspaceDir }) => {
         const pluginRoot = await writeClaudeBundleManifest({
           homeDir,

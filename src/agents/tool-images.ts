@@ -1,5 +1,5 @@
-import { canonicalizeBase64 } from "@openclaw/media-core/base64";
-import { resolveIntegerOption } from "@openclaw/normalization-core/number-coercion";
+import { canonicalizeBase64 } from "@merclaw/media-core/base64";
+import { resolveIntegerOption } from "@merclaw/normalization-core/number-coercion";
 import type { ImageContent } from "../llm/types.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import {
@@ -20,7 +20,7 @@ type ToolContentBlock = AgentToolResult<unknown>["content"][number];
 type ImageContentBlock = Extract<ToolContentBlock, { type: "image" }>;
 type TextContentBlock = Extract<ToolContentBlock, { type: "text" }>;
 
-// Anthropic Messages API limitations (observed in OpenClaw sessions):
+// Anthropic Messages API limitations (observed in MerClaw sessions):
 // - Images over ~2000px per side can fail in multi-image requests.
 // - Images over 5MB are rejected by the API.
 //

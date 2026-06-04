@@ -19,7 +19,7 @@ import { fileURLToPath } from "node:url";
 import { resolvePathEnvKey } from "./windows-cmd-helpers.mjs";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const ignoreRepoBinary = process.env.OPENCLAW_CRABBOX_WRAPPER_IGNORE_REPO_BINARY === "1";
+const ignoreRepoBinary = process.env.MERCLAW_CRABBOX_WRAPPER_IGNORE_REPO_BINARY === "1";
 const repoLocal = ignoreRepoBinary ? null : resolveCrabboxBinary(process.env, process.platform);
 const pathLocal = resolvePathBinary("crabbox", process.env, process.platform);
 const binary =
@@ -141,8 +141,8 @@ const shellControlCommandPrefixes = new Set([
 const shellCommandExecutionPrefixes = new Set(["exec"]);
 const shellInlineCommandInterpreters = new Set(["bash", "dash", "ksh", "sh", "zsh"]);
 const remoteChangedGateEnv = [
-  "OPENCLAW_CHECK_CHANGED_REMOTE_CHILD=1",
-  "OPENCLAW_CHANGED_LANES_RAW_SYNC=1",
+  "MERCLAW_CHECK_CHANGED_REMOTE_CHILD=1",
+  "MERCLAW_CHANGED_LANES_RAW_SYNC=1",
   "CI=1",
 ];
 const shellInlineCommandOptionsWithNextValue = new Set([
@@ -463,7 +463,7 @@ function selectedProvider(commandArgs, advertisedProviders = []) {
 }
 
 function shouldRequireBrokeredAws(commandArgs, providerName) {
-  if (process.env.OPENCLAW_CRABBOX_ALLOW_DIRECT_AWS === "1") {
+  if (process.env.MERCLAW_CRABBOX_ALLOW_DIRECT_AWS === "1") {
     return false;
   }
   const canonicalProvider = providerAliases.get(providerName) ?? providerName;
@@ -496,9 +496,9 @@ function enforceBrokeredAws(commandArgs, providerName) {
   }
   console.error(
     [
-      "[crabbox] provider=aws requires a configured Crabbox broker for OpenClaw proof.",
-      "[crabbox] run `crabbox login --url https://crabbox.openclaw.ai --provider aws`, then retry.",
-      "[crabbox] for intentional direct AWS provider debugging, set OPENCLAW_CRABBOX_ALLOW_DIRECT_AWS=1.",
+      "[crabbox] provider=aws requires a configured Crabbox broker for MerClaw proof.",
+      "[crabbox] run `crabbox login --url https://crabbox.merclaw.ai --provider aws`, then retry.",
+      "[crabbox] for intentional direct AWS provider debugging, set MERCLAW_CRABBOX_ALLOW_DIRECT_AWS=1.",
     ].join("\n"),
   );
   process.exit(2);
@@ -1433,11 +1433,11 @@ function remoteGitBootstrapForChangedGate(changedGateBase) {
     "if ! git status --short >/dev/null 2>&1; then",
     "rm -rf .git;",
     "git init -q;",
-    "git remote add origin https://github.com/openclaw/openclaw.git 2>/dev/null || git remote set-url origin https://github.com/openclaw/openclaw.git;",
+    "git remote add origin https://github.com/merclaw/merclaw.git 2>/dev/null || git remote set-url origin https://github.com/merclaw/merclaw.git;",
     `git fetch -q --depth=1 origin ${quotedBase}:refs/remotes/origin/main;`,
     "git reset --mixed --quiet refs/remotes/origin/main;",
     "git add -A;",
-    "if ! git diff --cached --quiet; then git -c user.name=OpenClaw -c user.email=ci@openclaw.local commit -q --no-gpg-sign -m remote-changed-gate-tree; fi;",
+    "if ! git diff --cached --quiet; then git -c user.name=MerClaw -c user.email=ci@merclaw.local commit -q --no-gpg-sign -m remote-changed-gate-tree; fi;",
     "fi",
   ].join(" ");
 }
@@ -1564,10 +1564,10 @@ function injectRemoteChangedGateGitBootstrap(commandArgs, changedGateBase) {
 }
 
 function remoteAwsMacosJsBootstrap({ packageManager = false } = {}) {
-  const nodeVersion = process.env.OPENCLAW_CRABBOX_MACOS_NODE_VERSION?.trim() || "24.15.0";
+  const nodeVersion = process.env.MERCLAW_CRABBOX_MACOS_NODE_VERSION?.trim() || "24.15.0";
   const bootstrap = [
-    "openclaw_crabbox_bootstrap_macos_js() {",
-    'tool_root="${OPENCLAW_CRABBOX_MACOS_TOOLCHAIN_DIR:-$HOME/.openclaw-crabbox-toolchain}";',
+    "merclaw_crabbox_bootstrap_macos_js() {",
+    'tool_root="${MERCLAW_CRABBOX_MACOS_TOOLCHAIN_DIR:-$HOME/.merclaw-crabbox-toolchain}";',
     `node_version=${shellQuote(nodeVersion)};`,
     'arch="$(uname -m)";',
     'case "$arch" in arm64) node_arch=arm64 ;; x86_64) node_arch=x64 ;; *) echo "unsupported macOS arch: $arch" >&2; return 2 ;; esac;',
@@ -1589,25 +1589,25 @@ function remoteAwsMacosJsBootstrap({ packageManager = false } = {}) {
     'rm -rf "$tmp_dir";',
     "fi;",
     "node --version >&2 || return 1;",
-    "openclaw_crabbox_env() {",
-    "openclaw_env_args=();",
-    "openclaw_env_ignore=0;",
-    "openclaw_env_path_seen=0;",
+    "merclaw_crabbox_env() {",
+    "merclaw_env_args=();",
+    "merclaw_env_ignore=0;",
+    "merclaw_env_path_seen=0;",
     'while [ "$#" -gt 0 ]; do',
     'case "$1" in',
-    '-i|--ignore-environment) openclaw_env_ignore=1; openclaw_env_args+=("$1"); shift ;;',
-    '-S|--split-string|-S*|--split-string=*) command env "${openclaw_env_args[@]}" "$@"; return ;;',
-    '-[!-]*i*) openclaw_env_ignore=1; openclaw_env_args+=("$1"); shift ;;',
-    '-u|--unset|-C|--chdir) openclaw_env_args+=("$1"); shift; if [ "$#" -gt 0 ]; then openclaw_env_args+=("$1"); shift; fi ;;',
-    '--unset=*|--chdir=*) openclaw_env_args+=("$1"); shift ;;',
-    'PATH=*) if [ "$openclaw_env_ignore" = "1" ]; then openclaw_env_args+=("PATH=$PATH:${1#PATH=}"); else openclaw_env_args+=("$1"); fi; openclaw_env_path_seen=1; shift ;;',
-    '[A-Za-z_]*=*) openclaw_env_args+=("$1"); shift ;;',
-    '--) openclaw_env_args+=("--"); shift; break ;;',
+    '-i|--ignore-environment) merclaw_env_ignore=1; merclaw_env_args+=("$1"); shift ;;',
+    '-S|--split-string|-S*|--split-string=*) command env "${merclaw_env_args[@]}" "$@"; return ;;',
+    '-[!-]*i*) merclaw_env_ignore=1; merclaw_env_args+=("$1"); shift ;;',
+    '-u|--unset|-C|--chdir) merclaw_env_args+=("$1"); shift; if [ "$#" -gt 0 ]; then merclaw_env_args+=("$1"); shift; fi ;;',
+    '--unset=*|--chdir=*) merclaw_env_args+=("$1"); shift ;;',
+    'PATH=*) if [ "$merclaw_env_ignore" = "1" ]; then merclaw_env_args+=("PATH=$PATH:${1#PATH=}"); else merclaw_env_args+=("$1"); fi; merclaw_env_path_seen=1; shift ;;',
+    '[A-Za-z_]*=*) merclaw_env_args+=("$1"); shift ;;',
+    '--) merclaw_env_args+=("--"); shift; break ;;',
     "*) break ;;",
     "esac;",
     "done;",
-    'if [ "$openclaw_env_ignore" = "1" ] && [ "$openclaw_env_path_seen" = "0" ]; then openclaw_env_args+=("PATH=$PATH"); fi;',
-    'command env "${openclaw_env_args[@]}" "$@";',
+    'if [ "$merclaw_env_ignore" = "1" ] && [ "$merclaw_env_path_seen" = "0" ]; then merclaw_env_args+=("PATH=$PATH"); fi;',
+    'command env "${merclaw_env_args[@]}" "$@";',
     "};",
   ];
   if (packageManager) {
@@ -1620,7 +1620,7 @@ function remoteAwsMacosJsBootstrap({ packageManager = false } = {}) {
       "pnpm --version >&2;",
     );
   }
-  bootstrap.push("};", "openclaw_crabbox_bootstrap_macos_js");
+  bootstrap.push("};", "merclaw_crabbox_bootstrap_macos_js");
   return bootstrap.join(" ");
 }
 
@@ -1649,7 +1649,7 @@ function scopedAwsMacosEnvCommand(commandArgs) {
   return {
     runtimeEntrypoint: targetEntrypoint,
     packageManager: awsMacosCorepackEntrypoints.has(targetEntrypoint),
-    shellCommand: `openclaw_crabbox_env ${shellJoin(commandArgs.slice(1))}`,
+    shellCommand: `merclaw_crabbox_env ${shellJoin(commandArgs.slice(1))}`,
   };
 }
 
@@ -1737,7 +1737,7 @@ function prepareAwsMacosScriptStdinBootstrap(commandArgs, providerName) {
     return { args: commandArgs, cleanup: () => {}, prepared: false };
   }
 
-  const scriptRoot = mkdtempSync(resolve(tmpdir(), "openclaw-crabbox-macos-script-"));
+  const scriptRoot = mkdtempSync(resolve(tmpdir(), "merclaw-crabbox-macos-script-"));
   const scriptPath = resolve(scriptRoot, "script.sh");
   const script = readFileSync(0, "utf8");
   writeFileSync(scriptPath, createAwsMacosScriptStdinWrapper(script), "utf8");
@@ -1757,9 +1757,9 @@ function createAwsMacosScriptStdinWrapper(script) {
   const delimiter = uniqueHereDocDelimiter(script);
   return [
     `${remoteAwsMacosJsBootstrap({ packageManager })} || exit $?`,
-    'tmp_script="$(mktemp "${TMPDIR:-/tmp}/openclaw-crabbox-script.XXXXXX")" || exit $?',
-    'cleanup_openclaw_crabbox_script() { rm -f "$tmp_script"; }',
-    "trap cleanup_openclaw_crabbox_script EXIT",
+    'tmp_script="$(mktemp "${TMPDIR:-/tmp}/merclaw-crabbox-script.XXXXXX")" || exit $?',
+    'cleanup_merclaw_crabbox_script() { rm -f "$tmp_script"; }',
+    "trap cleanup_merclaw_crabbox_script EXIT",
     `cat >"$tmp_script" <<'${delimiter}'`,
     script.endsWith("\n") ? script.slice(0, -1) : script,
     delimiter,
@@ -1789,7 +1789,7 @@ function scriptNeedsAwsMacosPackageManager(script) {
 function uniqueHereDocDelimiter(script) {
   let index = 0;
   for (;;) {
-    const delimiter = `OPENCLAW_CRABBOX_SCRIPT_${index}`;
+    const delimiter = `MERCLAW_CRABBOX_SCRIPT_${index}`;
     if (!new RegExp(`^${delimiter}$`, "mu").test(script)) {
       return delimiter;
     }
@@ -1822,7 +1822,7 @@ function shouldUseFullCheckoutForCleanSparseRemoteSync(commandArgs, providerName
 }
 
 function prepareFullCheckoutForSync(options = {}) {
-  const dir = mkdtempSync(resolve(tmpdir(), "openclaw-crabbox-sync-"));
+  const dir = mkdtempSync(resolve(tmpdir(), "merclaw-crabbox-sync-"));
   let active = false;
   const add = gitOutput(["worktree", "add", "--detach", dir, "HEAD"]);
   if (add.status !== 0) {
@@ -1995,7 +1995,7 @@ if (canonicalProvider === "blacksmith-testbox") {
       [
         `[crabbox] provider=blacksmith-testbox requires Crabbox >= ${formatVersionTuple(minimumBlacksmithCrabboxVersion)} for current Testbox sync, queue, and cleanup behavior.`,
         `[crabbox] selected binary reported version=${version.text || "unknown"}.`,
-        "[crabbox] if using ../crabbox, rebuild it: version=$(git -C ../crabbox describe --tags --always --dirty | sed 's/^v//') && go build -C ../crabbox -trimpath -ldflags \"-s -w -X github.com/openclaw/crabbox/internal/cli.version=${version}\" -o bin/crabbox ./cmd/crabbox",
+        "[crabbox] if using ../crabbox, rebuild it: version=$(git -C ../crabbox describe --tags --always --dirty | sed 's/^v//') && go build -C ../crabbox -trimpath -ldflags \"-s -w -X github.com/merclaw/crabbox/internal/cli.version=${version}\" -o bin/crabbox ./cmd/crabbox",
       ].join("\n"),
     );
     process.exit(2);
@@ -2077,7 +2077,7 @@ if (
       ? `pnpm crabbox:hydrate -- --id ${id}`
       : "pnpm crabbox:warmup, then pnpm crabbox:hydrate -- --id <id>";
     console.error(
-      `[crabbox] warning: provider=aws raw boxes may lack Node/Corepack/pnpm for ${runtimeEntrypoint}; hydrate first (${hydrate}) or pass --provider blacksmith-testbox for OpenClaw CI-like proof; not switching providers automatically`,
+      `[crabbox] warning: provider=aws raw boxes may lack Node/Corepack/pnpm for ${runtimeEntrypoint}; hydrate first (${hydrate}) or pass --provider blacksmith-testbox for MerClaw CI-like proof; not switching providers automatically`,
     );
   }
 }
@@ -2090,7 +2090,7 @@ if (
 ) {
   childEnv.CRABBOX_LOCAL_CONTAINER_DOCKER_SOCKET = "1";
   console.error(
-    "[crabbox] provider=docker enabling host Docker socket pass-through for OpenClaw Docker tests",
+    "[crabbox] provider=docker enabling host Docker socket pass-through for MerClaw Docker tests",
   );
 }
 if (
@@ -2099,9 +2099,9 @@ if (
   !childEnv.CRABBOX_LOCAL_CONTAINER_WORK_ROOT &&
   !hasOption(normalizedArgs, "--local-container-work-root")
 ) {
-  childEnv.CRABBOX_LOCAL_CONTAINER_WORK_ROOT = "/tmp/openclaw-crabbox-docker-work";
+  childEnv.CRABBOX_LOCAL_CONTAINER_WORK_ROOT = "/tmp/merclaw-crabbox-docker-work";
   console.error(
-    "[crabbox] provider=docker using short host-visible work root for OpenClaw Docker tests",
+    "[crabbox] provider=docker using short host-visible work root for MerClaw Docker tests",
   );
 }
 

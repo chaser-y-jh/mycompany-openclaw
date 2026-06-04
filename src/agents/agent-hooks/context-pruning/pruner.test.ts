@@ -1,5 +1,5 @@
-import type { AgentMessage } from "openclaw/plugin-sdk/agent-core";
-import type { ExtensionContext } from "openclaw/plugin-sdk/agent-sessions";
+import type { AgentMessage } from "merclaw/plugin-sdk/agent-core";
+import type { ExtensionContext } from "merclaw/plugin-sdk/agent-sessions";
 import { describe, expect, it } from "vitest";
 import { pruneContextMessages } from "./pruner.js";
 import { DEFAULT_CONTEXT_PRUNING_SETTINGS } from "./settings.js";
@@ -155,7 +155,7 @@ describe("pruneContextMessages", () => {
   it("keeps tool results with malformed text blocks", () => {
     // Regression: a plugin returning undefined produces {type: "text"} with no text property,
     // which crashed estimateTextAndImageChars / collectTextSegments / collectPrunableToolResultSegments.
-    // See https://github.com/openclaw/openclaw/issues/34979
+    // See https://github.com/merclaw/merclaw/issues/34979
     const malformedToolResult = {
       role: "toolResult",
       toolName: "sentinel_control",

@@ -1,18 +1,18 @@
-import type { SandboxContext } from "openclaw/plugin-sdk/sandbox";
-import type { OpenClawExecServer } from "./types.js";
+import type { SandboxContext } from "merclaw/plugin-sdk/sandbox";
+import type { MerClawExecServer } from "./types.js";
 
 export function requireBackend(
-  execServer: OpenClawExecServer,
+  execServer: MerClawExecServer,
 ): NonNullable<SandboxContext["backend"]> {
   const backend = execServer.sandbox.backend;
   if (!backend) {
-    throw new Error("OpenClaw sandbox backend is unavailable.");
+    throw new Error("MerClaw sandbox backend is unavailable.");
   }
   return backend;
 }
 
 export function requireFsBridge(
-  execServer: OpenClawExecServer,
+  execServer: MerClawExecServer,
 ): NonNullable<SandboxContext["fsBridge"]> {
   const fsBridge = execServer.sandbox.fsBridge;
   if (!fsBridge) {

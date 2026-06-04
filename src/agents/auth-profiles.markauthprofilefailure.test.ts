@@ -29,7 +29,7 @@ let tempRoot = "";
 let tempCaseIndex = 0;
 
 beforeAll(() => {
-  tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-auth-"));
+  tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-auth-"));
 });
 
 afterAll(() => {

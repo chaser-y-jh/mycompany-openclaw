@@ -1,13 +1,13 @@
 {
-  "name": "@openclaw/opencode-provider",
+  "name": "@merclaw/opencode-provider",
   "version": "2026.5.31",
   "private": true,
-  "description": "OpenClaw OpenCode Zen provider plugin",
+  "description": "MerClaw OpenCode Zen provider plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@merclaw/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ]

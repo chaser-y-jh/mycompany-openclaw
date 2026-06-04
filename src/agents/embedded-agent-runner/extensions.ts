@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import { normalizeOptionalLowercaseString } from "@merclaw/normalization-core/string-coerce";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import type { ProviderRuntimeModel } from "../../plugins/provider-runtime-model.types.js";
 import { setCompactionSafeguardRuntime } from "../agent-hooks/compaction-safeguard-runtime.js";
 import compactionSafeguardExtension from "../agent-hooks/compaction-safeguard.js";
@@ -48,7 +48,7 @@ function hasErrorToolResultStatus(result: AgentToolResult<unknown>): boolean {
 }
 
 function buildAgentToolResultMiddlewareFactory(): ExtensionFactory {
-  const runner = createAgentToolResultMiddlewareRunner({ runtime: "openclaw" });
+  const runner = createAgentToolResultMiddlewareRunner({ runtime: "merclaw" });
   return (agent) => {
     agent.on("tool_result", async (rawEvent: unknown, ctx: { cwd?: string }) => {
       const event = recordFromUnknown(rawEvent) as AgentToolResultEvent;
@@ -58,7 +58,7 @@ function buildAgentToolResultMiddlewareFactory(): ExtensionFactory {
       const toolCallId =
         typeof event.toolCallId === "string" && event.toolCallId.trim()
           ? event.toolCallId
-          : `openclaw-${randomUUID()}`;
+          : `merclaw-${randomUUID()}`;
       const content = Array.isArray(event.content) ? event.content : [];
       const current = {
         content,
@@ -87,7 +87,7 @@ function buildAgentToolResultMiddlewareFactory(): ExtensionFactory {
 }
 
 function resolveContextWindowTokens(params: {
-  cfg: OpenClawConfig | undefined;
+  cfg: MerClawConfig | undefined;
   provider: string;
   modelId: string;
   model: ProviderRuntimeModel | undefined;
@@ -103,7 +103,7 @@ function resolveContextWindowTokens(params: {
 }
 
 function buildContextPruningFactory(params: {
-  cfg: OpenClawConfig | undefined;
+  cfg: MerClawConfig | undefined;
   sessionManager: SessionManager;
   provider: string;
   modelId: string;
@@ -142,7 +142,7 @@ function buildContextPruningFactory(params: {
 }
 
 export function buildEmbeddedExtensionFactories(params: {
-  cfg: OpenClawConfig | undefined;
+  cfg: MerClawConfig | undefined;
   sessionManager: SessionManager;
   workspaceDir?: string;
   provider: string;

@@ -1,10 +1,10 @@
 import { createHash } from "node:crypto";
-import { readJsonFileWithFallback } from "openclaw/plugin-sdk/json-store";
+import { readJsonFileWithFallback } from "merclaw/plugin-sdk/json-store";
 import { getTelegramRuntime } from "./runtime.js";
 
 export const TELEGRAM_TOPIC_NAME_CACHE_MAX_ENTRIES = 2_048;
 const STORE_NAMESPACE_PREFIX = "telegram.topic-name-cache";
-const TOPIC_NAME_CACHE_STATE_KEY = Symbol.for("openclaw.telegramTopicNameCacheState");
+const TOPIC_NAME_CACHE_STATE_KEY = Symbol.for("merclaw.telegramTopicNameCacheState");
 const DEFAULT_TOPIC_NAME_CACHE_SCOPE = "default";
 
 type TopicEntry = {

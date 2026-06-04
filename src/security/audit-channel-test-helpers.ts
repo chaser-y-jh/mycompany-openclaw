@@ -1,14 +1,14 @@
 import type { ChannelPlugin } from "../channels/plugins/types.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { MerClawConfig } from "../config/config.js";
 
 export function stubAuditChannelPlugin(params: {
   id: string;
   label: string;
   commands: ChannelPlugin["commands"];
   collectAuditFindings: NonNullable<ChannelPlugin["security"]>["collectAuditFindings"];
-  resolveAccount: (cfg: OpenClawConfig, accountId: string | null | undefined) => unknown;
-  inspectAccount?: (cfg: OpenClawConfig, accountId: string | null | undefined) => unknown;
-  isConfigured?: (account: unknown, cfg: OpenClawConfig) => boolean;
+  resolveAccount: (cfg: MerClawConfig, accountId: string | null | undefined) => unknown;
+  inspectAccount?: (cfg: MerClawConfig, accountId: string | null | undefined) => unknown;
+  isConfigured?: (account: unknown, cfg: MerClawConfig) => boolean;
 }): ChannelPlugin {
   return {
     id: params.id,

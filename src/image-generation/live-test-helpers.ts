@@ -1,5 +1,5 @@
-import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { normalizeOptionalLowercaseString } from "@merclaw/normalization-core/string-coerce";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import {
   parseLiveCsvFilter,
   parseProviderModelMap,
@@ -37,7 +37,7 @@ export function parseCsvFilter(raw?: string): Set<string> | null {
   return parseLiveCsvFilter(raw, { lowercase: false });
 }
 
-export function resolveConfiguredLiveImageModels(cfg: OpenClawConfig): Map<string, string> {
+export function resolveConfiguredLiveImageModels(cfg: MerClawConfig): Map<string, string> {
   return resolveConfiguredLiveProviderModels(cfg.agents?.defaults?.imageGenerationModel);
 }
 

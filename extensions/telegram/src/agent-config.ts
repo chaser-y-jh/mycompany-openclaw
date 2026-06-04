@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
 
 type ReasoningDefault = "on" | "stream" | "off";
 
@@ -10,7 +10,7 @@ function normalizeAgentId(value: string | undefined | null): string {
 }
 
 export function resolveTelegramConfigReasoningDefault(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   agentId: string,
 ): ReasoningDefault {
   const id = normalizeAgentId(agentId);

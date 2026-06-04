@@ -1,11 +1,11 @@
 import fs from "node:fs";
-import { isRecord as isObjectRecord } from "@openclaw/normalization-core/record-coerce";
+import { isRecord as isObjectRecord } from "@merclaw/normalization-core/record-coerce";
 import JSON5 from "json5";
 import { getCommandPathWithRootOptions } from "../cli/argv.js";
 import { resolveConfigPath } from "../config/paths.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 
-type LoggingConfig = OpenClawConfig["logging"];
+type LoggingConfig = MerClawConfig["logging"];
 
 let cachedLoggingConfig:
   | {

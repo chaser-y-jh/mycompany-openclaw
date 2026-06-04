@@ -1,4 +1,4 @@
-import type { ConfigFileSnapshot, ConfigValidationIssue } from "./types.openclaw.js";
+import type { ConfigFileSnapshot, ConfigValidationIssue } from "./types.merclaw.js";
 
 const PLUGIN_ENTRY_PATH_PREFIX = "plugins.entries.";
 const PLUGIN_POLICY_PATHS = new Set(["plugins.allow", "plugins.deny"]);

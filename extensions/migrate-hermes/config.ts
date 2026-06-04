@@ -4,9 +4,9 @@ import {
   createMigrationConfigPatchItem,
   createMigrationManualItem,
   hasMigrationConfigPatchConflict,
-} from "openclaw/plugin-sdk/migration";
-import type { MigrationItem, MigrationProviderContext } from "openclaw/plugin-sdk/plugin-entry";
-import { uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "merclaw/plugin-sdk/migration";
+import type { MigrationItem, MigrationProviderContext } from "merclaw/plugin-sdk/plugin-entry";
+import { uniqueStrings } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { childRecord, isRecord, readString, readStringArray } from "./helpers.js";
 
 type HermesProviderConfig = {
@@ -178,7 +178,7 @@ export function buildConfigItems(params: {
         target: "memory",
         path: ["memory"],
         value: { backend: "builtin" },
-        message: "Use OpenClaw built-in file memory for imported Hermes memory files.",
+        message: "Use MerClaw built-in file memory for imported Hermes memory files.",
         conflict:
           !params.ctx.overwrite &&
           hasMigrationConfigPatchConflict(params.ctx.config, ["memory"], { backend: true }),
@@ -190,7 +190,7 @@ export function buildConfigItems(params: {
         target: "plugins.slots",
         path: ["plugins", "slots"],
         value: { memory: "memory-core" },
-        message: "Select the default OpenClaw memory plugin for imported file memory.",
+        message: "Select the default MerClaw memory plugin for imported file memory.",
         conflict:
           !params.ctx.overwrite &&
           hasMigrationConfigPatchConflict(params.ctx.config, ["plugins", "slots"], {
@@ -224,7 +224,7 @@ export function buildConfigItems(params: {
         id: "manual:memory-provider:honcho",
         source: "config.yaml:memory.provider",
         message:
-          "Hermes used Honcho memory. OpenClaw keeps built-in memory selected until the matching plugin is installed and reviewed.",
+          "Hermes used Honcho memory. MerClaw keeps built-in memory selected until the matching plugin is installed and reviewed.",
         recommendation:
           "Install or review the Honcho memory plugin before selecting it for plugins.slots.memory.",
       }),
@@ -234,8 +234,8 @@ export function buildConfigItems(params: {
       createMigrationManualItem({
         id: `manual:memory-provider:${memoryProvider}`,
         source: "config.yaml:memory.provider",
-        message: `Hermes memory provider "${memoryProvider}" does not have a known OpenClaw mapping.`,
-        recommendation: "Install or configure an equivalent OpenClaw memory plugin manually.",
+        message: `Hermes memory provider "${memoryProvider}" does not have a known MerClaw mapping.`,
+        recommendation: "Install or configure an equivalent MerClaw memory plugin manually.",
       }),
     );
   }

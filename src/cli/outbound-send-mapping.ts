@@ -1,4 +1,4 @@
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { normalizeLowercaseStringOrEmpty } from "@merclaw/normalization-core/string-coerce";
 import { normalizeChannelId } from "../channels/registry.js";
 import {
   resolveLegacyOutboundSendDepKeys,
@@ -10,7 +10,7 @@ import {
  * Each value is a lazily-loaded send function for that channel.
  */
 export const CLI_OUTBOUND_SEND_FACTORY: unique symbol = Symbol.for(
-  "openclaw.cliOutboundSendFactory",
+  "merclaw.cliOutboundSendFactory",
 ) as never;
 
 type CliOutboundSendFactory = (channelId: string) => unknown;

@@ -2,30 +2,30 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import OpenAI from "openai";
-import type { ResolvedTtsConfig } from "openclaw/plugin-sdk/agent-runtime";
-import { AuthStorage, ModelRegistry } from "openclaw/plugin-sdk/agent-sessions";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { Api, Model } from "openclaw/plugin-sdk/llm";
-import { encodePngRgba, fillPixel } from "openclaw/plugin-sdk/media-runtime";
+import type { ResolvedTtsConfig } from "merclaw/plugin-sdk/agent-runtime";
+import { AuthStorage, ModelRegistry } from "merclaw/plugin-sdk/agent-sessions";
+import type { MerClawConfig } from "merclaw/plugin-sdk/config-contracts";
+import type { Api, Model } from "merclaw/plugin-sdk/llm";
+import { encodePngRgba, fillPixel } from "merclaw/plugin-sdk/media-runtime";
 import {
   registerProviderPlugin,
   requireRegisteredProvider,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
-import { runRealtimeSttLiveTest } from "openclaw/plugin-sdk/provider-test-contracts";
-import { getRuntimeConfig } from "openclaw/plugin-sdk/runtime-config-snapshot";
+} from "merclaw/plugin-sdk/plugin-test-runtime";
+import { runRealtimeSttLiveTest } from "merclaw/plugin-sdk/provider-test-contracts";
+import { getRuntimeConfig } from "merclaw/plugin-sdk/runtime-config-snapshot";
 import {
   isOverloadedErrorMessage,
   isServerErrorMessage,
   isTimeoutErrorMessage,
-} from "openclaw/plugin-sdk/test-env";
+} from "merclaw/plugin-sdk/test-env";
 import { describe, expect, it } from "vitest";
 import plugin from "./index.js";
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY ?? "";
-const LIVE_MODEL_ID = process.env.OPENCLAW_LIVE_OPENAI_PLUGIN_MODEL?.trim() || "gpt-5.5";
-const LIVE_IMAGE_MODEL = process.env.OPENCLAW_LIVE_OPENAI_IMAGE_MODEL?.trim() || "gpt-image-2";
-const LIVE_VISION_MODEL = process.env.OPENCLAW_LIVE_OPENAI_VISION_MODEL?.trim() || "gpt-5.4-mini";
-const liveEnabled = OPENAI_API_KEY.trim().length > 0 && process.env.OPENCLAW_LIVE_TEST === "1";
+const LIVE_MODEL_ID = process.env.MERCLAW_LIVE_OPENAI_PLUGIN_MODEL?.trim() || "gpt-5.5";
+const LIVE_IMAGE_MODEL = process.env.MERCLAW_LIVE_OPENAI_IMAGE_MODEL?.trim() || "gpt-image-2";
+const LIVE_VISION_MODEL = process.env.MERCLAW_LIVE_OPENAI_VISION_MODEL?.trim() || "gpt-5.4-mini";
+const liveEnabled = OPENAI_API_KEY.trim().length > 0 && process.env.MERCLAW_LIVE_TEST === "1";
 const describeLive = liveEnabled ? describe : describe.skip;
 const EMPTY_AUTH_STORE = { version: 1, profiles: {} } as const;
 const ModelRegistryCtor = ModelRegistry as unknown as {
@@ -95,7 +95,7 @@ function resolveLiveOpenAISkipReason(error: unknown): string | null {
   return null;
 }
 
-function createLiveConfig(): OpenClawConfig {
+function createLiveConfig(): MerClawConfig {
   const cfg = getRuntimeConfig();
   return {
     ...cfg,
@@ -110,7 +110,7 @@ function createLiveConfig(): OpenClawConfig {
         },
       },
     },
-  } as OpenClawConfig;
+  } as MerClawConfig;
 }
 
 function createLiveTtsConfig(): ResolvedTtsConfig {
@@ -245,7 +245,7 @@ describeLive("openai plugin live", () => {
     const ttsConfig = createLiveTtsConfig();
 
     const audioFile = await speechProvider.synthesize({
-      text: "OpenClaw integration test OK.",
+      text: "MerClaw integration test OK.",
       cfg,
       providerConfig: ttsConfig.providerConfigs.openai ?? {},
       target: "audio-file",
@@ -327,7 +327,7 @@ describeLive("openai plugin live", () => {
     const speechProvider = requireRegisteredProvider(speechProviders, "openai");
     const cfg = createLiveConfig();
     const ttsConfig = createLiveTtsConfig();
-    const phrase = "Testing OpenClaw OpenAI realtime transcription integration test OK.";
+    const phrase = "Testing MerClaw OpenAI realtime transcription integration test OK.";
 
     const telephony = await speechProvider.synthesizeTelephony?.({
       text: phrase,

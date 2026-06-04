@@ -16,16 +16,16 @@ describe("gh-read helpers", () => {
   });
 
   it("finds repo from gh args", () => {
-    expect(parseRepoArg(["pr", "view", "42", "-R", "openclaw/openclaw"])).toBe("openclaw/openclaw");
-    expect(parseRepoArg(["run", "list", "--repo=openclaw/docs"])).toBe("openclaw/docs");
+    expect(parseRepoArg(["pr", "view", "42", "-R", "merclaw/merclaw"])).toBe("merclaw/merclaw");
+    expect(parseRepoArg(["run", "list", "--repo=merclaw/docs"])).toBe("merclaw/docs");
     expect(parseRepoArg(["pr", "view", "42"])).toBeNull();
   });
 
   it("normalizes repo strings from common git formats", () => {
-    expect(normalizeRepo("openclaw/openclaw")).toBe("openclaw/openclaw");
-    expect(normalizeRepo("github.com/openclaw/openclaw")).toBe("openclaw/openclaw");
-    expect(normalizeRepo("https://github.com/openclaw/openclaw.git")).toBe("openclaw/openclaw");
-    expect(normalizeRepo("git@github.com:openclaw/openclaw.git")).toBe("openclaw/openclaw");
+    expect(normalizeRepo("merclaw/merclaw")).toBe("merclaw/merclaw");
+    expect(normalizeRepo("github.com/merclaw/merclaw")).toBe("merclaw/merclaw");
+    expect(normalizeRepo("https://github.com/merclaw/merclaw.git")).toBe("merclaw/merclaw");
+    expect(normalizeRepo("git@github.com:merclaw/merclaw.git")).toBe("merclaw/merclaw");
     expect(normalizeRepo("invalid")).toBeNull();
   });
 
@@ -162,7 +162,7 @@ describe("gh-read helpers", () => {
   it("rejects invalid GitHub API timeout values", () => {
     expect(resolveGitHubFetchTimeoutMs("1000")).toBe(1000);
     expect(() => resolveGitHubFetchTimeoutMs("1s")).toThrow(
-      /OPENCLAW_GH_READ_FETCH_TIMEOUT_MS must be an integer/u,
+      /MERCLAW_GH_READ_FETCH_TIMEOUT_MS must be an integer/u,
     );
   });
 });

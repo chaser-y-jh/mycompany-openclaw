@@ -1,10 +1,10 @@
 import path from "node:path";
-import { normalizeUniqueSingleOrTrimmedStringList } from "@openclaw/normalization-core/string-normalization";
+import { normalizeUniqueSingleOrTrimmedStringList } from "@merclaw/normalization-core/string-normalization";
 import { note } from "../../packages/terminal-core/src/note.js";
 import { sanitizeTerminalText } from "../../packages/terminal-core/src/safe-text.js";
 import { formatCliCommand } from "../cli/command-format.js";
 import { resolveStateDir } from "../config/paths.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import { callGateway } from "../gateway/call.js";
 import {
   listApprovedPairedDeviceRoles,
@@ -119,7 +119,7 @@ function normalizeLocalPairedDevice(device: PairedDevice): DoctorPairedDevice {
 }
 
 async function loadDoctorPairingSnapshot(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   healthOk: boolean;
 }): Promise<DoctorPairingSnapshot | null> {
   if (params.healthOk) {
@@ -230,8 +230,8 @@ function resolvePendingPairingIssue(
     displayName: pending.displayName,
     clientId: pending.clientId,
   });
-  const approveCommand = formatCliArgs(["openclaw", "devices", "approve", pending.requestId]);
-  const inspectCommand = formatCliArgs(["openclaw", "devices", "list"]);
+  const approveCommand = formatCliArgs(["merclaw", "devices", "approve", pending.requestId]);
+  const inspectCommand = formatCliArgs(["merclaw", "devices", "list"]);
   if (!paired) {
     return {
       kind: "first-time",
@@ -248,7 +248,7 @@ function resolvePendingPairingIssue(
       deviceLabel,
       approveCommand,
       inspectCommand,
-      removeCommand: formatCliArgs(["openclaw", "devices", "remove", pending.deviceId]),
+      removeCommand: formatCliArgs(["merclaw", "devices", "remove", pending.deviceId]),
     };
   }
   const requestedRoles = normalizeUniqueSingleOrTrimmedStringList(
@@ -338,7 +338,7 @@ function collectPairedRecordIssues(snapshot: DoctorPairingSnapshot): string[] {
     for (const role of approvedRoles) {
       const token = findTokenSummary(device, role);
       const rotateCommand = formatCliArgs([
-        "openclaw",
+        "merclaw",
         "devices",
         "rotate",
         "--device",
@@ -457,7 +457,7 @@ function collectLocalDeviceAuthIssues(snapshot: DoctorPairingSnapshot): string[]
       continue;
     }
     const rotateCommand = formatCliArgs([
-      "openclaw",
+      "merclaw",
       "devices",
       "rotate",
       "--device",
@@ -485,11 +485,11 @@ function collectLocalDeviceAuthIssues(snapshot: DoctorPairingSnapshot): string[]
 
 function formatPairingStoreReadIssue(error: JsonFileReadError): string {
   const problem = error.reason === "parse" ? "contains invalid JSON" : "could not be read";
-  return `- Device pairing store ${error.filePath} ${problem}. OpenClaw refused to treat it as empty to avoid overwriting approved pairings. Fix the JSON or file permissions, or move it aside and re-pair devices.`;
+  return `- Device pairing store ${error.filePath} ${problem}. MerClaw refused to treat it as empty to avoid overwriting approved pairings. Fix the JSON or file permissions, or move it aside and re-pair devices.`;
 }
 
 export async function noteDevicePairingHealth(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   healthOk: boolean;
 }): Promise<void> {
   let snapshot: DoctorPairingSnapshot | null;

@@ -1,4 +1,4 @@
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
+import { definePluginEntry } from "merclaw/plugin-sdk/plugin-entry";
 import { handleAdminHttpRpcRequest } from "./src/handler.js";
 
 export default definePluginEntry({

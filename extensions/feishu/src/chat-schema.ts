@@ -1,4 +1,4 @@
-import { optionalPositiveIntegerSchema } from "openclaw/plugin-sdk/channel-actions";
+import { optionalPositiveIntegerSchema } from "merclaw/plugin-sdk/channel-actions";
 import { Type, type Static } from "typebox";
 
 const CHAT_ACTION_VALUES = ["members", "info", "member_info"] as const;

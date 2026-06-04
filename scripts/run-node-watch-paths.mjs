@@ -28,7 +28,7 @@ export const runNodeSourceRoots = [
 ];
 export const runNodeConfigFiles = ["tsconfig.json", "package.json", "tsdown.config.ts"];
 export const runNodeWatchedPaths = [...runNodeSourceRoots, ...runNodeConfigFiles];
-export const extensionRestartMetadataFiles = new Set(["openclaw.plugin.json", "package.json"]);
+export const extensionRestartMetadataFiles = new Set(["merclaw.plugin.json", "package.json"]);
 
 const ignoredRunNodeRepoPathPatterns = [
   /^extensions\/[^/]+\/src\/host\/.+\/\.bundle\.hash$/u,

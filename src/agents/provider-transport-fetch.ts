@@ -2,13 +2,13 @@ import {
   isCloudMetadataIpAddress,
   isLinkLocalIpAddress,
   parseCanonicalIpAddress,
-} from "@openclaw/net-policy/ip";
+} from "@merclaw/net-policy/ip";
 import {
   asFiniteNumberInRange,
   clampTimerTimeoutMs,
   parseStrictFiniteNumber,
   parseStrictNonNegativeInteger,
-} from "@openclaw/normalization-core/number-coercion";
+} from "@merclaw/normalization-core/number-coercion";
 import {
   fetchWithSsrFGuard,
   withTrustedEnvProxyGuardedFetchMode,
@@ -325,7 +325,7 @@ function parseRetryAfterHttpDateMs(value: string): number {
 }
 
 function resolveMaxSdkRetryWaitSeconds(): number | undefined {
-  const raw = process.env.OPENCLAW_SDK_RETRY_MAX_WAIT_SECONDS?.trim();
+  const raw = process.env.MERCLAW_SDK_RETRY_MAX_WAIT_SECONDS?.trim();
   if (!raw) {
     return DEFAULT_MAX_SDK_RETRY_WAIT_SECONDS;
   }

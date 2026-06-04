@@ -16,7 +16,7 @@ const controlTimeoutMs = readPositiveInt(
 const chatTimeoutMs = readPositiveInt("OPENWEBUI_CHAT_TIMEOUT_MS", fetchTimeoutMs);
 const responseBodyMaxBytes = readPositiveInt("OPENWEBUI_RESPONSE_BODY_MAX_BYTES", 1024 * 1024);
 const smokeMode =
-  process.env.OPENWEBUI_SMOKE_MODE ?? process.env.OPENCLAW_OPENWEBUI_SMOKE_MODE ?? "chat";
+  process.env.OPENWEBUI_SMOKE_MODE ?? process.env.MERCLAW_OPENWEBUI_SMOKE_MODE ?? "chat";
 
 setGlobalDispatcher(
   new Agent({
@@ -227,11 +227,11 @@ for (let attempt = 1; attempt <= modelAttempts; attempt += 1) {
   if (modelsResult?.ok) {
     modelIds = extractModelIds(modelsResult.json);
     targetModel =
-      modelIds.find((id) => id === "openclaw/default") ?? modelIds.find((id) => id === "openclaw");
+      modelIds.find((id) => id === "merclaw/default") ?? modelIds.find((id) => id === "merclaw");
     if (targetModel) {
       break;
     }
-    lastModelsError = `missing openclaw model: ${JSON.stringify(modelIds)}`;
+    lastModelsError = `missing merclaw model: ${JSON.stringify(modelIds)}`;
   } else if (modelsResult) {
     lastModelsError = `HTTP ${modelsResult.status} ${modelsResult.text}`;
   }
@@ -241,7 +241,7 @@ for (let attempt = 1; attempt <= modelAttempts; attempt += 1) {
 }
 if (!targetModel) {
   throw new Error(
-    `openclaw model missing from Open WebUI model list after retry: ${JSON.stringify(modelIds)} (${lastModelsError})`,
+    `merclaw model missing from Open WebUI model list after retry: ${JSON.stringify(modelIds)} (${lastModelsError})`,
   );
 }
 if (smokeMode === "models") {

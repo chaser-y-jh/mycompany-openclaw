@@ -133,7 +133,7 @@ describe("probeGatewayStatus", () => {
       timeoutMs: 5_000,
       json: true,
       requireRpc: true,
-      configPath: "/tmp/openclaw-daemon/openclaw.json",
+      configPath: "/tmp/merclaw-daemon/merclaw.json",
     });
 
     expect(result).toEqual({
@@ -163,7 +163,7 @@ describe("probeGatewayStatus", () => {
       tlsFingerprint: "abc123",
       method: "status",
       timeoutMs: 5_000,
-      configPath: "/tmp/openclaw-daemon/openclaw.json",
+      configPath: "/tmp/merclaw-daemon/merclaw.json",
     });
   });
 

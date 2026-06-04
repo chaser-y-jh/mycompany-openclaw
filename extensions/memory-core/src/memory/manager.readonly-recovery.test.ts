@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import type { DatabaseSync } from "node:sqlite";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/memory-core-host-engine-foundation";
+import type { MerClawConfig } from "merclaw/plugin-sdk/memory-core-host-engine-foundation";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { openMemoryDatabaseAtPath } from "./manager-db.js";
 import {
@@ -54,7 +54,7 @@ describe("memory manager readonly recovery", () => {
     };
   }
 
-  function createMemoryConfigForTests(): OpenClawConfig {
+  function createMemoryConfigForTests(): MerClawConfig {
     return createMemorySyncControlConfigForTests(workspaceDir, indexPath);
   }
 
@@ -146,7 +146,7 @@ describe("memory manager readonly recovery", () => {
   }
 
   beforeEach(async () => {
-    workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-mem-readonly-"));
+    workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "merclaw-mem-readonly-"));
     indexPath = path.join(workspaceDir, "index.sqlite");
     await fs.mkdir(path.join(workspaceDir, "memory"), { recursive: true });
     await fs.writeFile(path.join(workspaceDir, "MEMORY.md"), "Hello memory.");

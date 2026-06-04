@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.js";
+import type { MerClawConfig } from "../config/types.js";
 import type { UpdateCheckResult } from "../infra/update-check.js";
 import { runExec } from "../process/exec.js";
 import { createEmptyTaskAuditSummary } from "../tasks/task-registry.audit.shared.js";
@@ -59,7 +59,7 @@ type StatusScanExecRunner = (
 
 type StatusScanCoreBootstrapParams<TAgentStatus> = {
   coldStart: boolean;
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   hasConfiguredChannels: boolean;
   opts: { timeoutMs?: number; all?: boolean };
   skipUpdateCheck?: boolean;
@@ -74,7 +74,7 @@ type StatusScanCoreBootstrapParams<TAgentStatus> = {
     includeRegistry: boolean;
     updateConfigChannel?: string | null;
   }) => Promise<UpdateCheckResult>;
-  getAgentLocalStatuses: (cfg: OpenClawConfig) => Promise<TAgentStatus>;
+  getAgentLocalStatuses: (cfg: MerClawConfig) => Promise<TAgentStatus>;
 };
 
 export async function createStatusScanCoreBootstrap<TAgentStatus>(

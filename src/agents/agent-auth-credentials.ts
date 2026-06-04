@@ -1,6 +1,6 @@
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
-import { asDateTimestampMs } from "@openclaw/normalization-core/number-coercion";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeProviderId } from "@merclaw/model-catalog-core/provider-id";
+import { asDateTimestampMs } from "@merclaw/normalization-core/number-coercion";
+import { normalizeOptionalString } from "@merclaw/normalization-core/string-coerce";
 import { coerceSecretRef } from "../config/types.secrets.js";
 import type { AuthProfileCredential, AuthProfileStore } from "./auth-profiles.js";
 
@@ -19,7 +19,7 @@ export type ResolveAgentCredentialMapOptions = {
   includeSecretRefPlaceholders?: boolean;
 };
 
-const AGENT_SECRET_REF_CONFIGURED_MARKER = "openclaw-secret-ref-configured";
+const AGENT_SECRET_REF_CONFIGURED_MARKER = "merclaw-secret-ref-configured";
 
 function hasConfiguredSecretRef(value: unknown): boolean {
   return coerceSecretRef(value) !== null;

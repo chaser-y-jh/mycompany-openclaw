@@ -3,7 +3,7 @@ import path from "node:path";
 import { resolveUserPath } from "../utils.js";
 import { isPathInside, safeRealpathSync } from "./path-safety.js";
 
-export const OPENCLAW_DEV_SOURCE_ROOT_ENV = "OPENCLAW_DEV_SOURCE_ROOT";
+export const MERCLAW_DEV_SOURCE_ROOT_ENV = "MERCLAW_DEV_SOURCE_ROOT";
 
 function readPackageName(packageJsonPath: string): string | null {
   try {
@@ -14,8 +14,8 @@ function readPackageName(packageJsonPath: string): string | null {
   }
 }
 
-export function resolveOpenClawDevSourceRoot(env: NodeJS.ProcessEnv = process.env): string | null {
-  const rawRoot = env[OPENCLAW_DEV_SOURCE_ROOT_ENV]?.trim();
+export function resolveMerClawDevSourceRoot(env: NodeJS.ProcessEnv = process.env): string | null {
+  const rawRoot = env[MERCLAW_DEV_SOURCE_ROOT_ENV]?.trim();
   if (!rawRoot) {
     return null;
   }
@@ -24,7 +24,7 @@ export function resolveOpenClawDevSourceRoot(env: NodeJS.ProcessEnv = process.en
   if (!realRoot) {
     return null;
   }
-  if (readPackageName(path.join(realRoot, "package.json")) !== "openclaw") {
+  if (readPackageName(path.join(realRoot, "package.json")) !== "merclaw") {
     return null;
   }
   if (!fs.existsSync(path.join(realRoot, "src"))) {
@@ -40,7 +40,7 @@ export function isBundledPluginInsideDevSourceRoot(params: {
   rootDir: string;
   env: NodeJS.ProcessEnv;
 }): boolean {
-  const devSourceRoot = resolveOpenClawDevSourceRoot(params.env);
+  const devSourceRoot = resolveMerClawDevSourceRoot(params.env);
   if (!devSourceRoot) {
     return false;
   }

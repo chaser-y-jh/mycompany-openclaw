@@ -1,10 +1,10 @@
-import { createSubsystemLogger } from "openclaw/plugin-sdk/logging-core";
-import { resolveTimerTimeoutMs } from "openclaw/plugin-sdk/number-runtime";
-import { readProviderJsonArrayFieldResponse } from "openclaw/plugin-sdk/provider-http";
-import type { ModelDefinitionConfig } from "openclaw/plugin-sdk/provider-model-shared";
-import { SELF_HOSTED_DEFAULT_COST } from "openclaw/plugin-sdk/provider-setup";
-import { fetchWithSsrFGuard, type SsrFPolicy } from "openclaw/plugin-sdk/ssrf-runtime";
-import { asPositiveSafeInteger } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { createSubsystemLogger } from "merclaw/plugin-sdk/logging-core";
+import { resolveTimerTimeoutMs } from "merclaw/plugin-sdk/number-runtime";
+import { readProviderJsonArrayFieldResponse } from "merclaw/plugin-sdk/provider-http";
+import type { ModelDefinitionConfig } from "merclaw/plugin-sdk/provider-model-shared";
+import { SELF_HOSTED_DEFAULT_COST } from "merclaw/plugin-sdk/provider-setup";
+import { fetchWithSsrFGuard, type SsrFPolicy } from "merclaw/plugin-sdk/ssrf-runtime";
+import { asPositiveSafeInteger } from "merclaw/plugin-sdk/string-coerce-runtime";
 import { LMSTUDIO_DEFAULT_LOAD_CONTEXT_LENGTH } from "./defaults.js";
 import {
   buildLmstudioModelName,
@@ -129,7 +129,7 @@ export async function fetchLmstudioModels(params: {
   }
 }
 
-/** Discovers LLM models from LM Studio and maps them to OpenClaw model definitions. */
+/** Discovers LLM models from LM Studio and maps them to MerClaw model definitions. */
 export async function discoverLmstudioModels(
   params: DiscoverLmstudioModelsParams,
 ): Promise<ModelDefinitionConfig[]> {

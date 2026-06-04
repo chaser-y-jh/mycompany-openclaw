@@ -1,12 +1,12 @@
 ---
-summary: "Use Qwen Cloud via OpenClaw's bundled qwen provider"
+summary: "Use Qwen Cloud via MerClaw's bundled qwen provider"
 read_when:
-  - You want to use Qwen with OpenClaw
+  - You want to use Qwen with MerClaw
   - You previously used Qwen OAuth
 title: "Qwen"
 ---
 
-OpenClaw now treats Qwen as a first-class bundled provider with canonical id
+MerClaw now treats Qwen as a first-class bundled provider with canonical id
 `qwen`. The bundled provider targets the Qwen Cloud / Alibaba DashScope and
 Coding Plan endpoints, keeps legacy `modelstudio` ids working as a compatibility
 alias, and also exposes the Qwen Portal token flow as provider `qwen-oauth`.
@@ -38,13 +38,13 @@ Choose your plan type and follow the setup steps.
         For the **Global** endpoint:
 
         ```bash
-        openclaw onboard --auth-choice qwen-api-key
+        merclaw onboard --auth-choice qwen-api-key
         ```
 
         For the **China** endpoint:
 
         ```bash
-        openclaw onboard --auth-choice qwen-api-key-cn
+        merclaw onboard --auth-choice qwen-api-key-cn
         ```
       </Step>
       <Step title="Set a default model">
@@ -60,7 +60,7 @@ Choose your plan type and follow the setup steps.
       </Step>
       <Step title="Verify the model is available">
         ```bash
-        openclaw models list --provider qwen
+        merclaw models list --provider qwen
         ```
       </Step>
     </Steps>
@@ -87,13 +87,13 @@ Choose your plan type and follow the setup steps.
         For the **Global** endpoint:
 
         ```bash
-        openclaw onboard --auth-choice qwen-standard-api-key
+        merclaw onboard --auth-choice qwen-standard-api-key
         ```
 
         For the **China** endpoint:
 
         ```bash
-        openclaw onboard --auth-choice qwen-standard-api-key-cn
+        merclaw onboard --auth-choice qwen-standard-api-key-cn
         ```
       </Step>
       <Step title="Set a default model">
@@ -109,7 +109,7 @@ Choose your plan type and follow the setup steps.
       </Step>
       <Step title="Verify the model is available">
         ```bash
-        openclaw models list --provider qwen
+        merclaw models list --provider qwen
         ```
       </Step>
     </Steps>
@@ -134,7 +134,7 @@ Choose your plan type and follow the setup steps.
     <Steps>
       <Step title="Provide your portal token">
         ```bash
-        openclaw onboard --auth-choice qwen-oauth
+        merclaw onboard --auth-choice qwen-oauth
         ```
       </Step>
       <Step title="Set a default model">
@@ -150,7 +150,7 @@ Choose your plan type and follow the setup steps.
       </Step>
       <Step title="Verify the model is available">
         ```bash
-        openclaw models list --provider qwen-oauth
+        merclaw models list --provider qwen-oauth
         ```
       </Step>
     </Steps>
@@ -158,7 +158,7 @@ Choose your plan type and follow the setup steps.
     <Note>
     `qwen-oauth` uses the same `QWEN_API_KEY` env var name as the DashScope
     provider, but stores auth under the `qwen-oauth` provider id when configured
-    through OpenClaw onboarding.
+    through MerClaw onboarding.
     </Note>
 
   </Tab>
@@ -185,7 +185,7 @@ You can override with a custom `baseUrl` in config.
 
 ## Built-in catalog
 
-OpenClaw currently ships this bundled Qwen catalog. The configured catalog is
+MerClaw currently ships this bundled Qwen catalog. The configured catalog is
 endpoint-aware: Coding Plan configs omit models that are only known to work on
 the Standard endpoint.
 
@@ -209,7 +209,7 @@ present in the bundled catalog.
 
 ## Thinking Controls
 
-For reasoning-enabled Qwen Cloud models, the bundled provider maps OpenClaw
+For reasoning-enabled Qwen Cloud models, the bundled provider maps MerClaw
 thinking levels to DashScope's top-level `enable_thinking` request flag. Disabled
 thinking sends `enable_thinking: false`; other thinking levels send
 `enable_thinking: true`.
@@ -267,7 +267,7 @@ See [Video Generation](/tools/video-generation) for shared tool parameters, prov
     `qwen3.6-plus`, switch to Standard (pay-as-you-go) instead of the Coding Plan
     endpoint/key pair.
 
-    OpenClaw's bundled Qwen catalog does not advertise `qwen3.6-plus` on Coding
+    MerClaw's bundled Qwen catalog does not advertise `qwen3.6-plus` on Coding
     Plan endpoints, but explicitly configured `qwen/qwen3.6-plus` entries under
     `models.providers.qwen.models` are honored on Coding Plan baseUrls so you
     can opt that model in if Aliyun enables it on your subscription. The
@@ -290,7 +290,7 @@ See [Video Generation](/tools/video-generation) for shared tool parameters, prov
   </Accordion>
 
   <Accordion title="Video generation details">
-    For video generation, OpenClaw maps the configured Qwen region to the matching
+    For video generation, MerClaw maps the configured Qwen region to the matching
     DashScope AIGC host before submitting the job:
 
     - Global/Intl: `https://dashscope-intl.aliyuncs.com`
@@ -315,7 +315,7 @@ See [Video Generation](/tools/video-generation) for shared tool parameters, prov
 
   <Accordion title="Streaming usage compatibility">
     Native Model Studio endpoints advertise streaming usage compatibility on the
-    shared `openai-completions` transport. OpenClaw keys that off endpoint
+    shared `openai-completions` transport. MerClaw keys that off endpoint
     capabilities now, so DashScope-compatible custom provider ids targeting the
     same native hosts inherit the same streaming-usage behavior instead of
     requiring the built-in `qwen` provider id specifically.
@@ -341,7 +341,7 @@ See [Video Generation](/tools/video-generation) for shared tool parameters, prov
 
   <Accordion title="Environment and daemon setup">
     If the Gateway runs as a daemon (launchd/systemd), make sure `QWEN_API_KEY` is
-    available to that process (for example, in `~/.openclaw/.env` or via
+    available to that process (for example, in `~/.merclaw/.env` or via
     `env.shellEnv`).
   </Accordion>
 </AccordionGroup>

@@ -1,4 +1,4 @@
-import type { StreamFn } from "openclaw/plugin-sdk/agent-core";
+import type { StreamFn } from "merclaw/plugin-sdk/agent-core";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   createOpenRouterSystemCacheWrapper,

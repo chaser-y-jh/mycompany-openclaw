@@ -1,10 +1,10 @@
 {
-  "name": "@openclaw/sms",
+  "name": "@merclaw/sms",
   "version": "2026.5.31",
-  "description": "OpenClaw SMS channel plugin for Twilio text messages.",
+  "description": "MerClaw SMS channel plugin for Twilio text messages.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/openclaw/openclaw"
+    "url": "https://github.com/merclaw/merclaw"
   },
   "private": true,
   "type": "module",
@@ -12,9 +12,9 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@merclaw/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "merclaw": {
     "extensions": [
       "./index.ts"
     ],
@@ -33,7 +33,7 @@
       "pluginApi": ">=2026.5.31"
     },
     "build": {
-      "openclawVersion": "2026.5.31"
+      "merclawVersion": "2026.5.31"
     }
   }
 }

@@ -7,7 +7,7 @@
  * synthetic resume message to restart their work. Parent notification is handled
  * separately by completion delivery after the child reaches a terminal result.
  *
- * @see https://github.com/openclaw/openclaw/issues/47711
+ * @see https://github.com/merclaw/merclaw/issues/47711
  */
 
 import crypto from "node:crypto";
@@ -197,7 +197,7 @@ export async function recoverOrphanedSubagentSessions(params: {
     failedRuns: [] as Array<{ runId: string; childSessionKey: string; error?: string }>,
   };
   const resumedSessionKeys = params.resumedSessionKeys ?? new Set<string>();
-  const configChangePattern = /openclaw\.json|openclaw gateway restart|config\.patch/i;
+  const configChangePattern = /merclaw\.json|merclaw gateway restart|config\.patch/i;
 
   try {
     const activeRuns = params.getActiveRuns();
@@ -323,7 +323,7 @@ export async function recoverOrphanedSubagentSessions(params: {
           task: runRecord.task,
           lastHumanMessage: extractMessageText(lastHumanMessage),
           configChangeHint: configChangeDetected
-            ? "\n\n[config changes from your previous run were already applied — do not re-modify openclaw.json or restart the gateway]"
+            ? "\n\n[config changes from your previous run were already applied — do not re-modify merclaw.json or restart the gateway]"
             : undefined,
           originalRunId: runId,
           originalRun: runRecord,

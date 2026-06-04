@@ -111,7 +111,7 @@ test("sessions.list keeps bulk rows lightweight and uses persisted model fields"
       JSON.stringify({
         message: {
           role: "assistant",
-          provider: "openclaw",
+          provider: "merclaw",
           model: "delivery-mirror",
           usage: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
         },
@@ -584,9 +584,9 @@ test("sessions.patch scopes selected global mutations and events to the requeste
     JSON.stringify({ global: sessionStoreEntry("sess-work-global") }, null, 2),
     "utf-8",
   );
-  const configPath = process.env.OPENCLAW_CONFIG_PATH;
+  const configPath = process.env.MERCLAW_CONFIG_PATH;
   if (!configPath) {
-    throw new Error("OPENCLAW_CONFIG_PATH is required");
+    throw new Error("MERCLAW_CONFIG_PATH is required");
   }
   await fs.writeFile(
     configPath,
@@ -680,9 +680,9 @@ test("sessions.compact scopes selected global truncation to the requested agent"
     ),
     "utf-8",
   );
-  const configPath = process.env.OPENCLAW_CONFIG_PATH;
+  const configPath = process.env.MERCLAW_CONFIG_PATH;
   if (!configPath) {
-    throw new Error("OPENCLAW_CONFIG_PATH is required");
+    throw new Error("MERCLAW_CONFIG_PATH is required");
   }
   await fs.writeFile(
     configPath,
@@ -769,9 +769,9 @@ test("sessions.compact passes the selected global agent into embedded compaction
     ),
     "utf-8",
   );
-  const configPath = process.env.OPENCLAW_CONFIG_PATH;
+  const configPath = process.env.MERCLAW_CONFIG_PATH;
   if (!configPath) {
-    throw new Error("OPENCLAW_CONFIG_PATH is required");
+    throw new Error("MERCLAW_CONFIG_PATH is required");
   }
   await fs.writeFile(
     configPath,

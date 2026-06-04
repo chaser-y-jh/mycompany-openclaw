@@ -1,4 +1,4 @@
-import { mockPinnedHostnameResolution } from "openclaw/plugin-sdk/test-env";
+import { mockPinnedHostnameResolution } from "merclaw/plugin-sdk/test-env";
 import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 import { isValidXaiTtsVoice, XAI_BASE_URL, XAI_TTS_VOICES, xaiTTS } from "./tts.js";
 
@@ -100,8 +100,8 @@ describe("xai tts", () => {
       );
     });
 
-    it("sends an openclaw User-Agent on xAI TTS requests", async () => {
-      vi.stubEnv("OPENCLAW_VERSION", "2026.3.22");
+    it("sends an merclaw User-Agent on xAI TTS requests", async () => {
+      vi.stubEnv("MERCLAW_VERSION", "2026.3.22");
       const fetchMock = vi.fn(
         async (_input: RequestInfo | URL, _init?: RequestInit) =>
           new Response(Buffer.from("audio-bytes"), {
@@ -123,7 +123,7 @@ describe("xai tts", () => {
 
       const init = fetchMock.mock.calls.at(0)?.[1];
       const headers = new Headers(init?.headers ?? {});
-      expect(headers.get("user-agent")).toBe("openclaw/2026.3.22");
+      expect(headers.get("user-agent")).toBe("merclaw/2026.3.22");
       expect(headers.get("authorization")).toBe("Bearer ok-key");
       vi.unstubAllEnvs();
     });

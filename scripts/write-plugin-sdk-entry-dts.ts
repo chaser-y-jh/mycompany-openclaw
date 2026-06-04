@@ -45,10 +45,10 @@ const RUNTIME_SHIMS: Partial<Record<string, string>> = {
 
 function isBareImportSpecifier(id: string): boolean {
   if (
-    id === "@openclaw/model-catalog-core/model-catalog-types" ||
-    id.startsWith("@openclaw/normalization-core/") ||
-    id.startsWith("@openclaw/media-core/") ||
-    id.startsWith("@openclaw/acp-core/")
+    id === "@merclaw/model-catalog-core/model-catalog-types" ||
+    id.startsWith("@merclaw/normalization-core/") ||
+    id.startsWith("@merclaw/media-core/") ||
+    id.startsWith("@merclaw/acp-core/")
   ) {
     return false;
   }
@@ -78,8 +78,8 @@ function copyFlatDeclarations(fromDir: string, toDir: string): void {
 }
 
 const distPluginSdkDir = path.join(process.cwd(), "dist/plugin-sdk");
-const flatDeclarationTempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-plugin-sdk-dts-"));
-const shouldBuildPrivateQaEntries = process.env.OPENCLAW_BUILD_PRIVATE_QA === "1";
+const flatDeclarationTempDir = fs.mkdtempSync(path.join(os.tmpdir(), "merclaw-plugin-sdk-dts-"));
+const shouldBuildPrivateQaEntries = process.env.MERCLAW_BUILD_PRIVATE_QA === "1";
 const flatDeclarationEntrypoints = shouldBuildPrivateQaEntries
   ? pluginSdkEntrypoints
   : publicPluginSdkEntrypoints;

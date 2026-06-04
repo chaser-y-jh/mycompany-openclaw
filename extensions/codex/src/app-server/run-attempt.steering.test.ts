@@ -1,5 +1,5 @@
 import path from "node:path";
-import { abortAgentHarnessRun } from "openclaw/plugin-sdk/agent-harness-runtime";
+import { abortAgentHarnessRun } from "merclaw/plugin-sdk/agent-harness-runtime";
 import { describe, expect, it, vi } from "vitest";
 import { CODEX_GPT5_BEHAVIOR_CONTRACT } from "../../prompt-overlay.js";
 import type { CodexServerNotification } from "./protocol.js";

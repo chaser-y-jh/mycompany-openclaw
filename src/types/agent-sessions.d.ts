@@ -1,8 +1,8 @@
-export type OpenClawAgentSessionSkillSourceAugmentation = never;
+export type MerClawAgentSessionSkillSourceAugmentation = never;
 
-declare module "openclaw/plugin-sdk/agent-sessions" {
+declare module "merclaw/plugin-sdk/agent-sessions" {
   interface Skill {
-    // OpenClaw relies on the source identifier returned by skill loaders.
+    // MerClaw relies on the source identifier returned by skill loaders.
     source: string;
   }
 }

@@ -1,12 +1,12 @@
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
-import { sortUniqueStrings } from "@openclaw/normalization-core/string-normalization";
+import { normalizeProviderId } from "@merclaw/model-catalog-core/provider-id";
+import { sortUniqueStrings } from "@merclaw/normalization-core/string-normalization";
 import { loadAuthProfileStoreWithoutExternalProfiles } from "../../agents/auth-profiles/store.js";
 import {
   createProviderApiKeyResolver,
   createProviderAuthResolver,
 } from "../../agents/models-config.providers.secrets.js";
 import type { ModelProviderConfig } from "../../config/types.models.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { MerClawConfig } from "../../config/types.merclaw.js";
 import { formatErrorMessage } from "../../infra/errors.js";
 import type { Model } from "../../llm/types.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
@@ -49,7 +49,7 @@ function collectMatchingContributionOwners(
   index: PluginRegistrySnapshot,
   contribution: "providers" | "cliBackends",
   providerFilter: string,
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   options: { includeDisabled?: boolean } = {},
 ): string[] {
   if (contribution === "providers") {
@@ -74,7 +74,7 @@ function collectMatchingContributionOwners(
 }
 
 function resolveInstalledIndexPluginIdsForProviderFilter(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env?: NodeJS.ProcessEnv;
   providerFilter: string;
   registryIndex?: PluginRegistrySnapshot;
@@ -107,7 +107,7 @@ function resolveInstalledIndexPluginIdsForProviderFilter(params: {
 }
 
 export async function resolveProviderCatalogPluginIdsForFilter(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env?: NodeJS.ProcessEnv;
   providerFilter: string;
   registryIndex?: PluginRegistrySnapshot;
@@ -145,7 +145,7 @@ export async function resolveProviderCatalogPluginIdsForFilter(params: {
 }
 
 export async function hasProviderStaticCatalogForFilter(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   env?: NodeJS.ProcessEnv;
   providerFilter: string;
   registryIndex?: PluginRegistrySnapshot;
@@ -213,7 +213,7 @@ function modelFromProviderCatalog(params: {
 }
 
 export async function loadProviderCatalogModelsForList(params: {
-  cfg: OpenClawConfig;
+  cfg: MerClawConfig;
   agentDir: string;
   env?: NodeJS.ProcessEnv;
   providerFilter?: string;

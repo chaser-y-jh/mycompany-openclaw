@@ -1,12 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
-import { uniqueStrings } from "@openclaw/normalization-core/string-normalization";
+import { uniqueStrings } from "@merclaw/normalization-core/string-normalization";
 import { resolveDefaultAgentDir } from "../agents/agent-scope-config.js";
 import { buildAuthProfileId } from "../agents/auth-profiles/identity.js";
 import { upsertAuthProfile, upsertAuthProfileWithLock } from "../agents/auth-profiles/profiles.js";
 import { resolveProviderIdForAuth } from "../agents/provider-auth-aliases.js";
 import { resolveStateDir } from "../config/paths.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { MerClawConfig } from "../config/types.merclaw.js";
 import {
   coerceSecretRef,
   DEFAULT_SECRET_PROVIDER_ALIAS,
@@ -21,12 +21,12 @@ import type { SecretInputMode } from "./provider-auth-types.js";
 const ENV_REF_PATTERN = /^\$\{([A-Z][A-Z0-9_]*)\}$/;
 type UpsertAuthProfileParams = Parameters<typeof upsertAuthProfileWithLock>[0];
 
-const resolveAuthAgentDir = (agentDir?: string, config?: OpenClawConfig) =>
+const resolveAuthAgentDir = (agentDir?: string, config?: MerClawConfig) =>
   agentDir ?? resolveDefaultAgentDir(config ?? {});
 
 export type ApiKeyStorageOptions = {
   secretInputMode?: SecretInputMode;
-  config?: OpenClawConfig;
+  config?: MerClawConfig;
 };
 
 export type WriteOAuthCredentialsOptions = {
@@ -47,7 +47,7 @@ function parseEnvSecretRef(value: string): SecretRef | null {
   return buildEnvSecretRef(match[1]);
 }
 
-function resolveProviderDefaultEnvSecretRef(provider: string, config?: OpenClawConfig): SecretRef {
+function resolveProviderDefaultEnvSecretRef(provider: string, config?: MerClawConfig): SecretRef {
   const envVars = getProviderEnvVars(provider, {
     ...(config ? { config } : {}),
     includeUntrustedWorkspacePlugins: false,
@@ -145,7 +145,7 @@ async function upsertAuthProfileWithLockOrThrow(params: UpsertAuthProfileParams)
 }
 
 export function applyAuthProfileConfig(
-  cfg: OpenClawConfig,
+  cfg: MerClawConfig,
   params: {
     profileId: string;
     provider: string;
@@ -154,7 +154,7 @@ export function applyAuthProfileConfig(
     displayName?: string;
     preferProfileFirst?: boolean;
   },
-): OpenClawConfig {
+): MerClawConfig {
   const normalizedProvider = resolveProviderIdForAuth(params.provider, { config: cfg });
   const profiles = {
     ...cfg.auth?.profiles,

@@ -2,23 +2,23 @@ import { createHash } from "node:crypto";
 import type { Dirent } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { createAsyncLock } from "openclaw/plugin-sdk/async-lock-runtime";
+import { createAsyncLock } from "merclaw/plugin-sdk/async-lock-runtime";
 import {
   extractErrorCode,
   formatErrorMessage,
   RequestScopedSubagentRuntimeError,
   readErrorName,
   SUBAGENT_RUNTIME_REQUEST_SCOPE_ERROR_CODE,
-} from "openclaw/plugin-sdk/error-runtime";
-import { resolveGlobalMap } from "openclaw/plugin-sdk/global-singleton";
-import { resolveStateDir } from "openclaw/plugin-sdk/memory-core-host-runtime-core";
-import { getRuntimeConfig } from "openclaw/plugin-sdk/runtime-config-snapshot";
-import { pathExists, replaceFileAtomic } from "openclaw/plugin-sdk/security-runtime";
+} from "merclaw/plugin-sdk/error-runtime";
+import { resolveGlobalMap } from "merclaw/plugin-sdk/global-singleton";
+import { resolveStateDir } from "merclaw/plugin-sdk/memory-core-host-runtime-core";
+import { getRuntimeConfig } from "merclaw/plugin-sdk/runtime-config-snapshot";
+import { pathExists, replaceFileAtomic } from "merclaw/plugin-sdk/security-runtime";
 import {
   loadSessionStore,
   resolveStorePath,
   updateSessionStore,
-} from "openclaw/plugin-sdk/session-store-runtime";
+} from "merclaw/plugin-sdk/session-store-runtime";
 
 // ── Types ──────────────────────────────────────────────────────────────
 
@@ -102,12 +102,12 @@ const DREAMING_TRANSCRIPT_RUN_MARKER = '"runId":"dreaming-narrative-';
 const DREAMING_ORPHAN_MIN_AGE_MS = 300_000;
 const SAFE_SESSION_ID_RE = /^[a-z0-9][a-z0-9._-]{0,127}$/i;
 const DREAMS_FILENAMES = ["DREAMS.md", "dreams.md"] as const;
-const DIARY_START_MARKER = "<!-- openclaw:dreaming:diary:start -->";
-const DIARY_END_MARKER = "<!-- openclaw:dreaming:diary:end -->";
-const BACKFILL_ENTRY_MARKER = "openclaw:dreaming:backfill-entry";
-const DREAMS_FILE_LOCKS_KEY = Symbol.for("openclaw.memoryCore.dreamingNarrative.fileLocks");
+const DIARY_START_MARKER = "<!-- merclaw:dreaming:diary:start -->";
+const DIARY_END_MARKER = "<!-- merclaw:dreaming:diary:end -->";
+const BACKFILL_ENTRY_MARKER = "merclaw:dreaming:backfill-entry";
+const DREAMS_FILE_LOCKS_KEY = Symbol.for("merclaw.memoryCore.dreamingNarrative.fileLocks");
 const NARRATIVE_SESSION_LOCKS_KEY = Symbol.for(
-  "openclaw.memoryCore.dreamingNarrative.sessionLocks",
+  "merclaw.memoryCore.dreamingNarrative.sessionLocks",
 );
 
 type DreamsFileLockEntry = {

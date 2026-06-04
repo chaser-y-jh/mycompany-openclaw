@@ -5,11 +5,11 @@ import { readJson } from "./fixtures/common.mjs";
 export { readJson };
 
 export function stateDir() {
-  return process.env.OPENCLAW_STATE_DIR || path.join(process.env.HOME, ".openclaw");
+  return process.env.MERCLAW_STATE_DIR || path.join(process.env.HOME, ".merclaw");
 }
 
 export function configPath() {
-  return process.env.OPENCLAW_CONFIG_PATH || path.join(stateDir(), "openclaw.json");
+  return process.env.MERCLAW_CONFIG_PATH || path.join(stateDir(), "merclaw.json");
 }
 
 export function managedNpmRoot() {
