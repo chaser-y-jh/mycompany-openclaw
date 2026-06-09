@@ -1,0 +1,16 @@
+{
+  "name": "@merclaw/working-memory",
+  "version": "2026.6.9",
+  "private": true,
+  "description": "MerClaw Working Memory — task state machine, scratchpad, subtask tracking for agent execution context",
+  "type": "module",
+  "dependencies": {},
+  "devDependencies": {
+    "@merclaw/plugin-sdk": "workspace:*"
+  },
+  "merclaw": {
+    "extensions": [
+      "./index.ts"
+    ]
+  }
+}

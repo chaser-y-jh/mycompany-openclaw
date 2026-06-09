@@ -1,0 +1,16 @@
+{
+  "name": "@merclaw/intent-classifier",
+  "version": "2026.6.9",
+  "private": true,
+  "description": "MerClaw Intent Classifier — LLM few-shot intent classification + entity extraction for agent routing",
+  "type": "module",
+  "dependencies": {},
+  "devDependencies": {
+    "@merclaw/plugin-sdk": "workspace:*"
+  },
+  "merclaw": {
+    "extensions": [
+      "./index.ts"
+    ]
+  }
+}

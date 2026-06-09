@@ -1,0 +1,45 @@
+{
+  "id": "working-memory",
+  "activation": {
+    "onStartup": true
+  },
+  "enabledByDefault": true,
+  "name": "Working Memory",
+  "description": "Task working memory tracker — maintains current goal, subtask stack, scratchpad, active entities, and pending decisions for agent execution context.",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "enabled": { "type": "boolean", "default": true },
+      "maxSubtaskDepth": {
+        "type": "number",
+        "default": 10,
+        "description": "Maximum nesting depth for subtask stack to prevent unbounded recursion."
+      },
+      "scratchpadMaxChars": {
+        "type": "number",
+        "default": 8000,
+        "description": "Maximum characters allowed in the scratchpad before auto-compaction."
+      },
+      "persistOnEveryUpdate": {
+        "type": "boolean",
+        "default": true,
+        "description": "When true, every working memory mutation is immediately flushed to SQLite."
+      }
+    }
+  },
+  "uiHints": {
+    "enabled": {
+      "label": "Enable Working Memory",
+      "help": "Track agent task state, subtasks, scratchpad, and decisions during execution."
+    },
+    "maxSubtaskDepth": {
+      "label": "Max Subtask Depth",
+      "help": "How deeply subtasks can be nested. Prevents infinite recursion."
+    },
+    "scratchpadMaxChars": {
+      "label": "Scratchpad Size Limit",
+      "help": "Maximum size of the scratchpad before it is compacted."
+    }
+  }
+}

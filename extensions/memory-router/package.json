@@ -1,0 +1,16 @@
+{
+  "name": "@merclaw/memory-router",
+  "version": "2026.6.9",
+  "private": true,
+  "description": "MerClaw Memory Router — unified search across vector (LanceDB), file (MEMORY.md), and wiki memory sources",
+  "type": "module",
+  "dependencies": {},
+  "devDependencies": {
+    "@merclaw/plugin-sdk": "workspace:*"
+  },
+  "merclaw": {
+    "extensions": [
+      "./index.ts"
+    ]
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "id": "memory-router",
+  "activation": {
+    "onStartup": true
+  },
+  "enabledByDefault": true,
+  "name": "Memory Router",
+  "description": "Unified memory search across vector (LanceDB), file (MEMORY.md), and wiki memory sources. Provides a single search interface that fans out to all memory backends and merges/ranks results.",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "enabled": { "type": "boolean", "default": true },
+      "defaultSources": {
+        "type": "array",
+        "items": { "type": "string", "enum": ["vector", "file", "wiki"] },
+        "default": ["vector", "file"],
+        "description": "Default memory sources to search when none specified."
+      },
+      "maxTotalResults": {
+        "type": "number",
+        "default": 10,
+        "description": "Maximum total results returned across all sources."
+      },
+      "deduplicateThreshold": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1,
+        "default": 0.85,
+        "description": "Similarity threshold for deduplication (1.0 = exact match only)."
+      }
+    }
+  },
+  "uiHints": {
+    "enabled": {
+      "label": "Enable Memory Router",
+      "help": "Provide a unified memory search interface across all memory backends."
+    },
+    "defaultSources": {
+      "label": "Default Search Sources",
+      "help": "Which memory sources to search by default."
+    }
+  }
+}

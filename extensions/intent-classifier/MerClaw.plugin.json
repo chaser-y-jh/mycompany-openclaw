@@ -1,0 +1,38 @@
+{
+  "id": "intent-classifier",
+  "activation": {
+    "onStartup": true
+  },
+  "enabledByDefault": true,
+  "name": "Intent Classifier",
+  "description": "LLM few-shot intent classifier + entity extractor for the LLM/Agent Layer. Classifies user input into intent types and extracts entities to guide tool routing and task decomposition.",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "enabled": { "type": "boolean", "default": true },
+      "confidenceThreshold": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1,
+        "default": 0.6,
+        "description": "Minimum confidence score for an intent classification to be used. Below this, falls back to 'chat' (general)."
+      },
+      "maxClassificationTokens": {
+        "type": "number",
+        "default": 300,
+        "description": "Maximum output tokens for the classification LLM call."
+      }
+    }
+  },
+  "uiHints": {
+    "enabled": {
+      "label": "Enable Intent Classification",
+      "help": "Classify user intent and extract entities before each agent turn."
+    },
+    "confidenceThreshold": {
+      "label": "Confidence Threshold",
+      "help": "How confident the classifier must be to trust its result. Lower values = more aggressive classification."
+    }
+  }
+}
